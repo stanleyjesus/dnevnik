@@ -38,6 +38,7 @@ export const PRIOS = [
   { id: 'upper', n: 'Верх тела', m: ['chest', 'lats', 'upper_back', 'delt_front', 'delt_mid', 'delt_rear', 'biceps', 'triceps'] },
   { id: 'back', n: 'Спина', m: ['lats', 'upper_back', 'delt_rear'] },
   { id: 'chest', n: 'Грудь и плечи', m: ['chest', 'delt_front', 'delt_mid'] },
+  { id: 'delts', n: 'Плечи', m: ['delt_front', 'delt_mid', 'delt_rear'] },   // (в эталоне нет) три пучка дельт без груди: решение владельца, 23 ноября 2026
   { id: 'arms', n: 'Руки', m: ['biceps', 'triceps'] }
 ];
 /* a stock exercise for every muscle, used when the athlete's own list has nothing for it */

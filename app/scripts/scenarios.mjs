@@ -557,9 +557,11 @@ export const SCENARIOS = [
   { name: 'программа: цель и уточняющий список', data: 'seed', app: true, steps: [
     ['программа: масса, всем поровну', go('program') + settle + expect(goals + ' === "Масса,Сила,Гибрид,Вручную"', 'четыре кнопки цели')
       + expect(goalIs('mass') + ' && ' + listIs('pm', 'even') + ' && !document.querySelector("#pl, #ps")', 'по умолчанию — масса, всем поровну; уточняющий список один')
-      + expect(listOf('pm') + ' === "even,m:legs,m:glutes,m:upper,m:back,m:chest,m:arms"', 'в списке мышц — «всем поровну» и шесть групп')
-      + expect('[...document.getElementById("pm").options].map(o => o.textContent).join("|") === "Всем поровну|Ноги и ягодицы|Ягодицы|Верх тела|Спина|Грудь и плечи|Руки"', 'названия пунктов')
+      + expect(listOf('pm') + ' === "even,m:legs,m:glutes,m:upper,m:back,m:chest,m:delts,m:arms"', 'в списке мышц — «всем поровну» и семь групп')
+      + expect('[...document.getElementById("pm").options].map(o => o.textContent).join("|") === "Всем поровну|Ноги и ягодицы|Ягодицы|Верх тела|Спина|Грудь и плечи|Плечи|Руки"', 'названия пунктов')
       + expect('!document.getElementById("pf")', 'прежнего списка «Как собрать» нет') + expect(progTitle + ' === "Равномерно на всё тело"', 'название программы')],
+    ['масса: плечи в приоритете', pick('#pm', 'm:delts') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:delts'), 'в списке — плечи')
+      + expect(progTitle + ' === "Приоритет: плечи"', 'название программы')],
     ['масса: спина в приоритете', pick('#pm', 'm:back') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back'), 'цель та же, в списке — спина')
       + expect(progTitle + ' === "Приоритет: спина"', 'название программы')],
     ['лимит недели 70', pick('#pb-budget', 70) + settle + expect(listIs('pb-budget', '70') + ' && ' + listIs('pm', 'm:back'), 'лимит 70, выбор тот же')],
@@ -588,7 +590,7 @@ export const SCENARIOS = [
     ['сила на большом экране', click('#pg-force') + settle + expect(goalIs('force'), 'цель «Сила»')],
     ['телефон', size(390, 844)],
     ['второй профиль: без базовых — только масса и вручную', pick('#prof', 'p2') + settle + go('program') + settle + expect(goals + ' === "Масса,Вручную"', 'в справочнике нет базовых: целей «Сила» и «Гибрид» нет')
-      + expect(goalIs('mass') + ' && ' + listOf('pm') + ' === "even,m:legs,m:glutes,m:upper,m:back,m:chest,m:arms"', 'масса со списком мышц')],
+      + expect(goalIs('mass') + ' && ' + listOf('pm') + ' === "even,m:legs,m:glutes,m:upper,m:back,m:chest,m:delts,m:arms"', 'масса со списком мышц')],
     ['программа второго профиля: ягодицы в приоритете', mode('m:glutes') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:glutes'), 'в списке — ягодицы') + expect(progTitle + ' === "Приоритет: ягодицы"', 'название программы')],
     ['программа второго профиля: вручную и обратно', mode('manual') + settle + expect(goalIs('hand'), 'вручную') + click('#pg-mass') + settle + expect(listIs('pm', 'm:glutes'), 'ягодицы на месте')]
   ] },

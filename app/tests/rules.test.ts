@@ -132,3 +132,19 @@ test('сборка, где все мышцы в рабочей зоне: о пр
   assert.ok(noteOf(pr, /^(Все мышцы в рабочей зоне|Нагрузка поровну)/), pr.notes.map(n => n.t).join(' | '));
   assert.ok(!pr.notes.some(n => /ни при чём/.test(n.x || '')));
 }));
+
+test('группа «Плечи» в приоритете: три пучка дельт без груди, в полтора раза выше остальных — 14.8–15 при остальных 9.7–14.3', () => {
+  const g = ['delt_front', 'delt_mid', 'delt_rear'], W = seedW();
+  assert.deepEqual(plain(Core.PRIOS.find(x => x.id === 'delts')), { id: 'delts', n: 'Плечи', m: g });
+  assert.deepEqual(Core.PRIOS.map(x => x.id), ['legs', 'glutes', 'upper', 'back', 'chest', 'delts', 'arms'], 'плечи — сразу за грудью и плечами');
+  /* группы эталона — те же */
+  assert.deepEqual(plain(Core.PRIOS.filter(x => x.id !== 'delts')), plain(Ref.PRIOS));
+  const check = (pr: Built, cfg: Cfg, prio: string, rest: string, sets: number) => {
+    const others = Core.MUSCLES.map(m => m.id).filter(m => !cfg.ignore[m] && !g.includes(m));
+    assert.deepEqual([spanOf(pr, g), spanOf(pr, others), total(pr)], [prio, rest, sets]);
+    assert.equal(pr.name, 'Приоритет: плечи'); assert.deepEqual(Core.ruleBreaks(pr.cfg, pr.after), []);
+    assert.ok(noteOf(pr, /^Приоритет — /)!.x!.startsWith('Приоритетные мышцы (передние дельты, средние дельты и задние дельты) получают примерно в полтора раза больше остальных'));
+  };
+  { const cfg = Core.mergeCfg(seedRaw()); check(Core.buildProgram(W, cfg, { prio: 'delts' }), cfg, '15–15.3', '9.7–12.8', 100); }
+  withDays(3, () => { const cfg = Core.mergeCfg(seedRaw()); check(Core.buildProgram(W, cfg, { prio: 'delts' }), cfg, '14.8–15', '9.7–14.3', 100); });
+});
