@@ -10,6 +10,7 @@ import { goalOf, goalRange, GOALS, waveOf } from './goals.ts';
 import { allStats, exStats, program, sessions, stalledSets } from './stats.ts';
 import { formulaRange, hints, lastSessionItem, plan, planCycle, roundTo, startWeight, suggestSet } from './plan.ts';
 import { planned } from './tally.ts';
+import { appRules, rdlDef } from './rules.ts';
 import type { Tally } from './tally.ts';
 import type { Add, AddCtx, Addition, Cfg, Cyc, ExDef, MuscleMap, Prop, PropSet, Range, Session, Slot, Workout } from './types.ts';
 
@@ -17,7 +18,7 @@ import type { Add, AddCtx, Addition, Cfg, Cyc, ExDef, MuscleMap, Prop, PropSet, 
 export const ADDS: Add[] = [
   { key: 'abs', id: 'x_abs', prio: 4, sets: 3, times: 2, def: { n: 'Пресс', pat: 'iso', m: { abs: 1 } }, cover: e => ((e || {} as ExDef).m || {} as MuscleMap).abs >= 1,
     need: c => c.pv('abs') < c.z.min, why: c => 'пресс по программе получает ' + nSets(c.pv('abs')) + ' в неделю при минимуме ' + c.z.min },
-  { key: 'rdl', id: 'x_rdl', prio: 1, sets: 4, times: 1, def: { n: 'Румынская тяга', pat: 'hinge', m: { hams: 1, glutes: 1, erectors: 1 } }, cover: e => (e || {} as ExDef).pat === 'hinge',
+  { key: 'rdl', id: 'x_rdl', prio: 1, sets: 4, times: 1, get def() { return rdlDef(); }, cover: e => (e || {} as ExDef).pat === 'hinge',
     need: c => !c.pp('hinge'), why: c => 'в программе нет тяги с наклоном: разгибатели спины — ' + nSets(c.pv('erectors')) + ', ягодицы — ' + nSets(c.pv('glutes')) + ' в неделю' },
   { key: 'calf', id: 'x_calf', prio: 3, sets: 3, times: 2, def: { n: 'Подъёмы на носки', pat: 'iso', m: { calves: 1 } }, cover: e => ((e || {} as ExDef).m || {} as MuscleMap).calves >= 1,
     need: c => c.pv('calves') < c.z.min, why: c => 'икры по программе получают ' + nSets(c.pv('calves')) + ' в неделю при минимуме ' + c.z.min },

@@ -2,6 +2,7 @@
    Перенесено из reference/src/core.js: тела функций без изменений. */
 import { clone } from './records.ts';
 import { GEAR, NO_GEAR, placed } from './gear.ts';
+import { appEx } from './rules.ts';
 import type { Cfg, ExDef } from './types.ts';
 
 /* ---------- config ---------- */
@@ -24,6 +25,7 @@ export function mergeCfg(raw: any): Cfg {
   /* steps written by older versions are not read any more: the step is the equipment's. A light day rounds as its lift does, so it goes second */
   for (const [id, e] of Object.entries<any>(raw.ex || {})) if (e.mode !== 'light') c.ex[id] = placed(c, Object.assign({ n: id }, e));
   for (const [id, e] of Object.entries<any>(raw.ex || {})) if (e.mode === 'light') c.ex[id] = placed(c, Object.assign({ n: id }, e));
+  for (const id of Object.keys(c.ex)) c.ex[id] = appEx(c.ex[id]);   // (в эталоне нет) румынская тяга с картой прежнего правила по названию: разгибатели помогают (решение владельца, 23 ноября 2026)
   c.program = raw.program && raw.program.slots ? clone(raw.program) : null;
   /* muscles left out of the count: the diary gives them no sets of its own and does not call them a gap.
      Calves, abs and erectors are out by default (the athlete adds to them by hand); a stored 0 puts a muscle back in. */

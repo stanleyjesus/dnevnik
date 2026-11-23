@@ -12,6 +12,7 @@ import { planned, tally } from './tally.ts';
 import { ADDS } from './adapt.ts';
 import { STRONG } from './strength.ts';
 import { DAYS, awayDays, dayNo } from './days.ts';
+import { appRules } from './rules.ts';
 import type { Tally } from './tally.ts';
 import type { Add, BuildOpts, Cfg, Cut, DayOf, ExDef, LibEntry, Move, MuscleMap, OptOpts, ProgEntry, ProgNote, ProgSlots, Slot, Swap, Workout } from './types.ts';
 
@@ -53,7 +54,7 @@ export const LIB: LibEntry[] = [
   { id: 'x_pushdown', def: { n: 'Разгибания на трицепс на блоке', pat: 'iso', m: { triceps: 1 } } },
   { id: 'x_wrist', def: { n: 'Сгибания кисти', pat: 'iso', m: { forearms: 1 } } },
   { id: 'x_abs', def: addDef('abs') },
-  { id: 'x_rdl', def: addDef('rdl') },
+  { id: 'x_rdl', get def() { return addDef('rdl'); } },          // (в эталоне — постоянная карта) в приложении разгибатели в ней помогают: rules.ts
   { id: 'x_backext', def: { n: 'Гиперэкстензия', pat: 'hinge', m: { erectors: 1, glutes: 0.5, hams: 0.5 }, lo: 10, hi: 15 } },
   { id: 'x_legext', def: { n: 'Разгибания ног', pat: 'iso', m: { quads: 1 }, lo: 10, hi: 15 } },
   { id: 'x_legcurl', def: { n: 'Сгибания ног', pat: 'iso', m: { hams: 1 }, lo: 10, hi: 15 } },
@@ -147,7 +148,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
   /* a local search. A shortfall below the aim costs six times more than an excess above aim + 2.
      One step changes one exercise; when a day or the week is full, two at once: a set or an exercise goes and another comes. */
   {
-    const sameM = (a: MuscleMap, b: MuscleMap) => JSON.stringify(Object.entries(a).filter(x => x[1] > 0).sort()) === JSON.stringify(Object.entries(b).filter(x => x[1] > 0).sort());
+    const same = appRules(), sameM = (a: MuscleMap, b: MuscleMap) => JSON.stringify(Object.entries(a).filter(x => x[1] > 0).sort()) === JSON.stringify(Object.entries(b).filter(x => x[1] > 0).sort());
     const lim = (id: string) => info(id).pat === 'iso' ? 3 : 2;
     const cost = (pv: Record<string, number>) => MUSCLES.reduce((a, m) => { if (ign[m.id]) return a; const v = pv[m.id] || 0, d = tgt(m.id) - v, u = v - top(m.id); return a + (d > 0.25 ? 3 * d * d : 0) + (u > 0.01 ? 0.5 * u * u : 0); }, 0);
     /* two passes: first the volumes alone, to their balance; then the second training day for the muscles that have one,
@@ -179,7 +180,10 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
           if (e.n > 3) less.push(Object.assign({ dn: -2, dw: 0, pen: 0 }, a));       // two sets at once: they can move to another day as a new exercise
           if (!e.pin) less.push(Object.assign({ dn: -e.n, dw: -1, pen: e.isNew ? 0.1 : 0.8, drop: true }, a));     // an exercise the build put on its day for a reason stays there
         }
-        for (const id of pool) if ((hits(id, short) || fills(id, sl)) && !mainOff(id) && !L.some(e => e.ex === id) && !cut.some(c => c.ex === id && c.sl === sl)) more.push({ sl, e: null, id, f: uniF(id), dn: 2, dw: 1, pen: (c2.ex[id] ? 0.4 : 0.5) + 0.3 * aside(id), add: true });
+        /* (в эталоне нет) с днями «День N» в день не ставится второе упражнение с теми же мышцами: подходы прибавляются в том, что уже стоит.
+           Иначе два варианта одного движения по два подхода занимают два места из девяти, и поиск застревает ниже достижимого уровня (rules.ts) */
+        const twin = (id: string) => same && L.some(e => sameM(mOf(e.ex), mOf(id)));
+        for (const id of pool) if ((hits(id, short) || fills(id, sl)) && !mainOff(id) && !L.some(e => e.ex === id) && !twin(id) && !cut.some(c => c.ex === id && c.sl === sl)) more.push({ sl, e: null, id, f: uniF(id), dn: 2, dw: 1, pen: (c2.ex[id] ? 0.4 : 0.5) + 0.3 * aside(id), add: true });
       }
       const rate = (list: Move[]) => {
         const dt = list.reduce((a, x) => a + x.dn * x.f, 0);
@@ -534,9 +538,11 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     const empty = SLOTS.every(sl => !slots[sl.id].length);
     let start = clone(slots);
     let why = null as string | null, pick = null as { level: number; res: OptRes; slots: ProgSlots } | null;
+    const tried: Record<number, { res: OptRes; slots: ProgSlots }> = {};   // (в эталоне нет) последняя попытка каждого уровня: по ней видно, что остановило следующий
     const attempt = (lv: number) => {
       const trial = clone(start), r = optimise(c2, trial, { z, ignore: cfg.ignore, prio, budget, dayCap: caps.day, level: lv, allDays: scratch || everyDay }, define);
       if (!pick) why = r.hit;
+      tried[lv] = { res: r, slots: trial };
       if (!pick || r.left.length < pick.res.left.length || (r.left.length === pick.res.left.length && lv > pick.level)) pick = { level: lv, res: r, slots: trial };
       return { ok: !r.left.length, trial };
     };
@@ -602,7 +608,19 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     const names = (ids: string[]) => list(ids.map(m => MUSCLE[m].n.toLowerCase()));
     const spanOf = (ids: string[]) => { const v = ids.map(m => T.pv[m] || 0), a = fmt(Math.min(...v), 1), b = fmt(Math.max(...v), 1); return a === b ? a : 'от ' + a + ' до ' + b; };
     const pm = tracked.filter(m => prio[m]), rest = tracked.filter(m => !prio[m]), half = rest.filter(m => (T.pv[m] || 0) < z.opt - 0.01);
-    const noRoom = 'в днях уже по девять упражнений по пять подходов или мешает лимит ' + caps.day + ' подходов на мышцу за тренировку';
+    let noRoom = 'в днях уже по девять упражнений по пять подходов или мешает лимит ' + caps.day + ' подходов на мышцу за тренировку', roomFix = '';
+    /* (в эталоне нет) с днями «День N» причина, по которой общий уровень не выше, — та, что остановила следующий уровень, а не первая попытка:
+       иначе при свободных подходах заметка советовала увеличить лимит недели (решение владельца, 23 ноября 2026). Когда следующему уровню
+       мешает не лимит, заметка называет мышцы, которые выше не поднять, и что поможет */
+    const next = appRules() && !res.left.length ? tried[level + 1] : undefined;
+    if (next && next.res.hit) {
+      why = next.res.hit;
+      const short = next.res.left, packed = SLOTS.every(sl => next.slots[sl.id].reduce((a, e) => a + ((c2.ex[e.ex] || {} as ExDef).uni ? 0.5 : 1), 0) + 1 > 9.6);
+      if (why === 'full' && short.length) {
+        noRoom = names(short) + ' выше не поднять — ' + (packed ? 'в каждой тренировке уже по девять упражнений' : 'упражнения на ' + (short.length > 1 ? 'них' : 'неё') + ' уже по пять подходов или упираются в лимит ' + caps.day + ' подходов на мышцу за тренировку');
+        roomFix = ' Лимит недели тут ни при чём: занято ' + nSets(+tot.toFixed(1)) + ' из ' + budget + '. Поможет ' + (packed ? (SLOTS.length < 4 ? 'ещё один тренировочный день' : 'замена упражнений вручную') : 'ещё одно упражнение на ' + (short.length > 1 ? 'эти мышцы' : 'эту мышцу') + ' в справочнике') + '.';
+      }
+    }
     const plus = ' Точечно прибавить или убавить мышце можно кнопками «+» и «−» в таблице объёма.', sum = ' Всего ' + nSets(+tot.toFixed(1)) + ' при лимите ' + budget + '.';
     const lower = why === 'budget' ? 'Лимита ' + budget + ' подходов в неделю не хватает, чтобы довести все мышцы до рабочей зоны (от ' + z.opt + ')' : 'До рабочей зоны (от ' + z.opt + ') все мышцы разом не дотянуть: ' + noRoom;
     const nearly = 'Почти все мышцы в рабочей зоне (от ' + z.opt + '). На полподхода не дотягивают: ' + names(half) + ' — косвенная нагрузка считается половинами, поэтому ровно не сходится.';
@@ -611,17 +629,17 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     if (strong || solo) {
       if (res.left.length) stuck();
       else note('Подсобка — ' + spanOf(tracked) + ' подходов на мышцу', 'В силовом режиме подсобка целится ниже рабочей зоны — в ' + aim + ' подходов в неделю вместо ' + z.opt + ': место в неделе и силы на восстановление отданы базовым. Набранное при этом не уходит — по исследованиям для этого хватает и трети объёма, — но растут мышцы медленнее, чем в рабочей зоне.'
-        + (level < aim ? ' До ' + aim + ' все мышцы разом не дотянуть: ' + (why === 'budget' ? 'не хватает лимита ' + budget + ' подходов в неделю' : noRoom) + ', поэтому уровень общий, но ниже.' : '') + sum + plus);
+        + (level < aim ? ' До ' + aim + ' все мышцы разом не дотянуть: ' + (why === 'budget' ? 'не хватает лимита ' + budget + ' подходов в неделю' : noRoom) + ', поэтому уровень общий, но ниже.' + roomFix : '') + sum + plus);
     } else if (!pm.length) {
       const span = spanOf(tracked);
       if (res.left.length) stuck();
-      else if (level < z.opt) note('Нагрузка поровну: ' + span + ' подходов на мышцу', lower + (why === 'budget' ? ', поэтому он разделён поровну. Чтобы поднять общий уровень, увеличь лимит недели.' : '. Поэтому уровень общий, но ниже.') + plus);
+      else if (level < z.opt) note('Нагрузка поровну: ' + span + ' подходов на мышцу', lower + (why === 'budget' ? ', поэтому он разделён поровну. Чтобы поднять общий уровень, увеличь лимит недели.' : '. Поэтому уровень общий, но ниже.' + roomFix) + plus);
       else if (half.length) note('Нагрузка поровну: ' + span + ' подходов на мышцу', nearly + sum + plus);
       else note('Все мышцы в рабочей зоне, поровну', 'Каждая мышца в цели получает ' + span + ' подходов в неделю, ни одна не выделяется.' + sum);
     } else {
       const share = 'Приоритетные мышцы (' + names(pm) + ') получают примерно в полтора раза больше остальных, но не больше: каждый следующий подход прибавляет всё меньше, а остальным мышцам нужен свой объём. Остальные делят объём поровну. ';
       if (res.left.length) stuck();
-      else note('Приоритет — ' + spanOf(pm) + ', остальные мышцы — ' + spanOf(rest) + ' подходов в неделю', share + (level < z.opt ? lower + (why === 'budget' ? ': уровни ниже, пропорция та же. Чтобы поднять всех, увеличь лимит недели.' : '. Уровни ниже, пропорция та же.') + plus
+      else note('Приоритет — ' + spanOf(pm) + ', остальные мышцы — ' + spanOf(rest) + ' подходов в неделю', share + (level < z.opt ? lower + (why === 'budget' ? ': уровни ниже, пропорция та же. Чтобы поднять всех, увеличь лимит недели.' : '. Уровни ниже, пропорция та же.' + roomFix) + plus
         : (half.length ? nearly : 'Все мышцы в рабочей зоне (от ' + z.opt + ').') + sum));
     }
     if (res.over!.length) note('Чуть выше своего уровня: ' + names(res.over!), 'Эти мышцы работают попутно почти во всех упражнениях на соседние или в упражнениях по процентам, где число подходов задаёт волна. Убрать у них ещё — значит недодать соседям.');

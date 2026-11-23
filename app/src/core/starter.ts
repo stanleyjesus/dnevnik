@@ -14,7 +14,7 @@ export const STARTER_GEAR: Record<string, { n: string; step: number }> = { g_pul
 
 const PRESS: MuscleMap = { chest: 1, delt_front: 0.5, triceps: 0.5 }, OHP: MuscleMap = { delt_front: 1, delt_mid: 0.5, triceps: 0.5 };
 const PULL: MuscleMap = { lats: 1, upper_back: 0.5, biceps: 0.5 }, ROW: MuscleMap = { upper_back: 1, lats: 0.5, delt_rear: 0.5, biceps: 0.5 };
-const SQUAT: MuscleMap = { quads: 1, glutes: 0.5 }, LUNGE: MuscleMap = { quads: 1, glutes: 1 }, RDL: MuscleMap = { hams: 1, glutes: 1, erectors: 1 };
+const SQUAT: MuscleMap = { quads: 1, glutes: 0.5 }, LUNGE: MuscleMap = { quads: 1, glutes: 1 }, RDL: MuscleMap = { hams: 1, glutes: 1, erectors: 1 };   // карта прежнего правила по названию: с днями «День N» румынская тяга читается с разгибателями, которые помогают (rules.ts, appEx)
 const FLY: MuscleMap = { chest: 1, delt_front: 0.5 }, REAR: MuscleMap = { delt_rear: 1, upper_back: 0.5 }, BRIDGE: MuscleMap = { glutes: 1, hams: 0.5 };
 
 /** Упражнения встроенного списка по id. Порядок — как их увидит новый профиль: сначала основной набор, затем распространённые */

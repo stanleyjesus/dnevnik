@@ -2,6 +2,7 @@
    Перенесено из reference/src/core.js: тела функций без изменений. */
 import { MUSCLE, MUSCLES, PATTERNS } from './catalog.ts';
 import { clone } from './records.ts';
+import { RDL_M, appRules, isRdl } from './rules.ts';
 import type { ExGuess, MuscleMap } from './types.ts';
 
 /* ---------- what an exercise trains, read from its name: the athlete names it, the diary knows the muscles ----------
@@ -42,6 +43,7 @@ export function guessEx(name: string | null | undefined): ExGuess | null {
   const r = EX_RULES.find(x => x[0].test(s));
   if (!r) return null;
   const def: ExGuess = { pat: r[1], m: clone(r[2]) };
+  if (appRules() && isRdl(s)) def.m = clone(RDL_M);                    // (в эталоне нет) тяга на прямых ногах: разгибатели спины помогают (решение владельца, 23 ноября 2026)
   if (/ (лев|прав)(ая|ой|ую|ый|ое|ого) /.test(s)) def.uni = true;         // «кисть на блоке левая»: one side, its own exercise
   return def;
 }
