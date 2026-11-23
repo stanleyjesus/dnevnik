@@ -148,3 +148,27 @@ test('группа «Плечи» в приоритете: три пучка д�
   { const cfg = Core.mergeCfg(seedRaw()); check(Core.buildProgram(W, cfg, { prio: 'delts' }), cfg, '15–15.3', '9.7–12.8', 100); }
   withDays(3, () => { const cfg = Core.mergeCfg(seedRaw()); check(Core.buildProgram(W, cfg, { prio: 'delts' }), cfg, '14.8–15', '9.7–14.3', 100); });
 });
+
+test('баланс движений не считается: с днями «День N» нет замечания «В программе нет …» и поправок «добавь румынскую тягу / жим над головой» ради него', () => {
+  const later = readJson('data/later.json').profiles[0];
+  const cases: [string, Workout[], Raw][] = [['примерные данные', seedW(), seedRaw()], ['неделей позже', Core.sortW(later.workouts.map((d: Record<string, unknown>) => Core.fromDoc(String(d.id), d))), later.config]];
+  const look = (W: Workout[], raw: Raw) => {
+    const c0 = Core.mergeCfg(raw), cfg = c0.start ? c0 : Object.assign({}, c0, { start: Core.mondayOf(W[0].date) });
+    const ins = Core.insights({ workouts: W, cfg, body: [], today: '2025-11-12' } as Parameters<typeof Core.insights>[0]);
+    const adds = Core.additions(W, cfg, Core.planned(W, cfg));
+    return { bal: ins.filter(i => i.cat === 'Баланс').map(i => i.title), adds: Core.SLOTS.flatMap(sl => adds[sl.id].map(a => a.a.key)) };
+  };
+  for (const [name, W, raw] of cases) {
+    const week = look(W, raw);
+    assert.ok(week.bal.includes('В программе нет вертикального жима и тяги с наклоном'), name + ': таблица дней эталона — как в эталоне');
+    assert.ok(week.adds.includes('rdl') && week.adds.includes('ohp'), name + ': ' + week.adds.join(', '));
+    withDays(3, () => {
+      const app = look(W, raw);
+      assert.ok(!app.bal.some(t => t.startsWith('В программе нет')), name + ': ' + app.bal.join(' | '));
+      assert.ok(!app.adds.includes('rdl') && !app.adds.includes('ohp'), name + ': ' + app.adds.join(', '));
+      assert.ok(app.adds.includes('rear'), name + ': поправки по объёму мышц остаются');
+      /* разница сторон — не баланс движений: замечание остаётся */
+      assert.deepEqual(app.bal, week.bal.filter(t => !t.startsWith('В программе нет')), name);
+    });
+  }
+});

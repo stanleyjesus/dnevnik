@@ -32,8 +32,7 @@ export function gearBlock() {
     fresh(); render(true);
   };
   const move = async (id: string, g: string) => { if (!id || !cfg.ex[id] || !cfg.gear[g]) return; await saveCfg(r => { const e = r.ex[id]; if (!e) return; e.gear = g; delete e.step; delete e.round; }); fresh(); render(true); };
-  const addKind = async () => { const id = 'g_' + Date.now().toString(36); if (!(await saveCfg(r => { r.gear = r.gear || {}; r.gear[id] = { n: 'Новый снаряд', step: 2.5 }; }))) return; S.ui.gearFocus = { id, until: Date.now() + 1500 }; render(true); };
-  const rename = async (g: string, val: string) => { S.ui.gearFocus = null; const v = val.trim().slice(0, 30); if (!v || v === nm(g)) { render(true); return; } await saveCfg(r => { r.gear![g] = Object.assign({}, r.gear![g], { n: v }); }); render(true); };
+  const rename = async (g: string, val: string) => { const v = val.trim().slice(0, 30); if (!v || v === nm(g)) { render(true); return; } await saveCfg(r => { r.gear![g] = Object.assign({}, r.gear![g], { n: v }); }); render(true); };
   /* without its kind an exercise goes where its name points, else to «без снаряда» */
   const delKind = async (g: string) => { await saveCfg(r => { delete r.gear![g]; for (const e of Object.values(r.ex)) if (e.gear === g) delete e.gear; }); fresh(); toast('Снаряд убран'); render(true); };
   const stepInput = (g: string) => h('label', { class: 'row', style: 'gap:6px;font-size:13px;flex-wrap:nowrap' }, 'Шаг, кг', h('input', { class: 'num sm', type: 'text', inputmode: 'decimal', id: 'gear-step-' + g, 'aria-label': 'Шаг веса: ' + nm(g), value: C.fmt(cfg.gear[g].step, 3), disabled: ro, onchange: e => setStep(g, e.target.value) }));
@@ -61,12 +60,9 @@ export function gearBlock() {
             h('option', { value: '', text: 'снаряд…' }), kinds.map(x => h('option', { value: x.id, text: x.n }))))))
       : h('p', { class: 'sub', style: 'margin:8px 0 2px' }, 'Все упражнения разложены по снарядам.'));
   const out = h('div', { style: 'margin-bottom:14px' },
-    h('div', { class: 'row', style: 'justify-content:space-between;margin-bottom:4px' }, h('div', { class: 'eyebrow' }, 'Снаряды'),
-      ro ? null : h('button', { class: 'btn ghost sm', id: 'gear-new', onclick: addKind }, icon('plus'), 'Снаряд')),
+    h('div', { class: 'row', style: 'justify-content:space-between;margin-bottom:4px' }, h('div', { class: 'eyebrow' }, 'Снаряды')),   // кнопки «+ Снаряд» нет: шаг меняется у снарядов, которые есть (решение владельца, 23 ноября 2026)
     h('p', { class: 'note', style: 'margin-bottom:10px' }, 'Шаг веса задаётся у снаряда: упражнение берёт шаг того снаряда, в котором лежит.'),
     h('div', { class: 'gear-grid' }, kinds.map(x => box(x.id)), looseBox));
-  /* a new kind waits for its name: the save is followed by a redraw or two, and the cursor has to survive them */
-  { const f = S.ui.gearFocus; if (f && Date.now() < f.until) setTimeout(() => { const el = $('gear-n-' + f.id); if (el && S.ui.gearFocus === f && document.activeElement !== el) { el.focus(); el.select(); } }, 0); else S.ui.gearFocus = null; }
   return out;
 }
 /* weights the athlete names before the journal has them: a working weight or a one-rep maximum for every exercise */

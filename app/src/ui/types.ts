@@ -70,7 +70,7 @@ export interface UiState {
   plan: PlanUi | null; confirm: string | null; exForm: string | null; hist: boolean;
   q: string; coachBusy: boolean; coachText: string | null; coachErr: string | null;      // остались от запроса разбора: приложение их не использует
   prog: ProgUi | null; bodyBy: 'fact' | 'plan' | null; bodySel: string | null;
-  newEx?: NewExUi | null; gearFocus?: { id: string; until: number } | null; setupMore?: boolean;
+  newEx?: NewExUi | null; setupMore?: boolean;
 }
 /** Связь с хранилищем: ещё не открыто, записи грузятся, готово, хранилища нет, сбой */
 export type Conn = 'connecting' | 'loading' | 'ready' | 'none' | 'error';

@@ -15,15 +15,17 @@ import type { Tally } from './tally.ts';
 import type { Add, AddCtx, Addition, Cfg, Cyc, ExDef, MuscleMap, Prop, PropSet, Range, Session, Slot, Workout } from './types.ts';
 
 /* ---------- adaptive layer: what the diary would change on top of the athlete's rules ---------- */
+/* (в эталоне нет) с днями «День N» румынская тяга и жим над головой не предлагаются ради баланса движений — «нет тяги с наклоном», «нет вертикального жима»:
+   решение владельца, 23 ноября 2026 (баланс движений не учитывается). Румынская тяга там же — с разгибателями, которые помогают (rules.ts) */
 export const ADDS: Add[] = [
   { key: 'abs', id: 'x_abs', prio: 4, sets: 3, times: 2, def: { n: 'Пресс', pat: 'iso', m: { abs: 1 } }, cover: e => ((e || {} as ExDef).m || {} as MuscleMap).abs >= 1,
     need: c => c.pv('abs') < c.z.min, why: c => 'пресс по программе получает ' + nSets(c.pv('abs')) + ' в неделю при минимуме ' + c.z.min },
   { key: 'rdl', id: 'x_rdl', prio: 1, sets: 4, times: 1, get def() { return rdlDef(); }, cover: e => (e || {} as ExDef).pat === 'hinge',
-    need: c => !c.pp('hinge'), why: c => 'в программе нет тяги с наклоном: разгибатели спины — ' + nSets(c.pv('erectors')) + ', ягодицы — ' + nSets(c.pv('glutes')) + ' в неделю' },
+    need: c => !appRules() && !c.pp('hinge'), why: c => 'в программе нет тяги с наклоном: разгибатели спины — ' + nSets(c.pv('erectors')) + ', ягодицы — ' + nSets(c.pv('glutes')) + ' в неделю' },
   { key: 'calf', id: 'x_calf', prio: 3, sets: 3, times: 2, def: { n: 'Подъёмы на носки', pat: 'iso', m: { calves: 1 } }, cover: e => ((e || {} as ExDef).m || {} as MuscleMap).calves >= 1,
     need: c => c.pv('calves') < c.z.min, why: c => 'икры по программе получают ' + nSets(c.pv('calves')) + ' в неделю при минимуме ' + c.z.min },
   { key: 'ohp', id: 'x_ohp', prio: 2, sets: 3, times: 1, def: { n: 'Жим над головой', pat: 'v_push', m: { delt_front: 1, delt_mid: 0.5, triceps: 0.5 } }, cover: e => (e || {} as ExDef).pat === 'v_push',
-    need: c => !c.pp('v_push'), why: c => 'в программе нет вертикального жима: передние дельты — ' + nSets(c.pv('delt_front')) + ' в неделю' },
+    need: c => !appRules() && !c.pp('v_push'), why: c => 'в программе нет вертикального жима: передние дельты — ' + nSets(c.pv('delt_front')) + ' в неделю' },
   { key: 'rear', id: 'x_rear', prio: 5, sets: 3, times: 2, def: { n: 'Обратная бабочка', pat: 'iso', m: { delt_rear: 1, upper_back: 0.5 } }, cover: e => ((e || {} as ExDef).m || {} as MuscleMap).delt_rear >= 1,
     need: c => c.pv('delt_rear') < c.z.opt && !c.prim('delt_rear'), why: c => 'задние дельты работают только косвенно: ' + nSets(c.pv('delt_rear')) + ' в неделю при рабочей зоне от ' + c.z.opt }
 ];

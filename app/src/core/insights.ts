@@ -10,6 +10,7 @@ import { allStats, stalledSets, weeksInfo } from './stats.ts';
 import { avgVolume, volume, zone } from './volume.ts';
 import { planCycle } from './plan.ts';
 import { planned, ruleBreaks } from './tally.ts';
+import { appRules } from './rules.ts';
 import { bodyRate } from './body.ts';
 import type { ExStat } from './stats.ts';
 import type { Insight, Item, Muscle, State, Workout } from './types.ts';
@@ -42,8 +43,9 @@ export function insights(st: State) {
     if (by.opt.length) add('good', 'Объём', 'В рабочей зоне ' + z.opt + '–' + z.high + ': ' + list(by.opt.map(tag)),
       'Среднее за ' + refTxt + ', в подходах в неделю. За половину подхода идут косвенная работа и подходы, где в запасе осталось 3 повтора и больше.', 'muscles');
 
+    /* (в эталоне нет) с днями «День N» замечания о балансе движений нет: решение владельца, 23 ноября 2026 */
     const miss = PATTERNS.filter(p => p.fix && !(pat[p.id] > 0));
-    if (miss.length) add('warn', 'Баланс', 'В программе нет ' + list(miss.map(p => p.gen!)),
+    if (miss.length && !appRules()) add('warn', 'Баланс', 'В программе нет ' + list(miss.map(p => p.gen!)),
       'Сила растёт в тех движениях, которые тренируешь. Чтобы закрыть пробел: ' + miss.map(p => p.n.toLowerCase() + ' — ' + p.fix).join('; ') + '.', 'muscles');
     const unk: string[] = [];
     for (const w of wi.ref) for (const id of (vol[w.no] ? vol[w.no].unknown : [])) if (!unk.includes(id)) unk.push(id);

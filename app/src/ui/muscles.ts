@@ -1,7 +1,7 @@
 /* Экран «Мышцы».
    Перенесено из reference/src/ui3.js без изменения кода: добавлены только типы.
    Всё, чем экраны отличаются от эталона, перечислено в scripts/tokens.mjs. */
-import { C, h, pill } from './dom.ts';
+import { C, h } from './dom.ts';
 import { S } from './state.ts';
 import { D, render } from './render.ts';
 import { zonePill } from './charts.ts';
@@ -61,14 +61,7 @@ export function vMuscles() {
     h('div', { class: 'scale', style: 'margin-top:12px' }, sw('none', 'нет нагрузки'), sw('low', 'мало: до ' + z.min), sw('base', 'ниже рабочей: ' + z.min + '–' + z.opt), sw('opt', 'рабочая зона: ' + z.opt + '–' + z.high), sw('high', 'выше зоны: больше ' + z.high), sw('cur', 'неделя ещё идёт или мышца вне расчёта')),
     h('hr', { class: 'rule' }), detail));
 
-  /* movement patterns */
-  const mx = Math.max(1, ...C.PATTERNS.map(p => D.pat[p.id] || 0));
-  out.push(h('section', { class: 'card' },
-    h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Баланс движений'), h('p', { class: 'note' }, 'Рабочих подходов в неделю по типам движений, среднее за ' + refTxt + '.'))),
-    h('div', { class: 'meters' }, C.PATTERNS.map(p => {
-      const v = D.pat[p.id] || 0, f = h('i', { class: 'fill' }); f.style.width = (v / mx * 100) + '%';
-      return [h('span', { class: 'mn' }, p.n), h('div', { class: 'meter', role: 'img', 'aria-label': C.fmt(v, 1) + ' подходов' }, f), h('span', { class: 'mv' }, C.fmt(v, 1)), v > 0 ? h('span', { class: 'pill' }, '') : p.fix ? pill('warn', 'нет в программе') : h('span', { class: 'pill' }, '')];
-    }))));
+  /* карточки «Баланс движений» нет: баланс движений дневник не считает (решение владельца, 23 ноября 2026) */
 
   out.push(h('details', { class: 'card' }, h('summary', { style: 'cursor:pointer;font-weight:600' }, 'На чём основаны оценки'),
     h('div', { class: 'note stack', style: 'gap:8px;margin-top:10px' },
