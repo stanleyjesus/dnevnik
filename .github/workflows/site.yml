@@ -1,0 +1,109 @@
+# Проверки и сайт. На каждую отправку в main, в пробную ветку try/… и на каждый запрос на слияние — все проверки проекта;
+# из ветки main, если проверки прошли, — сборка и публикация сайта на GitHub Pages. Пробная ветка сайт не трогает.
+# Чтобы публикация заработала, в настройках репозитория: Settings → Pages → Source → GitHub Actions.
+name: Проверки и сайт
+
+on:
+  push:
+    branches: [main, 'try/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Проверки без браузера
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # вся история: проверка на личное смотрит и прежние версии файлов
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22        # нужна версия не ниже 22.18: она запускает .ts без сборки
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Установка
+        working-directory: app
+        run: npm ci
+      - name: В проекте нет личного — ни в файлах, ни в истории
+        working-directory: app
+        run: npm run leaks -- --история
+      - name: В коммитах только служебные адреса — у автора, у того, кто внёс, и в тексте
+        run: |
+          bad=$( { git log --format='%ae%n%ce'; git log --format='%B' | grep -oE '[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}' || true; } | sort -u | grep -viE '@users\.noreply\.github\.com$|^noreply@github\.com$|^noreply@anthropic\.com$|\.(png|js|ts|mjs|css|json|woff2)$' || true)
+          if [ -n "$bad" ]; then echo "В истории есть коммиты с настоящими адресами почты: их число — $(echo "$bad" | wc -l)"; exit 1; fi
+      - name: Эталон сам по себе — его тесты и его сборка
+        run: |
+          node reference/run-checks.js
+          cmp reference/.check/dist/harness.html reference/harness.html
+          cmp reference/.check/dist/index.html reference/index.built.html
+      - name: Типы, сверка с эталоном, тесты
+        working-directory: app
+        run: npm run check
+
+  browser:
+    name: Проверки в браузере
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Установка
+        working-directory: app
+        run: npm ci
+      - name: Работа без сети и обновление
+        working-directory: app
+        run: npm run offline
+      - name: Сверка экранов с эталоном
+        working-directory: app
+        run: npm run screens
+
+  build:
+    name: Сборка сайта
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: [check, browser]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Установка
+        working-directory: app
+        run: npm ci
+      - name: Сборка
+        working-directory: app
+        run: npm run build
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/dist
+
+  deploy:
+    name: Публикация
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

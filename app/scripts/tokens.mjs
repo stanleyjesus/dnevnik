@@ -1,0 +1,158 @@
+#!/usr/bin/env node
+/* Сверка кода с эталоном. Если убрать из src/core и src/ui типы, каждое объявление должно совпасть с эталонным
+   (reference/src/core.js и reference/src/ui*.js) токен в токен: отличаться могут только слова import / export,
+   обёртка модуля и скобки вокруг единственного параметра стрелочной функции.
+   Так перенос на TypeScript не может незаметно изменить расчёт или экран даже там, куда тесты не заходят.
+   Всё, что изменено намеренно, перечислено ниже с причиной: это и есть полный список отличий от артефакта.
+   node --disable-warning=ExperimentalWarning scripts/tokens.mjs */
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { stripTypeScriptTypes } from 'node:module';
+import * as acorn from 'acorn';
+
+const app = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const root = path.dirname(app), refDir = path.join(root, 'reference', 'src');
+
+/* логика: что в перенесённых функциях изменено намеренно — каждое правило с согласия владельца */
+const ALLOW_CORE = {
+  buildProgram: 'три правила, все — решения владельца 19 ноября 2026. Программа с нуля получает базовые справочника по одному в день, каждое первым; пауэрбилдинг для базового, которого нет в программе, сам ставит его в день. Силовой режим (opts.strength): каждое базовое — на силе по запасу и с лёгким днём, подсобка целится на два подхода ниже рабочей зоны. Сила в одном базовом (opts.strength вместе с opts.focus): оно идёт три дня в неделю — тяжёлый день по запасу и лёгкие дни в остальные тренировки, дня «на массу» нет, остальные базовые — как в пауэрбилдинге, подсобка — как в силовом режиме; в остальных режимах второй лёгкий день, оставшийся от такой программы, уходит. Дни 1…N без привязки к дням недели (решение владельца, 19 ноября 2026): в заметках «в день 2», все выбранные дни — тренировочные, базовые из убранного дня переезжают, базовое, оставшееся в дне вне недели, переезжает в день недели, а в появившийся пустой день переходит второе базовое из дня, где их два; у пауэрбилдинга день на массу один, а при двух днях он совмещён с лёгким; при числе дней не три и при новом дне поиск уровня повторяется от найденной раскладки, пока уровень растёт, а тренировки выравниваются по длине, не отнимая у мышцы второй тренировочный день; базовое, переехавшее из другого дня, помечено переносом; «Сейчас» считает и дни вне недели, пока в них что-то стоит; с таблицей дней эталона всё это не действует. Без этих режимов сборки на программе, где базовые уже стоят, не меняются',
+  optimise: 'в расчёте все выбранные дни, а не только те, что заняли базовые: при сборке с нуля и всегда — с днями «День N» (те же решения)',
+  planned: 'дни «День N» (решение владельца, 19 ноября 2026): запись дня, которого нет в принятой программе, сделанная до её принятия, шаблоном дня не служит — иначе, вернувшись к большему числу дней, атлет получил бы прежний день поверх новой программы и базовое дважды в неделю. С таблицей дней эталона — как в эталоне',
+  plan: 'то же правило для плана тренировки: день, которого в принятой программе нет, начинается пустым, а не с записи до программы',
+  program: 'упражнения «в программе» — только из дней выбранной недели: день, убранный при меньшем числе дней, в «Прогресс», советы и справочник своих упражнений больше не даёт. С таблицей дней эталона — как в эталоне',
+  nextSlot: 'дни без привязки к дням недели (решение владельца, 19 ноября 2026): пустой дневник начинается с дня 1, а не с ближайшего дня недели. С таблицей дней эталона — как в эталоне',
+  nextDate: 'дни без привязки к дням недели (то же решение): дата тренировки — сегодня, а если сегодняшняя уже записана — завтра, а не ближайший «свой» день недели. С таблицей дней эталона — как в эталоне'
+};
+/* новые файлы логики: в эталоне их нет — справочные данные, их выборка, числа новых режимов и правила дней «День N» */
+const NEW_CORE = ['starter.ts', 'strength.ts', 'days.ts'];   // встроенный справочник упражнений (18 ноября 2026), числа силового режима и дни «День 1…N» (19 ноября 2026) — решения владельца. В days.ts кроме таблицы дней два правила: dayStale и awayDays, их держит tests/days.test.ts
+/* экраны: что изменено намеренно */
+const ALLOW_UI = {
+  boot: 'хранилище и сохранение файлов даёт само приложение (platform.ts), а не window.claude; доступ к модели не запрашивается',
+  render: 'сообщения о недоступном хранилище говорят об устройстве, а не о Claude и связи',
+  paintTop: 'пометка в шапке: «записи на устройстве» вместо «хранилище на связи»',
+  dbErr: 'сообщения об ошибке сохранения без слов о связи',
+  saveBackup: 'сообщение об ошибке без слов о связи',
+  vOverview: 'в пустом дневнике есть кнопка «Загрузить резервную копию»',
+  openProfile: 'профиль без упражнений получает встроенный справочник (решение владельца, 18 ноября 2026); таблица дней ставится по настройке профиля: «День 1…N» (решение владельца, 19 ноября 2026)',
+  workoutCard: 'у дней «День N» дня недели нет: день программы показан в записи всегда, а не только когда он не совпал с днём недели (решение владельца, 19 ноября 2026)',
+  vSetup: 'блока «Лимиты и методика» нет: методика зашита в расчёт (решение владельца, 18 ноября 2026); над снарядами — кнопки встроенного справочника, в строке справочника — «Убрать» у упражнения, которое нигде не используется; в «Данных» — кнопка загрузки копии, текст о том, что записи лежат на устройстве, и строка об устройстве (хранение, установка, версия)',
+  vProgram: 'вместо списка «Как собрать» — кнопки цели (масса, сила, гибрид, вручную) и один уточняющий список (goal.ts); гибрид — пауэрбилдинг — предлагается для любого базового справочника, а не только для стоящего в программе; цель «Сила» — силовой режим со своим лимитом недели: все базовые или одно выбранное; выбор числа дней в неделе — 2, 3 или 4 — и столько же столбцов дней, подсказка о дне, который остался вне недели, слова о режимах под выбранное число дней; идёт ли программа, считается по её собственным дням, а о дне недели, которого в ней нет, сказано; список «Время на тренировку» (fit.ts): лимит недели — самый большой, при котором самая длинная тренировка укладывается, выбор лимита вручную время снимает, а принятая по времени программа держит свой лимит, пока не изменились время, отдых, режим и число дней; режим, которого больше не из чего собрать, возвращается к «Равномерно» (решения владельца, 19 ноября 2026)',
+  acceptProgram: 'принятая программа силового режима помечается (strength) и получает «скромные» поправки плана: добавки предлагаются, но не включены (решение владельца, 19 ноября 2026); с программой запоминается прежнее число дней, если его меняли перед принятием, и то, по чему найден лимит недели «по времени»',
+  undoProgram: '«Вернуть прежнюю» возвращает и число дней, под которое прежняя программа была (дни «День N», решение владельца 19 ноября 2026)',
+  workoutEditor: 'у записи дня, которого при выбранном числе дней нет в неделе, её день виден среди кнопок «День программы» и остаётся среди них после нажатия на другой день (дни «День N»)',
+  vCoach: 'карточки «Разбор от Claude» нет: запросов к модели нет',
+  newExForm: 'незнакомое название не уходит к модели: дневник сразу просит отметить мышцы'
+};
+/* экраны: что из эталона убрано намеренно — всё это запрос разбора у модели (решение владельца, 18 ноября 2026) */
+const GONE_UI = {
+  askCoach: 'запрос разбора у модели',
+  coachCtl: 'остановка запроса к модели',
+  COACH_ERR: 'тексты ошибок запроса к модели',
+  mdLite: 'разметка ответа модели'
+};
+/* стили: копия эталона; здесь — строки, добавленные намеренно (по началу строки) */
+const ADDED_CSS = {
+  '.set .fb .pill { white-space: normal; }': 'длинная подсказка у подхода переносится по словам: в артефакте она раздвигала страницу шире экрана телефона',
+  '.ex-meta .pill { white-space: normal; }': 'то же для пометки о прошлой тренировке в карточке упражнения',
+  '.ex-meta > label { min-width: 0; max-width: 100%; } .ex-meta > label select { min-width: 0; }': 'список режима упражнения не шире карточки: на iPhone шрифт в нём крупнее, и он раздвигал страницу',
+  '.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; } @media (max-width: 1180px) { .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } } @media (max-width: 820px) { .grid4 { grid-template-columns: minmax(0, 1fr); } }': 'четыре столбца дней программы: в артефакте дней всегда три (решение владельца о числе дней, 19 ноября 2026)',
+  '@supports (-webkit-touch-callout: none) { input:not(.gear-n), select, textarea { font-size: 16px !important; } }': 'только iPhone и iPad: поле с шрифтом мельче 16px приближает экран при каждом нажатии'
+};
+/* новые файлы экранов: в эталоне их нет (types.ts — только типы, без исполняемого кода) */
+const NEW_UI = ['platform.ts', 'importer.ts', 'pwa.ts', 'types.ts', 'device.ts', 'starter.ts', 'goal.ts', 'fit.ts'];
+
+const read = f => fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
+const parse = (code, sourceType) => { const toks = []; const ast = acorn.parse(code, { ecmaVersion: 'latest', sourceType, onToken: toks }); return { ast, toks }; };
+/* (x) => … и x => … — одно и то же: единственному параметру без скобок нельзя дать тип, поэтому скобки не считаются отличием */
+const bare = a => { const out = []; for (let i = 0; i < a.length; i++) { if (a[i] === '(' && a[i + 2] === ')' && a[i + 3] === '=>' && /^[A-Za-z_$][\w$]*$/.test(a[i + 1])) { out.push(a[i + 1]); i += 2; } else out.push(a[i]); } return out; };
+const slice = (code, toks, node) => bare(toks.filter(t => t.start >= node.start && t.end <= node.end).map(t => code.slice(t.start, t.end)));
+const namesOf = d => d.type === 'FunctionDeclaration' ? [d.id.name] : d.declarations.map(x => x.id.name);
+let failed = 0;
+const fail = msg => { failed++; console.log('  FAIL  ' + msg); };
+
+/* объявления и то, что выполняется при загрузке, из списка инструкций */
+function collect(code, toks, body, file, into) {
+  let run = 0;
+  for (const st of body) {
+    if (st.type === 'ImportDeclaration' || st.type === 'EmptyStatement' || st.type === 'ExportAllDeclaration') continue;
+    if (st.type === 'ExpressionStatement' && st.directive) continue;                 // 'use strict'
+    const d = st.type === 'ExportNamedDeclaration' ? st.declaration : st;
+    if (!d) continue;                                                                // export { … } без объявления
+    let key;
+    if (d.type === 'VariableDeclaration' || d.type === 'FunctionDeclaration') key = namesOf(d).join(',');
+    else if (d.type === 'ExpressionStatement') key = '(при загрузке ' + (++run) + ') ' + slice(code, toks, d).slice(0, 4).join('');
+    else if (d.type === 'ReturnStatement') { into.keys = d.argument.properties.map(p => p.key.name); continue; }
+    else { fail(file + ': неожиданная конструкция верхнего уровня: ' + d.type); continue; }
+    if (file === 'index.ts' && key === 'Core') { into.keys = d.declarations[0].init.properties.map(p => p.key.name); continue; }
+    if (into.map.has(key)) { fail(key + ' объявлено дважды: ' + into.map.get(key).file + ' и ' + file); continue; }
+    into.map.set(key, { file, toks: slice(code, toks, d) });
+  }
+}
+function mine(dir, skip) {
+  const out = { map: new Map(), keys: null };
+  for (const f of fs.readdirSync(dir).filter(x => x.endsWith('.ts') && !skip.includes(x)).sort()) {
+    const code = stripTypeScriptTypes(read(path.join(dir, f))), M = parse(code, 'module');
+    collect(code, M.toks, M.ast.body, f, out);
+  }
+  return out;
+}
+function compare(title, ref, got, allow, gone = {}) {
+  const before = failed, changed = [], removed = [];
+  for (const [key, want] of ref.map) {
+    const g = got.map.get(key);
+    if (!g && gone[key]) { removed.push(key + ' — ' + gone[key]); continue; }
+    if (g && gone[key]) { fail(g.file + ': ' + key + ' отмечено как убранное, но оно есть — убери его из списка'); continue; }
+    if (!g) { fail('нет объявления ' + key); continue; }
+    const i = want.toks.findIndex((t, k) => t !== g.toks[k]);
+    if (i < 0 && want.toks.length === g.toks.length) { if (allow[key]) fail(g.file + ': ' + key + ' отмечено как изменённое, но совпадает с эталоном — убери его из списка'); continue; }
+    if (allow[key]) { changed.push(g.file + ': ' + key + ' — ' + allow[key]); continue; }
+    const at = i < 0 ? want.toks.length : i, ctx = a => a.slice(Math.max(0, at - 6), at + 6).join(' ');
+    fail(g.file + ': ' + key + ' отличается от эталона на токене ' + (at + 1) + '\n          эталон: … ' + ctx(want.toks) + ' …\n          сейчас: … ' + ctx(g.toks) + ' …');
+  }
+  for (const [key, g] of got.map) if (!ref.map.has(key)) fail(g.file + ': ' + key + ' нет в эталоне');
+  for (const key of Object.keys(allow)) if (!ref.map.has(key)) fail('в списке изменённого есть ' + key + ', которого нет в эталоне');
+  for (const key of Object.keys(gone)) if (!ref.map.has(key)) fail('в списке убранного есть ' + key + ', которого нет в эталоне');
+  if (failed === before) console.log(title + ': совпадает с эталоном, объявлений ' + ref.map.size + (changed.length ? ', намеренно изменено ' + changed.length : '') + (removed.length ? ', намеренно убрано ' + removed.length : ''));
+  for (const c of changed) console.log('  иначе  ' + c);
+  for (const c of removed) console.log('  убрано ' + c);
+}
+
+/* логика: объявления внутри const Core = (() => { … })() */
+{
+  const code = read(path.join(refDir, 'core.js')), R = parse(code, 'script'), ref = { map: new Map(), keys: null };
+  collect(code, R.toks, R.ast.body[0].declarations[0].init.callee.body.body, 'core.js', ref);
+  const got = mine(path.join(app, 'src', 'core'), NEW_CORE);
+  compare('Логика', ref, got, ALLOW_CORE);
+  if (!got.keys) fail('в index.ts нет объекта Core');
+  else if (got.keys.join(',') !== ref.keys.join(',')) fail('набор функций Core отличается от эталона: в эталоне ' + ref.keys.length + ', сейчас ' + got.keys.length);
+  else console.log('  функций в Core: ' + ref.keys.length);
+}
+/* экраны: пять файлов эталона делят одну область видимости */
+{
+  const code = ['ui1.js', 'ui2.js', 'ui_prog.js', 'ui_body.js', 'ui3.js'].map(f => read(path.join(refDir, f)).replace(/\n*$/, '\n')).join(''), R = parse(code, 'script'), ref = { map: new Map(), keys: null };
+  collect(code, R.toks, R.ast.body, 'ui*.js', ref);
+  compare('Экраны', ref, mine(path.join(app, 'src', 'ui'), NEW_UI), ALLOW_UI, GONE_UI);
+}
+
+/* стили: те же строки в том же порядке, кроме добавленных намеренно */
+{
+  const lines = f => read(f).split('\n').map(l => l.trimEnd());
+  const want = lines(path.join(refDir, 'style.css')), got = lines(path.join(app, 'src', 'ui', 'style.css'));
+  const before = failed, added = [], seen = new Set();
+  let i = 0;
+  for (const l of got) {
+    if (l === want[i]) { i++; continue; }
+    const key = Object.keys(ADDED_CSS).find(k => l.startsWith(k));
+    if (key) { added.push(key + ' — ' + ADDED_CSS[key]); seen.add(key); continue; }
+    fail('style.css: строка отличается от эталона\n          эталон: ' + String(want[i]).slice(0, 110) + '\n          сейчас: ' + l.slice(0, 110));
+    break;
+  }
+  if (failed === before && i < want.length) fail('style.css: нет строки эталона: ' + want[i].slice(0, 110));
+  for (const k of Object.keys(ADDED_CSS)) if (!seen.has(k)) fail('в списке добавленных стилей есть строка, которой нет в style.css: ' + k);
+  if (failed === before) console.log('Стили: совпадают с эталоном, строк ' + want.length + (added.length ? ', намеренно добавлено ' + added.length : ''));
+  for (const a of added) console.log('  новое  ' + a);
+}
+
+console.log(failed ? '\nКод расходится с эталоном: ' + failed : '\nВсё совпадает');
+process.exit(failed ? 1 : 0);
