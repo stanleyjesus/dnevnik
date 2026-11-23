@@ -139,16 +139,16 @@ export interface LibEntry { id: string; def: ExDef }
 /** Вариант замены упражнения. exact — карта мышц совпадает целиком; like — сходство карт мышц от 0 до 1.
     exact — any, потому что сортировка вычитает эти «да / нет» друг из друга как числа */
 export interface Swap { id: string; n: string; m: MuscleMap; uni: boolean; def?: ExDef; exact?: any; like?: number; shared?: number; main?: string[] }
-/** Условия сборки: зоны, мышцы вне расчёта, приоритетные мышцы, лимит недели и дня, общий уровень */
-export interface OptOpts { z: Zones; ignore?: Record<string, number>; prio?: Record<string, number>; budget: number; dayCap: number; level?: number; noFill?: boolean; allDays?: boolean }
+/** Условия сборки: зоны, мышцы вне расчёта, приоритетные мышцы, лимит недели и дня, общий уровень; time — минут на тренировку, в которые укладывается каждый день */
+export interface OptOpts { z: Zones; ignore?: Record<string, number>; prio?: Record<string, number>; budget: number; dayCap: number; level?: number; noFill?: boolean; allDays?: boolean; time?: number }
 /** Упражнение, убранное сборкой из дня */
 export interface Cut { ex: string; sl: Slot; to?: string | null }
 /** Один шаг поиска в сборке: в каком дне, с каким упражнением, на сколько подходов (dn) и упражнений (dw), его цена (pen) */
 export interface Move { sl: Slot; e: ProgEntry | null; id: string; f: number; dn: number; dw: number; pen: number; drop?: boolean; add?: boolean; to?: Slot; n?: number; from?: Slot }
 /** Сколько подходов день даёт мышце */
 export type DayOf = (d: string, m: string) => number;
-/** Что собрать: вокруг базового (focus), под приоритет мышц (prio) или вручную (manual) */
-export interface BuildOpts { focus?: string | null; others?: string; prio?: string; budget?: number | string; manual?: boolean; strength?: boolean }
+/** Что собрать: вокруг базового (focus), под приоритет мышц (prio) или вручную (manual); time — минут на тренировку, от них потолок упражнений в дне (rules.ts) */
+export interface BuildOpts { focus?: string | null; others?: string; prio?: string; budget?: number | string; manual?: boolean; strength?: boolean; time?: number }
 /** Строка пояснения сборки: заголовок и текст */
 export interface ProgNote { t: string; x?: string }
 

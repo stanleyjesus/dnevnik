@@ -76,6 +76,9 @@ const progTitle = '[...document.querySelectorAll("#view section.card")].pop().qu
 /* время на тренировку: минуты каждого дня черновика (из заголовков дней), подпись выбранного лимита недели, настройка профиля в хранилище */
 const dayMins = '[...[...document.querySelectorAll("#view section.card")].pop().querySelectorAll(".pday-h .sub")].map(e => { const m = e.textContent.match(/≈ (?:(\\d+) ч)?\\s*(?:(\\d+) мин)?/); return m ? (+m[1] || 0) * 60 + (+m[2] || 0) : 0; })';
 const limitText = 'document.getElementById("pb-budget").selectedOptions[0].textContent';
+/* новая программа: сколько подходов в неделю (число в начале её заголовка) и сколько упражнений в самом полном дне */
+const draftSets = 'parseFloat([...document.querySelectorAll("#view section.card")].pop().querySelector(".sec-h .sub").textContent)';
+const dayEx = 'Math.max(...[...[...document.querySelectorAll("#view section.card")].pop().querySelectorAll(".pday")].map(d => d.querySelectorAll(".prow").length))';
 /* новая программа: «сейчас N» в её заголовке — недельная нагрузка того, что действует сейчас; пояснение режима под заголовком */
 const nowLoad = '(([...document.querySelectorAll("#view section.card")].pop().querySelector(".sec-h .sub").textContent.match(/сейчас ([\\d.,]+)/) || [])[1] || "")';
 const progNote = '[...document.querySelectorAll("#view section.card")].pop().querySelector("p.note").textContent';
@@ -612,39 +615,45 @@ export const SCENARIOS = [
     ['программа: снова четыре цели', go('program') + settle + expect(goals + ' === "Масса,Сила,Гибрид,Вручную"', 'сила и гибрид вернулись') + expect(goalIs('mass') + ' && ' + listIs('pm', 'even'), 'выбор тот же: масса, всем поровну')]
   ] },
 
-  /* только в приложении: время на тренировку. Атлет называет время — дневник берёт самый большой лимит недели, при котором самая длинная тренировка
-     укладывается; время зависит от отдыха; когда не уложиться — об этом сказано; лимит, выбранный вручную, время снимает; выбор помнится в профиле.
-     Числа — те же, что в app/tests/fit.test.ts для примерных данных */
+  /* только в приложении: время на тренировку. Атлет называет время — сборка ставит в каждый день столько упражнений и подходов, сколько в него помещается
+     (решение владельца, 23 ноября 2026: упражнений в дне — от времени), а лимит недели — самый большой, при котором самая длинная тренировка укладывается;
+     время зависит от отдыха; лимит, выбранный вручную, время снимает; выбор помнится в профиле. Числа — те же, что в app/tests/fit.test.ts для дней «День 1…3» */
   { name: 'программа: время на тренировку', data: 'seed', app: true, steps: [
     ['программа: время не ограничено', go('program') + settle + expect(listOf('pt') + ' === "0,60,75,90,105,120" && ' + listIs('pt', '0'), 'список времени: не ограничено и от часа до двух; выбрано «не ограничено»')
       + expect('[...document.getElementById("pt").options].map(o => o.textContent).join("|") === "не ограничено|до 1 ч|до 1 ч 15 мин|до 1 ч 30 мин|до 1 ч 45 мин|до 2 ч"', 'названия пунктов')
-      + expect(limitText + ' === "100 — твой лимит" && !("time" in ' + cfgMain + ')', 'лимит недели — свой, времени в настройке нет')],
-    ['до полутора часов', pick('#pt', 90) + settle + expect(listIs('pt', '90') + ' && ' + limitText + ' === "70 — по времени"', 'лимит недели — 70, по времени')
+      + expect(limitText + ' === "100 — твой лимит" && !("time" in ' + cfgMain + ')', 'лимит недели — свой, времени в настройке нет')
+      + expect(dayEx + ' === 10', 'без времени в дне девять мест, как в первой версии: кисть правой и левой рукой занимают одно')],
+    ['до полутора часов', pick('#pt', 90) + settle + expect(listIs('pt', '90') + ' && ' + limitText + ' === "100 — по времени"', 'лимит недели — по времени: сборка сама укладывает дни в полтора часа')
       + expect('Math.max(...' + dayMins + ') <= 90 && ' + dayMins + '.length === 3', 'ни одна тренировка не длиннее полутора часов')
+      + expect(draftSets + ' === 79 && ' + dayEx + ' === 9', 'в неделе 79 подходов, в дне до девяти упражнений')
       + expect(cfgMain + '.time === 90', 'время записано в настройку профиля')],
-    ['до двух часов', pick('#pt', 120) + settle + expect(limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 120', 'лимит 100, тренировки до двух часов')],
-    ['до часа пятнадцати', pick('#pt', 75) + settle + expect(limitText + ' === "50 — по времени" && Math.max(...' + dayMins + ') <= 75 && !document.getElementById("pt-note")', 'лимит 50, тренировки до часа пятнадцати')],
-    ['отдых полторы минуты: в то же время помещается больше', pick('#prog-rest', 90) + settle + expect(listIs('pt', '75') + ' && ' + limitText + ' === "70 — по времени" && Math.max(...' + dayMins + ') <= 75', 'при отдыхе 1:30 лимит 70')],
-    ['отдых три минуты, час: не уложиться', pick('#prog-rest', 180) + settle + pick('#pt', 60) + settle + expect(limitText + ' === "40 — по времени"', 'самый малый лимит')
-      + expect('!!document.getElementById("pt-note") && document.getElementById("pt-note").textContent.startsWith("За 1 ч не уложиться: даже 40 подходов в неделю — это тренировка ≈ 1 ч 20 мин")', 'сказано, что не уложиться, и сколько выходит')],
+    ['до двух часов', pick('#pt', 120) + settle + expect(limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 120', 'тренировки до двух часов')
+      + expect(draftSets + ' === 93 && ' + dayEx + ' === 12', 'в неделе 93 подхода, в дне до двенадцати упражнений: больше времени — больше упражнений')],
+    ['до часа пятнадцати', pick('#pt', 75) + settle + expect(limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 75 && !document.getElementById("pt-note")', 'тренировки до часа пятнадцати, подсказки «не уложиться» нет')
+      + expect(draftSets + ' === 64 && ' + dayEx + ' === 8', 'в неделе 64 подхода, в дне до восьми упражнений')],
+    ['отдых полторы минуты: в то же время помещается больше', pick('#prog-rest', 90) + settle + expect(listIs('pt', '75') + ' && Math.max(...' + dayMins + ') <= 75', 'время то же, тренировки до часа пятнадцати')
+      + expect(draftSets + ' === 76 && ' + dayEx + ' === 9', 'при отдыхе 1:30 — 76 подходов и до девяти упражнений')],
+    ['отдых три минуты, час: подходов меньше, но укладывается', pick('#prog-rest', 180) + settle + pick('#pt', 60) + settle + expect(limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 60 && !document.getElementById("pt-note")', 'тренировки до часа')
+      + expect(draftSets + ' === 36 && ' + dayEx + ' === 6', '36 подходов, до шести упражнений в дне')],
     ['узкий телефон: 360', size(360, 740)],
-    ['отдых две минуты, полтора часа', pick('#prog-rest', 120) + settle + pick('#pt', 90) + settle + expect(limitText + ' === "70 — по времени" && !document.getElementById("pt-note")', 'снова 70, подсказки нет')],
+    ['отдых две минуты, полтора часа', pick('#prog-rest', 120) + settle + pick('#pt', 90) + settle + expect(limitText + ' === "100 — по времени" && !document.getElementById("pt-note") && ' + draftSets + ' === 79', 'снова 79 подходов, подсказки нет')],
     ['телефон', size(390, 844)],
-    ['гибрид: время то же, лимит свой', mode('l:bench') + settle + expect(listIs('pt', '90') + ' && ' + limitText + ' === "70 — по времени" && Math.max(...' + dayMins + ') <= 90', 'у гибрида при полутора часах — 70')],
+    ['гибрид: время то же', mode('l:bench') + settle + expect(listIs('pt', '90') + ' && ' + limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 90', 'у гибрида при полутора часах тренировки тоже до полутора часов')],
     ['сила: лимит по времени, а не 80 по умолчанию', pick('#pt', 105) + settle + mode('s') + settle + expect(listIs('pt', '105') + ' && ' + limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 105', 'время на месте, лимит 100: выше своей цели подсобка всё равно не идёт')],
     ['вручную: времени и лимита нет', click('#pg-hand') + settle + expect('!document.getElementById("pt") && !document.getElementById("pb-budget")', 'в правке вручную нет ни времени, ни лимита')],
-    ['масса: время на месте', click('#pg-mass') + settle + expect(listIs('pt', '105') + ' && ' + limitText + ' === "80 — по времени"', 'у «Равномерно» при часе сорока пяти — 80')],
-    ['лимит вручную снимает время', pick('#pb-budget', 70) + settle + expect(listIs('pt', '0') + ' && ' + limitText + ' === "70" && !("time" in ' + cfgMain + ')', 'лимит 70, время — «не ограничено», в настройке его нет')],
+    ['масса: время на месте', click('#pg-mass') + settle + expect(listIs('pt', '105') + ' && ' + limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 105 && ' + draftSets + ' === 91', 'у «Равномерно» при часе сорока пяти — 91 подход, тренировки до часа сорока пяти')],
+    ['лимит вручную снимает время', pick('#pb-budget', 70) + settle + expect(listIs('pt', '0') + ' && ' + limitText + ' === "70" && !("time" in ' + cfgMain + ')', 'лимит 70, время — «не ограничено», в настройке его нет')
+      + expect(dayEx + ' <= 10', 'без времени — снова девять мест в дне')],
     /* лимит, найденный по времени, не должен пережить само время: под «Силой» он лежит в запасе до возврата к массе */
-    ['сила при времени, лимит вручную — и назад к массе', pick('#pt', 90) + settle + expect(limitText + ' === "70 — по времени"', 'масса при полутора часах — 70') + click('#pg-force') + settle + pick('#pb-budget', 60) + settle
+    ['сила при времени, лимит вручную — и назад к массе', pick('#pt', 90) + settle + expect(limitText + ' === "100 — по времени"', 'масса при полутора часах — по времени') + click('#pg-force') + settle + pick('#pb-budget', 60) + settle
       + expect(listIs('pt', '0') + ' && ' + limitText + ' === "60"', 'лимит 60 выбран вручную, время снято') + click('#pg-mass') + settle
       + expect(limitText + ' === "100 — твой лимит"', 'у массы — свой лимит, а не найденный по времени, которого уже нет')],
-    ['снова по времени и принять', pick('#pt', 105) + settle + expect(limitText + ' === "80 — по времени"', 'при часе сорока пяти — 80') + click('#prog-accept') + settle + accepted
-      + expect(cfgMain + '.time === 105 && ' + cfgMain + '.program.budget === 80', 'в настройке — время 105 и программа с лимитом 80')
+    ['снова по времени и принять', pick('#pt', 105) + settle + expect(limitText + ' === "100 — по времени"', 'при часе сорока пяти — по времени') + click('#prog-accept') + settle + accepted
+      + expect(cfgMain + '.time === 105 && ' + cfgMain + '.program.budget === 100', 'в настройке — время 105 и программа с лимитом 100')
       + expect('JSON.stringify(' + cfgMain + '.program.fit) === JSON.stringify({ time: 105, rest: 120, mode: "even", days: 3 })', 'с программой записано, по чему найден лимит')
-      + expect(limitText + ' === "80 — по времени" && document.getElementById("prog-accept").disabled', 'сразу после «Принять» лимит тот же, и новая программа совпадает с принятой')],
+      + expect(limitText + ' === "100 — по времени" && document.getElementById("prog-accept").disabled', 'сразу после «Принять» лимит тот же, и новая программа совпадает с принятой')],
     ['после перезагрузки время помнится', RELOAD],
-    ['программа после перезагрузки', go('program') + settle + expect(listIs('pt', '105') + ' && ' + limitText + ' === "80 — по времени" && Math.max(...' + dayMins + ') <= 105', 'время — час сорок пять, лимит по времени тот же, тренировки не длиннее')
+    ['программа после перезагрузки', go('program') + settle + expect(listIs('pt', '105') + ' && ' + limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 105', 'время — час сорок пять, лимит по времени тот же, тренировки не длиннее')
       + expect('document.getElementById("prog-accept").disabled', 'новая программа по-прежнему совпадает с принятой')],
     ['второй профиль: своё время', pick('#prof', 'p2') + settle + go('program') + settle + expect(listIs('pt', '0'), 'у второго профиля время не ограничено')],
     ['первый профиль: не ограничено — лимит снова свой', pick('#prof', 'me') + settle + go('program') + settle + pick('#pt', 0) + settle

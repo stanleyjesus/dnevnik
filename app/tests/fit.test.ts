@@ -1,12 +1,14 @@
 /* Лимит недели от времени на тренировку (функция 41 в docs/05; решение владельца, 19 ноября 2026; в эталоне этого нет).
    Атлет называет время на одну тренировку — дневник берёт самый большой лимит недели, при котором самая длинная тренировка
    собранной программы укладывается. Время сравнивается так, как оно показано в заголовке дня: с округлением до 5 минут.
-   Числа на примерных данных — те же, что в docs/04, раздел 2. Сам список на экране проверяет сценарий «программа: время на тренировку». */
+   Числа на примерных данных — те же, что в docs/04, раздел 2: первая таблица — с таблицей дней эталона (там в дне девять упражнений, как в эталоне),
+   вторая — с днями «День 1…3», как в приложении. Сам список на экране проверяет сценарий «программа: время на тренировку». */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readJson } from './helpers.ts';
 import { Core } from '../src/core/index.ts';
 import { TIMES, fitBudget, shown, timeOf } from '../src/ui/fit.ts';
+import { useDays } from '../src/core/days.ts';
 import type { BuildOpts, Workout } from '../src/core/types.ts';
 
 const LIMITS = [40, 50, 60, 70, 80, 90, 100];
@@ -78,4 +80,32 @@ test('примерные данные: лимит по времени на на�
       for (const b of LIMITS.filter(v => v > f.budget)) assert.ok(shown(longest(b)) > t, name + ', время ' + t + ': лимит ' + b + ' тоже укладывается, а выбран ' + f.budget);
     }
   }
+});
+
+test('дни «День 1…3»: сборка сама укладывает каждый день во время, поэтому лимит по времени — лимит профиля, а подходов и упражнений больше с большим временем', () => {
+  /* решение владельца 23 ноября 2026: упражнений в дне — от времени на тренировку. Числа — в docs/04, раздел 2, вторая таблица; на экране их проверяет сценарий
+     «программа: время на тренировку». Пара: подходов в неделю и упражнений в самом полном дне (стороны в паре — два упражнения) */
+  useDays(3, false);
+  try {
+    const W: Workout[] = Core.sortW(readJson('data/workouts.json').map((d: { date: string }) => Core.fromDoc(d.date, d)));
+    const cases: [string, BuildOpts, number, Record<number, [number, number]>][] = [
+      ['Равномерно, отдых 2:00', {}, 120, { 60: [49, 7], 75: [64, 8], 90: [79, 9], 105: [91, 11], 120: [93, 12] }],
+      ['Равномерно, отдых 1:30', {}, 90, { 60: [58, 8], 75: [76, 9], 90: [92, 12], 105: [93, 12], 120: [93, 12] }],
+      ['Равномерно, отдых 3:00', {}, 180, { 60: [36, 6], 75: [46, 7], 90: [58, 9], 105: [70, 9], 120: [81, 10] }],
+      ['Гибрид: жим лежа, отдых 2:00', { focus: 'bench' }, 120, { 60: [49, 8], 75: [64, 10], 90: [79, 10], 105: [91, 12], 120: [91, 12] }],
+      ['Сила: все базовые, отдых 2:00', { strength: true }, 120, { 60: [48, 7], 75: [63, 9], 90: [79, 10], 105: [82, 11], 120: [82, 11] }],
+      ['Сила: жим лежа, отдых 2:00', { focus: 'bench', strength: true }, 120, { 60: [49, 8], 75: [64, 9], 90: [79, 10], 105: [79, 11], 120: [79, 11] }]
+    ];
+    for (const [name, opts, rest, want] of cases) {
+      const cfg = Core.mergeCfg(readJson('data/config.json')); cfg.rest = rest;
+      for (const t of TIMES) {
+        const memo: Record<number, ReturnType<typeof Core.buildProgram>> = {}, at = (b: number) => memo[b] ?? (memo[b] = Core.buildProgram(W, cfg, Object.assign({ budget: b, time: t }, opts)));
+        const longest = (b: number) => Math.max(...Core.SLOTS.map(sl => Core.estMinutes(at(b).cfg, at(b).slots[sl.id])));
+        const f = fitBudget(LIMITS, longest, t), pr = at(f.budget);
+        assert.deepEqual([f.fits, f.budget], [true, 100], name + ', время ' + t + ': укладывается лимит профиля');
+        assert.ok(Core.SLOTS.every(sl => shown(Core.estMinutes(pr.cfg, pr.slots[sl.id])) <= t), name + ', время ' + t + ': тренировка длиннее названного времени');
+        assert.deepEqual([+Core.SLOTS.reduce((a, sl) => a + pr.after.load[sl.id], 0).toFixed(1), Math.max(...Core.SLOTS.map(sl => pr.slots[sl.id].length))], want[t], name + ', время ' + t);
+      }
+    }
+  } finally { useDays(null, true); }
 });
