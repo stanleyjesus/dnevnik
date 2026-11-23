@@ -118,7 +118,9 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
 
   /* frequency: a day trains a muscle when it gives it two sets or more (indirect work counts in halves, as everywhere);
      with two or more training days a muscle whose weekly aim allows it should have two such days, not one big one */
-  const FQ = { sets: 2, days: 2, pen: 4, slack: 0.5 };
+  /* (в эталоне нет) с выбранным временем на тренировку второй день весит больше: время заполняется подходами раньше, чем второй день достаётся всем мышцам,
+     а он — требование владельца (решение 23 ноября 2026). Штраф за недостающий день 10 вместо 4, и ради второго дня баланс объёма может уступить 3 вместо 0.5 за шаг */
+  const FQ = { sets: 2, days: 2, pen: o.time ? 10 : 4, slack: o.time ? 3 : 0.5 };
   const twice = (m: string) => !ign[m] && days.length >= FQ.days && tgt(m) >= FQ.sets * FQ.days;
   const trainedDays = (m: string, dOf: DayOf) => SLOTS.filter(sl => dOf(sl.id, m) >= FQ.sets - 0.01).length;
   const thinOf = (dOf: DayOf) => MUSCLES.filter(m => twice(m.id) && trainedDays(m.id, dOf) < FQ.days).map(m => m.id);
@@ -349,7 +351,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     awaySets += t.load[SLOTS[0].id] || 0;
   }
   /* by hand: the programme as it stands, to be edited in the page */
-  if (opts.manual) return { manual: true, focus: null, others: null, name: (cfg.program && cfg.program.name) || 'Своя программа', slots: clone(cur), cur, goals: {} as Record<string, string | null>, create: {} as Record<string, ExDef>, notes: [] as ProgNote[], cfg: clone(cfg), before, after: away.length ? progTally(cfg, cur) : before, same: !away.length, away: awaySets };
+  if (opts.manual) return { manual: true, focus: null, others: null, name: (cfg.program && cfg.program.name) || 'Своя программа', slots: clone(cur), cur, goals: {} as Record<string, string | null>, create: {} as Record<string, ExDef>, notes: [] as ProgNote[], cfg: clone(cfg), before, after: away.length ? progTally(cfg, cur) : before, same: !away.length, away: awaySets, dropped: [] as string[], dropFrom: [] as string[] };
   const c2 = clone(cfg), slots = clone(cur), goals: Record<string, string | null> = {}, create: Record<string, ExDef> = {}, notes: ProgNote[] = [];
   const note = (t: string, x?: string) => notes.push({ t, x });
   /* (в эталоне нет: решение владельца, 19 ноября 2026) дни без привязки к дням недели: в заметках «в день 2» вместо «в среду»;
@@ -389,21 +391,39 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
   const scratch = SLOTS.every(sl => !slots[sl.id].length), put: string[] = [];
   /* (в эталоне нет) неделя перекладывается под другое число дней: дней не три или в неделе появился пустой день */
   const reshape = everyDay && (SLOTS.length !== 3 || (!scratch && SLOTS.some(sl => !cur[sl.id].length)));
+  /* (в эталоне нет) Базовых больше, чем дней (решение владельца, 23 ноября 2026; правило приложения, rules.ts): с днями «День N» в тренировке
+     одно базовое — лишнее не встаёт вторым, а уходит из программы с заметкой. Каким жертвовать, выбирает атлет (opts.drop, по порядку); без выбора —
+     то, что по правилу оказалось бы лишним. Приоритетное базовое не уходит. Тем, чем принятая программа пожертвовала (program.drop),
+     сборка возвращает, когда дней снова хватает */
+  const oneBase = appRules(), dropped: string[] = [], dropFrom: string[] = [], mine = (opts.drop || []).filter(id => isCycle(cfg, id) && id !== focus);
+  let rivals = 0;
+  const pickOut = (all: string[], byRule: string[]) => {            // byRule: первым — то, что по правилу лишнее всего
+    const cands = [...new Set(all)];                                 // одно базовое, поставленное руками в два дня, — одно
+    if (cands.length <= SLOTS.length) return [] as string[];
+    rivals = cands.length;
+    for (const id of cands) if (id !== focus && !dropFrom.includes(id)) dropFrom.push(id);
+    const out = [...new Set(mine.concat(byRule).filter(id => cands.includes(id) && id !== focus))].slice(0, cands.length - SLOTS.length);
+    dropped.push(...out);
+    return out;
+  };
   if (scratch) {
     const ls = Object.keys(cfg.ex).filter(id => isCycle(cfg, id));
     if (focus) { ls.splice(ls.indexOf(focus), 1); ls.unshift(focus); }
-    /* (в эталоне нет) без привязки к трём дням: если базовых больше, чем дней, остальные встают вторыми по кругу — не больше двух в день */
-    const room = everyDay ? SLOTS.length * 2 : SLOTS.length;
+    if (oneBase) for (const id of pickOut(ls, ls.slice().reverse())) ls.splice(ls.indexOf(id), 1);   // с нуля лишнее — последнее по списку
+    /* (в эталоне нет) без привязки к трём дням: если базовых больше, чем дней, остальные встают вторыми по кругу — не больше двух в день
+       (с правилами приложения лишних уже нет: они ушли выше) */
+    const room = everyDay && !oneBase ? SLOTS.length * 2 : SLOTS.length;
     ls.slice(0, room).forEach((id, i) => { slots[SLOTS[i % SLOTS.length].id].push({ ex: id }); put.push(id); });
     if (put.length) note('Базовые — первыми в своих днях: ' + put.map((id, i) => nm(id) + ' (' + SLOTS[i % SLOTS.length].s.toLowerCase() + (i >= SLOTS.length ? ', вторым' : '') + ')').join(', '), 'Программа собрана с нуля, поэтому упражнения по волне встали по одному в день и первыми: сначала базовое на свежие силы, потом остальное.' + (put.length > SLOTS.length ? ' Базовых больше, чем дней, поэтому ' + list(put.slice(SLOTS.length).map(nm)) + ' — вторым упражнением.' : '') + (ls.length > room ? ' Дней ' + NUM[SLOTS.length] + ', поэтому не поместились: ' + list(ls.slice(room).map(nm)) + '.' : ''));
   }
   /* 0б. (в эталоне нет) Дней в неделе стало меньше: базовые, стоявшие в днях, которых больше нет, переезжают в оставшиеся — в день без лёгкого дня
          этого же базового, где базовых меньше, и встают после них. «Стояло в дне» — то, что в нём действует сейчас (awayDays): принятая программа,
          пока по ней в этом дне не тренировались, иначе последняя тренировка дня. Базовое, которое атлет убрал из дня сам, не возвращается */
-  const movedFrom: Record<string, string> = {};
+  const movedFrom: Record<string, string> = {}, incoming: { x: string; d: string }[] = [];
   if (everyDay && !scratch) for (const d of away) for (const it of d.items) {
     const x = it.ex;
     if (!isCycle(cfg, x) || inProg(x)) continue;
+    if (oneBase) { if (!incoming.some(v => v.x === x)) incoming.push({ x, d: d.id }); continue; }   // с правилами приложения встанет ниже, если ему хватит дня
     const T0 = now(), nBase = (sl: Slot) => slots[sl.id].filter(e => { const k = kindOf(cfg, e.ex); return k === 'base' || k === 'light'; }).length;
     const own = (sl: Slot) => slots[sl.id].some(e => isLight(cfg, e.ex) && cfg.ex[e.ex].of === x) ? 1 : 0;
     const day = SLOTS.slice().sort((a, b) => (own(a) - own(b)) || (nBase(a) - nBase(b)) || (T0.load[a.id] - T0.load[b.id]))[0];
@@ -421,6 +441,45 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     const bases = slots[from.id].filter(e => kindOf(cfg, e.ex) === 'base'), e = bases[bases.length - 1];
     slots[from.id].splice(slots[from.id].indexOf(e), 1); slots[sl.id].push({ ex: e.ex }); put.push(e.ex); movedFrom[e.ex] = from.id;
     note(nm(e.ex) + ' — ' + onDay(sl.id), 'В неделе есть день без упражнений, а в другом дне стояли два базовых. Второе переехало сюда.');
+  }
+  /* 0г. (в эталоне нет) Одно базовое в тренировке (см. выше). Спорят за дни базовые, что стоят в днях, базовые из дней вне недели (шаг 0б),
+         те, которыми принятая программа пожертвовала, и приоритетное, которого в программе нет. Лишних по правилу — сначала того, чем жертвовали,
+         потом из дня вне недели, потом стоящее в своём дне не первым базовым, потом — с конца недели. Оставшиеся новые встают в день без
+         другого базового: туда, где нет лёгкого дня этого же базового и лёгких дней меньше, при равенстве — в самый лёгкий. Если атлет убрал
+         не то, что стояло вторым, второе базовое из дня, где их два, переезжает в день, оставшийся без базового */
+  if (oneBase && !scratch) {
+    const isHeavy = (e: ProgEntry) => kindOf(cfg, e.ex) === 'base', nLift = (sl: Slot) => slots[sl.id].filter(e => { const k = kindOf(cfg, e.ex); return k === 'base' || k === 'light'; }).length;
+    const P = cfg.program, back = ((P && P.drop) || []).filter((id, i, a) => a.indexOf(id) === i && isCycle(cfg, id) && id !== focus && !inProg(id) && !incoming.some(v => v.x === id));
+    const lone = focus && !inProg(focus) && !incoming.some(v => v.x === focus) ? [focus] : [];   // его ставит шаг ниже
+    const inDays = SLOTS.flatMap(sl => slots[sl.id].filter(isHeavy).map((e, j) => ({ x: e.ex, j })));
+    const out = pickOut(inDays.map(v => v.x).concat(incoming.map(v => v.x), back, lone),
+      back.concat(incoming.slice().reverse().map(v => v.x), inDays.filter(v => v.j > 0).reverse().map(v => v.x), inDays.filter(v => !v.j).reverse().map(v => v.x)));
+    for (const x of out) for (const sl of SLOTS) slots[sl.id] = slots[sl.id].filter(e => e.ex !== x && !(isLight(cfg, e.ex) && cfg.ex[e.ex].of === x));   // вместе со своим лёгким днём
+    const place = (x: string) => {
+      const T0 = now(), free = SLOTS.filter(sl => !slots[sl.id].some(isHeavy)), own = (sl: Slot) => slots[sl.id].some(e => isLight(cfg, e.ex) && cfg.ex[e.ex].of === x) ? 1 : 0;
+      const day = (free.length ? free : SLOTS).slice().sort((a, b) => (own(a) - own(b)) || (nLift(a) - nLift(b)) || (T0.load[a.id] - T0.load[b.id]))[0];
+      slots[day.id] = slots[day.id].filter(e => !(isLight(cfg, e.ex) && cfg.ex[e.ex].of === x));   // тяжёлый и лёгкий день одного базового в одной тренировке не стоят
+      let at = 0;
+      slots[day.id].forEach((e, k) => { const kind = kindOf(cfg, e.ex); if (kind === 'base' || kind === 'light') at = k + 1; });
+      slots[day.id].splice(at, 0, { ex: x }); put.push(x);
+      return day;
+    };
+    for (const v of incoming) if (!out.includes(v.x)) { const day = place(v.x); movedFrom[v.x] = v.d; note(nm(v.x) + ' — ' + onDay(day.id), 'Дней в неделе стало меньше, а это базовое стояло в дне, которого больше нет. Оно переехало сюда.'); }
+    const grew = !!P && Object.keys(P.slots).length < SLOTS.length;   // программа принята на меньшее число дней
+    for (const x of back) if (!out.includes(x)) { const day = place(x); note(nm(x) + ' — ' + onDay(day.id), (grew ? 'Дней в неделе стало больше. Этим базовым программа жертвовала, потому что дней не хватало, — оно вернулось' : 'Этим базовым программа жертвовала, а теперь в списке «Без базового» выбрано другое. Оно вернулось') + ' в день без другого базового.'); }
+    if (out.length) for (let g = 0; g < SLOTS.length; g++) {
+      const two = SLOTS.find(sl => slots[sl.id].filter(isHeavy).length > 1);
+      if (!two || !SLOTS.some(sl => !slots[sl.id].some(isHeavy))) break;
+      const e = slots[two.id].filter(x => isHeavy(x) && x.ex !== focus).pop()!;
+      slots[two.id].splice(slots[two.id].indexOf(e), 1);
+      const day = place(e.ex);
+      movedFrom[e.ex] = movedFrom[e.ex] || two.id;
+      note(nm(e.ex) + ' — ' + onDay(day.id), 'В тренировке одно базовое, а этот день остался без базового. Оно переехало сюда из дня ' + dayNo(two.id) + '.');
+    }
+  }
+  if (dropped.length) {
+    const many = dropped.length > 1, num = (n: number) => NUM[n] || String(n);
+    note('Не в программе: ' + list(dropped.map(nm)), 'Базовых ' + num(rivals) + ', а дней ' + num(SLOTS.length) + ': в тренировке одно базовое, второе шло бы уже не на свежие силы. ' + (many ? 'Какие убрать, выбирается в списках' : 'Какое убрать, выбирается в списке') + ' «Без базового» над днями программы. Когда дней станет больше, ' + (many ? 'они вернутся в программу сами.' : 'оно вернётся в программу само.'));
   }
   if (!scratch && focus && !inProg(focus)) {
     const T0 = now(), open = SLOTS.filter(sl => everyDay || slots[sl.id].length), free = open.filter(sl => !slots[sl.id].some(e => kindOf(cfg, e.ex) === 'base'));
@@ -730,7 +789,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
   if (solo) for (const sl of SLOTS) for (const e of slots[sl.id]) if (e.ex === focus + '_light' && !cur[sl.id].some(x => x.ex === e.ex)) e.isNew = true;
   const sig = (S: ProgSlots) => SLOTS.map(sl => (S[sl.id] || []).map(e => e.ex + ':' + (e.n || '')).join(',')).join('|');
   const same = !away.length && sig(slots) === sig(cur) && Object.keys(goals).every(id => (goalOf(cfg, id) || null) === goals[id]);
-  return { focus, others: focus ? (hold ? 'hold' : 'grow') : null, prio: group ? group.id : '', budget, strength: strong || solo, name: solo ? 'Сила: ' + nm(focus!).toLowerCase() : focus ? 'Пауэрбилдинг: ' + nm(focus).toLowerCase() : strong ? 'Сила: базовые два раза в неделю' : group ? 'Приоритет: ' + group.n.toLowerCase() : 'Равномерно на всё тело', slots, cur, goals, create, notes, cfg: c2, before, after: now(), same, away: awaySets };
+  return { focus, others: focus ? (hold ? 'hold' : 'grow') : null, prio: group ? group.id : '', budget, strength: strong || solo, name: solo ? 'Сила: ' + nm(focus!).toLowerCase() : focus ? 'Пауэрбилдинг: ' + nm(focus).toLowerCase() : strong ? 'Сила: базовые два раза в неделю' : group ? 'Приоритет: ' + group.n.toLowerCase() : 'Равномерно на всё тело', slots, cur, goals, create, notes, cfg: c2, before, after: now(), same, away: awaySets, dropped, dropFrom };
 }
 
 export type OptRes = ReturnType<typeof optimise>;

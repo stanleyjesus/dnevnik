@@ -672,13 +672,18 @@ export const SCENARIOS = [
       + expect('JSON.parse(sessionStorage.getItem("w0")).length === 24 && JSON.parse(sessionStorage.getItem("w0")).some(x => x[1].slot === "fri")', 'в записях 24 тренировки, среди них — тренировки третьего дня')],
     ['два дня в неделю', click('#pd-2') + settle + expect('document.getElementById("pd-2").getAttribute("aria-pressed") === "true" && ' + cfgMain + '.days === 2', 'выбрано два дня, число записано в настройку профиля')
       + expect('[...document.querySelectorAll("#view .pday-h b")].map(b => b.textContent).join() === "День 1,День 2,День 1,День 2"', 'и в действующей программе, и в новой — два дня')
-      + 'const r = ' + draftRows + ';' + expect('r.length === 2 && r[1][0].startsWith("Разгибания ног") && r[1][1].startsWith("Жим ногами") && r[1][2].startsWith("Подтягивания") && r[0][0].startsWith("Жим лежа")', 'подтягивания из третьего дня переехали во второй, сразу после жима ногами (перед ним в записях стоят разгибания ног)') + expect('r[1][2].includes("перенос") && !r[1][2].includes("новое")', 'у подтягиваний метка «перенос», а не «новое»')
+      + 'const r = ' + draftRows + ';' + expect('r.length === 2 && r[0][0].startsWith("Жим лежа") && r[1][0].startsWith("Разгибания ног") && r[1][1].startsWith("Жим ногами")', 'в днях — то базовое, что в них стояло (перед жимом ногами в записях стоят разгибания ног)')
+      + expect('r.every(d => !d.some(t => t.startsWith("Подтягивания")))', 'подтягивания из третьего дня вторым базовым не встали: в тренировке одно базовое')
+      + 'const dr = document.getElementById("pd-drop");' + expect('!!dr && dr.closest("label").textContent.startsWith("Без базового") && dr.value === "pullup" && [...dr.options].map(o => o.textContent).join() === "Жим лежа,Жим ногами,Подтягивания"', 'список «Без базового»: без выбора — подтягивания, в списке все три базовых')
       + expect('!!document.getElementById("pd-away") && document.getElementById("pd-away").textContent.startsWith("День 3 сейчас не в неделе: Подтягивания и ещё 7 упражнений в план не попадают. Прими программу ниже — сборка разложит неделю заново, а в «Вручную» добавь их в дни сам — или верни прежнее число дней.")', 'подсказка: третий день не в неделе, подтягивания в план не попадают')
       + expect(nowLoad + ' === sessionStorage.getItem("now3")', '«сейчас» — вся нынешняя неделя вместе с третьим днём, как при трёх днях')],
     ['что изменилось и почему', click('#prog-why > summary') + settle + 'const t = document.getElementById("prog-why").textContent;'
-      + expect('t.includes("Подтягивания — в день 2") && t.includes("Дней в неделе стало меньше")', 'заметка о переехавшем базовом') + expect('!/понедельник|в среду|в пятницу|undefined/i.test(t)', 'в заметках нет дней недели и «undefined»')
+      + expect('t.includes("Не в программе: Подтягивания") && t.includes("Базовых три, а дней два: в тренировке одно базовое") && !t.includes("Подтягивания — в день")', 'заметка о базовом, которое ушло, и почему') + expect('!/понедельник|в среду|в пятницу|undefined/i.test(t)', 'в заметках нет дней недели и «undefined»')
       + expect('t.includes("Один день в неделю") && t.includes("в каждой тренировке уже по девять упражнений")', 'второй день достался не всем мышцам — и названа настоящая причина')
       + expect(progNote + '.includes("Второй день достался не всем мышцам") && !' + progNote + '.includes("Каждая мышца работает минимум")', 'пояснение режима не обещает второй день каждой мышце')],
+    ['без базового: жертвуем жимом ногами', pick('#pd-drop', 'leg_press') + settle + 'const r = ' + draftRows + ';'
+      + expect('r[0][0].startsWith("Жим лежа") && r[1][0].startsWith("Подтягивания") && r[1][0].includes("перенос") && r.every(d => !d.some(t => t.startsWith("Жим ногами")))', 'подтягивания встали первыми во второй день вместо жима ногами, с меткой «перенос»')
+      + expect('document.getElementById("pd-drop").value === "leg_press" && document.getElementById("prog-why").textContent.includes("Не в программе: Жим ногами")', 'выбор виден в списке и в заметке')],
     ['два дня и полтора часа на тренировку', pick('#pt', 90) + settle + expect(limitText + '.endsWith(" — по времени") && ' + dayMins + '.length === 2 && Math.max(...' + dayMins + ') <= 90', 'лимит по времени, обе тренировки не длиннее полутора часов')],
     ['время снова не ограничено', pick('#pt', 0) + settle + expect(limitText + ' === "100 — твой лимит"', 'лимит снова свой')],
     ['вручную при дне вне недели: принять можно', click('#pg-hand') + settle + expect('!!document.getElementById("pd-away") && !document.getElementById("prog-accept").disabled', 'подсказка на месте, «Принять программу» доступна: неделя из двух дней — уже другая программа')
@@ -689,11 +694,13 @@ export const SCENARIOS = [
       + expect(progNote + '.includes("Оно идёт оба дня на силу") && ' + progNote + '.includes("упражнение на массу стоит в лёгкий день")', 'пояснение режима — под два дня')],
     ['снова поровну и принять программу на два дня', mode('even') + settle + click('#prog-accept') + settle + accepted
       + expect('Object.keys(' + cfgMain + '.program.slots).join() === "mon,wed" && ' + cfgMain + '.days === 2 && ' + cfgMain + '.program.prev.days === 3', 'в программе два дня; запомнено, что до этого было три')
+      + expect('JSON.stringify(' + cfgMain + '.program.drop) === \'["leg_press"]\' && !JSON.stringify(' + cfgMain + '.program.slots).includes("leg_press")', 'программа помнит, каким базовым пожертвовала: жимом ногами, как выбрано')
       + expect('!document.getElementById("pd-away")', 'подсказки о третьем дне больше нет: программа его заменила')],
     ['вернуть прежнюю: дней снова три', click('#prog-undo') + settle + expect('!("days" in ' + cfgMain + ') && !' + cfgMain + '.program', 'программы нет, число дней в настройке — снова три')
       + expect('document.getElementById("pd-3").getAttribute("aria-pressed") === "true" && [...document.querySelectorAll("#view .pday-h b")].map(b => b.textContent).join() === "День 1,День 2,День 3,День 1,День 2,День 3" && !document.getElementById("pd-away")', 'на экране снова три дня, третий — со своими упражнениями')],
     ['снова два дня и принять', click('#pd-2') + settle + click('#prog-accept') + settle + accepted
       + expect('Object.keys(' + cfgMain + '.program.slots).join() === "mon,wed" && ' + cfgMain + '.days === 2', 'в программе два дня')
+      + expect('JSON.stringify(' + cfgMain + '.program.drop) === \'["pullup"]\'', 'после «Вернуть прежнюю» выбор снова по правилу: программа пожертвовала подтягиваниями')
       + expect('JSON.stringify(JSON.parse(' + stored + ').filter(x => x[0].startsWith("workouts/"))) === sessionStorage.getItem("w0")', 'прежние записи не изменились')],
     ['тренировка: дней два', go('workout') + settle + expect('[...document.querySelector("#view .seg").querySelectorAll("button")].map(b => b.textContent).join() === "День 1,День 2"', 'в планировщике два дня')],
     ...session('день 2', 'День 2', 1, 2),
@@ -707,10 +714,12 @@ export const SCENARIOS = [
     ['четыре дня в неделю', go('program') + settle + click('#pd-4') + settle + expect(cfgMain + '.days === 4', 'в настройке четыре дня')
       + 'const r = ' + draftRows + ';' + expect('r.length === 4 && r.every(d => d.length > 0)', 'в новой программе четыре дня, и ни один не пуст')
       + expect('r.filter(d => d.some(t => t.startsWith("Подтягивания") && !t.includes("лёгкий"))).length === 1', 'подтягивания — в одном дне: прежняя запись третьего дня поверх программы не вернулась')
+      + expect('r.every(d => d.filter(t => /^(Жим лежа|Жим ногами|Подтягивания)/.test(t) && !t.includes("лёгкий")).length <= 1) && !document.getElementById("pd-drop")', 'базовых три, дней четыре: в каждом дне не больше одного, и спрашивать, каким жертвовать, не о чем')
       + expect('!!document.querySelector("#view .grid4")', 'четыре столбца дней')
       + expect('document.querySelector("#view section.card p.sub").textContent.includes("День 3 и день 4 в ней пусты: заполнятся, когда примешь программу ниже.")', 'в строке о действующей программе сказано, что новых дней в ней нет')],
     ['что изменилось при четырёх днях', maybe(click('#prog-why:not([open]) > summary')) ],
     ['дни выровнены по длине', expect('document.getElementById("prog-why").textContent.includes("Дни выровнены по длине")', 'заметка о выравнивании дней')
+      + expect('document.getElementById("prog-why").textContent.includes("Дней в неделе стало больше. Этим базовым программа жертвовала")', 'подтягивания, которыми программа на два дня пожертвовала, вернулись — и об этом сказано')
       + 'const m = ' + dayMins + ';' + expect('m.length === 4 && Math.max(...m) - Math.min(...m) <= 30', 'тренировки отличаются не больше чем на полчаса: ' )],
     ['узкий телефон: 360', size(360, 740)],
     ['большой экран', size(...BIG)],

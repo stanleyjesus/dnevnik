@@ -88,6 +88,10 @@ export async function acceptProgram(pr: Built, name: string | null) {
     if (was && was !== C.SLOTS.length) raw.program.prev!.days = was;
     const time = timeOf(raw), fit = keep ? old.fit : time && !pr.manual ? { time, rest: D.cfg.rest, mode, days: C.SLOTS.length } : null;
     if (fit) raw.program.fit = fit;
+    /* (в эталоне нет) базовые, которыми программа пожертвовала из-за числа дней: когда дней станет больше, сборка их вернёт. Правка вручную
+       оставляет прежний список, кроме того, что атлет сам поставил в дни */
+    const drop = keep ? (old.drop || []).filter(id => !C.SLOTS.some(sl => slots[sl.id].some(e => e.ex === id))) : pr.dropped;
+    if (drop.length) raw.program.drop = drop.slice();
   });
   if (!ok) return;
   S.ui.prog = null; S.ui.plan = null;
@@ -167,17 +171,17 @@ export function vProgram() {
      тренировка укладывается в названное время. Сборки-примерки считаются по одной на лимит и помнятся, пока не изменилось то, от чего они зависят */
   const time = manual ? 0 : timeOf(S.cfgRaw);
   /* (в эталоне нет) от времени зависит и число упражнений в дне (решение владельца, 23 ноября 2026): сборка получает его вместе с лимитом */
-  const build = (budget: number) => C.buildProgram(D.W, cfg, { manual, focus: lift || solo, others: st.others, prio, budget, strength: strong || !!solo, time });
+  const build = (budget: number) => C.buildProgram(D.W, cfg, { manual, focus: lift || solo, others: st.others, prio, budget, strength: strong || !!solo, time, drop: st.drop });
   let fit = null as ReturnType<typeof fitBudget> | null;
   if (time) {
-    const fkey = st.focus + '|' + st.others + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + JSON.stringify(cfg.ex) + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + cfg.rest + '|' + time + '|' + C.SLOTS.length + '|' + awaySig;
+    const fkey = st.focus + '|' + st.others + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + JSON.stringify(cfg.ex) + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + cfg.rest + '|' + time + '|' + C.SLOTS.length + '|' + awaySig + (st.drop ? '|' + st.drop.join(',') : '');
     if (!st.fit || st.fit.key !== fkey) st.fit = { key: fkey, max: {} };
     const max = st.fit.max, longest = (b: number) => { if (max[b] == null) { const t = build(b); max[b] = Math.max(...C.SLOTS.map(sl => C.estMinutes(t.cfg, t.slots[sl.id], cfg.rest))); } return max[b]; };
     const F = P && P.fit, held = F && F.time === time && F.rest === cfg.rest && F.mode === modeKey(st) && F.days === C.SLOTS.length ? budgets.filter(b => b <= +P.budget!) : [];
     fit = fitBudget(held.length ? held : budgets, longest, time);
     st.budget = fit.budget;
   }
-  const key = st.focus + '|' + st.others + '|' + st.budget + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + Object.keys(cfg.ex).length + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + C.SLOTS.length + '|' + awaySig + (time ? '|' + time + '/' + cfg.rest : '');
+  const key = st.focus + '|' + st.others + '|' + st.budget + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + Object.keys(cfg.ex).length + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + C.SLOTS.length + '|' + awaySig + (time ? '|' + time + '/' + cfg.rest : '') + (st.drop ? '|' + st.drop.join(',') : '');
   if (!st.draft || st.key !== key) { st.draft = build(st.budget); st.key = key; st.edited = false; st.name = null; st.swapAt = null; }
   const pr = st.draft, changed = !pr.same || progSig(pr.slots) !== progSig(pr.cur);
   const recount = () => { pr.after = C.progTally(pr.cfg, pr.slots); st.edited = true; render(true); };
@@ -252,6 +256,13 @@ export function vProgram() {
           await saveCfg(raw => { if (n === 3) delete raw.days; else raw.days = n; });
           useDays(n, false); st.draft = null; S.ui.plan = null; render(true);
         } }, String(n))))),
+      /* (в эталоне нет) базовых больше, чем дней (решение владельца, 23 ноября 2026): в тренировке одно базовое, лишнее уходит из программы.
+         Каким жертвовать, выбирает атлет; пока не выбрал — стоит то, что сборка убрала по правилу. Выбор живёт, пока страница открыта, и уходит с принятой программой */
+      !manual ? pr.dropped.map((x, i) => h('label', { class: 'f' }, h('span', null, 'Без базового'), h('select', { id: 'pd-drop' + (i ? '-' + i : ''), onchange: e => {
+        const v = e.target.value, next = pr.dropped.slice(), j = next.indexOf(v);
+        if (j >= 0) next[j] = next[i];
+        next[i] = v; st.drop = next; st.draft = null; render(true);
+      } }, pr.dropFrom.map(id => h('option', { value: id, selected: id === x, text: C.exName(cfg, id) }))))) : null,
       /* время на тренировку: выбор запоминается в профиле; «не ограничено» — лимит выбирается списком рядом, как в эталоне */
       !manual ? h('label', { class: 'f' }, h('span', null, 'Время на тренировку'), h('select', { id: 'pt', onchange: async e => { const v = +e.target.value; await saveCfg(raw => { if (v) raw.time = v; else delete raw.time; }); if (!v) { st.budget = modeBudget(st.focus, cfg.caps.week); delete st.keep; } st.draft = null; render(true); } },
         [0].concat(TIMES.includes(time) || !time ? TIMES : TIMES.concat(time).sort((a, b) => a - b)).map(v => h('option', { value: v, selected: v === time, text: v ? 'до ' + C.fmtDur(v) : 'не ограничено' })))) : null,

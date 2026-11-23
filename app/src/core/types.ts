@@ -74,7 +74,7 @@ export type ProgSlots = Record<string, ProgEntry[]>;
     prev — к чему вернуться кнопкой «Вернуть прежнюю»: прежние отметки цели упражнений, прежняя программа и (только приложение) прежнее число дней
     в неделе, если перед принятием его меняли. fit (только приложение) — программа принята с лимитом недели, найденным по времени на тренировку:
     время, отдых, режим сборки и число дней, при которых он найден; пока они те же, дневник большего лимита не ищет */
-export interface ProgramCfg { name?: string; focus?: string | null; others?: string | null; prio?: string; budget?: number; lean?: boolean; strength?: boolean; since: string; made?: string; slots: ProgSlots; prev?: { goals?: Record<string, string>; program?: ProgramCfg; days?: number }; fit?: { time: number; rest: number; mode: string; days: number } }
+export interface ProgramCfg { name?: string; focus?: string | null; others?: string | null; prio?: string; budget?: number; lean?: boolean; strength?: boolean; since: string; made?: string; slots: ProgSlots; prev?: { goals?: Record<string, string>; program?: ProgramCfg; days?: number }; fit?: { time: number; rest: number; mode: string; days: number }; drop?: string[] }
 /** Настройка профиля после mergeCfg: все значения по умолчанию подставлены */
 export interface Cfg {
   start: string | null;                       // понедельник первой недели программы
@@ -147,8 +147,9 @@ export interface Cut { ex: string; sl: Slot; to?: string | null }
 export interface Move { sl: Slot; e: ProgEntry | null; id: string; f: number; dn: number; dw: number; pen: number; drop?: boolean; add?: boolean; to?: Slot; n?: number; from?: Slot }
 /** Сколько подходов день даёт мышце */
 export type DayOf = (d: string, m: string) => number;
-/** Что собрать: вокруг базового (focus), под приоритет мышц (prio) или вручную (manual); time — минут на тренировку, от них потолок упражнений в дне (rules.ts) */
-export interface BuildOpts { focus?: string | null; others?: string; prio?: string; budget?: number | string; manual?: boolean; strength?: boolean; time?: number }
+/** Что собрать: вокруг базового (focus), под приоритет мышц (prio) или вручную (manual); time — минут на тренировку, от них потолок упражнений в дне (rules.ts);
+    drop — базовые, которыми атлет жертвует, когда их больше, чем дней, по порядку (rules.ts) */
+export interface BuildOpts { focus?: string | null; others?: string; prio?: string; budget?: number | string; manual?: boolean; strength?: boolean; time?: number; drop?: string[] }
 /** Строка пояснения сборки: заголовок и текст */
 export interface ProgNote { t: string; x?: string }
 

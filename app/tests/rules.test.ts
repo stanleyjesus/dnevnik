@@ -187,21 +187,22 @@ test('с таблицей дней эталона время сборку не �
     assert.deepEqual(plain(Core.buildProgram(W, cfg, Object.assign({ time: 120 }, opts))), plain(Core.buildProgram(W, cfg, opts)), JSON.stringify(opts));
 });
 
-test('с днями «День N» и выбранным временем день заполняется до этого времени, а не до девяти упражнений: два дня, 2 ч — 70 подходов, у каждой мышцы два дня', () => withDays(2, () => {
+test('с днями «День N» и выбранным временем день заполняется до этого времени, а не до девяти упражнений: два дня, 2 ч — 70 подходов, у каждой мышцы два дня, и так от 1 ч 30 мин', () => withDays(2, () => {
   const W = seedW(), cfg = Core.mergeCfg(seedRaw()), dayEx = (pr: Built) => Math.max(...Core.SLOTS.map(sl => pr.slots[sl.id].length));
   const mins = (pr: Built) => Core.SLOTS.map(sl => Core.fmtDur(Core.estMinutes(pr.cfg, pr.slots[sl.id])));
   const twoDays = (pr: Built) => Core.MUSCLES.filter(m => !cfg.ignore[m.id]).every(m => Core.SLOTS.filter(sl => (pr.after.day[sl.id][m.id] || 0) >= 2 - 0.01).length >= 2);
   /* без времени — как было: девять мест в дне, и второй день достался не всем */
   const free = Core.buildProgram(W, cfg, {});
-  assert.deepEqual([total(free), dayEx(free), mins(free)], [69, 10, ['1 ч 55 мин', '2 ч']]);
+  assert.deepEqual([total(free), dayEx(free), mins(free)], [69, 10, ['1 ч 55 мин', '1 ч 50 мин']]);
   assert.ok(noteOf(free, /^Один день в неделю/)!.x!.includes('в каждой тренировке уже по девять упражнений'));
   /* два часа: двенадцать упражнений в дне, тренировки не длиннее, второй день — у всех мышц */
   const two = Core.buildProgram(W, cfg, { time: 120 });
-  assert.deepEqual([total(two), dayEx(two), mins(two)], [70, 12, ['2 ч', '2 ч']]);
+  assert.deepEqual([total(two), dayEx(two), mins(two)], [70, 12, ['2 ч', '1 ч 55 мин']]);
   assert.ok(twoDays(two) && !noteOf(two, /^Один день в неделю/), two.notes.map(n => n.t).join(' | '));
-  /* больше времени — больше упражнений и подходов; каждая тренировка укладывается */
-  const rows = TIMES.map(t => { const pr = Core.buildProgram(W, cfg, { time: t }); assert.ok(Core.SLOTS.every(sl => inTime(Core.estMinutes(pr.cfg, pr.slots[sl.id]), t)), t + ': ' + mins(pr)); return [t, total(pr), dayEx(pr)]; });
-  assert.deepEqual(rows, [[60, 31, 6], [75, 39, 8], [90, 47, 10], [105, 61, 11], [120, 70, 12]]);
+  /* больше времени — больше упражнений и подходов; каждая тренировка укладывается; второй день у каждой мышцы — от 1 ч 30 мин.
+     В 1 ч 30 мин подходов меньше, чем могло бы поместиться: уровнем выше у квадрицепса остался бы один день (заметка — в тесте ниже) */
+  const rows = TIMES.map(t => { const pr = Core.buildProgram(W, cfg, { time: t }); assert.ok(Core.SLOTS.every(sl => inTime(Core.estMinutes(pr.cfg, pr.slots[sl.id]), t)), t + ': ' + mins(pr)); return [t, total(pr), dayEx(pr), twoDays(pr)]; });
+  assert.deepEqual(rows, [[60, 33, 7, false], [75, 43, 7, false], [90, 45, 9, true], [105, 63, 10, true], [120, 70, 12, true]]);
 }));
 
 test('с выбранным временем заметка называет время: что не поместилось и какое время поможет', () => {
@@ -216,6 +217,6 @@ test('с выбранным временем заметка называет в�
   withDays(2, () => {
     /* уровень ниже ради второго дня: так и сказано */
     const n = noteOf(Core.buildProgram(W, cfg, { time: 90 }), /^Нагрузка поровну/)!;
-    assert.ok(n.x!.includes('уровнем выше у части мышц (средние дельты и квадрицепс) остался бы один день в неделю, а в 1 ч 30 мин на тренировку не помещается и то и другое. Поэтому уровень общий, но ниже. Лимит недели тут ни при чём: занято 47 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 45 мин.'), String(n.x));
+    assert.ok(n.x!.includes('уровнем выше у части мышц (квадрицепс) остался бы один день в неделю, а в 1 ч 30 мин на тренировку не помещается и то и другое. Поэтому уровень общий, но ниже. Лимит недели тут ни при чём: занято 45 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 45 мин.'), String(n.x));
   });
 });
