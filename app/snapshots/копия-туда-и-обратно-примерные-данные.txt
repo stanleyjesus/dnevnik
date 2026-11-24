@@ -1,0 +1,2037 @@
+Снимок сценария «копия туда и обратно · примерные данные» с днями приложения «День 1…N».
+Сверяет: npm run screens -- --дни. Переписать (только намеренно): npm run screens -- --переписать. Как устроен — app/scripts/snapshots.mjs.
+
+=== 1. настройка
+адрес: "#setup"
+шапка: целиком
+  div.wrap
+   | "\n  "
+   div.brand
+    svg(viewBox="0 0 24 24" aria-hidden="true") …#37e8870c3f
+    h1 Тренировочный дневник
+   | "\n  "
+   div.top-meta
+    span#prof-slot
+     select#prof.prof(aria-label="Чей дневник открыт")
+      option(value="me" selected="") Мой дневник
+      option(value="p2") Второй профиль
+    span#week-badge Неделя 10 · 10 ноя – 16 ноя
+    span#sync.sync.ok
+     i
+     span
+   | "\n"
+  | " профиль=me"
+  a(href="#overview") Обзор
+  a(href="#workout") Тренировка
+  a(href="#journal") Журнал
+  a(href="#progress") Прогресс
+  a(href="#muscles") Мышцы
+  a(href="#coach") Советы
+  a(href="#program") Программа
+  a(href="#setup" aria-current="page") Настройка
+поля: целиком
+  gear-step-machine=2.5
+  gear-add-machine=pec_fly
+  gear-step-cable=2.5
+  gear-add-cable=pec_fly
+  gear-step-barbell=2.5
+  gear-add-barbell=pec_fly
+  gear-step-dumbbell=2
+  gear-add-dumbbell=pec_fly
+  gear-step-none=2.5
+  gear-to-pec_fly=
+  gear-to-bayesian_curl=
+  gear-to-bench=
+  gear-to-leg_press=
+  gear-to-pullup=
+  gear-to-abs=
+  pr-n-me=Мой дневник
+  pr-n-p2=Второй профиль
+  pr-new=
+  pr-copy=true
+сообщение: ""
+курсор: ""
+файл: ""
+буфер: ""
+записи:
+  config/main 0ad6609c57
+  config/p2 81fcdb67e5
+  config/profiles 304989c7da
+  workouts/2025-09-08 60c270d39a
+  workouts/2025-09-10 941e594b86
+  workouts/2025-09-12 e4e9b93c7f
+  workouts/2025-09-15 9eca0c3b9f
+  workouts/2025-09-19 dffe7844a8
+  workouts/2025-09-22 5de032b523
+  workouts/2025-09-24 ab8b7b8965
+  workouts/2025-09-26 167e26c559
+  workouts/2025-09-29 8874a7171a
+  workouts/2025-10-01 c09af81e94
+  workouts/2025-10-03 ed3b1add2b
+  workouts/2025-10-13 8c3a16e6d5
+  workouts/2025-10-15 33e8268f62
+  workouts/2025-10-17 4684cf0ff2
+  workouts/2025-10-20 269c7e08c7
+  workouts/2025-10-22 184b91fb0f
+  workouts/2025-10-24 02bb02ca64
+  workouts/2025-10-27 572948a158
+  workouts/2025-10-29 9af25e8991
+  workouts/2025-10-31 91f5258ccd
+  workouts/2025-11-03 e5ea9e35b6
+  workouts/2025-11-05 7ff89a3942
+  workouts/2025-11-07 07af07f9b7
+  workouts/2025-11-10 d323f65cd6
+черновик:
+  td-profile me
+экран: целиком
+  div.wrap.stack
+   section.card
+    div.sec-h
+     h2 Упражнения
+     button#ex-new.btn
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+      | Новое упражнение
+    div#starter-tools.row(style="margin-bottom:14px")
+     button#starter-sort.btn.sm(title=#8d9078b3f3) Разложить по снарядам: 6
+     button#starter-add.btn.sm(title=#9c8d458e94)
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+      | Типовые упражнения: 40
+    div(style="margin-bottom:14px")
+     div.row(style="justify-content:space-between;margin-bottom:4px")
+      div.eyebrow Снаряды
+     p.note(style="margin-bottom:10px") Шаг веса задаётся у снаряда: упражнение берёт шаг того снаряда, в котором лежит.
+     div.gear-grid
+      div#gear-machine.pday
+       div.pday-h(style="align-items:center")
+        b Тренажёр
+        div.row(style="gap:4px;flex-wrap:nowrap")
+         label.row(style="gap:6px;font-size:13px;flex-wrap:nowrap")
+          | Шаг, кг
+          input#gear-step-machine.num.sm(type="text" inputmode="decimal" aria-label="Шаг веса: Тренажёр")
+       div.chips(style="justify-content:flex-start;margin:8px 0")
+        span.chip
+         | Бицепс бедра на тренажере лежа на животе
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Бицепс бедра на тренажере лежа на животе")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Бицепс бедра сидя в тренажере
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Бицепс бедра сидя в тренажере")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Вертикальная тяга в тренажере
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Вертикальная тяга в тренажере")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Горизонтальная тяга в тренажере
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Горизонтальная тяга в тренажере")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Разгибания ног в тренажере
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Разгибания ног в тренажере")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Средние дельты в тренажере
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Средние дельты в тренажере")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       div.row(style="flex-wrap:nowrap")
+        select#gear-add-machine.grow(style="min-width:0" aria-label="Упражнение для снаряда: Тренажёр")
+         option(value="pec_fly") Бабочка
+         option(value="bayesian_curl") Бицепс Bayesian curl
+         option(value="bench") Жим лежа
+         option(value="leg_press") Жим ногами
+         option(value="pullup") Подтягивания
+         option(value="abs") Пресс
+         option(value="barbell_curl") Бицепс со штангой стоя (штанга)
+         option(value="tbar_row") Горизонтальная тяга Т-бар (штанга)
+         option(value="incline_db") Жим гантелей под углом 45 (гантель)
+         option(value="wrist_cable_l") Кисть на блоке левая (блок)
+         option(value="wrist_cable_r") Кисть на блоке правая (блок)
+         option(value="wrist_db_l") Кисть с гантелью левая рука (гантель)
+         option(value="wrist_db_r") Кисть с гантелью правая рука (гантель)
+         option(value="lat_raise_db") Махи с гантелями на плечи (гантель)
+         option(value="hammer") Молотки с гантелями (гантель)
+         option(value="tri_overhead") Трицепс из за головы на блоке с косичкой (блок)
+         option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
+        button#gear-btn-machine.btn.sm
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+         | Добавить
+      div#gear-cable.pday
+       div.pday-h(style="align-items:center")
+        b Блок
+        div.row(style="gap:4px;flex-wrap:nowrap")
+         label.row(style="gap:6px;font-size:13px;flex-wrap:nowrap")
+          | Шаг, кг
+          input#gear-step-cable.num.sm(type="text" inputmode="decimal" aria-label="Шаг веса: Блок")
+       div.chips(style="justify-content:flex-start;margin:8px 0")
+        span.chip
+         | Кисть на блоке левая
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Кисть на блоке левая")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Кисть на блоке правая
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Кисть на блоке правая")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Трицепс из за головы на блоке с косичкой
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Трицепс из за головы на блоке с косичкой")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Трицепс с косичкой на блоке
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Трицепс с косичкой на блоке")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       div.row(style="flex-wrap:nowrap")
+        select#gear-add-cable.grow(style="min-width:0" aria-label="Упражнение для снаряда: Блок")
+         option(value="pec_fly") Бабочка
+         option(value="bayesian_curl") Бицепс Bayesian curl
+         option(value="bench") Жим лежа
+         option(value="leg_press") Жим ногами
+         option(value="pullup") Подтягивания
+         option(value="abs") Пресс
+         option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе (тренажёр)
+         option(value="leg_curl_seated") Бицепс бедра сидя в тренажере (тренажёр)
+         option(value="barbell_curl") Бицепс со штангой стоя (штанга)
+         option(value="lat_pulldown") Вертикальная тяга в тренажере (тренажёр)
+         option(value="row_machine") Горизонтальная тяга в тренажере (тренажёр)
+         option(value="tbar_row") Горизонтальная тяга Т-бар (штанга)
+         option(value="incline_db") Жим гантелей под углом 45 (гантель)
+         option(value="wrist_db_l") Кисть с гантелью левая рука (гантель)
+         option(value="wrist_db_r") Кисть с гантелью правая рука (гантель)
+         option(value="lat_raise_db") Махи с гантелями на плечи (гантель)
+         option(value="hammer") Молотки с гантелями (гантель)
+         option(value="leg_ext") Разгибания ног в тренажере (тренажёр)
+         option(value="lat_raise_machine") Средние дельты в тренажере (тренажёр)
+        button#gear-btn-cable.btn.sm
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+         | Добавить
+      div#gear-barbell.pday
+       div.pday-h(style="align-items:center")
+        b Штанга
+        div.row(style="gap:4px;flex-wrap:nowrap")
+         label.row(style="gap:6px;font-size:13px;flex-wrap:nowrap")
+          | Шаг, кг
+          input#gear-step-barbell.num.sm(type="text" inputmode="decimal" aria-label="Шаг веса: Штанга")
+       div.chips(style="justify-content:flex-start;margin:8px 0")
+        span.chip
+         | Бицепс со штангой стоя
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Бицепс со штангой стоя")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Горизонтальная тяга Т-бар
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Горизонтальная тяга Т-бар")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       div.row(style="flex-wrap:nowrap")
+        select#gear-add-barbell.grow(style="min-width:0" aria-label="Упражнение для снаряда: Штанга")
+         option(value="pec_fly") Бабочка
+         option(value="bayesian_curl") Бицепс Bayesian curl
+         option(value="bench") Жим лежа
+         option(value="leg_press") Жим ногами
+         option(value="pullup") Подтягивания
+         option(value="abs") Пресс
+         option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе (тренажёр)
+         option(value="leg_curl_seated") Бицепс бедра сидя в тренажере (тренажёр)
+         option(value="lat_pulldown") Вертикальная тяга в тренажере (тренажёр)
+         option(value="row_machine") Горизонтальная тяга в тренажере (тренажёр)
+         option(value="incline_db") Жим гантелей под углом 45 (гантель)
+         option(value="wrist_cable_l") Кисть на блоке левая (блок)
+         option(value="wrist_cable_r") Кисть на блоке правая (блок)
+         option(value="wrist_db_l") Кисть с гантелью левая рука (гантель)
+         option(value="wrist_db_r") Кисть с гантелью правая рука (гантель)
+         option(value="lat_raise_db") Махи с гантелями на плечи (гантель)
+         option(value="hammer") Молотки с гантелями (гантель)
+         option(value="leg_ext") Разгибания ног в тренажере (тренажёр)
+         option(value="lat_raise_machine") Средние дельты в тренажере (тренажёр)
+         option(value="tri_overhead") Трицепс из за головы на блоке с косичкой (блок)
+         option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
+        button#gear-btn-barbell.btn.sm
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+         | Добавить
+      div#gear-dumbbell.pday
+       div.pday-h(style="align-items:center")
+        b Гантель
+        div.row(style="gap:4px;flex-wrap:nowrap")
+         label.row(style="gap:6px;font-size:13px;flex-wrap:nowrap")
+          | Шаг, кг
+          input#gear-step-dumbbell.num.sm(type="text" inputmode="decimal" aria-label="Шаг веса: Гантель")
+       div.chips(style="justify-content:flex-start;margin:8px 0")
+        span.chip
+         | Жим гантелей под углом 45
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Жим гантелей под углом 45")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Кисть с гантелью левая рука
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Кисть с гантелью левая рука")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Кисть с гантелью правая рука
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Кисть с гантелью правая рука")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Махи с гантелями на плечи
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Махи с гантелями на плечи")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        span.chip
+         | Молотки с гантелями
+         button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Молотки с гантелями")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       div.row(style="flex-wrap:nowrap")
+        select#gear-add-dumbbell.grow(style="min-width:0" aria-label="Упражнение для снаряда: Гантель")
+         option(value="pec_fly") Бабочка
+         option(value="bayesian_curl") Бицепс Bayesian curl
+         option(value="bench") Жим лежа
+         option(value="leg_press") Жим ногами
+         option(value="pullup") Подтягивания
+         option(value="abs") Пресс
+         option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе (тренажёр)
+         option(value="leg_curl_seated") Бицепс бедра сидя в тренажере (тренажёр)
+         option(value="barbell_curl") Бицепс со штангой стоя (штанга)
+         option(value="lat_pulldown") Вертикальная тяга в тренажере (тренажёр)
+         option(value="row_machine") Горизонтальная тяга в тренажере (тренажёр)
+         option(value="tbar_row") Горизонтальная тяга Т-бар (штанга)
+         option(value="wrist_cable_l") Кисть на блоке левая (блок)
+         option(value="wrist_cable_r") Кисть на блоке правая (блок)
+         option(value="leg_ext") Разгибания ног в тренажере (тренажёр)
+         option(value="lat_raise_machine") Средние дельты в тренажере (тренажёр)
+         option(value="tri_overhead") Трицепс из за головы на блоке с косичкой (блок)
+         option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
+        button#gear-btn-dumbbell.btn.sm
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+         | Добавить
+      div#gear-none.pday.gear-loose
+       div.pday-h(style="align-items:center")
+        b
+         | Без снаряда
+         span#gear-loose-n.cnt " 6"
+        label.row(style="gap:6px;font-size:13px;flex-wrap:nowrap")
+         | Шаг, кг
+         input#gear-step-none.num.sm(type="text" inputmode="decimal" aria-label="Шаг веса: Без снаряда")
+       div.chips(style="justify-content:flex-start;margin:8px 0 2px")
+        span.chip
+         | Бабочка
+         select#gear-to-pec_fly.chip-sel(aria-label="Снаряд для: Бабочка")
+          option(value="") снаряд…
+          option(value="machine") Тренажёр
+          option(value="cable") Блок
+          option(value="barbell") Штанга
+          option(value="dumbbell") Гантель
+        span.chip
+         | Бицепс Bayesian curl
+         select#gear-to-bayesian_curl.chip-sel(aria-label="Снаряд для: Бицепс Bayesian curl")
+          option(value="") снаряд…
+          option(value="machine") Тренажёр
+          option(value="cable") Блок
+          option(value="barbell") Штанга
+          option(value="dumbbell") Гантель
+        span.chip
+         | Жим лежа
+         select#gear-to-bench.chip-sel(aria-label="Снаряд для: Жим лежа")
+          option(value="") снаряд…
+          option(value="machine") Тренажёр
+          option(value="cable") Блок
+          option(value="barbell") Штанга
+          option(value="dumbbell") Гантель
+        span.chip
+         | Жим ногами
+         select#gear-to-leg_press.chip-sel(aria-label="Снаряд для: Жим ногами")
+          option(value="") снаряд…
+          option(value="machine") Тренажёр
+          option(value="cable") Блок
+          option(value="barbell") Штанга
+          option(value="dumbbell") Гантель
+        span.chip
+         | Подтягивания
+         select#gear-to-pullup.chip-sel(aria-label="Снаряд для: Подтягивания")
+          option(value="") снаряд…
+          option(value="machine") Тренажёр
+          option(value="cable") Блок
+          option(value="barbell") Штанга
+          option(value="dumbbell") Гантель
+        span.chip
+         | Пресс
+         select#gear-to-abs.chip-sel(aria-label="Снаряд для: Пресс")
+          option(value="") снаряд…
+          option(value="machine") Тренажёр
+          option(value="cable") Блок
+          option(value="barbell") Штанга
+          option(value="dumbbell") Гантель
+    div#known(style="margin-bottom:14px")
+     div.eyebrow(style="margin-bottom:4px") Известные веса
+     p.note(style="margin-bottom:10px") Для упражнений, которых ещё нет в журнале: рабочий вес или разовый максимум, хватит одного. С них стартует первая тренировка.
+     details(style="margin-top:10px")
+      summary.sub(style="cursor:pointer") Уже в журнале: 23 — веса берутся из него
+      div.kw(style="margin-top:8px")
+       div.kw-row
+        div.kw-n
+         | Жим лежа
+         span.tag(style="margin-left:6px") базовое
+        div.kw-log.sub Есть в журнале: 95 кг × 3, 10 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Вертикальная тяга в тренажере
+        div.kw-log.sub Есть в журнале: 55 кг × 12, 10 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Бицепс бедра сидя в тренажере
+        div.kw-log.sub Есть в журнале: 37.5 кг × 11, 10 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Средние дельты в тренажере
+        div.kw-log.sub Есть в журнале: 22.5 кг × 10, 10 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Трицепс из за головы на блоке с косичкой
+        div.kw-log.sub Есть в журнале: 20 кг × 9, 10 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Молотки с гантелями
+        div.kw-log.sub Есть в журнале: 16 кг × 10, 10 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Разгибания ног в тренажере
+        div.kw-log.sub Есть в журнале: 50 кг × 12, 7 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n
+         | Жим ногами
+         span.tag(style="margin-left:6px") базовое
+        div.kw-log.sub Есть в журнале: 195 кг × 3, 5 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Жим гантелей под углом 45
+        div.kw-log.sub Есть в журнале: 24 кг × 9, 5 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Горизонтальная тяга Т-бар
+        div.kw-log.sub Есть в журнале: 30 кг × 11, 5 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Бицепс со штангой стоя
+        div.kw-log.sub Есть в журнале: 30 кг, 5 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Кисть на блоке правая
+        div.kw-log.sub Есть в журнале: 15 кг × 9, 5 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Кисть на блоке левая
+        div.kw-log.sub Есть в журнале: 12.5 кг × 14, 5 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n
+         | Подтягивания
+         span.tag(style="margin-left:6px") базовое
+        div.kw-log.sub Есть в журнале: 92.5 кг × 4, 7 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Бабочка
+        div.kw-log.sub Есть в журнале: 45 кг × 14, 7 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Бицепс бедра на тренажере лежа на животе
+        div.kw-log.sub Есть в журнале: 32.5 кг × 8, 7 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Трицепс с косичкой на блоке
+        div.kw-log.sub Есть в журнале: 22.5 кг × 10, 7 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Бицепс Bayesian curl
+        div.kw-log.sub Есть в журнале: 10 кг × 16, 7 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Кисть с гантелью правая рука
+        div.kw-log.sub Есть в журнале: 12 кг × 10, 7 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Кисть с гантелью левая рука
+        div.kw-log.sub Есть в журнале: 10 кг × 15, 7 ноя — веса берутся из него.
+       div.kw-row
+        div.kw-n Горизонтальная тяга в тренажере
+        div.kw-log.sub Есть в журнале: 45 кг × 8, 15 окт — веса берутся из него.
+       div.kw-row
+        div.kw-n Махи с гантелями на плечи
+        div.kw-log.sub Есть в журнале: 10 кг × 9, 15 окт — веса берутся из него.
+       div.kw-row
+        div.kw-n Пресс
+        div.kw-log.sub Есть в журнале: 7.5 кг × 15, 3 окт — веса берутся из него.
+   details#setup-more.morebox(open="")
+    summary Остальные настройки: профили, справочник, данные
+    section.card
+     div.sec-h
+      div
+       h2 Профили
+       p.note У каждого профиля свои тренировки, программа, упражнения и настройка. Переключатель — в шапке страницы; всё ниже относится к открытому профилю: Мой дневник.
+     div.plan-list
+      div.plan-row(style="align-items:center")
+       input#pr-n-me(type="text" aria-label="Имя профиля" style="flex:1 1 200px")
+       span.tag.accent открыт
+      div.plan-row(style="align-items:center")
+       input#pr-n-p2(type="text" aria-label="Имя профиля" style="flex:1 1 200px")
+       button.btn.sm Открыть
+     div.row(style="margin-top:12px;align-items:flex-end")
+      label.f.grow
+       span Новый профиль
+       input#pr-new(type="text" placeholder="Имя")
+      label.row(style="font-size:13px;min-height:40px")
+       input#pr-copy(type="checkbox" checked="")
+       | скопировать упражнения из открытого
+      button#pr-add.btn
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+       | Добавить
+    section#catalogue.card
+     div.sec-h
+      div
+       h2 Справочник упражнений
+       p.note Название, прогрессия, диапазон повторов и мышцы каждого упражнения. Мышцы дневник определяет сам по названию; здесь их можно поправить.
+     div.plan-list
+      div.plan-row
+       span.n Бабочка
+       span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Грудь, Передние дельты ½
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Бицепс бедра на тренажере лежа на животе
+       span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Бицепс бедра
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Бицепс бедра сидя в тренажере
+       span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Бицепс бедра
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Бицепс со штангой стоя
+       span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Бицепс
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Бицепс Bayesian curl
+       span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Бицепс
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Вертикальная тяга в тренажере
+       span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Широчайшие, Верх спины ½, Бицепс ½
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Горизонтальная тяга Т-бар
+       span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Верх спины, Широчайшие ½, Задние дельты ½, Бицепс ½
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Жим гантелей под углом 45
+       span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Грудь, Передние дельты ½, Трицепс ½
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Жим лежа
+       span.sub(style="flex:2 1 220px") без снаряда · базовое, шаг 2.5 кг · Грудь, Трицепс ½, Передние дельты ½
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Жим ногами
+       span.sub(style="flex:2 1 220px") без снаряда · базовое, шаг 2.5 кг · Квадрицепс, Ягодицы ½
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Кисть на блоке левая
+       span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Предплечья
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Кисть на блоке правая
+       span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Предплечья
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Кисть с гантелью левая рука
+       span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Предплечья
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Кисть с гантелью правая рука
+       span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Предплечья
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Молотки с гантелями
+       span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Бицепс, Предплечья ½
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Подтягивания
+       span.sub(style="flex:2 1 220px") без снаряда · базовое, шаг 2.5 кг · Широчайшие, Верх спины ½, Бицепс ½
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Разгибания ног в тренажере
+       span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Квадрицепс
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Средние дельты в тренажере
+       span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Средние дельты
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Трицепс из за головы на блоке с косичкой
+       span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Трицепс
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n Трицепс с косичкой на блоке
+       span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Трицепс
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n
+        | Горизонтальная тяга в тренажере
+        span.muted " · не в программе"
+       span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Верх спины, Широчайшие ½, Задние дельты ½, Бицепс ½
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n
+        | Махи с гантелями на плечи
+        span.muted " · не в программе"
+       span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Средние дельты
+       button.btn.ghost.sm Изменить
+      div.plan-row
+       span.n
+        | Пресс
+        span.muted " · не в программе"
+       span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Пресс
+       button.btn.ghost.sm Изменить
+    section.card
+     div.sec-h
+      div
+       h2 Данные
+       p.note Записей в дневнике: 24. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
+     div.row
+      button.btn Скачать CSV
+      button.btn Скопировать CSV
+      button#backup-all.btn Резервная копия всех профилей (JSON)
+      button#import-backup.btn Загрузить копию из файла
+     p.note(style="margin-top:8px") CSV — тренировки открытого профиля. Резервная копия — всё сразу: профили, настройка, программы, тренировки и вес тела. Это единственный способ перенести записи на другое устройство или вернуть их, если это сломается.
+     p#device-note.note(style="margin-top:6px") Браузер не обещал хранить записи: при нехватке места он может их стереть. Держи свежую резервную копию. Сборка для разработки.
+
+=== 2. сохранить копию
+файл: "{\"filename\":\"dnevnik-backup-2025-11-12.json\",\"text\":\"{\\n \\\"format\\\": \\\"training-diary-backup\\\",\\n \\\"version\\\": 1,\\n \\\"exportedAt\\\": \\\"2025-11-12T10:00:02.000Z\\\",\\n \\\"profiles\\\": [\\n  {\\n   \\\"id\\\": \\\"me\\\",\\n   \\\"name\\\": \\\"Мой дневник\\\",\\n   \\\"config\\\": {\\n    \\\"start\\\": \\\"2025-09-08\\\",\\n    \\\"zones\\\": {\\n     \\\"min\\\": 4,\\n     \\\"opt\\\": 10,\\n     \\\"high\\\": 20\\n    },\\n    \\\"cycle\\\": {\\n     \\\"inc\\\": 2,\\n     \\\"sets\\\": 4,\\n     \\\"pct\\\": {\\n      \\\"3\\\": 87,\\n      \\\"4\\\": 82,\\n      \\\"5\\\": 77\\n     }\\n    },\\n    \\\"method\\\": \\\"Примерный дневник: атлет выдуман, записи посчитаны генератором data/make.cjs. Занятий в неделе три. Три базовых упражнения - жим лежа, жим ногами, подтягивания - ведутся волной: четыре подхода на 5, 4 и 3 повтора при 77, 82 и 87 процентах от расчётного максимума; максимум за неделю прибавляет не больше 2 процентов. В остальных упражнениях сначала растут повторы, потом вес, у каждого подхода свой счёт; до отказа остаётся один повтор.\\\",\\n    \\\"ex\\\": {\\n     \\\"bench\\\": {\\n      \\\"n\\\": \\\"Жим лежа\\\",\\n      \\\"mode\\\": \\\"cycle\\\",\\n      \\\"pat\\\": \\\"h_push\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"triceps\\\": 0.5,\\n       \\\"delt_front\\\": 0.5\\n      },\\n      \\\"round\\\": 5\\n     },\\n     \\\"leg_press\\\": {\\n      \\\"n\\\": \\\"Жим ногами\\\",\\n      \\\"mode\\\": \\\"cycle\\\",\\n      \\\"pat\\\": \\\"knee\\\",\\n      \\\"m\\\": {\\n       \\\"quads\\\": 1,\\n       \\\"glutes\\\": 0.5\\n      },\\n      \\\"round\\\": 5\\n     },\\n     \\\"pullup\\\": {\\n      \\\"n\\\": \\\"Подтягивания\\\",\\n      \\\"mode\\\": \\\"cycle\\\",\\n      \\\"pat\\\": \\\"v_pull\\\",\\n      \\\"m\\\": {\\n       \\\"lats\\\": 1,\\n       \\\"upper_back\\\": 0.5,\\n       \\\"biceps\\\": 0.5\\n      },\\n      \\\"round\\\": 1\\n     },\\n     \\\"incline_db\\\": {\\n      \\\"n\\\": \\\"Жим гантелей под углом 45\\\",\\n      \\\"pat\\\": \\\"h_push\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"step\\\": 1\\n     },\\n     \\\"pec_fly\\\": {\\n      \\\"n\\\": \\\"Бабочка\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5\\n      },\\n      \\\"step\\\": 2.5\\n     },\\n     \\\"lat_pulldown\\\": {\\n      \\\"n\\\": \\\"Вертикальная тяга в тренажере\\\",\\n      \\\"pat\\\": \\\"v_pull\\\",\\n      \\\"m\\\": {\\n       \\\"lats\\\": 1,\\n       \\\"upper_back\\\": 0.5,\\n       \\\"biceps\\\": 0.5\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"row_machine\\\": {\\n      \\\"n\\\": \\\"Горизонтальная тяга в тренажере\\\",\\n      \\\"pat\\\": \\\"h_pull\\\",\\n      \\\"m\\\": {\\n       \\\"upper_back\\\": 1,\\n       \\\"lats\\\": 0.5,\\n       \\\"delt_rear\\\": 0.5,\\n       \\\"biceps\\\": 0.5\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"tbar_row\\\": {\\n      \\\"n\\\": \\\"Горизонтальная тяга Т-бар\\\",\\n      \\\"pat\\\": \\\"h_pull\\\",\\n      \\\"m\\\": {\\n       \\\"upper_back\\\": 1,\\n       \\\"lats\\\": 0.5,\\n       \\\"delt_rear\\\": 0.5,\\n       \\\"biceps\\\": 0.5\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"lat_raise_db\\\": {\\n      \\\"n\\\": \\\"Махи с гантелями на плечи\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"step\\\": 1\\n     },\\n     \\\"lat_raise_machine\\\": {\\n      \\\"n\\\": \\\"Средние дельты в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"barbell_curl\\\": {\\n      \\\"n\\\": \\\"Бицепс со штангой стоя\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"hammer\\\": {\\n      \\\"n\\\": \\\"Молотки с гантелями\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1,\\n       \\\"forearms\\\": 0.5\\n      },\\n      \\\"step\\\": 1\\n     },\\n     \\\"bayesian_curl\\\": {\\n      \\\"n\\\": \\\"Бицепс Bayesian curl\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"tri_pushdown\\\": {\\n      \\\"n\\\": \\\"Трицепс с косичкой на блоке\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"triceps\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"tri_overhead\\\": {\\n      \\\"n\\\": \\\"Трицепс из за головы на блоке с косичкой\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"triceps\\\": 1\\n      },\\n      \\\"step\\\": 1.25\\n     },\\n     \\\"wrist_db_r\\\": {\\n      \\\"n\\\": \\\"Кисть с гантелью правая рука\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"uni\\\": true,\\n      \\\"step\\\": 1\\n     },\\n     \\\"wrist_db_l\\\": {\\n      \\\"n\\\": \\\"Кисть с гантелью левая рука\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"uni\\\": true,\\n      \\\"step\\\": 1\\n     },\\n     \\\"wrist_cable_r\\\": {\\n      \\\"n\\\": \\\"Кисть на блоке правая\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"uni\\\": true,\\n      \\\"step\\\": 1.25\\n     },\\n     \\\"wrist_cable_l\\\": {\\n      \\\"n\\\": \\\"Кисть на блоке левая\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"uni\\\": true,\\n      \\\"step\\\": 1.25\\n     },\\n     \\\"leg_ext\\\": {\\n      \\\"n\\\": \\\"Разгибания ног в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"quads\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"leg_curl_lying\\\": {\\n      \\\"n\\\": \\\"Бицепс бедра на тренажере лежа на животе\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"hams\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"leg_curl_seated\\\": {\\n      \\\"n\\\": \\\"Бицепс бедра сидя в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"hams\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"abs\\\": {\\n      \\\"n\\\": \\\"Пресс\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"abs\\\": 1\\n      },\\n      \\\"step\\\": 1\\n     }\\n    }\\n   },\\n   \\\"workouts\\\": [\\n    {\\n     \\\"id\\\": \\\"2025-09-08\\\",\\n     \\\"date\\\": \\\"2025-09-08\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"70x5 70x5 70x5 70x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x10 52.5x9 52.5x7 52.5x6\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x10 35x8 35x8 35x6\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x12 20x9 20x9 20x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x11 17.5x8 17.5x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x12 14x10 14x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-10\\\",\\n     \\\"date\\\": \\\"2025-09-10\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x11 45x9 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"155x5 155x5 155x5 155x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22x9 22x8 22x7 22x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"row_machine\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x11 45x9 45x7 45x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_db\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x10 10x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x10 27.5x9 27.5x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x13 12.5x12 12.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x12 12.5x10 12.5x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-12\\\",\\n     \\\"date\\\": \\\"2025-09-12\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"72.5x5 72.5x5 72.5x5 72.5x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"40x10 40x9 40x8 40x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x11 30x8 30x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x8 22.5x7 22.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x11 10x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"abs\\\",\\n       \\\"rng\\\": \\\"10-15\\\",\\n       \\\"sets\\\": \\\"0x15 0x13 0x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x14 10x13 10x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x12 10x11 10x8\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-15\\\",\\n     \\\"date\\\": \\\"2025-09-15\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"75x4 75x4 75x4 75x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x10 52.5x10 50x8 50x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x10 35x9 35x7 32.5x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x12 20x12 20x9 17.5x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x10 17.5x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x12 14x11 14x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-19\\\",\\n     \\\"date\\\": \\\"2025-09-19\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"80x4 80x4 80x4 80x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"40x11 40x9 40x9 40x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x11 30x10 30x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x11 22.5x9 20x12 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x13 10x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"abs\\\",\\n       \\\"rng\\\": \\\"10-15\\\",\\n       \\\"sets\\\": \\\"2.5x15 0x14 0x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x13 10x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x12 10x10 10x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-22\\\",\\n     \\\"date\\\": \\\"2025-09-22\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"80x3 80x3 80x3 80x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x11 52.5x9 50x9 50x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x9 35x9 32.5x11 32.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x13 20x10 20x10 20x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x10 17.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x13 14x11 14x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-24\\\",\\n     \\\"date\\\": \\\"2025-09-24\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x11 45x11 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"167.5x4 167.5x4 167.5x4 167.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"14x12w 22x10 22x10 20x10 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"row_machine\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x10 45x9 42.5x10 42.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_db\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x11 10x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x11 27.5x9 25x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x14 12.5x13 12.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x12 12.5x10 12.5x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-26\\\",\\n     \\\"date\\\": \\\"2025-09-26\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"87.5x3 87.5x3 87.5x3 87.5x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"40x12 40x11 40x8 37.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x12 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x9 22.5x9 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x12 10x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"abs\\\",\\n       \\\"rng\\\": \\\"10-15\\\",\\n       \\\"sets\\\": \\\"5x15 0x14 0x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x13 10x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x12 10x10 10x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-29\\\",\\n     \\\"date\\\": \\\"2025-09-29\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"72.5x5 72.5x5 72.5x5 72.5x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x10 52.5x10 50x11 50x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x? 35x? 32.5x? 32.5x?\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x8 20x12 20x9 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x11 17.5x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x13 14x12 14x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-01\\\",\\n     \\\"date\\\": \\\"2025-10-01\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x12 45x10 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"182.5x3 182.5x3 182.5x3 182.5x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22x11 22x9 20x11 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"row_machine\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x11 45x9 42.5x10 42.5x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_db\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x12 10x10 10x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x10 27.5x9 25x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x15 12.5x13 12.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x12 12.5x10 12.5x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-03\\\",\\n     \\\"date\\\": \\\"2025-10-03\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"80x5 80x5 80x5 80x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"42.5x10 40x10 40x10 37.5x11\\\",\\n       \\\"note\\\": \\\"сиденье на деление ниже\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x8 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x11 22.5x10 22.5x8 20x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x14 10x13 10x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"abs\\\",\\n       \\\"rng\\\": \\\"10-15\\\",\\n       \\\"sets\\\": \\\"7.5x15 0x15 0x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x14 10x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x12 10x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-13\\\",\\n     \\\"date\\\": \\\"2025-10-13\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"80x4 80x4 80x4 80x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x11 52.5x10 50x11 50x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x11 35x10 32.5x12 32.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x8 20x12 20x11 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x11 17.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x12 14x12 14x10\\\"\\n      }\\n     ],\\n     \\\"note\\\": \\\"первая после недели без тренировок\\\"\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-15\\\",\\n     \\\"date\\\": \\\"2025-10-15\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"47.5x9 45x11 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"165x5 165x5 165x5 165x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22x10 22x9 20x10 20x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"row_machine\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x8 45x8 42.5x9 42.5x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_db\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x9 10x9 10x6\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x9 27.5x9 27.5x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x15 12.5x13 12.5x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x12 12.5x10 12.5x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-17\\\",\\n     \\\"date\\\": \\\"2025-10-17\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"87.5x4 87.5x4 87.5x4 87.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"42.5x10 40x11 40x10 37.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x8 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x8 22.5x7 22.5x6\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x13 10x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x12 45x10 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x15 10x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x10 10x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-20\\\",\\n     \\\"date\\\": \\\"2025-10-20\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"87.5x3 87.5x3 87.5x3 87.5x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x15w 52.5x12 52.5x10 50x12 50x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x12 35x11 35x10 32.5x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x9 20x13 20x12 20x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x12 17.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x14 14x14 14x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-22\\\",\\n     \\\"date\\\": \\\"2025-10-22\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"47.5x12 45x12 45x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"180x4 180x4 180x4 180x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22x12 22x10 20x12 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tbar_row\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x10 30x8 30x7 30x7\\\",\\n       \\\"note\\\": \\\"узкая рукоять\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x12 27.5x10 27.5x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x16 12.5x14 12.5x14\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x14 12.5x12 12.5x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-24\\\",\\n     \\\"date\\\": \\\"2025-10-24\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"95x3 95x3 95x3 95x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"42.5x11 40x12 40x11 37.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x9 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x- 22.5x- 20x- 20x-\\\",\\n       \\\"skip\\\": true\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x16 10x13 10x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"47.5x11 45x11 45x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x16 10x14 10x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x14 10x12 10x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-27\\\",\\n     \\\"date\\\": \\\"2025-10-27\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"80x5 80x5 80x5 80x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"55x10 52.5x11 52.5x10 50x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"37.5x10 35x11 35x10 35x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x11 22.5x8 20x12 20x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x13 17.5x12 17.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"16x8 16x8 14x12\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-29\\\",\\n     \\\"date\\\": \\\"2025-10-29\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"50x9 47.5x11 45x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"180x4 180x4 180x4 180x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"24x9 22x11 22x10 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tbar_row\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x10 30x10 27.5x11 27.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x8 27.5x11 27.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"15x- 12.5x- 12.5x-\\\",\\n       \\\"skip\\\": true\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x- 12.5x- 12.5x-\\\",\\n       \\\"skip\\\": true\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-31\\\",\\n     \\\"date\\\": \\\"2025-10-31\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"85x5 85x5 85x5 85x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"42.5x12 42.5x10 40x11 37.5x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x8 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x11 22.5x9 20x12 20x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x7 10x? 10x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"47.5x12 45x12 45x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12x10 10x15 10x14\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x13 10x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-11-03\\\",\\n     \\\"date\\\": \\\"2025-11-03\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"87.5x4 87.5x4 87.5x4 87.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"55x11 52.5x11 52.5x11 50x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"37.5x11 35x12 35x11 35x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x10 20x12 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x9 17.5x13 17.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"16x9 16x7 14x13\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-11-05\\\",\\n     \\\"date\\\": \\\"2025-11-05\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"50x10 47.5x12 45x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"195x3 195x3 195x3 195x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"24x9 22x12 22x? 20x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tbar_row\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x11 30x8 27.5x12 27.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x? 27.5x? 27.5x?\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"15x9 12.5x15 12.5x15\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x14 12.5x13 12.5x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-11-07\\\",\\n     \\\"date\\\": \\\"2025-11-07\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"92.5x4 92.5x4 92.5x4 92.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x14 42.5x10 40x12 40x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x8 30x10 30x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x9 22.5x8 22.5x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x16 10x15 10x14\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"50x12 47.5x12 45x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12x10 10x16 10x14\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x12 10x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-11-10\\\",\\n     \\\"date\\\": \\\"2025-11-10\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"95x3 95x3 95x3 95x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"55x12 52.5x12 52.5x11 50x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"37.5x11 37.5x9 35x11 35x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x9 20x13 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x9 20x9 17.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"16x10 16x6 14x12\\\"\\n      }\\n     ]\\n    }\\n   ],\\n   \\\"body\\\": [],\\n   \\\"coach\\\": null\\n  },\\n  {\\n   \\\"id\\\": \\\"p2\\\",\\n   \\\"name\\\": \\\"Второй профиль\\\",\\n   \\\"config\\\": {\\n    \\\"bw\\\": \\\"track\\\",\\n    \\\"cycle\\\": {\\n     \\\"inc\\\": 2,\\n     \\\"pct\\\": {\\n      \\\"3\\\": 87,\\n      \\\"4\\\": 82,\\n      \\\"5\\\": 77\\n     },\\n     \\\"sets\\\": 4\\n    },\\n    \\\"ex\\\": {\\n     \\\"abduction\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"hi\\\": 15,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 1\\n      },\\n      \\\"n\\\": \\\"Отведение ног в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 5,\\n      \\\"work\\\": 40,\\n      \\\"workR\\\": 14\\n     },\\n     \\\"abs\\\": {\\n      \\\"hi\\\": 15,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"abs\\\": 1\\n      },\\n      \\\"n\\\": \\\"Пресс\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 1\\n     },\\n     \\\"back_ext\\\": {\\n      \\\"hi\\\": 15,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"erectors\\\": 1,\\n       \\\"glutes\\\": 0.5,\\n       \\\"hams\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Гиперэкстензия\\\",\\n      \\\"pat\\\": \\\"hinge\\\",\\n      \\\"step\\\": 5\\n     },\\n     \\\"barbell_curl\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1\\n      },\\n      \\\"n\\\": \\\"Бицепс со штангой стоя\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"bayesian_curl\\\": {\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1\\n      },\\n      \\\"n\\\": \\\"Бицепс Bayesian curl\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 5\\n     },\\n     \\\"bench\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Жим лежа\\\",\\n      \\\"pat\\\": \\\"h_push\\\"\\n     },\\n     \\\"chest_press\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"max\\\": 30,\\n      \\\"n\\\": \\\"Жим в тренажере на грудь\\\",\\n      \\\"pat\\\": \\\"h_push\\\",\\n      \\\"step\\\": 2.5,\\n      \\\"work\\\": 15,\\n      \\\"workR\\\": 12\\n     },\\n     \\\"db_bench\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Жим гантелей лежа\\\",\\n      \\\"pat\\\": \\\"h_push\\\",\\n      \\\"step\\\": 2\\n     },\\n     \\\"db_ohp\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"delt_front\\\": 1,\\n       \\\"delt_mid\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Жим гантелей сидя\\\",\\n      \\\"pat\\\": \\\"v_push\\\",\\n      \\\"step\\\": 2,\\n      \\\"work\\\": 6\\n     },\\n     \\\"hammer\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1,\\n       \\\"forearms\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Молотки с гантелями\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"hip_thrust\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 1,\\n       \\\"hams\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Ягодичный мост со штангой\\\",\\n      \\\"pat\\\": \\\"hinge\\\",\\n      \\\"step\\\": 2.5,\\n      \\\"work\\\": 60,\\n      \\\"workR\\\": 10\\n     },\\n     \\\"incline_db\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Жим гантелей под углом 45\\\",\\n      \\\"pat\\\": \\\"h_push\\\"\\n     },\\n     \\\"lat_pulldown\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 0.5,\\n       \\\"lats\\\": 1,\\n       \\\"upper_back\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Вертикальная тяга в тренажере\\\",\\n      \\\"pat\\\": \\\"v_pull\\\",\\n      \\\"step\\\": 2.5,\\n      \\\"work\\\": 30,\\n      \\\"workR\\\": 11\\n     },\\n     \\\"lat_raise\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"hi\\\": 20,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"n\\\": \\\"Махи гантелями в стороны\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 2,\\n      \\\"work\\\": 4\\n     },\\n     \\\"lat_raise_db\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"n\\\": \\\"Махи с гантелями на плечи\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"lat_raise_machine\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"n\\\": \\\"Средние дельты в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"leg_curl_lying\\\": {\\n      \\\"hi\\\": 15,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"hams\\\": 1\\n      },\\n      \\\"n\\\": \\\"Сгибания ног лежа\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 5,\\n      \\\"work\\\": 20,\\n      \\\"workR\\\": 13\\n     },\\n     \\\"leg_curl_seated\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"hams\\\": 1\\n      },\\n      \\\"n\\\": \\\"Бицепс бедра сидя в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"leg_ext\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"quads\\\": 1\\n      },\\n      \\\"n\\\": \\\"Разгибания ног в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"leg_press\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 0.5,\\n       \\\"quads\\\": 1\\n      },\\n      \\\"n\\\": \\\"Жим ногами\\\",\\n      \\\"pat\\\": \\\"knee\\\",\\n      \\\"step\\\": 10,\\n      \\\"work\\\": 70,\\n      \\\"workR\\\": 15\\n     },\\n     \\\"lunge\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 1,\\n       \\\"quads\\\": 1\\n      },\\n      \\\"n\\\": \\\"Выпады с гантелями\\\",\\n      \\\"pat\\\": \\\"knee\\\",\\n      \\\"step\\\": 2,\\n      \\\"work\\\": 10,\\n      \\\"workR\\\": 10\\n     },\\n     \\\"pec_fly\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Бабочка\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 2.5\\n     },\\n     \\\"pullup\\\": {\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 0.5,\\n       \\\"lats\\\": 1,\\n       \\\"upper_back\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Подтягивания\\\",\\n      \\\"pat\\\": \\\"v_pull\\\",\\n      \\\"step\\\": 1\\n     },\\n     \\\"rdl\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"erectors\\\": 1,\\n       \\\"glutes\\\": 1,\\n       \\\"hams\\\": 1\\n      },\\n      \\\"n\\\": \\\"Румынская тяга\\\",\\n      \\\"pat\\\": \\\"hinge\\\",\\n      \\\"step\\\": 5,\\n      \\\"work\\\": 35,\\n      \\\"workR\\\": 9\\n     },\\n     \\\"row_machine\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 0.5,\\n       \\\"delt_rear\\\": 0.5,\\n       \\\"lats\\\": 0.5,\\n       \\\"upper_back\\\": 1\\n      },\\n      \\\"n\\\": \\\"Горизонтальная тяга в тренажере\\\",\\n      \\\"pat\\\": \\\"h_pull\\\",\\n      \\\"step\\\": 5,\\n      \\\"work\\\": 25,\\n      \\\"workR\\\": 10\\n     },\\n     \\\"squat\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 0.5,\\n       \\\"quads\\\": 1\\n      },\\n      \\\"max\\\": 55,\\n      \\\"n\\\": \\\"Приседания со штангой\\\",\\n      \\\"pat\\\": \\\"knee\\\",\\n      \\\"step\\\": 5\\n     },\\n     \\\"tbar_row\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 0.5,\\n       \\\"delt_rear\\\": 0.5,\\n       \\\"lats\\\": 0.5,\\n       \\\"upper_back\\\": 1\\n      },\\n      \\\"n\\\": \\\"Горизонтальная тяга Т-бар\\\",\\n      \\\"pat\\\": \\\"h_pull\\\"\\n     },\\n     \\\"tri_overhead\\\": {\\n      \\\"gear\\\": \\\"cable\\\",\\n      \\\"m\\\": {\\n       \\\"triceps\\\": 1\\n      },\\n      \\\"n\\\": \\\"Трицепс из за головы на блоке с косичкой\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"tri_pushdown\\\": {\\n      \\\"gear\\\": \\\"cable\\\",\\n      \\\"m\\\": {\\n       \\\"triceps\\\": 1\\n      },\\n      \\\"n\\\": \\\"Трицепс с косичкой на блоке\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"wrist_cable_l\\\": {\\n      \\\"gear\\\": \\\"cable\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"n\\\": \\\"Кисть на блоке левая\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"uni\\\": true\\n     },\\n     \\\"wrist_cable_r\\\": {\\n      \\\"gear\\\": \\\"cable\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"n\\\": \\\"Кисть на блоке правая\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"uni\\\": true\\n     },\\n     \\\"wrist_db_l\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"n\\\": \\\"Кисть с гантелью левая рука\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"uni\\\": true\\n     },\\n     \\\"wrist_db_r\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"n\\\": \\\"Кисть с гантелью правая рука\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"uni\\\": true\\n     }\\n    },\\n    \\\"gear\\\": {\\n     \\\"barbell\\\": {\\n      \\\"step\\\": 2.5\\n     },\\n     \\\"cable\\\": {\\n      \\\"step\\\": 2.5\\n     },\\n     \\\"dumbbell\\\": {\\n      \\\"step\\\": 2\\n     },\\n     \\\"machine\\\": {\\n      \\\"step\\\": 2.5\\n     }\\n    },\\n    \\\"ignore\\\": {\\n     \\\"calves\\\": 1,\\n     \\\"chest\\\": 1,\\n     \\\"forearms\\\": 1\\n    },\\n    \\\"method\\\": \\\"\\\",\\n    \\\"program\\\": {\\n     \\\"focus\\\": \\\"\\\",\\n     \\\"lean\\\": true,\\n     \\\"made\\\": \\\"2025-11-11\\\",\\n     \\\"name\\\": \\\"Пример: всё тело три раза в неделю\\\",\\n     \\\"others\\\": \\\"\\\",\\n     \\\"since\\\": \\\"2025-11-11\\\",\\n     \\\"slots\\\": {\\n      \\\"fri\\\": [\\n       {\\n        \\\"ex\\\": \\\"rdl\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lunge\\\",\\n        \\\"n\\\": 4\\n       },\\n       {\\n        \\\"ex\\\": \\\"db_bench\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lat_pulldown\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lat_raise\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"abduction\\\",\\n        \\\"n\\\": 2\\n       }\\n      ],\\n      \\\"mon\\\": [\\n       {\\n        \\\"ex\\\": \\\"hip_thrust\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"leg_press\\\",\\n        \\\"n\\\": 4\\n       },\\n       {\\n        \\\"ex\\\": \\\"db_ohp\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"back_ext\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"leg_curl_lying\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"abs\\\",\\n        \\\"n\\\": 3\\n       }\\n      ],\\n      \\\"wed\\\": [\\n       {\\n        \\\"ex\\\": \\\"squat\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lat_pulldown\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"chest_press\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"row_machine\\\",\\n        \\\"n\\\": 4\\n       },\\n       {\\n        \\\"ex\\\": \\\"abduction\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lat_raise\\\",\\n        \\\"n\\\": 2\\n       }\\n      ]\\n     }\\n    },\\n    \\\"rest\\\": 90,\\n    \\\"rir\\\": 2,\\n    \\\"start\\\": \\\"2025-11-10\\\",\\n    \\\"zones\\\": {\\n     \\\"high\\\": 20,\\n     \\\"min\\\": 4,\\n     \\\"opt\\\": 10\\n    }\\n   },\\n   \\\"workouts\\\": [],\\n   \\\"body\\\": [],\\n   \\\"coach\\\": null\\n  }\\n ]\\n}\"}"
+
+=== 3. испортить записи: удалить тренировку
+адрес: "#journal"
+шапка: правки к шагу 2
+@@ 20 -1 +1
+- a(href="#journal") Журнал
++ a(href="#journal" aria-current="page") Журнал
+@@ 25 -1 +1
+- a(href="#setup" aria-current="page") Настройка
++ a(href="#setup") Настройка
+поля: —
+сообщение: "Запись удалена"
+файл: ""
+записи:
+  - workouts/2025-11-10
+экран: целиком
+  div.wrap.stack
+   details.week(open="")
+    summary
+     h2 Неделя 10
+     span.sub 10 ноя – 16 ноя · тренировок нет
+    div.stack(style="gap:10px;padding-bottom:14px")
+   details.week(open="")
+    summary
+     h2 Неделя 9
+     span.sub 3 ноя – 9 ноя · 3 тренировки · 63 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Понедельник, 3 ноября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 4 × 4 по 87.5
+        span.tag 82%
+      div.wo-row
+       span.n Вертикальная тяга в тренажере
+       div.chips
+        span.chip 55 × 11
+        span.chip 52.5 × 11
+        span.chip 52.5 × 11
+        span.chip 50 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip 37.5 × 11
+        span.chip 35 × 12
+        span.chip 35 × 11
+        span.chip 35 × 9
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Средние дельты в тренажере
+       div.chips
+        span.chip 22.5 × 10
+        span.chip 22.5 × 10
+        span.chip 20 × 12
+        span.chip 20 × 11
+      div.wo-row
+       span.n Трицепс из за головы на блоке с косичкой
+       div.chips
+        span.chip 20 × 9
+        span.chip 17.5 × 13
+        span.chip 17.5 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Молотки с гантелями
+       div.chips
+        span.chip 16 × 9
+        span.chip 16 × 7
+        span.chip 14 × 13
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 5 ноября
+        span.tag день 2
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 50 × 10
+        span.chip 47.5 × 12
+        span.chip 45 × 7
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Жим ногами
+       div.chips
+        span.chip 4 × 3 по 195
+        span.tag 87%
+      div.wo-row
+       span.n Жим гантелей под углом 45
+       div.chips
+        span.chip 24 × 9
+        span.chip 22 × 12
+        span.chip.hole(title="повторы не записаны") 22 × ?
+        span.chip 20 × 12
+      div.wo-row
+       span.n Горизонтальная тяга Т-бар
+       div.chips
+        span.chip 30 × 11
+        span.chip 30 × 8
+        span.chip 27.5 × 12
+        span.chip 27.5 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс со штангой стоя
+       div.chips
+        span.chip.hole(title="повторы не записаны") 30 × ?
+        span.chip.hole(title="повторы не записаны") 27.5 × ?
+        span.chip.hole(title="повторы не записаны") 27.5 × ?
+      div.wo-row
+       span.n Кисть на блоке правая
+       div.chips
+        span.chip 15 × 9
+        span.chip 12.5 × 15
+        span.chip 12.5 × 15
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть на блоке левая
+       div.chips
+        span.chip 12.5 × 14
+        span.chip 12.5 × 13
+        span.chip 12.5 × 11
+     div.wo
+      div.wo-h
+       div.row
+        b Пятница, 7 ноября
+        span.tag день 3
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 4 × 4 по 92.5
+        span.tag 82%
+      div.wo-row
+       span.n Бабочка
+       div.chips
+        span.chip 45 × 14
+        span.chip 42.5 × 10
+        span.chip 40 × 12
+        span.chip 40 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс бедра на тренажере лежа на животе
+       div.chips
+        span.chip 32.5 × 8
+        span.chip 30 × 10
+        span.chip 30 × 10
+      div.wo-row
+       span.n Трицепс с косичкой на блоке
+       div.chips
+        span.chip 22.5 × 10
+        span.chip 22.5 × 9
+        span.chip 22.5 × 8
+        span.chip 22.5 × 5
+      div.wo-row
+       span.n Бицепс Bayesian curl
+       div.chips
+        span.chip 10 × 16
+        span.chip 10 × 15
+        span.chip 10 × 14
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 50 × 12
+        span.chip 47.5 × 12
+        span.chip 45 × 12
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть с гантелью правая рука
+       div.chips
+        span.chip 12 × 10
+        span.chip 10 × 16
+        span.chip 10 × 14
+      div.wo-row
+       span.n Кисть с гантелью левая рука
+       div.chips
+        span.chip 10 × 15
+        span.chip 10 × 12
+        span.chip 10 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+   details.week(open="")
+    summary
+     h2 Неделя 8
+     span.sub 27 окт – 2 ноя · 3 тренировки · 63 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Понедельник, 27 октября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 4 × 5 по 80
+        span.tag 77%
+      div.wo-row
+       span.n Вертикальная тяга в тренажере
+       div.chips
+        span.chip 55 × 10
+        span.chip 52.5 × 11
+        span.chip 52.5 × 10
+        span.chip 50 × 11
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip 37.5 × 10
+        span.chip 35 × 11
+        span.chip 35 × 10
+        span.chip 35 × 8
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Средние дельты в тренажере
+       div.chips
+        span.chip 22.5 × 11
+        span.chip 22.5 × 8
+        span.chip 20 × 12
+        span.chip 20 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Трицепс из за головы на блоке с косичкой
+       div.chips
+        span.chip 17.5 × 13
+        span.chip 17.5 × 12
+        span.chip 17.5 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Молотки с гантелями
+       div.chips
+        span.chip 16 × 8
+        span.chip 16 × 8
+        span.chip 14 × 12
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 29 октября
+        span.tag день 2
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 50 × 9
+        span.chip 47.5 × 11
+        span.chip 45 × 11
+      div.wo-row
+       span.n Жим ногами
+       div.chips
+        span.chip 4 × 4 по 180
+        span.tag 82%
+      div.wo-row
+       span.n Жим гантелей под углом 45
+       div.chips
+        span.chip 24 × 9
+        span.chip 22 × 11
+        span.chip 22 × 10
+        span.chip 20 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Горизонтальная тяга Т-бар
+       div.chips
+        span.chip 30 × 10
+        span.chip 30 × 10
+        span.chip 27.5 × 11
+        span.chip 27.5 × 10
+      div.wo-row
+       span.n Бицепс со штангой стоя
+       div.chips
+        span.chip 30 × 8
+        span.chip 27.5 × 11
+        span.chip 27.5 × 10
+      div.wo-row
+       span.n Кисть на блоке правая
+       div.chips
+        span.tag не делал
+      div.wo-row
+       span.n Кисть на блоке левая
+       div.chips
+        span.tag не делал
+     div.wo
+      div.wo-h
+       div.row
+        b Пятница, 31 октября
+        span.tag день 3
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 4 × 5 по 85
+        span.tag 77%
+      div.wo-row
+       span.n Бабочка
+       div.chips
+        span.chip 42.5 × 12
+        span.chip 42.5 × 10
+        span.chip 40 × 11
+        span.chip 37.5 × 12
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс бедра на тренажере лежа на животе
+       div.chips
+        span.chip 32.5 × 8
+        span.chip 30 × 10
+        span.chip 30 × 9
+      div.wo-row
+       span.n Трицепс с косичкой на блоке
+       div.chips
+        span.chip 22.5 × 11
+        span.chip 22.5 × 9
+        span.chip 20 × 12
+        span.chip 20 × 12
+      div.wo-row
+       span.n Бицепс Bayesian curl
+       div.chips
+        span.chip 12.5 × 7
+        span.chip.hole(title="повторы не записаны") 10 × ?
+        span.chip 10 × 12
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 47.5 × 12
+        span.chip 45 × 12
+        span.chip 45 × 11
+      div.wo-row
+       span.n Кисть с гантелью правая рука
+       div.chips
+        span.chip 12 × 10
+        span.chip 10 × 15
+        span.chip 10 × 14
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть с гантелью левая рука
+       div.chips
+        span.chip 10 × 13
+        span.chip 10 × 13
+        span.chip 10 × 11
+   details.week
+    summary
+     h2 Неделя 7
+     span.sub 20 окт – 26 окт · 3 тренировки · 63 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Понедельник, 20 октября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 4 × 3 по 87.5
+        span.tag 87%
+      div.wo-row
+       span.n Вертикальная тяга в тренажере
+       div.chips
+        span.chip.warmup(title="разминочный") 30 × 15
+        span.chip 52.5 × 12
+        span.chip 52.5 × 10
+        span.chip 50 × 12
+        span.chip 50 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip 35 × 12
+        span.chip 35 × 11
+        span.chip 35 × 10
+        span.chip 32.5 × 12
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Средние дельты в тренажере
+       div.chips
+        span.chip 22.5 × 9
+        span.chip 20 × 13
+        span.chip 20 × 12
+        span.chip 20 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Трицепс из за головы на блоке с косичкой
+       div.chips
+        span.chip 17.5 × 12
+        span.chip 17.5 × 12
+        span.chip 17.5 × 10
+      div.wo-row
+       span.n Молотки с гантелями
+       div.chips
+        span.chip 14 × 14
+        span.chip 14 × 14
+        span.chip 14 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 22 октября
+        span.tag день 2
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 47.5 × 12
+        span.chip 45 × 12
+        span.chip 45 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Жим ногами
+       div.chips
+        span.chip 180 × 4
+        span.chip 180 × 4
+        span.chip 180 × 4
+        span.chip 180 × 3
+        span.tag 82%
+      div.wo-row
+       span.n Жим гантелей под углом 45
+       div.chips
+        span.chip 22 × 12
+        span.chip 22 × 10
+        span.chip 20 × 12
+        span.chip 20 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n
+        | Горизонтальная тяга Т-бар
+        span.muted " · узкая рукоять"
+       div.chips
+        span.chip 30 × 10
+        span.chip 30 × 8
+        span.chip 30 × 7
+        span.chip 30 × 7
+      div.wo-row
+       span.n Бицепс со штангой стоя
+       div.chips
+        span.chip 27.5 × 12
+        span.chip 27.5 × 10
+        span.chip 27.5 × 9
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть на блоке правая
+       div.chips
+        span.chip 12.5 × 16
+        span.chip 12.5 × 14
+        span.chip 12.5 × 14
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть на блоке левая
+       div.chips
+        span.chip 12.5 × 14
+        span.chip 12.5 × 12
+        span.chip 12.5 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+     div.wo
+      div.wo-h
+       div.row
+        b Пятница, 24 октября
+        span.tag день 3
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 4 × 3 по 95
+        span.tag 87%
+      div.wo-row
+       span.n Бабочка
+       div.chips
+        span.chip 42.5 × 11
+        span.chip 40 × 12
+        span.chip 40 × 11
+        span.chip 37.5 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс бедра на тренажере лежа на животе
+       div.chips
+        span.chip 32.5 × 9
+        span.chip 30 × 10
+        span.chip 30 × 9
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Трицепс с косичкой на блоке
+       div.chips
+        span.tag не делал
+      div.wo-row
+       span.n Бицепс Bayesian curl
+       div.chips
+        span.chip 10 × 16
+        span.chip 10 × 13
+        span.chip 10 × 12
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 47.5 × 11
+        span.chip 45 × 11
+        span.chip 45 × 11
+      div.wo-row
+       span.n Кисть с гантелью правая рука
+       div.chips
+        span.chip 10 × 16
+        span.chip 10 × 14
+        span.chip 10 × 13
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть с гантелью левая рука
+       div.chips
+        span.chip 10 × 14
+        span.chip 10 × 12
+        span.chip 10 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+   details.week
+    summary
+     h2 Неделя 6
+     span.sub 13 окт – 19 окт · 3 тренировки · 70 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Понедельник, 13 октября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 4 × 4 по 80
+        span.tag 82%
+      div.wo-row
+       span.n Вертикальная тяга в тренажере
+       div.chips
+        span.chip 52.5 × 11
+        span.chip 52.5 × 10
+        span.chip 50 × 11
+        span.chip 50 × 9
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip 35 × 11
+        span.chip 35 × 10
+        span.chip 32.5 × 12
+        span.chip 32.5 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Средние дельты в тренажере
+       div.chips
+        span.chip 22.5 × 8
+        span.chip 20 × 12
+        span.chip 20 × 11
+        span.chip 20 × 9
+      div.wo-row
+       span.n Трицепс из за головы на блоке с косичкой
+       div.chips
+        span.chip 17.5 × 12
+        span.chip 17.5 × 11
+        span.chip 17.5 × 10
+      div.wo-row
+       span.n Молотки с гантелями
+       div.chips
+        span.chip 14 × 12
+        span.chip 14 × 12
+        span.chip 14 × 10
+      p.note(style="margin-top:8px") первая после недели без тренировок
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 15 октября
+        span.tag день 2
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 47.5 × 9
+        span.chip 45 × 11
+        span.chip 45 × 9
+      div.wo-row
+       span.n Жим ногами
+       div.chips
+        span.chip 4 × 5 по 165
+        span.tag 77%
+      div.wo-row
+       span.n Жим гантелей под углом 45
+       div.chips
+        span.chip 22 × 10
+        span.chip 22 × 9
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Горизонтальная тяга в тренажере
+       div.chips
+        span.chip 45 × 8
+        span.chip 45 × 8
+        span.chip 42.5 × 9
+        span.chip 42.5 × 8
+      div.wo-row
+       span.n Махи с гантелями на плечи
+       div.chips
+        span.chip 10 × 9
+        span.chip 10 × 9
+        span.chip 10 × 6
+      div.wo-row
+       span.n Бицепс со штангой стоя
+       div.chips
+        span.chip 27.5 × 9
+        span.chip 27.5 × 9
+        span.chip 27.5 × 8
+      div.wo-row
+       span.n Кисть на блоке правая
+       div.chips
+        span.chip 12.5 × 15
+        span.chip 12.5 × 13
+        span.chip 12.5 × 12
+      div.wo-row
+       span.n Кисть на блоке левая
+       div.chips
+        span.chip 12.5 × 12
+        span.chip 12.5 × 10
+        span.chip 12.5 × 9
+     div.wo
+      div.wo-h
+       div.row
+        b Пятница, 17 октября
+        span.tag день 3
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 4 × 4 по 87.5
+        span.tag 82%
+      div.wo-row
+       span.n Бабочка
+       div.chips
+        span.chip 42.5 × 10
+        span.chip 40 × 11
+        span.chip 40 × 10
+        span.chip 37.5 × 11
+      div.wo-row
+       span.n Бицепс бедра на тренажере лежа на животе
+       div.chips
+        span.chip 32.5 × 8
+        span.chip 30 × 10
+        span.chip 30 × 9
+      div.wo-row
+       span.n Трицепс с косичкой на блоке
+       div.chips
+        span.chip 22.5 × 10
+        span.chip 22.5 × 8
+        span.chip 22.5 × 7
+        span.chip 22.5 × 6
+      div.wo-row
+       span.n Бицепс Bayesian curl
+       div.chips
+        span.chip 10 × 15
+        span.chip 10 × 13
+        span.chip 10 × 11
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 45 × 12
+        span.chip 45 × 10
+        span.chip 45 × 9
+      div.wo-row
+       span.n Кисть с гантелью правая рука
+       div.chips
+        span.chip 10 × 15
+        span.chip 10 × 15
+        span.chip 10 × 12
+      div.wo-row
+       span.n Кисть с гантелью левая рука
+       div.chips
+        span.chip 10 × 13
+        span.chip 10 × 10
+        span.chip 10 × 9
+   details.week
+    summary
+     h2 Неделя 5
+     span.sub 6 окт – 12 окт · тренировок нет
+    div.stack(style="gap:10px;padding-bottom:14px")
+   details.week
+    summary
+     h2 Неделя 4
+     span.sub 29 сен – 5 окт · 3 тренировки · 66 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Понедельник, 29 сентября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 4 × 5 по 72.5
+        span.tag 77%
+      div.wo-row
+       span.n Вертикальная тяга в тренажере
+       div.chips
+        span.chip 52.5 × 10
+        span.chip 52.5 × 10
+        span.chip 50 × 11
+        span.chip 50 × 10
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip.hole(title="повторы не записаны") 35 × ?
+        span.chip.hole(title="повторы не записаны") 35 × ?
+        span.chip.hole(title="повторы не записаны") 32.5 × ?
+        span.chip.hole(title="повторы не записаны") 32.5 × ?
+      div.wo-row
+       span.n Средние дельты в тренажере
+       div.chips
+        span.chip 22.5 × 8
+        span.chip 20 × 12
+        span.chip 20 × 9
+        span.chip 20 × 9
+      div.wo-row
+       span.n Трицепс из за головы на блоке с косичкой
+       div.chips
+        span.chip 17.5 × 12
+        span.chip 17.5 × 11
+        span.chip 17.5 × 9
+      div.wo-row
+       span.n Молотки с гантелями
+       div.chips
+        span.chip 14 × 13
+        span.chip 14 × 12
+        span.chip 14 × 10
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 1 октября
+        span.tag день 2
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 45 × 12
+        span.chip 45 × 10
+        span.chip 45 × 9
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Жим ногами
+       div.chips
+        span.chip 4 × 3 по 182.5
+        span.tag 87%
+      div.wo-row
+       span.n Жим гантелей под углом 45
+       div.chips
+        span.chip 22 × 11
+        span.chip 22 × 9
+        span.chip 20 × 11
+        span.chip 20 × 9
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Горизонтальная тяга в тренажере
+       div.chips
+        span.chip 45 × 11
+        span.chip 45 × 9
+        span.chip 42.5 × 10
+        span.chip 42.5 × 9
+      div.wo-row
+       span.n Махи с гантелями на плечи
+       div.chips
+        span.chip 10 × 12
+        span.chip 10 × 10
+        span.chip 10 × 8
+      div.wo-row
+       span.n Бицепс со штангой стоя
+       div.chips
+        span.chip 27.5 × 10
+        span.chip 27.5 × 9
+        span.chip 25 × 12
+      div.wo-row
+       span.n Кисть на блоке правая
+       div.chips
+        span.chip 12.5 × 15
+        span.chip 12.5 × 13
+        span.chip 12.5 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть на блоке левая
+       div.chips
+        span.chip 12.5 × 12
+        span.chip 12.5 × 10
+        span.chip 12.5 × 9
+     div.wo
+      div.wo-h
+       div.row
+        b Пятница, 3 октября
+        span.tag день 3
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 4 × 5 по 80
+        span.tag 77%
+      div.wo-row
+       span.n
+        | Бабочка
+        span.muted " · сиденье на деление ниже"
+       div.chips
+        span.chip 42.5 × 10
+        span.chip 40 × 10
+        span.chip 40 × 10
+        span.chip 37.5 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс бедра на тренажере лежа на животе
+       div.chips
+        span.chip 32.5 × 8
+        span.chip 30 × 10
+        span.chip 30 × 9
+      div.wo-row
+       span.n Трицепс с косичкой на блоке
+       div.chips
+        span.chip 22.5 × 11
+        span.chip 22.5 × 10
+        span.chip 22.5 × 8
+        span.chip 20 × 12
+      div.wo-row
+       span.n Бицепс Bayesian curl
+       div.chips
+        span.chip 10 × 14
+        span.chip 10 × 13
+        span.chip 10 × 10
+      div.wo-row
+       span.n Пресс
+       div.chips
+        span.chip 7.5 × 15
+        span.chip 0 × 15
+        span.chip 0 × 13
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть с гантелью правая рука
+       div.chips
+        span.chip 10 × 15
+        span.chip 10 × 14
+        span.chip 10 × 13
+      div.wo-row
+       span.n Кисть с гантелью левая рука
+       div.chips
+        span.chip 10 × 13
+        span.chip 10 × 12
+        span.chip 10 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+   details.week
+    summary
+     h2 Неделя 3
+     span.sub 22 сен – 28 сен · 3 тренировки · 70 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Понедельник, 22 сентября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 4 × 3 по 80
+        span.tag 87%
+      div.wo-row
+       span.n Вертикальная тяга в тренажере
+       div.chips
+        span.chip 52.5 × 11
+        span.chip 52.5 × 9
+        span.chip 50 × 9
+        span.chip 50 × 9
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip 35 × 9
+        span.chip 35 × 9
+        span.chip 32.5 × 11
+        span.chip 32.5 × 11
+      div.wo-row
+       span.n Средние дельты в тренажере
+       div.chips
+        span.chip 20 × 13
+        span.chip 20 × 10
+        span.chip 20 × 10
+        span.chip 20 × 8
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Трицепс из за головы на блоке с косичкой
+       div.chips
+        span.chip 17.5 × 12
+        span.chip 17.5 × 10
+        span.chip 17.5 × 10
+      div.wo-row
+       span.n Молотки с гантелями
+       div.chips
+        span.chip 14 × 13
+        span.chip 14 × 11
+        span.chip 14 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 24 сентября
+        span.tag день 2
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 45 × 11
+        span.chip 45 × 11
+        span.chip 45 × 9
+      div.wo-row
+       span.n Жим ногами
+       div.chips
+        span.chip 4 × 4 по 167.5
+        span.tag 82%
+      div.wo-row
+       span.n Жим гантелей под углом 45
+       div.chips
+        span.chip.warmup(title="разминочный") 14 × 12
+        span.chip 22 × 10
+        span.chip 22 × 10
+        span.chip 20 × 10
+        span.chip 20 × 9
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Горизонтальная тяга в тренажере
+       div.chips
+        span.chip 45 × 10
+        span.chip 45 × 9
+        span.chip 42.5 × 10
+        span.chip 42.5 × 10
+      div.wo-row
+       span.n Махи с гантелями на плечи
+       div.chips
+        span.chip 10 × 13
+        span.chip 10 × 11
+        span.chip 10 × 9
+      div.wo-row
+       span.n Бицепс со штангой стоя
+       div.chips
+        span.chip 27.5 × 11
+        span.chip 27.5 × 9
+        span.chip 25 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть на блоке правая
+       div.chips
+        span.chip 12.5 × 14
+        span.chip 12.5 × 13
+        span.chip 12.5 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть на блоке левая
+       div.chips
+        span.chip 12.5 × 12
+        span.chip 12.5 × 10
+        span.chip 12.5 × 9
+     div.wo
+      div.wo-h
+       div.row
+        b Пятница, 26 сентября
+        span.tag день 3
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 4 × 3 по 87.5
+        span.tag 87%
+      div.wo-row
+       span.n Бабочка
+       div.chips
+        span.chip 40 × 12
+        span.chip 40 × 11
+        span.chip 40 × 8
+        span.chip 37.5 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс бедра на тренажере лежа на животе
+       div.chips
+        span.chip 30 × 12
+        span.chip 30 × 10
+        span.chip 30 × 9
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Трицепс с косичкой на блоке
+       div.chips
+        span.chip 22.5 × 10
+        span.chip 22.5 × 9
+        span.chip 22.5 × 9
+        span.chip 20 × 11
+      div.wo-row
+       span.n Бицепс Bayesian curl
+       div.chips
+        span.chip 10 × 15
+        span.chip 10 × 12
+        span.chip 10 × 10
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Пресс
+       div.chips
+        span.chip 5 × 15
+        span.chip 0 × 14
+        span.chip 0 × 13
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть с гантелью правая рука
+       div.chips
+        span.chip 10 × 15
+        span.chip 10 × 13
+        span.chip 10 × 11
+      div.wo-row
+       span.n Кисть с гантелью левая рука
+       div.chips
+        span.chip 10 × 12
+        span.chip 10 × 10
+        span.chip 10 × 10
+   details.week
+    summary
+     h2 Неделя 2
+     span.sub 15 сен – 21 сен · 2 тренировки · 46 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Понедельник, 15 сентября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 4 × 4 по 75
+        span.tag 82%
+      div.wo-row
+       span.n Вертикальная тяга в тренажере
+       div.chips
+        span.chip 52.5 × 10
+        span.chip 52.5 × 10
+        span.chip 50 × 8
+        span.chip 50 × 8
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip 35 × 10
+        span.chip 35 × 9
+        span.chip 35 × 7
+        span.chip 32.5 × 9
+      div.wo-row
+       span.n Средние дельты в тренажере
+       div.chips
+        span.chip 20 × 12
+        span.chip 20 × 12
+        span.chip 20 × 9
+        span.chip 17.5 × 13
+      div.wo-row
+       span.n Трицепс из за головы на блоке с косичкой
+       div.chips
+        span.chip 17.5 × 12
+        span.chip 17.5 × 10
+        span.chip 17.5 × 8
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Молотки с гантелями
+       div.chips
+        span.chip 14 × 12
+        span.chip 14 × 11
+        span.chip 14 × 10
+     div.wo
+      div.wo-h
+       div.row
+        b Пятница, 19 сентября
+        span.tag день 3
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 4 × 4 по 80
+        span.tag 82%
+      div.wo-row
+       span.n Бабочка
+       div.chips
+        span.chip 40 × 11
+        span.chip 40 × 9
+        span.chip 40 × 9
+        span.chip 40 × 7
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс бедра на тренажере лежа на животе
+       div.chips
+        span.chip 30 × 11
+        span.chip 30 × 10
+        span.chip 30 × 8
+      div.wo-row
+       span.n Трицепс с косичкой на блоке
+       div.chips
+        span.chip 22.5 × 11
+        span.chip 22.5 × 9
+        span.chip 20 × 12
+        span.chip 20 × 9
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Бицепс Bayesian curl
+       div.chips
+        span.chip 10 × 13
+        span.chip 10 × 13
+        span.chip 10 × 9
+      div.wo-row
+       span.n Пресс
+       div.chips
+        span.chip 2.5 × 15
+        span.chip 0 × 14
+        span.chip 0 × 12
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть с гантелью правая рука
+       div.chips
+        span.chip 10 × 15
+        span.chip 10 × 13
+        span.chip 10 × 11
+        span.pill.good
+         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+         | рекорд
+      div.wo-row
+       span.n Кисть с гантелью левая рука
+       div.chips
+        span.chip 10 × 12
+        span.chip 10 × 10
+        span.chip 10 × 9
+   details.week
+    summary
+     h2 Неделя 1
+     span.sub 8 сен – 14 сен · 3 тренировки · 70 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Понедельник, 8 сентября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 4 × 5 по 70
+        span.tag 77%
+      div.wo-row
+       span.n Вертикальная тяга в тренажере
+       div.chips
+        span.chip 52.5 × 10
+        span.chip 52.5 × 9
+        span.chip 52.5 × 7
+        span.chip 52.5 × 6
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip 35 × 10
+        span.chip 35 × 8
+        span.chip 35 × 8
+        span.chip 35 × 6
+      div.wo-row
+       span.n Средние дельты в тренажере
+       div.chips
+        span.chip 20 × 12
+        span.chip 20 × 9
+        span.chip 20 × 9
+        span.chip 20 × 7
+      div.wo-row
+       span.n Трицепс из за головы на блоке с косичкой
+       div.chips
+        span.chip 17.5 × 11
+        span.chip 17.5 × 8
+        span.chip 17.5 × 8
+      div.wo-row
+       span.n Молотки с гантелями
+       div.chips
+        span.chip 14 × 12
+        span.chip 14 × 10
+        span.chip 14 × 10
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 10 сентября
+        span.tag день 2
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Разгибания ног в тренажере
+       div.chips
+        span.chip 45 × 11
+        span.chip 45 × 9
+        span.chip 45 × 9
+      div.wo-row
+       span.n Жим ногами
+       div.chips
+        span.chip 4 × 5 по 155
+        span.tag 77%
+      div.wo-row
+       span.n Жим гантелей под углом 45
+       div.chips
+        span.chip 22 × 9
+        span.chip 22 × 8
+        span.chip 22 × 7
+        span.chip 22 × 5
+      div.wo-row
+       span.n Горизонтальная тяга в тренажере
+       div.chips
+        span.chip 45 × 11
+        span.chip 45 × 9
+        span.chip 45 × 7
+        span.chip 45 × 7
+      div.wo-row
+       span.n Махи с гантелями на плечи
+       div.chips
+        span.chip 10 × 13
+        span.chip 10 × 10
+        span.chip 10 × 9
+      div.wo-row
+       span.n Бицепс со штангой стоя
+       div.chips
+        span.chip 27.5 × 10
+        span.chip 27.5 × 9
+        span.chip 27.5 × 7
+      div.wo-row
+       span.n Кисть на блоке правая
+       div.chips
+        span.chip 12.5 × 13
+        span.chip 12.5 × 12
+        span.chip 12.5 × 11
+      div.wo-row
+       span.n Кисть на блоке левая
+       div.chips
+        span.chip 12.5 × 12
+        span.chip 12.5 × 10
+        span.chip 12.5 × 9
+     div.wo
+      div.wo-h
+       div.row
+        b Пятница, 12 сентября
+        span.tag день 3
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 4 × 5 по 72.5
+        span.tag 77%
+      div.wo-row
+       span.n Бабочка
+       div.chips
+        span.chip 40 × 10
+        span.chip 40 × 9
+        span.chip 40 × 8
+        span.chip 40 × 8
+      div.wo-row
+       span.n Бицепс бедра на тренажере лежа на животе
+       div.chips
+        span.chip 30 × 11
+        span.chip 30 × 8
+        span.chip 30 × 8
+      div.wo-row
+       span.n Трицепс с косичкой на блоке
+       div.chips
+        span.chip 22.5 × 10
+        span.chip 22.5 × 8
+        span.chip 22.5 × 7
+        span.chip 22.5 × 4
+      div.wo-row
+       span.n Бицепс Bayesian curl
+       div.chips
+        span.chip 10 × 13
+        span.chip 10 × 11
+        span.chip 10 × 8
+      div.wo-row
+       span.n Пресс
+       div.chips
+        span.chip 0 × 15
+        span.chip 0 × 13
+        span.chip 0 × 12
+      div.wo-row
+       span.n Кисть с гантелью правая рука
+       div.chips
+        span.chip 10 × 14
+        span.chip 10 × 13
+        span.chip 10 × 11
+      div.wo-row
+       span.n Кисть с гантелью левая рука
+       div.chips
+        span.chip 10 × 12
+        span.chip 10 × 11
+        span.chip 10 × 8
+
+=== 4. загрузить сохранённую копию
+адрес: "#setup"
+шапка: как в шаге 1
+поля: как в шаге 1
+сообщение: "Копия загружена: 24 тренировки"
+записи:
+  + workouts/2025-11-10 {"date":"2025-11-10","slot":"mon","items":[{"ex":"bench","cyc":"87/3","sets":"95x3 95x3 95x3 95x3"},{"ex":"lat_pulldown","rng":"8-12","sets":"55x12 52.5x12 52.5x11 50x12"},{"ex":"leg_curl_seated","rng":"8-12","sets":"37.5x11 37.5x9 35x11 35x9"},{"ex":"lat_raise_machine","rng":"8-13","sets":"22.5x10 22.5x9 20x13 20x11"},{"ex":"tri_overhead","rng":"8-13","sets":"20x9 20x9 17.5x11"},{"ex":"hammer","rng":"8-14","sets":"16x10 16x6 14x12"}]}
+экран: как в шаге 1
+
+=== 5. записи те же, что до правки
+сообщение: ""
+
+=== 6. сначала сохранить нынешние
+файл: "{\"filename\":\"dnevnik-backup-2025-11-12.json\",\"text\":\"{\\n \\\"format\\\": \\\"training-diary-backup\\\",\\n \\\"version\\\": 1,\\n \\\"exportedAt\\\": \\\"2025-11-12T10:00:06.000Z\\\",\\n \\\"profiles\\\": [\\n  {\\n   \\\"id\\\": \\\"me\\\",\\n   \\\"name\\\": \\\"Мой дневник\\\",\\n   \\\"config\\\": {\\n    \\\"start\\\": \\\"2025-09-08\\\",\\n    \\\"zones\\\": {\\n     \\\"min\\\": 4,\\n     \\\"opt\\\": 10,\\n     \\\"high\\\": 20\\n    },\\n    \\\"cycle\\\": {\\n     \\\"inc\\\": 2,\\n     \\\"sets\\\": 4,\\n     \\\"pct\\\": {\\n      \\\"3\\\": 87,\\n      \\\"4\\\": 82,\\n      \\\"5\\\": 77\\n     }\\n    },\\n    \\\"method\\\": \\\"Примерный дневник: атлет выдуман, записи посчитаны генератором data/make.cjs. Занятий в неделе три. Три базовых упражнения - жим лежа, жим ногами, подтягивания - ведутся волной: четыре подхода на 5, 4 и 3 повтора при 77, 82 и 87 процентах от расчётного максимума; максимум за неделю прибавляет не больше 2 процентов. В остальных упражнениях сначала растут повторы, потом вес, у каждого подхода свой счёт; до отказа остаётся один повтор.\\\",\\n    \\\"ex\\\": {\\n     \\\"bench\\\": {\\n      \\\"n\\\": \\\"Жим лежа\\\",\\n      \\\"mode\\\": \\\"cycle\\\",\\n      \\\"pat\\\": \\\"h_push\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"triceps\\\": 0.5,\\n       \\\"delt_front\\\": 0.5\\n      },\\n      \\\"round\\\": 5\\n     },\\n     \\\"leg_press\\\": {\\n      \\\"n\\\": \\\"Жим ногами\\\",\\n      \\\"mode\\\": \\\"cycle\\\",\\n      \\\"pat\\\": \\\"knee\\\",\\n      \\\"m\\\": {\\n       \\\"quads\\\": 1,\\n       \\\"glutes\\\": 0.5\\n      },\\n      \\\"round\\\": 5\\n     },\\n     \\\"pullup\\\": {\\n      \\\"n\\\": \\\"Подтягивания\\\",\\n      \\\"mode\\\": \\\"cycle\\\",\\n      \\\"pat\\\": \\\"v_pull\\\",\\n      \\\"m\\\": {\\n       \\\"lats\\\": 1,\\n       \\\"upper_back\\\": 0.5,\\n       \\\"biceps\\\": 0.5\\n      },\\n      \\\"round\\\": 1\\n     },\\n     \\\"incline_db\\\": {\\n      \\\"n\\\": \\\"Жим гантелей под углом 45\\\",\\n      \\\"pat\\\": \\\"h_push\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"step\\\": 1\\n     },\\n     \\\"pec_fly\\\": {\\n      \\\"n\\\": \\\"Бабочка\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5\\n      },\\n      \\\"step\\\": 2.5\\n     },\\n     \\\"lat_pulldown\\\": {\\n      \\\"n\\\": \\\"Вертикальная тяга в тренажере\\\",\\n      \\\"pat\\\": \\\"v_pull\\\",\\n      \\\"m\\\": {\\n       \\\"lats\\\": 1,\\n       \\\"upper_back\\\": 0.5,\\n       \\\"biceps\\\": 0.5\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"row_machine\\\": {\\n      \\\"n\\\": \\\"Горизонтальная тяга в тренажере\\\",\\n      \\\"pat\\\": \\\"h_pull\\\",\\n      \\\"m\\\": {\\n       \\\"upper_back\\\": 1,\\n       \\\"lats\\\": 0.5,\\n       \\\"delt_rear\\\": 0.5,\\n       \\\"biceps\\\": 0.5\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"tbar_row\\\": {\\n      \\\"n\\\": \\\"Горизонтальная тяга Т-бар\\\",\\n      \\\"pat\\\": \\\"h_pull\\\",\\n      \\\"m\\\": {\\n       \\\"upper_back\\\": 1,\\n       \\\"lats\\\": 0.5,\\n       \\\"delt_rear\\\": 0.5,\\n       \\\"biceps\\\": 0.5\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"lat_raise_db\\\": {\\n      \\\"n\\\": \\\"Махи с гантелями на плечи\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"step\\\": 1\\n     },\\n     \\\"lat_raise_machine\\\": {\\n      \\\"n\\\": \\\"Средние дельты в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"barbell_curl\\\": {\\n      \\\"n\\\": \\\"Бицепс со штангой стоя\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"hammer\\\": {\\n      \\\"n\\\": \\\"Молотки с гантелями\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1,\\n       \\\"forearms\\\": 0.5\\n      },\\n      \\\"step\\\": 1\\n     },\\n     \\\"bayesian_curl\\\": {\\n      \\\"n\\\": \\\"Бицепс Bayesian curl\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"tri_pushdown\\\": {\\n      \\\"n\\\": \\\"Трицепс с косичкой на блоке\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"triceps\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"tri_overhead\\\": {\\n      \\\"n\\\": \\\"Трицепс из за головы на блоке с косичкой\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"triceps\\\": 1\\n      },\\n      \\\"step\\\": 1.25\\n     },\\n     \\\"wrist_db_r\\\": {\\n      \\\"n\\\": \\\"Кисть с гантелью правая рука\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"uni\\\": true,\\n      \\\"step\\\": 1\\n     },\\n     \\\"wrist_db_l\\\": {\\n      \\\"n\\\": \\\"Кисть с гантелью левая рука\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"uni\\\": true,\\n      \\\"step\\\": 1\\n     },\\n     \\\"wrist_cable_r\\\": {\\n      \\\"n\\\": \\\"Кисть на блоке правая\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"uni\\\": true,\\n      \\\"step\\\": 1.25\\n     },\\n     \\\"wrist_cable_l\\\": {\\n      \\\"n\\\": \\\"Кисть на блоке левая\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"uni\\\": true,\\n      \\\"step\\\": 1.25\\n     },\\n     \\\"leg_ext\\\": {\\n      \\\"n\\\": \\\"Разгибания ног в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"quads\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"leg_curl_lying\\\": {\\n      \\\"n\\\": \\\"Бицепс бедра на тренажере лежа на животе\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"hams\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"leg_curl_seated\\\": {\\n      \\\"n\\\": \\\"Бицепс бедра сидя в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"hams\\\": 1\\n      },\\n      \\\"step\\\": 5\\n     },\\n     \\\"abs\\\": {\\n      \\\"n\\\": \\\"Пресс\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"m\\\": {\\n       \\\"abs\\\": 1\\n      },\\n      \\\"step\\\": 1\\n     }\\n    }\\n   },\\n   \\\"workouts\\\": [\\n    {\\n     \\\"id\\\": \\\"2025-09-08\\\",\\n     \\\"date\\\": \\\"2025-09-08\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"70x5 70x5 70x5 70x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x10 52.5x9 52.5x7 52.5x6\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x10 35x8 35x8 35x6\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x12 20x9 20x9 20x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x11 17.5x8 17.5x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x12 14x10 14x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-10\\\",\\n     \\\"date\\\": \\\"2025-09-10\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x11 45x9 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"155x5 155x5 155x5 155x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22x9 22x8 22x7 22x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"row_machine\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x11 45x9 45x7 45x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_db\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x10 10x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x10 27.5x9 27.5x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x13 12.5x12 12.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x12 12.5x10 12.5x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-12\\\",\\n     \\\"date\\\": \\\"2025-09-12\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"72.5x5 72.5x5 72.5x5 72.5x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"40x10 40x9 40x8 40x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x11 30x8 30x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x8 22.5x7 22.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x11 10x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"abs\\\",\\n       \\\"rng\\\": \\\"10-15\\\",\\n       \\\"sets\\\": \\\"0x15 0x13 0x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x14 10x13 10x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x12 10x11 10x8\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-15\\\",\\n     \\\"date\\\": \\\"2025-09-15\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"75x4 75x4 75x4 75x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x10 52.5x10 50x8 50x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x10 35x9 35x7 32.5x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x12 20x12 20x9 17.5x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x10 17.5x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x12 14x11 14x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-19\\\",\\n     \\\"date\\\": \\\"2025-09-19\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"80x4 80x4 80x4 80x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"40x11 40x9 40x9 40x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x11 30x10 30x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x11 22.5x9 20x12 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x13 10x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"abs\\\",\\n       \\\"rng\\\": \\\"10-15\\\",\\n       \\\"sets\\\": \\\"2.5x15 0x14 0x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x13 10x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x12 10x10 10x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-22\\\",\\n     \\\"date\\\": \\\"2025-09-22\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"80x3 80x3 80x3 80x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x11 52.5x9 50x9 50x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x9 35x9 32.5x11 32.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x13 20x10 20x10 20x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x10 17.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x13 14x11 14x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-24\\\",\\n     \\\"date\\\": \\\"2025-09-24\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x11 45x11 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"167.5x4 167.5x4 167.5x4 167.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"14x12w 22x10 22x10 20x10 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"row_machine\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x10 45x9 42.5x10 42.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_db\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x11 10x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x11 27.5x9 25x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x14 12.5x13 12.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x12 12.5x10 12.5x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-26\\\",\\n     \\\"date\\\": \\\"2025-09-26\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"87.5x3 87.5x3 87.5x3 87.5x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"40x12 40x11 40x8 37.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x12 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x9 22.5x9 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x12 10x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"abs\\\",\\n       \\\"rng\\\": \\\"10-15\\\",\\n       \\\"sets\\\": \\\"5x15 0x14 0x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x13 10x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x12 10x10 10x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-09-29\\\",\\n     \\\"date\\\": \\\"2025-09-29\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"72.5x5 72.5x5 72.5x5 72.5x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x10 52.5x10 50x11 50x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x? 35x? 32.5x? 32.5x?\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x8 20x12 20x9 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x11 17.5x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x13 14x12 14x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-01\\\",\\n     \\\"date\\\": \\\"2025-10-01\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x12 45x10 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"182.5x3 182.5x3 182.5x3 182.5x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22x11 22x9 20x11 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"row_machine\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x11 45x9 42.5x10 42.5x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_db\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x12 10x10 10x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x10 27.5x9 25x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x15 12.5x13 12.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x12 12.5x10 12.5x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-03\\\",\\n     \\\"date\\\": \\\"2025-10-03\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"80x5 80x5 80x5 80x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"42.5x10 40x10 40x10 37.5x11\\\",\\n       \\\"note\\\": \\\"сиденье на деление ниже\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x8 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x11 22.5x10 22.5x8 20x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x14 10x13 10x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"abs\\\",\\n       \\\"rng\\\": \\\"10-15\\\",\\n       \\\"sets\\\": \\\"7.5x15 0x15 0x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x14 10x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x12 10x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-13\\\",\\n     \\\"date\\\": \\\"2025-10-13\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"80x4 80x4 80x4 80x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"52.5x11 52.5x10 50x11 50x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x11 35x10 32.5x12 32.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x8 20x12 20x11 20x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x11 17.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x12 14x12 14x10\\\"\\n      }\\n     ],\\n     \\\"note\\\": \\\"первая после недели без тренировок\\\"\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-15\\\",\\n     \\\"date\\\": \\\"2025-10-15\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"47.5x9 45x11 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"165x5 165x5 165x5 165x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22x10 22x9 20x10 20x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"row_machine\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x8 45x8 42.5x9 42.5x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_db\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x9 10x9 10x6\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x9 27.5x9 27.5x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x15 12.5x13 12.5x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x12 12.5x10 12.5x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-17\\\",\\n     \\\"date\\\": \\\"2025-10-17\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"87.5x4 87.5x4 87.5x4 87.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"42.5x10 40x11 40x10 37.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x8 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x8 22.5x7 22.5x6\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x13 10x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x12 45x10 45x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x15 10x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x10 10x9\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-20\\\",\\n     \\\"date\\\": \\\"2025-10-20\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"87.5x3 87.5x3 87.5x3 87.5x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x15w 52.5x12 52.5x10 50x12 50x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"35x12 35x11 35x10 32.5x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x9 20x13 20x12 20x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x12 17.5x12 17.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"14x14 14x14 14x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-22\\\",\\n     \\\"date\\\": \\\"2025-10-22\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"47.5x12 45x12 45x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"180x4 180x4 180x4 180x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22x12 22x10 20x12 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tbar_row\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x10 30x8 30x7 30x7\\\",\\n       \\\"note\\\": \\\"узкая рукоять\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"27.5x12 27.5x10 27.5x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x16 12.5x14 12.5x14\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x14 12.5x12 12.5x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-24\\\",\\n     \\\"date\\\": \\\"2025-10-24\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"95x3 95x3 95x3 95x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"42.5x11 40x12 40x11 37.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x9 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x- 22.5x- 20x- 20x-\\\",\\n       \\\"skip\\\": true\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x16 10x13 10x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"47.5x11 45x11 45x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x16 10x14 10x13\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x14 10x12 10x10\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-27\\\",\\n     \\\"date\\\": \\\"2025-10-27\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"80x5 80x5 80x5 80x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"55x10 52.5x11 52.5x10 50x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"37.5x10 35x11 35x10 35x8\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x11 22.5x8 20x12 20x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"17.5x13 17.5x12 17.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"16x8 16x8 14x12\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-29\\\",\\n     \\\"date\\\": \\\"2025-10-29\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"50x9 47.5x11 45x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"180x4 180x4 180x4 180x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"24x9 22x11 22x10 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tbar_row\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x10 30x10 27.5x11 27.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x8 27.5x11 27.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"15x- 12.5x- 12.5x-\\\",\\n       \\\"skip\\\": true\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x- 12.5x- 12.5x-\\\",\\n       \\\"skip\\\": true\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-10-31\\\",\\n     \\\"date\\\": \\\"2025-10-31\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"77/5\\\",\\n       \\\"sets\\\": \\\"85x5 85x5 85x5 85x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"42.5x12 42.5x10 40x11 37.5x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x8 30x10 30x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x11 22.5x9 20x12 20x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x7 10x? 10x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"47.5x12 45x12 45x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12x10 10x15 10x14\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x13 10x13 10x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-11-03\\\",\\n     \\\"date\\\": \\\"2025-11-03\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"87.5x4 87.5x4 87.5x4 87.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"55x11 52.5x11 52.5x11 50x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"37.5x11 35x12 35x11 35x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x10 20x12 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x9 17.5x13 17.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"16x9 16x7 14x13\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-11-05\\\",\\n     \\\"date\\\": \\\"2025-11-05\\\",\\n     \\\"slot\\\": \\\"wed\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"50x10 47.5x12 45x7\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_press\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"195x3 195x3 195x3 195x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"incline_db\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"24x9 22x12 22x? 20x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tbar_row\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x11 30x8 27.5x12 27.5x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"barbell_curl\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"30x? 27.5x? 27.5x?\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"15x9 12.5x15 12.5x15\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_cable_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12.5x14 12.5x13 12.5x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-11-07\\\",\\n     \\\"date\\\": \\\"2025-11-07\\\",\\n     \\\"slot\\\": \\\"fri\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"pullup\\\",\\n       \\\"cyc\\\": \\\"82/4\\\",\\n       \\\"sets\\\": \\\"92.5x4 92.5x4 92.5x4 92.5x4\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"pec_fly\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"45x14 42.5x10 40x12 40x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_lying\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"32.5x8 30x10 30x10\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_pushdown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x9 22.5x8 22.5x5\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"bayesian_curl\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x16 10x15 10x14\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_ext\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"50x12 47.5x12 45x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_r\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"12x10 10x16 10x14\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"wrist_db_l\\\",\\n       \\\"rng\\\": \\\"8-16\\\",\\n       \\\"sets\\\": \\\"10x15 10x12 10x11\\\"\\n      }\\n     ]\\n    },\\n    {\\n     \\\"id\\\": \\\"2025-11-10\\\",\\n     \\\"date\\\": \\\"2025-11-10\\\",\\n     \\\"slot\\\": \\\"mon\\\",\\n     \\\"items\\\": [\\n      {\\n       \\\"ex\\\": \\\"bench\\\",\\n       \\\"cyc\\\": \\\"87/3\\\",\\n       \\\"sets\\\": \\\"95x3 95x3 95x3 95x3\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_pulldown\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"55x12 52.5x12 52.5x11 50x12\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"leg_curl_seated\\\",\\n       \\\"rng\\\": \\\"8-12\\\",\\n       \\\"sets\\\": \\\"37.5x11 37.5x9 35x11 35x9\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"lat_raise_machine\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"22.5x10 22.5x9 20x13 20x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"tri_overhead\\\",\\n       \\\"rng\\\": \\\"8-13\\\",\\n       \\\"sets\\\": \\\"20x9 20x9 17.5x11\\\"\\n      },\\n      {\\n       \\\"ex\\\": \\\"hammer\\\",\\n       \\\"rng\\\": \\\"8-14\\\",\\n       \\\"sets\\\": \\\"16x10 16x6 14x12\\\"\\n      }\\n     ]\\n    }\\n   ],\\n   \\\"body\\\": [],\\n   \\\"coach\\\": null\\n  },\\n  {\\n   \\\"id\\\": \\\"p2\\\",\\n   \\\"name\\\": \\\"Второй профиль\\\",\\n   \\\"config\\\": {\\n    \\\"bw\\\": \\\"track\\\",\\n    \\\"cycle\\\": {\\n     \\\"inc\\\": 2,\\n     \\\"pct\\\": {\\n      \\\"3\\\": 87,\\n      \\\"4\\\": 82,\\n      \\\"5\\\": 77\\n     },\\n     \\\"sets\\\": 4\\n    },\\n    \\\"ex\\\": {\\n     \\\"abduction\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"hi\\\": 15,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 1\\n      },\\n      \\\"n\\\": \\\"Отведение ног в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 5,\\n      \\\"work\\\": 40,\\n      \\\"workR\\\": 14\\n     },\\n     \\\"abs\\\": {\\n      \\\"hi\\\": 15,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"abs\\\": 1\\n      },\\n      \\\"n\\\": \\\"Пресс\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 1\\n     },\\n     \\\"back_ext\\\": {\\n      \\\"hi\\\": 15,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"erectors\\\": 1,\\n       \\\"glutes\\\": 0.5,\\n       \\\"hams\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Гиперэкстензия\\\",\\n      \\\"pat\\\": \\\"hinge\\\",\\n      \\\"step\\\": 5\\n     },\\n     \\\"barbell_curl\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1\\n      },\\n      \\\"n\\\": \\\"Бицепс со штангой стоя\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"bayesian_curl\\\": {\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1\\n      },\\n      \\\"n\\\": \\\"Бицепс Bayesian curl\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 5\\n     },\\n     \\\"bench\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Жим лежа\\\",\\n      \\\"pat\\\": \\\"h_push\\\"\\n     },\\n     \\\"chest_press\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"max\\\": 30,\\n      \\\"n\\\": \\\"Жим в тренажере на грудь\\\",\\n      \\\"pat\\\": \\\"h_push\\\",\\n      \\\"step\\\": 2.5,\\n      \\\"work\\\": 15,\\n      \\\"workR\\\": 12\\n     },\\n     \\\"db_bench\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Жим гантелей лежа\\\",\\n      \\\"pat\\\": \\\"h_push\\\",\\n      \\\"step\\\": 2\\n     },\\n     \\\"db_ohp\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"delt_front\\\": 1,\\n       \\\"delt_mid\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Жим гантелей сидя\\\",\\n      \\\"pat\\\": \\\"v_push\\\",\\n      \\\"step\\\": 2,\\n      \\\"work\\\": 6\\n     },\\n     \\\"hammer\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 1,\\n       \\\"forearms\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Молотки с гантелями\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"hip_thrust\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 1,\\n       \\\"hams\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Ягодичный мост со штангой\\\",\\n      \\\"pat\\\": \\\"hinge\\\",\\n      \\\"step\\\": 2.5,\\n      \\\"work\\\": 60,\\n      \\\"workR\\\": 10\\n     },\\n     \\\"incline_db\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5,\\n       \\\"triceps\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Жим гантелей под углом 45\\\",\\n      \\\"pat\\\": \\\"h_push\\\"\\n     },\\n     \\\"lat_pulldown\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 0.5,\\n       \\\"lats\\\": 1,\\n       \\\"upper_back\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Вертикальная тяга в тренажере\\\",\\n      \\\"pat\\\": \\\"v_pull\\\",\\n      \\\"step\\\": 2.5,\\n      \\\"work\\\": 30,\\n      \\\"workR\\\": 11\\n     },\\n     \\\"lat_raise\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"hi\\\": 20,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"n\\\": \\\"Махи гантелями в стороны\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 2,\\n      \\\"work\\\": 4\\n     },\\n     \\\"lat_raise_db\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"n\\\": \\\"Махи с гантелями на плечи\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"lat_raise_machine\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"delt_mid\\\": 1\\n      },\\n      \\\"n\\\": \\\"Средние дельты в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"leg_curl_lying\\\": {\\n      \\\"hi\\\": 15,\\n      \\\"lo\\\": 10,\\n      \\\"m\\\": {\\n       \\\"hams\\\": 1\\n      },\\n      \\\"n\\\": \\\"Сгибания ног лежа\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 5,\\n      \\\"work\\\": 20,\\n      \\\"workR\\\": 13\\n     },\\n     \\\"leg_curl_seated\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"hams\\\": 1\\n      },\\n      \\\"n\\\": \\\"Бицепс бедра сидя в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"leg_ext\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"quads\\\": 1\\n      },\\n      \\\"n\\\": \\\"Разгибания ног в тренажере\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"leg_press\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 0.5,\\n       \\\"quads\\\": 1\\n      },\\n      \\\"n\\\": \\\"Жим ногами\\\",\\n      \\\"pat\\\": \\\"knee\\\",\\n      \\\"step\\\": 10,\\n      \\\"work\\\": 70,\\n      \\\"workR\\\": 15\\n     },\\n     \\\"lunge\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 1,\\n       \\\"quads\\\": 1\\n      },\\n      \\\"n\\\": \\\"Выпады с гантелями\\\",\\n      \\\"pat\\\": \\\"knee\\\",\\n      \\\"step\\\": 2,\\n      \\\"work\\\": 10,\\n      \\\"workR\\\": 10\\n     },\\n     \\\"pec_fly\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"chest\\\": 1,\\n       \\\"delt_front\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Бабочка\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"step\\\": 2.5\\n     },\\n     \\\"pullup\\\": {\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 0.5,\\n       \\\"lats\\\": 1,\\n       \\\"upper_back\\\": 0.5\\n      },\\n      \\\"n\\\": \\\"Подтягивания\\\",\\n      \\\"pat\\\": \\\"v_pull\\\",\\n      \\\"step\\\": 1\\n     },\\n     \\\"rdl\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"erectors\\\": 1,\\n       \\\"glutes\\\": 1,\\n       \\\"hams\\\": 1\\n      },\\n      \\\"n\\\": \\\"Румынская тяга\\\",\\n      \\\"pat\\\": \\\"hinge\\\",\\n      \\\"step\\\": 5,\\n      \\\"work\\\": 35,\\n      \\\"workR\\\": 9\\n     },\\n     \\\"row_machine\\\": {\\n      \\\"gear\\\": \\\"machine\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 0.5,\\n       \\\"delt_rear\\\": 0.5,\\n       \\\"lats\\\": 0.5,\\n       \\\"upper_back\\\": 1\\n      },\\n      \\\"n\\\": \\\"Горизонтальная тяга в тренажере\\\",\\n      \\\"pat\\\": \\\"h_pull\\\",\\n      \\\"step\\\": 5,\\n      \\\"work\\\": 25,\\n      \\\"workR\\\": 10\\n     },\\n     \\\"squat\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"glutes\\\": 0.5,\\n       \\\"quads\\\": 1\\n      },\\n      \\\"max\\\": 55,\\n      \\\"n\\\": \\\"Приседания со штангой\\\",\\n      \\\"pat\\\": \\\"knee\\\",\\n      \\\"step\\\": 5\\n     },\\n     \\\"tbar_row\\\": {\\n      \\\"gear\\\": \\\"barbell\\\",\\n      \\\"m\\\": {\\n       \\\"biceps\\\": 0.5,\\n       \\\"delt_rear\\\": 0.5,\\n       \\\"lats\\\": 0.5,\\n       \\\"upper_back\\\": 1\\n      },\\n      \\\"n\\\": \\\"Горизонтальная тяга Т-бар\\\",\\n      \\\"pat\\\": \\\"h_pull\\\"\\n     },\\n     \\\"tri_overhead\\\": {\\n      \\\"gear\\\": \\\"cable\\\",\\n      \\\"m\\\": {\\n       \\\"triceps\\\": 1\\n      },\\n      \\\"n\\\": \\\"Трицепс из за головы на блоке с косичкой\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"tri_pushdown\\\": {\\n      \\\"gear\\\": \\\"cable\\\",\\n      \\\"m\\\": {\\n       \\\"triceps\\\": 1\\n      },\\n      \\\"n\\\": \\\"Трицепс с косичкой на блоке\\\",\\n      \\\"pat\\\": \\\"iso\\\"\\n     },\\n     \\\"wrist_cable_l\\\": {\\n      \\\"gear\\\": \\\"cable\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"n\\\": \\\"Кисть на блоке левая\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"uni\\\": true\\n     },\\n     \\\"wrist_cable_r\\\": {\\n      \\\"gear\\\": \\\"cable\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"n\\\": \\\"Кисть на блоке правая\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"uni\\\": true\\n     },\\n     \\\"wrist_db_l\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"n\\\": \\\"Кисть с гантелью левая рука\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"uni\\\": true\\n     },\\n     \\\"wrist_db_r\\\": {\\n      \\\"gear\\\": \\\"dumbbell\\\",\\n      \\\"m\\\": {\\n       \\\"forearms\\\": 1\\n      },\\n      \\\"n\\\": \\\"Кисть с гантелью правая рука\\\",\\n      \\\"pat\\\": \\\"iso\\\",\\n      \\\"uni\\\": true\\n     }\\n    },\\n    \\\"gear\\\": {\\n     \\\"barbell\\\": {\\n      \\\"step\\\": 2.5\\n     },\\n     \\\"cable\\\": {\\n      \\\"step\\\": 2.5\\n     },\\n     \\\"dumbbell\\\": {\\n      \\\"step\\\": 2\\n     },\\n     \\\"machine\\\": {\\n      \\\"step\\\": 2.5\\n     }\\n    },\\n    \\\"ignore\\\": {\\n     \\\"calves\\\": 1,\\n     \\\"chest\\\": 1,\\n     \\\"forearms\\\": 1\\n    },\\n    \\\"method\\\": \\\"\\\",\\n    \\\"program\\\": {\\n     \\\"focus\\\": \\\"\\\",\\n     \\\"lean\\\": true,\\n     \\\"made\\\": \\\"2025-11-11\\\",\\n     \\\"name\\\": \\\"Пример: всё тело три раза в неделю\\\",\\n     \\\"others\\\": \\\"\\\",\\n     \\\"since\\\": \\\"2025-11-11\\\",\\n     \\\"slots\\\": {\\n      \\\"fri\\\": [\\n       {\\n        \\\"ex\\\": \\\"rdl\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lunge\\\",\\n        \\\"n\\\": 4\\n       },\\n       {\\n        \\\"ex\\\": \\\"db_bench\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lat_pulldown\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lat_raise\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"abduction\\\",\\n        \\\"n\\\": 2\\n       }\\n      ],\\n      \\\"mon\\\": [\\n       {\\n        \\\"ex\\\": \\\"hip_thrust\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"leg_press\\\",\\n        \\\"n\\\": 4\\n       },\\n       {\\n        \\\"ex\\\": \\\"db_ohp\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"back_ext\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"leg_curl_lying\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"abs\\\",\\n        \\\"n\\\": 3\\n       }\\n      ],\\n      \\\"wed\\\": [\\n       {\\n        \\\"ex\\\": \\\"squat\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lat_pulldown\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"chest_press\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"row_machine\\\",\\n        \\\"n\\\": 4\\n       },\\n       {\\n        \\\"ex\\\": \\\"abduction\\\",\\n        \\\"n\\\": 3\\n       },\\n       {\\n        \\\"ex\\\": \\\"lat_raise\\\",\\n        \\\"n\\\": 2\\n       }\\n      ]\\n     }\\n    },\\n    \\\"rest\\\": 90,\\n    \\\"rir\\\": 2,\\n    \\\"start\\\": \\\"2025-11-10\\\",\\n    \\\"zones\\\": {\\n     \\\"high\\\": 20,\\n     \\\"min\\\": 4,\\n     \\\"opt\\\": 10\\n    }\\n   },\\n   \\\"workouts\\\": [],\\n   \\\"body\\\": [],\\n   \\\"coach\\\": null\\n  }\\n ]\\n}\"}"
+
+=== 7. после перезагрузки записи те же
+файл: ""
+экран: правки к шагу 6
+@@ 351 -1 +1
+-  details#setup-more.morebox(open="")
++  details#setup-more.morebox
+
+=== 8. сверка после перезагрузки

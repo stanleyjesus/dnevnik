@@ -1,0 +1,1119 @@
+Снимок сценария «советы · дневник неделей позже» с днями приложения «День 1…N».
+Сверяет: npm run screens -- --дни. Переписать (только намеренно): npm run screens -- --переписать. Как устроен — app/scripts/snapshots.mjs.
+
+=== 1. советы
+адрес: "#coach"
+шапка: целиком
+  div.wrap
+   | "\n  "
+   div.brand
+    svg(viewBox="0 0 24 24" aria-hidden="true") …#37e8870c3f
+    h1 Тренировочный дневник
+   | "\n  "
+   div.top-meta
+    span#prof-slot
+     select#prof.prof(aria-label="Чей дневник открыт")
+      option(value="me" selected="") Мой дневник
+      option(value="p2") Второй профиль
+    span#week-badge Неделя 11 · 17 ноя – 23 ноя
+    span#sync.sync.ok
+     i
+     span
+   | "\n"
+  | " профиль=me"
+  a(href="#overview") Обзор
+  a(href="#workout") Тренировка
+  a(href="#journal") Журнал
+  a(href="#progress") Прогресс
+  a(href="#muscles") Мышцы
+  a(href="#coach" aria-current="page") Советы
+  a(href="#program") Программа
+  a(href="#setup") Настройка
+поля: —
+сообщение: ""
+курсор: ""
+файл: ""
+буфер: ""
+записи:
+  body/2025-11-03 4f2afdc6c4
+  body/2025-11-10 e4ccde204d
+  body/2025-11-17 82a30a2847
+  config/main 3a638df694
+  config/p2 9aff51afd9
+  config/profiles 304989c7da
+  workouts/2025-09-08 60c270d39a
+  workouts/2025-09-10 941e594b86
+  workouts/2025-09-12 e4e9b93c7f
+  workouts/2025-09-15 9eca0c3b9f
+  workouts/2025-09-19 dffe7844a8
+  workouts/2025-09-22 5de032b523
+  workouts/2025-09-24 ab8b7b8965
+  workouts/2025-09-26 167e26c559
+  workouts/2025-09-29 8874a7171a
+  workouts/2025-10-01 c09af81e94
+  workouts/2025-10-03 ed3b1add2b
+  workouts/2025-10-13 8c3a16e6d5
+  workouts/2025-10-15 33e8268f62
+  workouts/2025-10-17 4684cf0ff2
+  workouts/2025-10-20 269c7e08c7
+  workouts/2025-10-22 184b91fb0f
+  workouts/2025-10-24 02bb02ca64
+  workouts/2025-10-27 572948a158
+  workouts/2025-10-29 9af25e8991
+  workouts/2025-10-31 91f5258ccd
+  workouts/2025-11-03 e5ea9e35b6
+  workouts/2025-11-05 7ff89a3942
+  workouts/2025-11-07 07af07f9b7
+  workouts/2025-11-10 d323f65cd6
+  workouts/2025-11-12 b4ff841882
+  workouts/2025-11-15 5831df1705
+  workouts/2025-11-17 9121e86074
+  workouts_p2/2025-11-14 d6e3dcb259
+  workouts_p2/2025-11-17 61ede9cbb4
+черновик:
+  td-profile me
+экран: целиком
+  div.wrap.stack
+   section.card
+    div.sec-h
+     div
+      h2 Замечания дневника
+      p.note Пересчитываются после каждой записи по твоим правилам прогрессии и недельному объёму.
+     div.row(style="gap:12px")
+      span.pill.warn
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+       | внимание: 3
+      span.pill.info
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+       | заметки: 3
+      span.pill.good
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+       | хорошо: 3
+    div.ins.warn
+     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+     div.grow
+      div.k Внимание · Объём
+      div.t Меньше 4 подходов в неделю: Задние дельты 1.9 и Ягодицы 1.7
+      div.x Это ниже минимальной дозы, при которой рост заметен. Что добавить: задние дельты — обратная бабочка или тяга каната к лицу, 3–4 подхода дважды в неделю; ягодицы — румынская тяга, ягодичный мост или выпады, 3–4 подхода.
+      a.btn.ghost.sm(href="#muscles" style="margin-left:-8px") Открыть раздел
+    div.ins.warn
+     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+     div.grow
+      div.k Внимание · Прогресс
+      div.t Застой: Средние дельты в тренажере
+      div.x Лучший подход (22.5 × 11) был 3 тренировки назад, 27 октября. Убедись, что подход идёт до RIR 1. Если да — сбрось вес на 10% на 1–2 недели и набери повторы заново, либо смени вариант упражнения.
+      a.btn.ghost.sm(href="#progress" style="margin-left:-8px") Открыть раздел
+    div.ins.warn
+     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+     div.grow
+      div.k Внимание · Прогресс
+      div.t Застой: Бицепс бедра на тренажере лежа на животе
+      div.x Лучший подход (32.5 × 9) был 3 тренировки назад, 24 октября. Убедись, что подход идёт до RIR 1. Если да — сбрось вес на 10% на 1–2 недели и набери повторы заново, либо смени вариант упражнения.
+      a.btn.ghost.sm(href="#progress" style="margin-left:-8px") Открыть раздел
+    div.ins.info
+     svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+     div.grow
+      div.k Заметка · Объём
+      div.t Ниже рабочей зоны: Широчайшие 7.9, Верх спины 6.8, Передние дельты 5, Средние дельты 4, Трицепс 9.9, Предплечья 6.3, Квадрицепс 9.2 и Бицепс бедра 6.8
+      div.x От 4 до 10 подходов в неделю мышцы растут, но медленнее, чем могли бы. Если какая-то из них в приоритете, добавляй по 1–2 подхода в неделю: широчайшие — ещё подходы вертикальной тяги или пуловер на блоке; верх спины — ещё подходы горизонтальной тяги; передние дельты — жим над головой с гантелями или штангой, 3–4 подхода; средние дельты — ещё подходы махов в стороны; трицепс — ещё подход разгибаний; предплечья — сгибания кисти или молотки; квадрицепс — ещё подходы разгибаний, приседания или гакк; бицепс бедра — ещё подходы сгибаний или румынская тяга.
+      a.btn.ghost.sm(href="#muscles" style="margin-left:-8px") Открыть раздел
+    div.ins.info
+     svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+     div.grow
+      div.k Заметка · Баланс
+      div.t Кисть на блоке: правая сильнее на 9.09%
+      div.x Правая 15 × 10, левая 12.5 × 14. Начинай со слабой руки и не делай сильной больше повторов, чем получилось слабой.
+      a.btn.ghost.sm(href="#progress" style="margin-left:-8px") Открыть раздел
+    div.ins.info
+     svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+     div.grow
+      div.k Заметка · Данные
+      div.t Не записаны повторы: 9 подходов
+      div.x Бицепс бедра сидя в тренажере 29.09, Бицепс Bayesian curl 31.10, Жим гантелей под углом 45 05.11, Бицепс со штангой стоя 05.11. Эти подходы не считаются ни в объёме, ни в прогрессе. Если ты их делал, допиши повторы в журнале.
+      a.btn.ghost.sm(href="#journal" style="margin-left:-8px") Открыть раздел
+    div.ins.good
+     svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+     div.grow
+      div.k Хорошо · Объём
+      div.t В рабочей зоне 10–20: Грудь 10 и Бицепс 12.4
+      div.x Среднее за недели 8–10, в подходах в неделю. За половину подхода идут косвенная работа и подходы, где в запасе осталось 3 повтора и больше.
+      a.btn.ghost.sm(href="#muscles" style="margin-left:-8px") Открыть раздел
+    div.ins.good
+     svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+     div.grow
+      div.k Хорошо · Вес тела
+      div.t Вес растёт в нужном темпе: +0.35 кг в неделю (+0.5%)
+      div.x Ориентир для набора — 0.25–0.5% веса тела в неделю.
+      a.btn.ghost.sm(href="#progress" style="margin-left:-8px") Открыть раздел
+    div.ins.good
+     svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+     div.grow
+      div.k Хорошо · Прогресс
+      div.t Быстрее всего растут: Подтягивания +22%, Жим лежа +21%, Жим гантелей под углом 45 +20% и Разгибания ног в тренажере +14%
+      div.x Изменение расчётного максимума лучшего подхода с первой тренировки упражнения до последней.
+      a.btn.ghost.sm(href="#progress" style="margin-left:-8px") Открыть раздел
+
+=== 2. раздел из первого замечания
+адрес: "#muscles"
+шапка: правки к шагу 1
+@@ 22 -2 +2
+- a(href="#muscles") Мышцы
+- a(href="#coach" aria-current="page") Советы
++ a(href="#muscles" aria-current="page") Мышцы
++ a(href="#coach") Советы
+экран: правки к шагу 1
+@@ 5 -75 +547
++     h2 Нагрузка на теле
++     p.note Подходов в неделю по факту: среднее за недели 8, 9, 10.
++    div.seg(role="group" aria-label="Что показать на теле")
++     button#bm-fact(aria-pressed="true") По факту
++     button#bm-plan(aria-pressed="false") По программе
++   div.bodymap
++    figure.bm-fig
++     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#8298fa456d
++     figcaption Вид спереди
++    figure.bm-fig
++     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#3300035b5f
++     figcaption Вид сзади
++   div.scale(style="margin:10px 0")
++    span.sw
++     i.hc.z-none
++     | нет нагрузки
++    span.sw
++     i.hc.z-low
++     | мало: до 4
++    span.sw
++     i.hc.z-base
++     | ниже рабочей: 4–10
++    span.sw
++     i.hc.z-opt
++     | рабочая зона: 10–20
++    span.sw
++     i.hc.z-high
++     | выше зоны
++    span.sw
++     i.hc.z-off
++     | вне расчёта
++   p.sub Нажми на мышцу или подпись, чтобы увидеть оценку и что с ней делать.
++  section.card
++   div.sec-h
++    div
++     h2 Подходы на мышцу по неделям
++     p.note Подход, где мышца работает основной, считается за 1, где помогает — за 0.5. Подход, после которого в запасе осталось 3 повтора и больше, идёт за половину: у подходов по проценту от максимума запас считается по проценту, если ты не отметил его сам. Оценка стоит по среднему за три последние полные недели (недели 8, 9, 10).
++   div.scroll-x.to-end
++    table.heat
++     thead
++      tr
++       th Мышца
++       th(style="text-align:center" title="8 сен – 14 сен") н1
++       th(style="text-align:center" title="15 сен – 21 сен") н2
++       th(style="text-align:center" title="22 сен – 28 сен") н3
++       th(style="text-align:center" title="29 сен – 5 окт") н4
++       th(style="text-align:center" title="6 окт – 12 окт") н5
++       th(style="text-align:center" title="13 окт – 19 окт") н6
++       th(style="text-align:center" title="20 окт – 26 окт") н7
++       th(style="text-align:center" title="27 окт – 2 ноя") н8
++       th(style="text-align:center" title="3 ноя – 9 ноя") н9
++       th(style="text-align:center" title="10 ноя – 16 ноя") н10
++       th(style="text-align:center" title="17 ноя – 23 ноя") н11
++       th Среднее
++       th(style="text-align:left") Оценка
++     tbody
++      tr.g
++       td(colspan="14")
++        span.eyebrow Верх
++      tr
++       td Грудь
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 1: 10") 10
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Грудь, неделя 2: 6") 6
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 3: 12") 12
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 4: 10") 10
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Грудь, неделя 5: 0") –
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 6: 10") 10
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 7: 12") 12
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 8: 10") 10
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Грудь, неделя 9: 9") 9
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 10: 11") 11
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Грудь, неделя 11: 4") 4
++       td
++        b 10
++        span#mavg-chest.msplit (масса 7.3 · сила 2.7)
++       td(style="text-align:left")
++        span.pill.good
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++         | рабочая зона
++      tr
++       td Широчайшие
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Широчайшие, неделя 1: 8") 8
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Широчайшие, неделя 2: 6") 6
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Широчайшие, неделя 3: 10") 10
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Широчайшие, неделя 4: 8") 8
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Широчайшие, неделя 5: 0") –
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Широчайшие, неделя 6: 8") 8
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Широчайшие, неделя 7: 10") 10
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Широчайшие, неделя 8: 8") 8
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Широчайшие, неделя 9: 8") 8
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Широчайшие, неделя 10: 7.8") 7.8
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Широчайшие, неделя 11: 4") 4
++       td
++        b 7.9
++        span#mavg-lats.msplit (масса 5.9 · сила 2)
++       td(style="text-align:left")
++        span.pill.warn
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++         | ниже рабочей зоны
++      tr
++       td Верх спины
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Верх спины, неделя 1: 7") 7
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Верх спины, неделя 2: 3") 3
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Верх спины, неделя 3: 8") 8
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Верх спины, неделя 4: 7") 7
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Верх спины, неделя 5: 0") –
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Верх спины, неделя 6: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Верх спины, неделя 7: 8") 8
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Верх спины, неделя 8: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Верх спины, неделя 9: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Верх спины, неделя 10: 6.5") 6.5
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Верх спины, неделя 11: 2") 2
++       td
++        b 6.8
++        span#mavg-upper_back.msplit (масса 5.8 · сила 1)
++       td(style="text-align:left")
++        span.pill.warn
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++         | ниже рабочей зоны
++      tr
++       td Передние дельты
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Передние дельты, неделя 1: 5") 5
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Передние дельты, неделя 2: 3") 3
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Передние дельты, неделя 3: 6") 6
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Передние дельты, неделя 4: 5") 5
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Передние дельты, неделя 5: 0") –
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Передние дельты, неделя 6: 5") 5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Передние дельты, неделя 7: 6") 6
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Передние дельты, неделя 8: 5") 5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Передние дельты, неделя 9: 4.5") 4.5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Передние дельты, неделя 10: 5.5") 5.5
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Передние дельты, неделя 11: 2") 2
++       td
++        b 5
++        span#mavg-delt_front.msplit (масса 3.7 · сила 1.3)
++       td(style="text-align:left")
++        span.pill.warn
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++         | ниже рабочей зоны
++      tr
++       td Средние дельты
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Средние дельты, неделя 1: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Средние дельты, неделя 2: 4") 4
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Средние дельты, неделя 3: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Средние дельты, неделя 4: 7") 7
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Средние дельты, неделя 5: 0") –
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Средние дельты, неделя 6: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Средние дельты, неделя 7: 4") 4
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Средние дельты, неделя 8: 4") 4
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Средние дельты, неделя 9: 4") 4
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Средние дельты, неделя 10: 4") 4
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Средние дельты, неделя 11: 4") 4
++       td
++        b 4
++       td(style="text-align:left")
++        span.pill.warn
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++         | ниже рабочей зоны
++      tr
++       td Задние дельты
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Задние дельты, неделя 1: 2") 2
++       td
++        button.hc.z-none(aria-pressed="false" aria-label="Задние дельты, неделя 2: 0") 0
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Задние дельты, неделя 3: 2") 2
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Задние дельты, неделя 4: 2") 2
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Задние дельты, неделя 5: 0") –
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Задние дельты, неделя 6: 2") 2
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Задние дельты, неделя 7: 2") 2
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Задние дельты, неделя 8: 2") 2
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Задние дельты, неделя 9: 2") 2
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Задние дельты, неделя 10: 1.8") 1.8
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Задние дельты, неделя 11: 0") 0
++       td
++        b 1.9
++       td(style="text-align:left")
++        span.pill.serious
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
++         | мало
++      tr.g
++       td(colspan="14")
++        span.eyebrow Руки
++      tr
++       td Бицепс
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Бицепс, неделя 1: 14") 14
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Бицепс, неделя 2: 9") 9
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Бицепс, неделя 3: 15") 15
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Бицепс, неделя 4: 14") 14
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Бицепс, неделя 5: 0") –
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Бицепс, неделя 6: 14") 14
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Бицепс, неделя 7: 15") 15
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Бицепс, неделя 8: 13") 13
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Бицепс, неделя 9: 11") 11
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Бицепс, неделя 10: 13.3") 13.3
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Бицепс, неделя 11: 4.5") 4.5
++       td
++        b 12.4
++        span#mavg-biceps.msplit (масса 11.4 · сила 1)
++       td(style="text-align:left")
++        span.pill.good
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++         | рабочая зона
++      tr
++       td Трицепс
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Трицепс, неделя 1: 10") 10
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Трицепс, неделя 2: 8") 8
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Трицепс, неделя 3: 11") 11
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Трицепс, неделя 4: 10") 10
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Трицепс, неделя 5: 0") –
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Трицепс, неделя 6: 10") 10
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Трицепс, неделя 7: 7") 7
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Трицепс, неделя 8: 10") 10
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Трицепс, неделя 9: 9.5") 9.5
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Трицепс, неделя 10: 10.3") 10.3
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Трицепс, неделя 11: 4.5") 4.5
++       td
++        b 9.9
++        span#mavg-triceps.msplit (масса 8.6 · сила 1.3)
++       td(style="text-align:left")
++        span.pill.warn
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++         | ниже рабочей зоны
++      tr
++       td Предплечья
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Предплечья, неделя 1: 7.5") 7.5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Предплечья, неделя 2: 4.5") 4.5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Предплечья, неделя 3: 7.5") 7.5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Предплечья, неделя 4: 7.5") 7.5
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Предплечья, неделя 5: 0") –
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Предплечья, неделя 6: 7.5") 7.5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Предплечья, неделя 7: 7.5") 7.5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Предплечья, неделя 8: 4.5") 4.5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Предплечья, неделя 9: 7.5") 7.5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Предплечья, неделя 10: 7") 7
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Предплечья, неделя 11: 1.3") 1.3
++       td
++        b 6.3
++       td(style="text-align:left")
++        span.pill.warn
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++         | ниже рабочей зоны
++      tr.g
++       td(colspan="14")
++        span.eyebrow Корпус
++      tr
++       td Пресс
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 1: 3") 3
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 2: 3") 3
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 3: 3") 3
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 4: 3") 3
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 5: 0") –
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 6: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 7: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 8: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 9: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Пресс, неделя 10: 0") 0
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Пресс, неделя 11: 0") 0
++       td
++        b 0
++       td(style="text-align:left")
++        span.pill вне расчёта
++      tr
++       td Разгибатели спины
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 1: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 2: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 3: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 4: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 5: 0") –
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 6: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 7: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 8: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 9: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Разгибатели спины, неделя 10: 0") 0
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Разгибатели спины, неделя 11: 0") 0
++       td
++        b 0
++       td(style="text-align:left")
++        span.pill вне расчёта
++      tr.g
++       td(colspan="14")
++        span.eyebrow Ноги
++      tr
++       td Квадрицепс
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Квадрицепс, неделя 1: 5") 5
++       td
++        button.hc.z-none(aria-pressed="false" aria-label="Квадрицепс, неделя 2: 0") 0
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Квадрицепс, неделя 3: 5") 5
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Квадрицепс, неделя 4: 7") 7
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Квадрицепс, неделя 5: 0") –
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Квадрицепс, неделя 6: 8") 8
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Квадрицепс, неделя 7: 8") 8
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Квадрицепс, неделя 8: 8") 8
++       td
++        button.hc.z-opt(aria-pressed="false" aria-label="Квадрицепс, неделя 9: 10") 10
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Квадрицепс, неделя 10: 9.5") 9.5
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Квадрицепс, неделя 11: 0") 0
++       td
++        b 9.2
++        span#mavg-quads.msplit (масса 5.9 · сила 3.3)
++       td(style="text-align:left")
++        span.pill.warn
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++         | ниже рабочей зоны
++      tr
++       td Бицепс бедра
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Бицепс бедра, неделя 1: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Бицепс бедра, неделя 2: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Бицепс бедра, неделя 3: 7") 7
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Бицепс бедра, неделя 4: 3") 3
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Бицепс бедра, неделя 5: 0") –
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Бицепс бедра, неделя 6: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Бицепс бедра, неделя 7: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Бицепс бедра, неделя 8: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Бицепс бедра, неделя 9: 7") 7
++       td
++        button.hc.z-base(aria-pressed="false" aria-label="Бицепс бедра, неделя 10: 6.5") 6.5
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Бицепс бедра, неделя 11: 4") 4
++       td
++        b 6.8
++       td(style="text-align:left")
++        span.pill.warn
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++         | ниже рабочей зоны
++      tr
++       td Ягодицы
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Ягодицы, неделя 1: 1") 1
++       td
++        button.hc.z-none(aria-pressed="false" aria-label="Ягодицы, неделя 2: 0") 0
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Ягодицы, неделя 3: 1") 1
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Ягодицы, неделя 4: 2") 2
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Ягодицы, неделя 5: 0") –
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Ягодицы, неделя 6: 1") 1
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Ягодицы, неделя 7: 1") 1
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Ягодицы, неделя 8: 1") 1
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Ягодицы, неделя 9: 2") 2
++       td
++        button.hc.z-low(aria-pressed="false" aria-label="Ягодицы, неделя 10: 2") 2
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Ягодицы, неделя 11: 0") 0
++       td
++        b 1.7
++        span#mavg-glutes.msplit (масса 0 · сила 1.7)
++       td(style="text-align:left")
++        span.pill.serious
++         svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
++         | мало
++      tr
++       td Икры
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 1: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 2: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 3: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 4: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 5: 0") –
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 6: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 7: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 8: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 9: 0") 0
++       td
++        button.hc.z-off(aria-pressed="false" aria-label="Икры, неделя 10: 0") 0
++       td
++        button.hc.z-cur.cur(aria-pressed="false" aria-label="Икры, неделя 11: 0") 0
++       td
++        b 0
++       td(style="text-align:left")
++        span.pill вне расчёта
++   div.scale(style="margin-top:12px")
++    span.sw
++     i.hc.z-none
++     | нет нагрузки
++    span.sw
++     i.hc.z-low
++     | мало: до 4
++    span.sw
++     i.hc.z-base
++     | ниже рабочей: 4–10
++    span.sw
++     i.hc.z-opt
++     | рабочая зона: 10–20
++    span.sw
++     i.hc.z-high
++     | выше зоны: больше 20
++    span.sw
++     i.hc.z-cur
++     | неделя ещё идёт или мышца вне расчёта
++   hr.rule
++   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
++  details.card
++   summary(style="cursor:pointer;font-weight:600") На чём основаны оценки
++   div.note.stack(style="gap:8px;margin-top:10px")
++    p Границы 4 / 10 / 20 подходов в неделю — практический ориентир, а не закон: рост мышц увеличивается вместе с недельным числом подходов, но каждый следующий подход добавляет всё меньше. Около 4 подходов в неделю — нижний порог, при котором рост заметен; 10–20 — зона, где обычно лежит разумный баланс между результатом, временем и восстановлением.
++    p Способ счёта (прямой подход = 1, косвенный = 0.5) взят из мета-регрессии Pelland и соавторов о дозе недельного объёма; там же показано, что сила выходит на плато при заметно меньшем объёме, чем гипертрофия. Близость к отказу (RIR 1 в твоей методике) важна именно для роста мышц — это вывод мета-регрессии Robinson и соавторов.
++    p Коэффициенты упражнений и сами границы можно изменить в настройке.
+
+=== 3. советы снова
+адрес: "#coach"
+шапка: как в шаге 1
+экран: как в шаге 1
+
+=== 4. раздел из третьего замечания
+адрес: "#progress"
+шапка: правки к шагу 3
+@@ 21 -1 +1
+- a(href="#progress") Прогресс
++ a(href="#progress" aria-current="page") Прогресс
+@@ 23 -1 +1
+- a(href="#coach" aria-current="page") Советы
++ a(href="#coach") Советы
+поля: целиком
+  bw-date=2025-11-19
+  bw-kg=
+экран: правки к шагу 3
+@@ 2 -0 +339
++  div.grid2.even
++   div.card
++    div.sec-h
++     h2 Индекс силы
++     span.sub 119 · +19% к первой неделе
++    div.chart
++     svg(viewBox="0 0 324 210" height="210" role="img" aria-label="Индекс силы по неделям") …#5690102321
++     div.tip(style="display: none;")
++    p.note(style="margin-top:8px") Первая неделя = 100. Каждую неделю индекс меняется на среднее изменение расчётного максимума в упражнениях, которые были и неделей раньше, поэтому замена упражнений его не ломает.
++   div.card
++    div.sec-h
++     h2 Рабочие подходы по неделям
++    div.chart
++     svg(viewBox="0 0 324 210" height="210" role="img" aria-label="Рабочие подходы по неделям") …#43954098bb
++     div.tip(style="display: none;")
++    p.note(style="margin-top:8px") Здесь все подходы с записанными повторами, без разминочных и без поправки на запас. Правая и левая рука вместе дают один подход. Серый столбец — текущая неделя.
++  section.stack(style="gap:12px")
++   div.sec-h(style="margin-bottom:0")
++    h2 Упражнения
++    div.seg(role="group" aria-label="Какие упражнения показать")
++     button(aria-pressed="true") В программе
++     button(aria-pressed="false") Все
++   div#ex-detail.card
++    div.sec-h
++     div
++      h3(style="font-size:18px") Жим лежа
++      p.sub Грудь, Передние дельты ½, Трицепс ½
++     div.row
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++      div.seg(role="group" aria-label="Что показать на графике")
++       button(aria-pressed="true") Рабочий вес
++       button(aria-pressed="false") Максимум
++    div.kv
++     div
++      b 85 × 5
++      span лучший подход, 17 ноя
++     div
++      b 110.4 кг
++      span расчётный максимум по волне
++     div
++      b +21%
++      span с 8 сен (70 × 5)
++     div
++      b 10
++      span тренировок
++    div.chart
++     div.legend
++      span
++       i.key(style="border-top-color: var(--s1);")
++       | 5 повт. · 77%
++      span
++       i.key(style="border-top-color: var(--s2);")
++       | 4 повт. · 82%
++      span
++       i.key(style="border-top-color: var(--s3);")
++       | 3 повт. · 87%
++     svg(viewBox="0 0 324 220" height="220" role="img" aria-label="Рабочий вес по неделям волны") …#3061ce5544
++     div.tip(style="display: none;")
++    div.scroll-x(style="margin-top:10px")
++     table
++      thead
++       tr
++        th Дата
++        th(style="text-align:left") Подходы
++        th Максимум
++        th К прошлой
++      tbody
++       tr
++        td 17 ноя, День 1
++        td.wrapc
++         div.chips(style="justify-content:flex-start")
++          span.chip(title="в запасе повторов: 1")
++           | 85 × 5
++           small r1
++          span.chip(title="в запасе повторов: 1")
++           | 85 × 5
++           small r1
++          span.chip(title="в запасе повторов: 1")
++           | 85 × 5
++           small r1
++          span.chip(title="в запасе повторов: 1")
++           | 85 × 5
++           small r1
++        td 110.4
++        td +1.1%
++       tr
++        td 10 ноя, День 1
++        td.wrapc
++         div.chips(style="justify-content:flex-start")
++          span.chip 95 × 3
++          span.chip 95 × 3
++          span.chip 95 × 3
++          span.chip 95 × 3
++        td 109.2
++        td +2.3%
++       tr
++        td 3 ноя, День 1
++        td.wrapc
++         div.chips(style="justify-content:flex-start")
++          span.chip 87.5 × 4
++          span.chip 87.5 × 4
++          span.chip 87.5 × 4
++          span.chip 87.5 × 4
++        td 106.7
++        td +2.7%
++       tr
++        td 27 окт, День 1
++        td.wrapc
++         div.chips(style="justify-content:flex-start")
++          span.chip 80 × 5
++          span.chip 80 × 5
++          span.chip 80 × 5
++          span.chip 80 × 5
++        td 103.9
++        td +3.3%
++       tr
++        td 20 окт, День 1
++        td.wrapc
++         div.chips(style="justify-content:flex-start")
++          span.chip 87.5 × 3
++          span.chip 87.5 × 3
++          span.chip 87.5 × 3
++          span.chip 87.5 × 3
++        td 100.6
++        td +3.1%
++       tr
++        td 13 окт, День 1
++        td.wrapc
++         div.chips(style="justify-content:flex-start")
++          span.chip 80 × 4
++          span.chip 80 × 4
++          span.chip 80 × 4
++          span.chip 80 × 4
++        td 97.6
++        td +3.6%
++    button.btn.ghost.sm(style="margin-top:6px") Вся история: 10
++   div.ex-grid
++    button.ex-card(aria-pressed="true")
++     span.nm Жим лежа
++     div.ln
++      span.big 85 × 5
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#10104ce47b
++     div.ln
++      span.tag +21% за 10 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Вертикальная тяга в тренажере
++     div.ln
++      span.big 57.5 × 11
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#e4138efb89
++     div.ln
++      span.tag +10% за 10 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Бицепс бедра сидя в тренажере
++     div.ln
++      span.big 37.5 × 11
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#5ae102eda3
++     div.ln
++      span.tag +10% за 9 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Средние дельты в тренажере
++     div.ln
++      span.big 22.5 × 10
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#ee904ce53f
++     div.ln
++      span.tag +7% за 10 тренировок
++      span.pill.warn
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++       | застой
++    button.ex-card(aria-pressed="false")
++     span.nm Трицепс из за головы на блоке с косичкой
++     div.ln
++      span.big 20 × 8
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#7f5af0478e
++     div.ln
++      span.tag +11% за 10 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Молотки с гантелями
++     div.ln
++      span.big 16 × 10
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#fbe82825de
++     div.ln
++      span.tag +9% за 10 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Разгибания ног в тренажере
++     div.ln
++      span.big 52.5 × 10
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#229c68633a
++     div.ln
++      span.tag +14% за 13 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Жим ногами
++     div.ln
++      span.big 175 × 5
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#7e8f417455
++     div.ln
++      span.tag +13% за 8 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Жим гантелей под углом 45
++     div.ln
++      span.big 24 × 11
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#cf19b0a18d
++     div.ln
++      span.tag +20% за 8 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Бицепс со штангой стоя
++     div.ln
++      span.big 30 × 10
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#e405cbf130
++     div.ln
++      span.tag +9% за 7 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Кисть на блоке правая
++     div.ln
++      span.big 15 × 10
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#5e617665bc
++     div.ln
++      span.tag +12% за 7 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Кисть на блоке левая
++     div.ln
++      span.big 12.5 × 14
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#143a952dd7
++     div.ln
++      span.tag +5% за 7 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Подтягивания
++     div.ln
++      span.big 100 × 3
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#ce02f82125
++     div.ln
++      span.tag +22% за 9 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Бабочка
++     div.ln
++      span.big 47.5 × 8
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#229a090511
++     div.ln
++      span.tag +13% за 9 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Бицепс бедра на тренажере лежа на животе
++     div.ln
++      span.big 30 × 10
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#78226cc1e2
++     div.ln
++      span.tag +2% за 9 тренировок
++      span.pill.warn
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++       | застой
++    button.ex-card(aria-pressed="false")
++     span.nm Трицепс с косичкой на блоке
++     div.ln
++      span.big 22.5 × 11
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#9c5aa0c615
++     div.ln
++      span.tag +7% за 8 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Бицепс Bayesian curl
++     div.ln
++      span.big 12.5 × 8
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#4f282f0431
++     div.ln
++      span.tag +13% за 9 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Кисть с гантелью правая рука
++     div.ln
++      span.big 12 × 10
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#8d190971eb
++     div.ln
++      span.tag +9% за 9 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Кисть с гантелью левая рука
++     div.ln
++      span.big 10 × 14
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#4f45772332
++     div.ln
++      span.tag +10% за 9 тренировок
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
++    button.ex-card(aria-pressed="false")
++     span.nm Горизонтальная тяга Т-бар
++     div.ln
++      span.big 30 × 11
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#a7045ed364
++     div.ln
++      span.tag +5% за 4 тренировки
++      span.pill.good
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++       | растёт
+@@ 5 -75 +26
++     h2 Вес тела
++     p.sub Последняя запись: 70.1 кг, 17 ноября · +0.35 кг в неделю (+0.5%)
++   div.row(style="margin-bottom:12px")
++    label.f
++     span Дата
++     input#bw-date(type="date")
++    label.f
++     span Вес, кг
++     input#bw-kg.num(type="text" inputmode="decimal" placeholder="70.1")
++    button.btn(style="align-self:flex-end") Записать
++   div.chart
++    svg(viewBox="0 0 324 180" height="180" role="img" aria-label="Вес тела") …#ac11c412c7
++    div.tip(style="display: none;")
++   div.chips(style="justify-content:flex-start;margin-top:10px")
++    span.chip
++     | 17.11 · 70.1
++     button.icon-btn(style="width:20px;height:20px" title="Удалить запись" aria-label="Удалить запись 17.11")
++      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++    span.chip
++     | 10.11 · 69.8
++     button.icon-btn(style="width:20px;height:20px" title="Удалить запись" aria-label="Удалить запись 10.11")
++      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++    span.chip
++     | 03.11 · 69.4
++     button.icon-btn(style="width:20px;height:20px" title="Удалить запись" aria-label="Удалить запись 03.11")
++      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+
+=== 5. большой экран
+экран: правки к шагу 4
+@@ 8 -1 +1
+-     svg(viewBox="0 0 324 210" height="210" role="img" aria-label="Индекс силы по неделям") …#5690102321
++     svg(viewBox="0 0 500 210" height="210" role="img" aria-label="Индекс силы по неделям") …#e3170e75b4
+@@ 15 -1 +1
+-     svg(viewBox="0 0 324 210" height="210" role="img" aria-label="Рабочие подходы по неделям") …#43954098bb
++     svg(viewBox="0 0 500 210" height="210" role="img" aria-label="Рабочие подходы по неделям") …#82deb2445f
+@@ 60 -1 +1
+-     svg(viewBox="0 0 324 220" height="220" role="img" aria-label="Рабочий вес по неделям волны") …#3061ce5544
++     svg(viewBox="0 0 1054 220" height="220" role="img" aria-label="Рабочий вес по неделям волны") …#b7d978bd20
+@@ 355 -1 +1
+-    svg(viewBox="0 0 324 180" height="180" role="img" aria-label="Вес тела") …#ac11c412c7
++    svg(viewBox="0 0 1054 180" height="180" role="img" aria-label="Вес тела") …#f9ce127e5f
+
+=== 6. советы на большом экране
+адрес: "#coach"
+шапка: как в шаге 1
+поля: —
+экран: как в шаге 1

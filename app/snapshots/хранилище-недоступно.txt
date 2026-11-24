@@ -1,0 +1,102 @@
+Снимок сценария «хранилище недоступно» с днями приложения «День 1…N».
+Сверяет: npm run screens -- --дни. Переписать (только намеренно): npm run screens -- --переписать. Как устроен — app/scripts/snapshots.mjs.
+
+=== 1. сообщение о сбое
+адрес: "#overview"
+шапка: целиком
+  div.wrap
+   | "\n  "
+   div.brand
+    svg(viewBox="0 0 24 24" aria-hidden="true") …#37e8870c3f
+    h1 Тренировочный дневник
+   | "\n  "
+   div.top-meta
+    span#prof-slot
+    span#week-badge Неделя 1 · 10 ноя – 16 ноя
+    span#sync.sync.bad
+     i
+     span хранилище недоступно
+   | "\n"
+  a(href="#overview" aria-current="page") Обзор
+  a(href="#workout") Тренировка
+  a(href="#journal") Журнал
+  a(href="#progress") Прогресс
+  a(href="#muscles") Мышцы
+  a(href="#coach") Советы
+  a(href="#program") Программа
+  a(href="#setup") Настройка
+поля: —
+сообщение: ""
+курсор: ""
+файл: ""
+буфер: ""
+записи: —
+черновик: —
+экран: целиком
+  div.wrap.stack
+   div.banner.crit
+    b "Хранилище на этом устройстве недоступно. "
+    | Записи не загрузились, и новые сейчас не сохранятся. Закрой режим «инкогнито», если он включён, и обнови страницу.
+
+=== 2. workout: открывается с тем же сообщением
+адрес: "#workout"
+шапка: правки к шагу 1
+@@ 14 -2 +2
+- a(href="#overview" aria-current="page") Обзор
+- a(href="#workout") Тренировка
++ a(href="#overview") Обзор
++ a(href="#workout" aria-current="page") Тренировка
+
+=== 3. journal: открывается с тем же сообщением
+адрес: "#journal"
+шапка: правки к шагу 2
+@@ 15 -2 +2
+- a(href="#workout" aria-current="page") Тренировка
+- a(href="#journal") Журнал
++ a(href="#workout") Тренировка
++ a(href="#journal" aria-current="page") Журнал
+
+=== 4. progress: открывается с тем же сообщением
+адрес: "#progress"
+шапка: правки к шагу 3
+@@ 16 -2 +2
+- a(href="#journal" aria-current="page") Журнал
+- a(href="#progress") Прогресс
++ a(href="#journal") Журнал
++ a(href="#progress" aria-current="page") Прогресс
+
+=== 5. muscles: открывается с тем же сообщением
+адрес: "#muscles"
+шапка: правки к шагу 4
+@@ 17 -2 +2
+- a(href="#progress" aria-current="page") Прогресс
+- a(href="#muscles") Мышцы
++ a(href="#progress") Прогресс
++ a(href="#muscles" aria-current="page") Мышцы
+
+=== 6. coach: открывается с тем же сообщением
+адрес: "#coach"
+шапка: правки к шагу 5
+@@ 18 -2 +2
+- a(href="#muscles" aria-current="page") Мышцы
+- a(href="#coach") Советы
++ a(href="#muscles") Мышцы
++ a(href="#coach" aria-current="page") Советы
+
+=== 7. program: открывается с тем же сообщением
+адрес: "#program"
+шапка: правки к шагу 6
+@@ 19 -2 +2
+- a(href="#coach" aria-current="page") Советы
+- a(href="#program") Программа
++ a(href="#coach") Советы
++ a(href="#program" aria-current="page") Программа
+
+=== 8. setup: открывается с тем же сообщением
+адрес: "#setup"
+шапка: правки к шагу 7
+@@ 20 -2 +2
+- a(href="#program" aria-current="page") Программа
+- a(href="#setup") Настройка
++ a(href="#program") Программа
++ a(href="#setup" aria-current="page") Настройка
