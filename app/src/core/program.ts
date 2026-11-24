@@ -12,7 +12,7 @@ import { planned, tally } from './tally.ts';
 import { ADDS } from './adapt.ts';
 import { STRONG } from './strength.ts';
 import { DAYS, awayDays, dayNo } from './days.ts';
-import { HOLD, MAX_EX, TYPE, appRules, inTime, moreTime, sameMuscles } from './rules.ts';
+import { HOLD, MAX_EX, ORDER, TYPE, appRules, dayOrder, inTime, moreTime, sameMuscles } from './rules.ts';
 import { estMinutes, fmtDur } from './time.ts';
 import type { Tally } from './tally.ts';
 import type { Add, BuildOpts, Cfg, Cut, DayOf, ExDef, LibEntry, Move, MuscleMap, OptOpts, ProgEntry, ProgNote, ProgSlots, Slot, Swap, Workout } from './types.ts';
@@ -784,6 +784,26 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     if (res.cut.length) note('Убрано из программы', res.cut.map(c => nm(c.ex) + ' (' + c.sl.s.toLowerCase() + ')').join(', ') + ': эти упражнения давали лишнее мышцам, которые и так выше своего уровня, или не помещались в лимит недели' + (time ? ' либо в ' + fmtDur(time) + ' на тренировку' : '') + '.');
   }
 
+  /* (в эталоне нет) Порядок упражнений в дне (решение владельца, 24 ноября 2026, вопрос сборки 13; rules.ts, dayOrder): первым движение цели «Гибрида» и «Силы: …»
+     (тяжёлый или лёгкий день — как и было: «лёгкий день встаёт первым»), за ним базовое дня, лёгкие дни силового режима, упражнения мышц в приоритете
+     и закреплённое «на массу»; на каждой ступени многосуставные до изоляции; соседние упражнения — на разные основные мышцы.
+     Заметка называет дни, где сборка переставила то, что в них уже стояло; новое упражнение и так отмечено «новое» */
+  if (appRules()) {
+    const own = MUSCLES.filter(m => !cfg.ignore[m.id]).map(m => m.id), pm = group && !own.every(m => group.m.includes(m)) ? group.m.filter(m => !cfg.ignore[m]) : [];
+    const mains = (e: ProgEntry) => Object.entries(mOf(e.ex)).filter(x => x[1] >= 1).map(x => x[0]);
+    const tier = (e: ProgEntry) => { const k = kindOf(c2, e.ex); return focus && (e.ex === focus || e.ex === focus + '_light') ? ORDER.goal : k === 'base' ? ORDER.base : k === 'light' ? ORDER.light : (e.pin || mains(e).some(m => pm.includes(m)) ? ORDER.prio : ORDER.rest) + (k === 'iso' ? 1 : 0); };
+    const side = (e: ProgEntry) => (c2.ex[e.ex] || {} as ExDef).uni ? JSON.stringify(Object.entries(mOf(e.ex)).sort()) : null;
+    const turned: string[] = [];
+    for (const sl of SLOTS) {
+      const L = slots[sl.id], to = dayOrder(L, tier, mains, side);
+      if (to === L) continue;
+      slots[sl.id] = to;
+      const had = (cur[sl.id] || []).map(e => e.ex), seq = (A: ProgEntry[]) => A.filter(e => had.includes(e.ex)).map(e => e.ex).join();
+      if (seq(L) !== seq(to)) turned.push(sl.s.toLowerCase());
+    }
+    const up = pm.length ? ', затем упражнения на мышцы в приоритете' : SLOTS.some(sl => slots[sl.id].some(e => e.pin)) ? ', затем упражнение на массу' : '';
+    if (turned.length) note('Порядок упражнений: ' + list(turned), 'Сначала ' + (focus ? nm(focus).toLowerCase() + ', затем остальные базовые' : 'базовое дня') + up + ', многосуставные — раньше изоляции, соседние упражнения — на разные мышцы. По исследованиям в упражнении ближе к началу тренировки больше повторов и сильнее растёт сила; чередование мышц — правило дневника. Свой порядок — в «Вручную»: там сборка его не трогает.');
+  }
   /* the first weights: named in the settings, or to be found in the first workout */
   if (!opts.manual) {
     const ids = [...new Set(SLOTS.flatMap(sl => slots[sl.id].map(e => e.ex)))].filter(id => !lastSessionItem(done, isLight(c2, id) ? c2.ex[id].of! : id, null, null));

@@ -1,4 +1,4 @@
-/* Методика под цель (решение владельца, 24 ноября 2026): rules.ts, разбор и источники — docs/03, раздел 15.
+/* Методика под цель и порядок упражнений в дне (решения владельца, 24 ноября 2026): rules.ts, разбор и источники — docs/03, раздел 15.
    С днями «День 1…N» по проценту от расчётного максимума идёт только базовое в силовой роли: сила по запасу, поддержание, лёгкий день.
    Всё остальное, в том числе базовое в «Массе», — по независимой двойной прогрессии с диапазоном по типу упражнения: многосуставные 6–10,
    изоляция 8–12. Волны 77–82–87 нет. С таблицей дней эталона всё считается как в эталоне. Числа — на примерных данных из data/. */
@@ -9,8 +9,8 @@ import { Core } from '../src/core/index.ts';
 import { useDays } from '../src/core/days.ts';
 import { withStarter } from '../src/core/starter.ts';
 import { AUTO, LIGHT_A } from '../src/core/goals.ts';
-import { HOLD, TYPE, appRange, appRules, byPct, logMax } from '../src/core/rules.ts';
-import type { BuildOpts, Cfg, ExDef, Item, SetRec, Workout } from '../src/core/types.ts';
+import { HOLD, ORDER, TYPE, appRange, appRules, byPct, dayOrder, logMax } from '../src/core/rules.ts';
+import type { BuildOpts, Cfg, ExDef, Item, ProgEntry, ProgSlots, SetRec, Workout } from '../src/core/types.ts';
 
 type Raw = { ex: Record<string, ExDef>; program?: unknown };
 function withDays<T>(n: number, fn: () => T): T { useDays(n, false); try { return fn(); } finally { useDays(null, true); } }
@@ -157,3 +157,78 @@ test('время подхода: у базового на двойной про�
   });
 });
 
+/* ---------- порядок упражнений в дне (решение владельца, 24 ноября 2026, вопрос сборки 13; docs/03, раздел 15.3) ---------- */
+type Built = ReturnType<typeof Core.buildProgram>;
+const ids = (L: ProgEntry[]) => L.map(e => e.ex);
+const orderNote = (pr: Built) => pr.notes.filter(n => n.t.startsWith('Порядок упражнений')).map(n => n.t);
+/* так программу принимает экран (acceptProgram) */
+function acceptAs(raw: Raw, pr: Built, since: string): Cfg {
+  const r = plain(raw); Object.assign(r.ex, plain(pr.create));
+  for (const [id, g] of Object.entries(pr.goals)) { if (!r.ex[id]) continue; if (g) r.ex[id].goal = g; else delete r.ex[id].goal; }
+  const slots: ProgSlots = {}; for (const id of Object.keys(pr.slots)) slots[id] = pr.slots[id].map(e => e.n ? { ex: e.ex, n: e.n } : { ex: e.ex });
+  r.program = Object.assign({ name: pr.name, focus: pr.focus || '', others: pr.others || '', prio: pr.prio, budget: pr.budget, since, made: since, slots }, pr.strength ? { strength: true, lean: true } : {}, pr.dropped.length ? { drop: pr.dropped.slice() } : {});
+  return Core.mergeCfg(r);
+}
+
+test('порядок в дне: пример из разбора — базовое первым, многосуставное до изоляции, два упражнения на трицепс не подряд', () => {
+  const cfg = Core.mergeCfg(withStarter(null)), mains = (e: ProgEntry) => Object.entries(cfg.ex[e.ex].m || {}).filter(x => x[1] >= 1).map(x => x[0]);
+  const tier = (e: ProgEntry) => { const k = Core.kindOf(cfg, e.ex); return k === 'base' ? ORDER.base : k === 'light' ? ORDER.light : ORDER.rest + (k === 'iso' ? 1 : 0); };
+  const day = ['bench', 'tri_pushdown', 'skullcrusher', 'lat_pulldown', 'pec_fly', 'barbell_curl'].map(ex => ({ ex })), put = dayOrder(day, tier, mains, () => null);
+  assert.deepEqual(put.map(e => cfg.ex[e.ex].n), ['Жим лежа', 'Вертикальная тяга в тренажере', 'Трицепс с косичкой на блоке', 'Бабочка', 'Французский жим лежа', 'Бицепс со штангой стоя']);
+  assert.equal(dayOrder(put, tier, mains, () => null), put, 'расставленный день остаётся как есть');
+  /* два упражнения на трицепс не развести, если в дне больше нет изоляции: порядок остаётся прежним */
+  const two = ['bench', 'skullcrusher', 'tri_pushdown'].map(ex => ({ ex }));
+  assert.deepEqual(ids(dayOrder(two, tier, mains, () => null)), ['bench', 'skullcrusher', 'tri_pushdown']);
+  /* правая и левая сторона — одно упражнение: стоят рядом, даже если между ними было другое */
+  const side = (e: ProgEntry) => e.ex.startsWith('w') ? 'кисть' : null, wm = (e: ProgEntry) => e.ex.startsWith('w') ? ['forearms'] : mains(e);
+  assert.deepEqual(ids(dayOrder(['w_r', 'barbell_curl', 'w_l', 'lat_pulldown'].map(ex => ({ ex })), e => e.ex === 'lat_pulldown' ? ORDER.rest : ORDER.rest + 1, wm, side)), ['lat_pulldown', 'w_r', 'w_l', 'barbell_curl']);
+});
+
+test('порядок в дне: сборка расставляет дни черновика, заметка называет дни, где переставлено прежнее', () => withDays(3, () => {
+  const W = seedW(), raw = seedRaw(), pr = Core.buildProgram(W, Core.mergeCfg(raw), {});
+  /* день 2 начинался с разгибаний ног — изоляции перед жимом ногами на те же мышцы; теперь первым базовое, разгибания — после многосуставных */
+  assert.deepEqual(ids(pr.cur.wed).slice(0, 2), ['leg_ext', 'leg_press']);
+  assert.deepEqual(ids(pr.slots.wed), ['leg_press', 'incline_db', 'tbar_row', 'x_thrust', 'leg_ext', 'wrist_cable_r', 'wrist_cable_l', 'x_rear', 'lat_raise_db']);
+  /* румынская тяга и сгибания ног на бицепс бедра не подряд: между ними жим над головой */
+  assert.deepEqual(ids(pr.slots.mon), ['bench', 'lat_pulldown', 'x_rdl', 'x_ohp', 'leg_curl_seated', 'lat_raise_machine', 'tri_overhead', 'hammer', 'x_rear']);
+  assert.deepEqual(orderNote(pr), ['Порядок упражнений: день 2'], 'в днях 1 и 3 прежние упражнения стоят в прежнем порядке, новое отмечено «новое»');
+  assert.ok(!pr.same);
+  /* после «Принять» сборка совпадает с принятой и ничего не переставляет */
+  const again = Core.buildProgram(W, acceptAs(raw, pr, '2025-11-12'), {});
+  assert.ok(again.same, 'сразу после «Принять» сборка предлагает другую программу'); assert.deepEqual(orderNote(again), []);
+  /* мышцы в приоритете — сразу после базового, раньше многосуставных на другие мышцы */
+  const arms = Core.buildProgram(W, Core.mergeCfg(raw), { prio: 'arms' });
+  assert.deepEqual(ids(arms.slots.mon).slice(0, 4), ['bench', 'tri_overhead', 'hammer', 'lat_pulldown']);
+  assert.deepEqual(ids(arms.slots.fri).slice(0, 4), ['pullup', 'tri_pushdown', 'bayesian_curl', 'pec_fly']);
+  /* гибрид: упражнение на массу — сразу после базового своего дня; лёгкий день жима — раньше базового на поддержании */
+  const pb = Core.buildProgram(W, Core.mergeCfg(raw), { focus: 'bench' }), mass = Core.SLOTS.find(sl => pb.slots[sl.id].some(e => e.pin))!;
+  assert.deepEqual(ids(pb.slots[mass.id]).slice(0, 2), ['leg_press', 'incline_db']);
+  assert.deepEqual(ids(pb.slots.fri).slice(0, 2), ['bench_light', 'pullup']);
+  /* «Вручную» порядок атлета */
+  const hand = Core.buildProgram(W, Core.mergeCfg(raw), { manual: true });
+  assert.deepEqual(Core.SLOTS.map(sl => ids(hand.slots[sl.id])), Core.SLOTS.map(sl => ids(hand.cur[sl.id])));
+}));
+
+test('порядок в дне при любой цели и любом числе дней: ступени по порядку, стороны рядом, после «Принять» то же; с таблицей дней эталона порядок не трогается', () => {
+  const later = readJson('data/later.json').profiles[0];
+  const sets: [string, Raw, Workout[], string][] = [['примерные данные', seedRaw(), seedW(), '2025-11-12'], ['второй профиль', readJson('data/config.p2.stored.json'), [], '2025-11-12'],
+    ['дневник неделей позже', later.config, Core.sortW(later.workouts.map((d: Record<string, unknown>) => Core.fromDoc(String(d.id), d))), '2025-11-19']];
+  const modes: BuildOpts[] = [{}, { prio: 'legs' }, { prio: 'arms' }, { focus: 'bench' }, { strength: true, budget: 80 }, { focus: 'bench', strength: true, budget: 80 }, { time: 105 }];
+  for (const n of [2, 3, 4]) for (const [name, raw, W, since] of sets) for (const opts of modes) withDays(n, () => {
+    const pr = Core.buildProgram(W, Core.mergeCfg(plain(raw)), opts), c = pr.cfg, at = n + ' дня, ' + name + ', ' + JSON.stringify(opts);
+    for (const sl of Core.SLOTS) {
+      /* движение цели (тяжёлый или лёгкий день), остальные базовые, лёгкие дни силового режима, потом всё остальное */
+      const L = pr.slots[sl.id], rank = L.map(e => { const k = Core.kindOf(c, e.ex); return pr.focus && (e.ex === pr.focus || e.ex === pr.focus + '_light') ? 0 : k === 'base' ? 1 : k === 'light' ? 2 : 3; });
+      assert.ok(rank.every((r, i) => !i || r >= rank[i - 1]), at + ', ' + sl.s + ': базовое и лёгкий день не первыми — ' + ids(L).join());
+      for (let i = 0; i < L.length; i++) if (c.ex[L[i].ex].uni) {
+        const j = L.findIndex((e, x) => x !== i && c.ex[e.ex].uni && JSON.stringify(c.ex[e.ex].m) === JSON.stringify(c.ex[L[i].ex].m));
+        assert.ok(j < 0 || Math.abs(j - i) === 1, at + ', ' + sl.s + ': стороны упражнения не рядом — ' + ids(L).join());
+      }
+    }
+    const again = Core.buildProgram(W, acceptAs(raw, pr, since), opts);
+    assert.deepEqual(orderNote(again), [], at + ': после «Принять» сборка снова переставляет');
+    assert.deepEqual(Core.SLOTS.map(sl => ids(again.slots[sl.id]).filter(id => ids(pr.slots[sl.id]).includes(id)).join()), Core.SLOTS.map(sl => ids(pr.slots[sl.id]).filter(id => ids(again.slots[sl.id]).includes(id)).join()), at + ': после «Принять» порядок другой');
+  });
+  const pr = Core.buildProgram(seedW(), Core.mergeCfg(seedRaw()), {});
+  assert.deepEqual(orderNote(pr), []); assert.deepEqual(ids(pr.slots.wed).slice(0, 2), ['leg_ext', 'leg_press'], 'с таблицей дней эталона — порядок эталона');
+});

@@ -1,7 +1,7 @@
 /* Правила приложения, которых в эталоне нет (решения владельца, 23 и 24 ноября 2026).
    Они действуют, когда приложение выбрало дни «День 1…N» (useDays): так открывается любой профиль в приложении.
    С таблицей дней эталона — эталонные тесты и общие сценарии сверки экранов — всё считается как в эталоне.
-   Держат tests/rules.test.ts и, для методики под цель, tests/method.test.ts. */
+   Держат tests/rules.test.ts и, для методики под цель и порядка в дне, tests/method.test.ts. */
 import { DAYS } from './days.ts';
 import { e1, estRir, work } from './sets.ts';
 import type { Cfg, ExDef, Item, MuscleMap, Range } from './types.ts';
@@ -100,6 +100,53 @@ export function logMax(it: Item, rir: number) {
 }
 /** Вес подхода двойной прогрессии от расчётного максимума: середина диапазона с запасом по методике, вниз до шага снаряда */
 export const fromMax = (tm: number, range: Range, rir: number, step: number) => { const v = Math.floor(tm / (1 + (Math.round((range[0] + range[1]) / 2) + rir) / 30) / step + 1e-6) * step; return v > 0 ? +v.toFixed(3) : null; };
+/* Порядок упражнений в дне (решение владельца, 24 ноября 2026, вопрос сборки 13; разбор — docs/03, раздел 15.3). С днями «День N» сборка
+   расставляет каждый день черновика; в «Вручную» порядок атлета, сборка его не трогает:
+   1. Первым — то, что важнее для цели: движение цели «Гибрида» и «Силы: …» (тяжёлый или лёгкий день), затем базовое дня, затем лёгкие дни силового
+      режима (сразу после тяжёлых), затем упражнения мышц в приоритете и закреплённое упражнение «на массу».
+   2. На каждой ступени многосуставные — до изоляции.
+   3. Соседние упражнения — на разные основные мышцы, если можно иначе, не нарушая 1 и 2.
+   Из раскладок с наименьшим числом соседей на одни мышцы берётся ближайшая к прежнему порядку: раньше остаётся то, что стояло раньше.
+   Правая и левая сторона одного упражнения стоят рядом и считаются одним упражнением */
+/** Ступени порядка в дне: движение цели, базовое, лёгкий день, мышцы в приоритете и упражнение «на массу», остальное; у двух последних изоляция — следующая ступень */
+export const ORDER = { goal: 0, base: 1, light: 2, prio: 3, rest: 5 };
+/** Порядок дня. tier — ступень упражнения (меньше — раньше), mains — его основные мышцы, side — общий ключ у правой и левой стороны
+    одного упражнения (null — не сторона). Если менять нечего, возвращает тот же массив, иначе новый */
+export function dayOrder<T>(L: T[], tier: (e: T) => number, mains: (e: T) => string[], side: (e: T) => string | null): T[] {
+  type U = { at: number; t: number; m: string[]; items: T[] };
+  const units: U[] = [], open: Record<string, U> = {};
+  L.forEach((e, at) => {
+    const k = side(e);
+    if (k != null && open[k]) { open[k].items.push(e); delete open[k]; return; }
+    const u: U = { at, t: tier(e), m: mains(e), items: [e] };
+    if (k != null) open[k] = u;
+    units.push(u);
+  });
+  units.sort((a, b) => (a.t - b.t) || (a.at - b.at));
+  const n = units.length, clash = (a: number, b: number) => a >= 0 && units[a].m.some(m => units[b].m.includes(m)) ? 1 : 0;
+  let seq = units.map((u, i) => i);
+  if (n > 2 && n <= 16) {
+    /* перебор с запоминанием: что уже стоит (маска) и что стоит последним; дальше можно ставить только упражнения самой ранней ступени из оставшихся */
+    const full = (1 << n) - 1, memo = new Map<number, number>();
+    const next = (mask: number) => { let i = 0; while (mask & (1 << i)) i++; const out: number[] = []; for (let j = i; j < n && units[j].t === units[i].t; j++) if (!(mask & (1 << j))) out.push(j); return out; };
+    const cost = (mask: number, last: number): number => {
+      if (mask === full) return 0;
+      const key = mask * 17 + last + 1, got = memo.get(key);
+      if (got !== undefined) return got;
+      let v = Infinity;
+      for (const j of next(mask)) v = Math.min(v, clash(last, j) + cost(mask | (1 << j), j));
+      memo.set(key, v);
+      return v;
+    };
+    seq = [];
+    for (let mask = 0, last = -1; mask !== full;) {
+      const aim = cost(mask, last), j = next(mask).find(j => clash(last, j) + cost(mask | (1 << j), j) === aim)!;
+      seq.push(j); mask |= 1 << j; last = j;
+    }
+  }
+  const out = seq.flatMap(i => units[i].items);
+  return out.every((e, i) => e === L[i]) ? L : out;
+}
 /** Настройка, как её читает приложение; в хранилище ничего не переписывается. Программа вокруг одного базового, принятая с «Растут как раньше»
     до 24 ноября 2026: остальные базовые в ней без отметки шли по обычной волне. Волны в приложении нет, а «растут» — это сила по запасу раз в неделю */
 export function appCfg(c: Cfg) {
