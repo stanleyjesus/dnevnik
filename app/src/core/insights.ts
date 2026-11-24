@@ -3,14 +3,14 @@
 import { FIX, MUSCLES, PATTERNS } from './catalog.ts';
 import { dnum, fmtDate, fmtDM } from './dates.ts';
 import { fmt, list, pct, plural, signed } from './format.ts';
-import { exName, isCycle, isLight } from './config.ts';
+import { exName, isLight } from './config.ts';
 import { TARGET, work } from './sets.ts';
-import { AUTO, WAVE_S } from './goals.ts';
+import { AUTO, goalOf, WAVE_S } from './goals.ts';
 import { allStats, stalledSets, weeksInfo } from './stats.ts';
 import { avgVolume, volume, zone } from './volume.ts';
 import { planCycle } from './plan.ts';
 import { planned, ruleBreaks } from './tally.ts';
-import { appRules } from './rules.ts';
+import { appRules, byPct } from './rules.ts';
 import { bodyRate } from './body.ts';
 import type { ExStat } from './stats.ts';
 import type { Insight, Item, Muscle, State, Workout } from './types.ts';
@@ -59,7 +59,7 @@ export function insights(st: State) {
 
   /* progress per exercise */
   const stats = allStats(workouts, cfg).filter(s => s.active);
-  const dp = stats.filter(s => !isCycle(cfg, s.id) && !isLight(cfg, s.id));
+  const dp = stats.filter(s => !byPct(cfg, s.id) && !isLight(cfg, s.id));   // (в эталоне нет) с днями «День N» базовое на двойной прогрессии — здесь же
   for (const s of dp) {
     if (s.status === 'flat' || s.status === 'down') {
       const p = s.pr.best;
@@ -83,20 +83,24 @@ export function insights(st: State) {
   if (cmp.length >= 6 && worse.length >= cmp.length / 2) add('warn', 'Восстановление', 'Похоже на накопленную усталость',
     'В ' + worse.length + ' из ' + cmp.length + ' упражнений последняя тренировка слабее предыдущей: ' + list(worse.slice(0, 5).map(s => exName(cfg, s.id))) + '. Если на следующей неделе картина та же, сделай разгрузку: те же веса, половина подходов.', 'progress');
 
-  /* the percentage wave */
-  const cyc = stats.filter(s => isCycle(cfg, s.id));
+  /* the percentage wave (в приложении — сила по запасу и поддержание: волны нет, решение владельца 24 ноября 2026) */
+  const cyc = stats.filter(s => byPct(cfg, s.id)), app = appRules();
   if (cyc.length) {
     const lines: string[] = [], bad: string[] = [];
     for (const s of cyc) {
       const p = planCycle(workouts, cfg, s.id, null);
       const wk = Math.max(1, Math.round((dnum(s.last.date) - dnum(s.first.date)) / 7));
-      lines.push(exName(cfg, s.id) + ': расчётный максимум ' + fmt(s.first.tm, 1) + ' → ' + fmt(s.last.tm, 1) + ' кг (' + signed(pct(s.last.tm!, s.first.tm!)) + '% за ' + wk + ' ' + plural(wk, ['неделю', 'недели', 'недель']) + '), дальше ' + fmt(p.w) + ' × ' + p.reps + (p.auto ? ' — сила по запасу: ' + AUTO.sets + ' × ' + AUTO.reps + ' одним весом, вес по запасу в последнем подходе' : p.strong ? ' — приоритет силы, тяжёлая волна, максимум +' + fmt(WAVE_S.inc, 1) + '% раз в цикл' : p.hold ? ' — поддержание, максимум не растёт' : ''));
+      const t0 = s.first.tm || s.first.metric, t1 = s.last.tm || s.last.metric;   // (в эталоне нет) в журнале бывают записи и по двойной прогрессии: у них максимум по Эпли
+      lines.push(exName(cfg, s.id) + ': расчётный максимум ' + fmt(t0, 1) + ' → ' + fmt(t1, 1) + ' кг (' + signed(pct(t1, t0)) + '% за ' + wk + ' ' + plural(wk, ['неделю', 'недели', 'недель']) + '), дальше ' + fmt(p.w) + ' × ' + p.reps + (p.auto ? ' — сила по запасу: ' + AUTO.sets + ' × ' + AUTO.reps + ' одним весом, вес по запасу в последнем подходе' : p.strong ? ' — приоритет силы, тяжёлая волна, максимум +' + fmt(WAVE_S.inc, 1) + '% раз в цикл' : p.hold ? ' — поддержание, максимум не растёт' : ''));
       if (p.repeat) bad.push(exName(cfg, s.id) + ' — не все подходы закрыты ' + fmtDate(s.last.date, true) + ', неделя повторяется без прибавки');
       else if (p.hard) bad.push(exName(cfg, s.id) + ' — подход шёл в отказ, максимум на следующую неделю не повышается');
     }
-    if (bad.length) add('warn', 'Базовые', 'Волна упёрлась: ' + bad.length + ' ' + plural(bad.length, ['упражнение', 'упражнения', 'упражнений']), bad.join('; ') + '. Когда это случится второй раз подряд, переходи на прибавку раз в 3-недельный цикл.', 'progress');
+    if (bad.length) add('warn', 'Базовые', (app ? 'Подходы не закрыты: ' : 'Волна упёрлась: ') + bad.length + ' ' + plural(bad.length, ['упражнение', 'упражнения', 'упражнений']), bad.join('; ') + (app ? '. Вес остаётся тем же, пока подходы не закроются; если так два раза подряд, дневник предложит снизить максимум на 10%.' : '. Когда это случится второй раз подряд, переходи на прибавку раз в 3-недельный цикл.'), 'progress');
     const q = Math.round((Math.pow(1 + cfg.cycle.inc / 100, 13) - 1) * 100);
-    add('info', 'Базовые', 'Волна ' + Object.entries(cfg.cycle.pct).sort((a: any, b: any) => b[0] - a[0]).map(e => e[1] + '%').join(' / ') + ': максимум растёт на ' + fmt(cfg.cycle.inc, 1) + '% в неделю',
+    const auto = cyc.some(s => goalOf(cfg, s.id) !== 'hold'), held = cyc.some(s => goalOf(cfg, s.id) === 'hold');
+    if (app) add('info', 'Базовые', auto ? 'Сила по запасу: вес решает запас в последнем подходе' : 'Поддержание: вес не растёт',
+      lines.join('. ') + (auto ? '. Отмечай запас (RIR) в последнем подходе: ' + AUTO.aim + ' и больше — на следующей неделе плюс шаг, 1 — вес тот же, 0 или подходы не закрыты — минус ' + AUTO.down + '%' : '') + (held ? '. На поддержании вес прежний: по исследованиям этого хватает, чтобы сила не уходила' : '') + '.', 'progress');
+    else add('info', 'Базовые', 'Волна ' + Object.entries(cfg.cycle.pct).sort((a: any, b: any) => b[0] - a[0]).map(e => e[1] + '%').join(' / ') + ': максимум растёт на ' + fmt(cfg.cycle.inc, 1) + '% в неделю',
       lines.join('. ') + '. Такой темп — это +' + q + '% за квартал, и однажды он закончится. Отмечай запас (RIR) в подходах: как только он дойдёт до 0 или подходы перестанут закрываться, дневник перестанет повышать максимум и предложит повторить неделю.', 'progress');
   }
 

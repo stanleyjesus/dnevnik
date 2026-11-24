@@ -6,6 +6,7 @@ import { S } from './state.ts';
 import { D, render } from './render.ts';
 import { zonePill } from './charts.ts';
 import { bodyMap } from './bodymap.ts';
+import { appRules } from '../core/rules.ts';
 import type { Muscle, WeekInfo } from '../core/index.ts';
 
 /* ---------- muscles ---------- */
@@ -56,7 +57,7 @@ export function vMuscles() {
 
   const sw = (k: string, t: string) => h('span', { class: 'sw' }, h('i', { class: 'hc z-' + k }), t);
   out.push(h('section', { class: 'card' },
-    h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Подходы на мышцу по неделям'), h('p', { class: 'note' }, 'Подход, где мышца работает основной, считается за 1, где помогает — за 0.5. Подход, после которого в запасе осталось 3 повтора и больше, идёт за половину: у базовых по волне запас считается по проценту, если ты не отметил его сам. Оценка стоит по среднему за три последние полные недели (' + refTxt + ').'))),
+    h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Подходы на мышцу по неделям'), h('p', { class: 'note' }, 'Подход, где мышца работает основной, считается за 1, где помогает — за 0.5. Подход, после которого в запасе осталось 3 повтора и больше, идёт за половину: ' + (appRules() ? 'у подходов по проценту от максимума' : 'у базовых по волне') + ' запас считается по проценту, если ты не отметил его сам. Оценка стоит по среднему за три последние полные недели (' + refTxt + ').'))),
     h('div', { class: 'scroll-x to-end' }, h('table', { class: 'heat' }, h('thead', null, head), h('tbody', null, body))),
     h('div', { class: 'scale', style: 'margin-top:12px' }, sw('none', 'нет нагрузки'), sw('low', 'мало: до ' + z.min), sw('base', 'ниже рабочей: ' + z.min + '–' + z.opt), sw('opt', 'рабочая зона: ' + z.opt + '–' + z.high), sw('high', 'выше зоны: больше ' + z.high), sw('cur', 'неделя ещё идёт или мышца вне расчёта')),
     h('hr', { class: 'rule' }), detail));

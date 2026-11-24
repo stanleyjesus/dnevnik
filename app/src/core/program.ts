@@ -12,7 +12,7 @@ import { planned, tally } from './tally.ts';
 import { ADDS } from './adapt.ts';
 import { STRONG } from './strength.ts';
 import { DAYS, awayDays, dayNo } from './days.ts';
-import { MAX_EX, appRules, inTime, moreTime } from './rules.ts';
+import { HOLD, MAX_EX, TYPE, appRules, inTime, moreTime, sameMuscles } from './rules.ts';
 import { estMinutes, fmtDur } from './time.ts';
 import type { Tally } from './tally.ts';
 import type { Add, BuildOpts, Cfg, Cut, DayOf, ExDef, LibEntry, Move, MuscleMap, OptOpts, ProgEntry, ProgNote, ProgSlots, Slot, Swap, Workout } from './types.ts';
@@ -243,7 +243,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
       /* the second pass may also carry an exercise over to another day as it is: the week's volumes stay, the days change */
       if (fq) for (const sl of days) for (const e of slots[sl.id]) {
         if (!e.n || !isDp(e.ex) || byHand(e.ex) || e.pin || info(e.ex).uni || !hits(e.ex, thin)) continue;
-        for (const to of days) if (to !== sl && !slots[to.id].some(x => x.ex === e.ex) && !cut.some(c => c.ex === e.ex && c.sl === to))
+        for (const to of days) if (to !== sl && !slots[to.id].some(x => x.ex === e.ex || (same && sameM(mOf(x.ex), mOf(e.ex)))) && !cut.some(c => c.ex === e.ex && c.sl === to))   // (в эталоне нет) и не в день, где уже стоит упражнение с теми же мышцами
           take([{ sl, e, id: e.ex, f: 1, dn: -e.n, dw: -1, pen: 0.3, drop: true, to }, { sl: to, e: null, id: e.ex, f: 1, dn: e.n, dw: 1, pen: 0, add: true, n: e.n, from: sl }]);
       }
       if (!best) { if (fq) break; fq = true; continue; }
@@ -284,7 +284,7 @@ export function nudgeMuscle(c2: Cfg, slots: ProgSlots, m: string, dir: number, o
       const sc = c * 3 - 0.5 * side - 0.5 * harm + 0.05 * e.n + 0.01 * T.load[sl.id];
       if (!best || sc > best.sc) best = { sc, sl, e };
     }
-    if (!best) return { ok: false, text: SLOTS.some(sl => slots[sl.id].some(e => !e.n && (mOf(e.ex)[m] || 0) > 0)) ? 'Эту мышцу нагружают только упражнения по процентам: число подходов в них задаёт волна' : 'В программе нет упражнений на эту мышцу' };
+    if (!best) return { ok: false, text: SLOTS.some(sl => slots[sl.id].some(e => !e.n && (mOf(e.ex)[m] || 0) > 0)) ? (appRules() ? 'Эту мышцу нагружают только базовые и лёгкие дни: число подходов в них постоянное' : 'Эту мышцу нагружают только упражнения по процентам: число подходов в них задаёт волна') : 'В программе нет упражнений на эту мышцу' };
     const L = slots[best.sl.id], sb = pair(L, best.e);
     if (best.e.n! <= 1) { for (const x of [best.e, sb]) if (x) L.splice(L.indexOf(x), 1); return { ok: true, text: 'Убрано: ' + label(best.e.ex, best.sl, sb) }; }
     for (const x of [best.e, sb]) if (x) { x.n!--; x.chg = (x.chg || 0) - 1; }
@@ -414,7 +414,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
        (с правилами приложения лишних уже нет: они ушли выше) */
     const room = everyDay && !oneBase ? SLOTS.length * 2 : SLOTS.length;
     ls.slice(0, room).forEach((id, i) => { slots[SLOTS[i % SLOTS.length].id].push({ ex: id }); put.push(id); });
-    if (put.length) note('Базовые — первыми в своих днях: ' + put.map((id, i) => nm(id) + ' (' + SLOTS[i % SLOTS.length].s.toLowerCase() + (i >= SLOTS.length ? ', вторым' : '') + ')').join(', '), 'Программа собрана с нуля, поэтому упражнения по волне встали по одному в день и первыми: сначала базовое на свежие силы, потом остальное.' + (put.length > SLOTS.length ? ' Базовых больше, чем дней, поэтому ' + list(put.slice(SLOTS.length).map(nm)) + ' — вторым упражнением.' : '') + (ls.length > room ? ' Дней ' + NUM[SLOTS.length] + ', поэтому не поместились: ' + list(ls.slice(room).map(nm)) + '.' : ''));
+    if (put.length) note('Базовые — первыми в своих днях: ' + put.map((id, i) => nm(id) + ' (' + SLOTS[i % SLOTS.length].s.toLowerCase() + (i >= SLOTS.length ? ', вторым' : '') + ')').join(', '), 'Программа собрана с нуля, поэтому ' + (appRules() ? 'базовые' : 'упражнения по волне') + ' встали по одному в день и первыми: сначала базовое на свежие силы, потом остальное.' + (put.length > SLOTS.length ? ' Базовых больше, чем дней, поэтому ' + list(put.slice(SLOTS.length).map(nm)) + ' — вторым упражнением.' : '') + (ls.length > room ? ' Дней ' + NUM[SLOTS.length] + ', поэтому не поместились: ' + list(ls.slice(room).map(nm)) + '.' : ''));
   }
   /* 0б. (в эталоне нет) Дней в неделе стало меньше: базовые, стоявшие в днях, которых больше нет, переезжают в оставшиеся — в день без лёгкого дня
          этого же базового, где базовых меньше, и встают после них. «Стояло в дне» — то, что в нём действует сейчас (awayDays): принятая программа,
@@ -511,14 +511,18 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
   });
 
   /* 2. the percentage lifts: priority, maintenance or the usual wave */
-  const lifts = Object.keys(cfg.ex).filter(id => isCycle(cfg, id) && inProg(id)), held: string[] = [], back: string[] = [];
+  const lifts = Object.keys(cfg.ex).filter(id => isCycle(cfg, id) && inProg(id)), held: string[] = [], back: string[] = [], grown: string[] = [];
   if (!lifts.length) strong = false;
   for (const id of lifts) {
-    /* the lift in priority goes by reserve; the others hold, or keep what they do. A lift the athlete put on «сила по запасу» himself stays on it */
-    const was = goalOf(cfg, id), want = id === focus || strong ? 'auto' : hold ? 'hold' : was === 'auto' ? 'auto' : null;
+    /* the lift in priority goes by reserve; the others hold, or keep what they do. A lift the athlete put on «сила по запасу» himself stays on it.
+       (в эталоне нет) Методика под цель (решение владельца, 24 ноября 2026): с днями «День N» по проценту идёт только силовая роль, которую задаёт цель.
+       «Сила» и выбранное базовое — сила по запасу; остальные базовые вокруг выбранного — поддержание или, если «растут», сила по запасу раз в неделю;
+       в «Массе» базовые — на двойной прогрессии */
+    const was = goalOf(cfg, id), want = appRules() ? (id === focus || strong ? 'auto' : focus ? (hold ? 'hold' : 'auto') : null) : id === focus || strong ? 'auto' : hold ? 'hold' : was === 'auto' ? 'auto' : null;
     setGoal(id, want);
     if (want === 'hold' && was !== 'hold') held.push(id);
     if (!want && was) back.push(id);
+    if (appRules() && want === 'auto' && was !== 'auto' && id !== focus && !strong) grown.push(id);
   }
   if (focus && inProg(focus)) {
     if (goalOf(cfg, focus) !== 'auto') note(nm(focus) + ' — сила по запасу', AUTO.sets + ' × ' + AUTO.reps + ' одним весом, первый вес — ' + AUTO.pct + '% от расчётного максимума. Дальше решает запас в последнем подходе: ' + AUTO.aim + ' повтора и больше — на следующей неделе плюс шаг, 1 — вес тот же, 0 или подходы не закрыты — минус ' + AUTO.down + '%. Запас отмечается в карточке упражнения.');
@@ -554,8 +558,11 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
       }
     }
   }
-  if (held.length) note(list(held.map(nm)) + ' — поддержание', 'Та же волна, ' + Math.max(2, cfg.cycle.sets - 1) + ' подхода вместо ' + cfg.cycle.sets + ', расчётный максимум не растёт. Вес остаётся прежним — этого хватает, чтобы сила не уходила, а восстановление достаётся приоритету.');
-  if (back.length) note(list(back.map(nm)) + ' — снова обычная волна', cfg.cycle.sets + ' подхода, расчётный максимум +' + fmt(cfg.cycle.inc, 1) + '% в неделю.');
+  if (held.length && appRules()) note(list(held.map(nm)) + ' — поддержание', HOLD.sets + ' × ' + HOLD.reps + ' на ' + HOLD.pct + '% от расчётного максимума, раз в неделю; максимум не растёт, вес остаётся прежним. По исследованиям этого хватает, чтобы сила не уходила, а восстановление достаётся приоритету.');
+  else if (held.length) note(list(held.map(nm)) + ' — поддержание', 'Та же волна, ' + Math.max(2, cfg.cycle.sets - 1) + ' подхода вместо ' + cfg.cycle.sets + ', расчётный максимум не растёт. Вес остаётся прежним — этого хватает, чтобы сила не уходила, а восстановление достаётся приоритету.');
+  if (grown.length) note(list(grown.map(nm)) + ' — сила по запасу раз в неделю', AUTO.sets + ' × ' + AUTO.reps + ' одним весом, первый вес — ' + AUTO.pct + '% от расчётного максимума; дальше решает запас в последнем подходе: ' + AUTO.aim + ' и больше — плюс шаг, 1 — вес тот же, 0 — минус ' + AUTO.down + '%.');
+  if (back.length && appRules()) note(list(back.map(nm)) + ' — по двойной прогрессии', 'Без процентов от максимума: ' + AUTO.sets + ' подхода по ' + TYPE.compound.lo + '–' + (TYPE.compound.lo + TYPE.compound.w) + ' повторов с запасом ' + cfg.rir + ', каждый подход ведётся отдельно — взял верх диапазона, в следующий раз в этом подходе вес на шаг выше. Первый вес — от расчётного максимума по последним подходам.');
+  else if (back.length) note(list(back.map(nm)) + ' — снова обычная волна', cfg.cycle.sets + ' подхода, расчётный максимум +' + fmt(cfg.cycle.inc, 1) + '% в неделю.');
   if (strong) {
     /* 3а. (в эталоне нет) Силовой режим: каждое базовое — первым в своём дне на силу по запасу и ещё раз лёгким днём в другой день недели.
            Лёгкий день встаёт туда, где базовых и лёгких дней меньше, при равенстве — в самый дальний по календарю день, и стоит сразу после тяжёлых базовых.
@@ -685,7 +692,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
         if (diff <= 3) break;
         const got = (sl: Slot, m: string) => (T1.day[sl.id] || {} as Record<string, number>)[m] || 0;
         const fits = (e: ProgEntry) => {
-          if (e.n! >= diff || (time ? !inTime(estMinutes(c2, slots[lo.id].concat([e])), time) : slots[lo.id].length >= MAX_EX) || slots[lo.id].some(x => x.ex === e.ex)) return false;
+          if (e.n! >= diff || (time ? !inTime(estMinutes(c2, slots[lo.id].concat([e])), time) : slots[lo.id].length >= MAX_EX) || slots[lo.id].some(x => x.ex === e.ex || sameMuscles(mOf(x.ex), mOf(e.ex)))) return false;   // и не туда, где уже стоит упражнение с теми же мышцами
           for (const [m, c] of Object.entries(mOf(e.ex))) {
             if (!(c > 0)) continue;
             if (got(lo, m) + c * e.n! > caps.day + 0.01) return false;
@@ -747,7 +754,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
       else note('Приоритет — ' + spanOf(pm) + ', остальные мышцы — ' + spanOf(rest) + ' подходов в неделю', share + (level < z.opt ? lower + (why === 'budget' ? ': уровни ниже, пропорция та же. Чтобы поднять всех, увеличь лимит недели.' : '. Уровни ниже, пропорция та же.' + roomFix) + plus
         : (half.length ? nearly : 'Все мышцы в рабочей зоне (от ' + z.opt + ').') + sum));
     }
-    if (res.over!.length) note('Чуть выше своего уровня: ' + names(res.over!), 'Эти мышцы работают попутно почти во всех упражнениях на соседние или в упражнениях по процентам, где число подходов задаёт волна. Убрать у них ещё — значит недодать соседям.');
+    if (res.over!.length) note('Чуть выше своего уровня: ' + names(res.over!), 'Эти мышцы работают попутно почти во всех упражнениях на соседние или ' + (appRules() ? 'в базовых, где число подходов постоянное' : 'в упражнениях по процентам, где число подходов задаёт волна') + '. Убрать у них ещё — значит недодать соседям.');
     /* у лёгкого дня числа подходов и диапазона нет: в эталоне его строка читается как «undefined × 8–12». С днями «День N» её нет — о лёгком дне сказано своей заметкой */
     for (const sl of SLOTS) for (const e of slots[sl.id]) if (e.isNew && !e.from && !(everyDay && isLight(c2, e.ex))) {
       const ms = Object.entries(mOf(e.ex)).filter(x => x[1] >= 1).map(x => x[0]);

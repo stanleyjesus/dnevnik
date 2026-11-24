@@ -8,6 +8,7 @@ import { backupDraft, flushSave, saveCfg, saveT, setSaveState, touch, uniqueId }
 import { D, go, render } from './render.ts';
 import { dayTitle, durText, paintEta, planLegend, planRows, planSets, propList, restSelect, setWord, startWorkout } from './overview.ts';
 import { exForm } from './setup.ts';
+import { appRules } from '../core/rules.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
 import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
 
@@ -43,7 +44,7 @@ export function vWorkout() {
       propList(A, pl.off, (k, isOff) => { if (isOff) pl.off![k] = true; else delete pl.off![k]; render(true); })) : null,
     h('p', { class: 'sub', style: 'margin-bottom:6px' }, A.base.prog ? 'Основа — программа «' + D.cfg.program!.name + '»: в этот день она идёт первый раз, ' + (D.W.some(w => !w.open) ? 'веса взяты из последних тренировок каждого упражнения' : 'вес в каждом упражнении подбирается на месте') + '. В плане ' + setWord(selSets) + (adj && selSets !== baseSets ? ' (по программе ' + baseSets + ')' : '') + '. Всё можно поправить по ходу.' : A.base.template ? 'Основа — тренировка ' + C.fmtDate(A.base.template.slice(0, 10), true) + '. В плане ' + setWord(selSets) + (adj && selSets !== baseSets ? ' (по правилам было бы ' + baseSets + ')' : '') + '. Всё можно поправить по ходу.' : '',
       !n && A.base.items.length ? ' Поправок нет: дневник не видит причин отходить от правил.' : ''),
-    sel.items.length ? h('p', { class: 'sub', style: 'margin-bottom:6px' }, h('b', null, 'Время: ' + durText(sel.items)), ' — разминка, ' + setWord(selSets) + ' и отдых по ' + C.fmtRest(D.cfg.rest) + ' (в базовых по волне на минуту дольше).') : null,
+    sel.items.length ? h('p', { class: 'sub', style: 'margin-bottom:6px' }, h('b', null, 'Время: ' + durText(sel.items)), ' — разминка, ' + setWord(selSets) + ' и отдых по ' + C.fmtRest(D.cfg.rest) + (appRules() ? ' (в базовых на минуту дольше).' : ' (в базовых по волне на минуту дольше).')) : null,
     planRows(sel.items, pl.slot, pl.date, A, sel.used), sel.items.length ? planLegend(adj && sel.used.length > 0) : null,
     h('div', { class: 'row', style: 'margin-top:14px' }, h('button', { class: 'btn primary', onclick: () => start(sel.items) }, 'Начать тренировку'), sel.items.length ? h('button', { class: 'btn', onclick: () => startWorkout({ slot: pl.slot, date: pl.date, items: [] }) }, 'Начать с пустого листа') : null))];
 }
@@ -122,7 +123,7 @@ export const propApplied = (it: Item, prop: Prop) => it.sets.length === prop.set
    Isolation has no mark: its range follows the weight step */
 export function goalSelect(it: Item) {
   const k = C.kindOf(D.cfg, it.ex), cur = C.goalOf(D.cfg, it.ex) || '';
-  if (k !== 'base' && k !== 'compound') return null;
+  if (appRules() || (k !== 'base' && k !== 'compound')) return null;   // (в эталоне нет) с днями «День N» методику задаёт цель программы и тип упражнения, отметки у упражнения нет
   const opts = k === 'base' ? [['', 'обычная волна'], ['auto', 'сила по запасу: 4 × 4, вес по запасу'], ['strength', 'тяжёлая волна: прибавка раз в цикл'], ['hold', 'поддержание: на подход меньше, без прибавки']] : [['mass', '8–12 повторов'], ['both', '6–10 повторов']];
   const sel = k === 'base' ? cur : cur || (it.range && it.range[0] < 8 ? 'both' : 'mass');
   return h('label', { class: 'row', style: 'gap:6px' }, k === 'base' ? 'Режим' : 'Цель', h('select', { id: 'goal-' + it.ex, 'aria-label': k === 'base' ? 'Режим волны' : 'Диапазон по цели', onchange: async e => {

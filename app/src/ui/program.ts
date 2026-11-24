@@ -13,6 +13,7 @@ import { goalPicker, lostMode, mixText, modeBudget, modeKey, setMode, soloNow, s
 import { TIMES, fitBudget, timeOf } from './fit.ts';
 import { weekDays } from './platform.ts';
 import { DAY_COUNTS, awayDays, daysOf, useDays } from '../core/days.ts';
+import { BASE_SETS, HOLD, appRules, byPct } from '../core/rules.ts';
 import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../core/index.ts';
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
 
@@ -21,6 +22,7 @@ export const progSig = (slots: ProgSlots) => C.SLOTS.map(sl => (slots[sl.id] || 
 export function progScheme(cfg: Cfg, e: ProgEntry) {
   const k = C.kindOf(cfg, e.ex), s = C.startOf(D.W, cfg, e.ex), from = s ? ' · старт ' + C.fmt(s.w) + ' кг' : '';   // a weight named in the settings for an exercise new to the journal
   if (k === 'light') { const L = C.lightOf(cfg, e.ex); return L.sets + ' × ' + L.reps + ' на ' + L.pct + '% от максимума' + from; }
+  if (k === 'base' && appRules()) return (!byPct(cfg, e.ex) ? BASE_SETS + ' × ' + C.rangeOf(D.W, cfg, e.ex).join('–') : C.waveOf(cfg, e.ex).hold ? HOLD.sets + ' × ' + HOLD.reps + ', вес прежний' : C.AUTO.sets + ' × ' + C.AUTO.reps + ' одним весом, вес по запасу') + from;   // (в эталоне нет) методика под цель
   if (k === 'base') { const wv = C.waveOf(cfg, e.ex); return (wv.auto ? C.AUTO.sets + ' × ' + C.AUTO.reps + ' одним весом, вес по запасу' : 'волна ' + wv.order.map(r => wv.sets(r) + '×' + r).join(' → ')) + from; }
   return e.n + ' × ' + C.rangeOf(D.W, cfg, e.ex).join('–') + from;
 }

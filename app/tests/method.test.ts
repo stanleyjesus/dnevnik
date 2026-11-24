@@ -1,0 +1,159 @@
+/* Методика под цель (решение владельца, 24 ноября 2026): rules.ts, разбор и источники — docs/03, раздел 15.
+   С днями «День 1…N» по проценту от расчётного максимума идёт только базовое в силовой роли: сила по запасу, поддержание, лёгкий день.
+   Всё остальное, в том числе базовое в «Массе», — по независимой двойной прогрессии с диапазоном по типу упражнения: многосуставные 6–10,
+   изоляция 8–12. Волны 77–82–87 нет. С таблицей дней эталона всё считается как в эталоне. Числа — на примерных данных из data/. */
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { Ref, plain, readJson } from './helpers.ts';
+import { Core } from '../src/core/index.ts';
+import { useDays } from '../src/core/days.ts';
+import { withStarter } from '../src/core/starter.ts';
+import { AUTO, LIGHT_A } from '../src/core/goals.ts';
+import { HOLD, TYPE, appRange, appRules, byPct, logMax } from '../src/core/rules.ts';
+import type { BuildOpts, Cfg, ExDef, Item, SetRec, Workout } from '../src/core/types.ts';
+
+type Raw = { ex: Record<string, ExDef>; program?: unknown };
+function withDays<T>(n: number, fn: () => T): T { useDays(n, false); try { return fn(); } finally { useDays(null, true); } }
+const seedRaw = (): Raw => readJson('data/config.json');
+const docs = (): { date: string }[] => readJson('data/workouts.json');
+const seedW = (): Workout[] => Core.sortW(docs().map(d => Core.fromDoc(d.date, d)));
+/** настройка примерного профиля; у жима лежа — роль `goal` */
+function cfgWith(goal?: string, more?: (r: Raw) => void): Cfg {
+  const r = seedRaw();
+  if (goal) r.ex.bench = Object.assign({}, r.ex.bench, { goal });
+  if (more) more(r);
+  return Core.mergeCfg(r);
+}
+/* последняя тренировка примерного журнала — понедельник 10 ноября, день 1: жим лежа 4 × 3 по 95 кг на 87% */
+const NEXT = '2025-11-17', LATER = '2025-11-24';
+const benchOf = (W: Workout[], cfg: Cfg, date = NEXT) => Core.plan(W, cfg, 'mon', date).items.find(i => i.ex === 'bench')!;
+const sh = (it: Item) => plain({ cyc: it.cyc, range: it.range, w: it.sets.map(s => s.w) });
+/** журнал примерного профиля и ещё одна тренировка дня 1 с жимом лежа */
+function plus(it: Partial<Item> & { sets: SetRec[] }): Workout[] {
+  const bench = Object.assign({ ex: 'bench', range: null, cyc: null, note: '', skip: false, rir: null }, it) as Item;
+  return Core.sortW(seedW().concat([{ id: NEXT, date: NEXT, slot: 'mon', note: '', open: false, items: [bench] }]));
+}
+const x4 = (w: number, r: number, q?: number): SetRec[] => [{ w, r }, { w, r }, { w, r }, q == null ? { w, r } : { w, r, q }];
+const BASE = ['bench', 'leg_press', 'pullup'];
+
+test('с таблицей дней эталона всё как в эталоне: базовые идут волной, у остальных диапазон от 8', () => {
+  assert.equal(appRules(), false);
+  const W = seedW(), cfg = Core.mergeCfg(seedRaw()), RW = Ref.sortW(docs().map(d => Ref.fromDoc(d.date, d))), RC = Ref.mergeCfg(seedRaw());
+  for (const id of BASE) assert.ok(byPct(cfg, id), id);
+  for (const sl of ['mon', 'wed', 'fri']) assert.deepEqual(plain(Core.plan(W, cfg, sl, NEXT)), plain(Ref.plan(RW, RC, sl, NEXT)), sl);
+  assert.deepEqual(sh(benchOf(W, cfg)), { cyc: { pct: 77, reps: 5 }, range: null, w: [85, 85, 85, 85] }, 'волна пошла по кругу: 77% × 5');
+  assert.deepEqual(Core.rangeOf(W, cfg, 'pec_fly'), [8, 12]);
+});
+
+test('с днями «День N» диапазон — по типу упражнения: многосуставные и базовые 6–10, изоляция 8–12, ширина от шага снаряда', () => withDays(3, () => {
+  const W = seedW(), cfg = Core.mergeCfg(seedRaw()), range = (id: string) => Core.rangeOf(W, cfg, id);
+  for (const id of BASE.concat(['incline_db', 'lat_pulldown', 'tbar_row'])) assert.deepEqual(range(id), [6, 10], id);
+  for (const id of ['pec_fly', 'leg_ext', 'leg_curl_lying', 'barbell_curl', 'tri_pushdown']) assert.deepEqual(range(id), [8, 12], id);
+  /* шаг снаряда больше 11% от рабочего веса — диапазон шире: после прибавки веса нижняя граница по силам */
+  for (const id of ['hammer', 'tri_overhead']) assert.deepEqual(range(id), [8, 13], id);
+  /* махи с лёгкими гантелями: шаг 2 кг — большой процент от веса, ширина упирается в восемь повторов */
+  assert.deepEqual(range('lat_raise_db'), [8, 16]);
+  /* ширина — шаг веса в % от рабочего веса / 2.5: не уже 4 повторов, не шире 8 */
+  const ex = (more: Partial<ExDef>): ExDef => Object.assign({ n: 'Упражнение', m: {} }, more);
+  assert.deepEqual(appRange(ex({ pat: 'h_push' }), null, 100, 2.5), [TYPE.compound.lo, TYPE.compound.lo + TYPE.compound.w]);
+  assert.deepEqual(appRange(ex({ pat: 'iso' }), null, 50, 2.5), [TYPE.iso.lo, TYPE.iso.lo + TYPE.iso.w]);
+  assert.deepEqual(appRange(ex({ pat: 'iso' }), null, 5, 2.5), [8, 16]);
+  assert.deepEqual(appRange(ex({ mode: 'cycle' }), null, 0, 2.5), [6, 10], 'базовое — многосуставное');
+  /* свой диапазон остаётся: прошлый, если он начинается не с 8 (8 всем давало прежнее правило), или lo–hi справочника */
+  assert.deepEqual(appRange(ex({ pat: 'iso' }), [12, 20], 10, 2), [12, 20]);
+  assert.deepEqual(appRange(ex({ pat: 'iso' }), [8, 12], 10, 2), [8, 16], 'прежний 8–12 — по типу и по шагу');
+  assert.deepEqual(appRange(ex({ pat: 'iso', lo: 10, hi: 20 }), [8, 12], 10, 2), [10, 20]);
+  assert.deepEqual(Core.rangeOf([], Core.mergeCfg(withStarter(null)), 'lat_raise'), [10, 20], 'махи встроенного справочника — 10–20');
+}));
+
+test('«Масса»: базовое идёт по двойной прогрессии, четыре подхода; первый раз — от расчётного максимума последних подходов', () => withDays(3, () => {
+  const W = seedW(), cfg = cfgWith();
+  assert.ok(!byPct(cfg, 'bench'));
+  /* 95 кг × 3 на 87% — запас около одного повтора: максимум по Эпли 95 × (1 + 4/30) ≈ 107.7 кг.
+     Середина 6–10 с запасом 1 — 8 повторов и ещё один: 107.7 / (1 + 9/30) ≈ 82.8, вниз до шага штанги — 82.5 */
+  const last = W.filter(w => w.items.some(i => i.ex === 'bench')).pop()!.items.find(i => i.ex === 'bench')!;
+  assert.equal(Core.fmt(logMax(last, cfg.rir)!, 1), '107.7');
+  assert.deepEqual(sh(benchOf(W, cfg)), { cyc: null, range: [6, 10], w: [82.5, 82.5, 82.5, 82.5] });
+}));
+
+test('двойная прогрессия независимая: каждый подход идёт от своего прошлого подхода', () => withDays(3, () => {
+  const W = plus({ range: [6, 10], sets: [{ w: 82.5, r: 10 }, { w: 82.5, r: 9 }, { w: 82.5, r: 6 }, { w: 82.5, r: 5 }] });
+  /* верх диапазона — плюс шаг, внутри — тот же вес, ниже нижней границы — минус шаг */
+  assert.deepEqual(sh(benchOf(W, cfgWith(), LATER)), { cyc: null, range: [6, 10], w: [85, 82.5, 82.5, 80] });
+}));
+
+test('«Сила»: базовое в силовой роли — 4 × 4 одним весом на 83%, вес решает запас в последнем подходе', () => withDays(3, () => {
+  const W = seedW(), cfg = cfgWith('auto');
+  assert.ok(byPct(cfg, 'bench'));
+  /* максимум — 95 / 0.87 ≈ 109.2 кг; 83% — 90.6, до шага штанги — 90 */
+  assert.deepEqual(sh(benchOf(W, cfg)), { cyc: { pct: AUTO.pct, reps: AUTO.reps }, range: null, w: [90, 90, 90, 90] });
+  const next = (sets: SetRec[]) => benchOf(plus({ cyc: { pct: AUTO.pct, reps: AUTO.reps }, tm: 108.43, sets }), cfg, LATER).sets.map(s => s.w);
+  assert.deepEqual([next(x4(90, 4, 3)), next(x4(90, 4, 2)), next(x4(90, 4, 1)), next(x4(90, 4, 0))].map(w => w[0]), [92.5, 92.5, 90, 85], 'запас 2 и больше — плюс шаг, 1 — тот же вес, 0 — минус 5%');
+  assert.deepEqual(next([{ w: 90, r: 4 }, { w: 90, r: 4 }, { w: 90, r: 4 }, { w: 90, r: 3, q: 0 }]), [85, 85, 85, 85], 'подход не закрыт — минус 5%');
+  /* прежняя отметка «приоритет силы» (тяжёлая волна) читается как сила по запасу */
+  assert.deepEqual(sh(benchOf(W, cfgWith('strength'))), sh(benchOf(W, cfg)));
+}));
+
+test('«Сила»: лёгкий день — 3 × 4 на 78%, поддержание — 3 × 4 на 83% от максимума, который не растёт', () => withDays(3, () => {
+  const W = seedW();
+  const cfg = cfgWith('auto', r => { r.ex.bench_light = { n: 'Жим лежа — лёгкий день', mode: 'light', of: 'bench', pat: 'h_push', m: r.ex.bench.m }; });
+  assert.deepEqual(sh(Core.makeItem(W, cfg, 'bench_light', 'wed', '2025-11-19')), { cyc: { pct: LIGHT_A.pct, reps: LIGHT_A.reps }, range: null, w: [85, 85, 85] }, '78% от 109.2 кг');
+  const hold = cfgWith('hold');
+  assert.deepEqual(sh(benchOf(W, hold)), { cyc: { pct: HOLD.pct, reps: HOLD.reps }, range: null, w: [90, 90, 90] });
+  const held = plus({ cyc: { pct: HOLD.pct, reps: HOLD.reps }, tm: 109.2, sets: [{ w: 90, r: 4 }, { w: 90, r: 4 }, { w: 90, r: 4 }] });
+  assert.deepEqual(sh(benchOf(held, hold, LATER)).w, [90, 90, 90], 'вес прежний');
+}));
+
+test('смена способа: после двойной прогрессии максимум берётся из её подходов, план идёт с весов журнала', () => withDays(3, () => {
+  const W = plus({ range: [6, 10], sets: [{ w: 85, r: 8 }, { w: 85, r: 8 }, { w: 85, r: 7 }, { w: 85, r: 7 }] });
+  /* лучший подход — 85 × 8 с запасом по методике профиля (1): 85 × (1 + 9/30) = 110.5 кг; 83% — 91.7, до шага штанги — 92.5 */
+  assert.equal(logMax(W.find(w => w.date === NEXT)!.items[0], 1), 110.5);
+  assert.deepEqual(sh(benchOf(W, cfgWith('auto'), LATER)), { cyc: { pct: 83, reps: 4 }, range: null, w: [92.5, 92.5, 92.5, 92.5] });
+  assert.deepEqual(sh(benchOf(W, cfgWith('hold'), LATER)).w, [92.5, 92.5, 92.5]);
+  /* отмеченный запас — вместо запаса по методике: 85 × 8 с запасом 2 — 85 × (1 + 10/30) ≈ 113.3 кг */
+  assert.equal(Core.fmt(logMax({ ex: 'bench', range: [6, 10], cyc: null, note: '', skip: false, rir: null, sets: [{ w: 85, r: 8, q: 2 }, { w: 85, r: 8 }] }, 1)!, 1), '113.3');
+}));
+
+test('сборка ставит роль базовых по цели: «Масса» — двойная прогрессия, «Сила» — сила по запасу, «Гибрид» — выбранное по запасу, остальные на поддержании', () => withDays(3, () => {
+  const W = seedW(), cfg = Core.mergeCfg(seedRaw());
+  const roles = (o: BuildOpts) => { const pr = Core.buildProgram(W, cfg, o); return BASE.map(id => [pr.goals[id] ?? null, byPct(pr.cfg, id)]); };
+  assert.deepEqual(roles({}), BASE.map(() => [null, false]), '«Масса»: базовых по проценту нет');
+  assert.deepEqual(roles({ strength: true }), BASE.map(() => ['auto', true]));
+  assert.deepEqual(roles({ focus: 'bench' }), [['auto', true], ['hold', true], ['hold', true]]);
+  assert.deepEqual(roles({ focus: 'bench', others: 'grow' }), BASE.map(() => ['auto', true]), '«Остальные растут» — сила по запасу раз в неделю');
+  assert.deepEqual(roles({ focus: 'bench', strength: true }), [['auto', true], ['hold', true], ['hold', true]], '«Сила: жим лежа»');
+}));
+
+test('программа вокруг одного базового, принятая с «Растут как раньше»: остальные базовые читаются как сила по запасу, хранилище не меняется', () => {
+  const raw = seedRaw();
+  raw.ex.bench = Object.assign({}, raw.ex.bench, { goal: 'auto' });
+  raw.program = { name: 'Пауэрбилдинг: жим лежа', focus: 'bench', others: 'grow', slots: { mon: [{ ex: 'bench' }], wed: [{ ex: 'leg_press' }], fri: [{ ex: 'pullup' }] } };
+  const before = JSON.stringify(raw);
+  assert.deepEqual(BASE.map(id => Core.goalOf(Core.mergeCfg(raw), id)), ['auto', null, null], 'таблица дней эталона: остальные — по волне, как в эталоне');
+  withDays(3, () => assert.deepEqual(BASE.map(id => Core.goalOf(Core.mergeCfg(raw), id)), ['auto', 'auto', 'auto']));
+  raw.program = Object.assign({}, raw.program, { others: 'hold' });
+  withDays(3, () => assert.deepEqual(BASE.map(id => Core.goalOf(Core.mergeCfg(raw), id)), ['auto', null, null], 'без «растут» отметки не появляются'));
+  raw.program = Object.assign({}, raw.program, { others: 'grow' });
+  assert.equal(JSON.stringify(raw), before, 'настройка в хранилище переписана');
+});
+
+test('недельный объём: базовое на двойной прогрессии — масса и полные подходы, по проценту — сила', () => {
+  const ref = Core.planned(seedW(), Core.mergeCfg(seedRaw())), r2 = (v: number | undefined) => v == null ? v : Math.round(v * 100) / 100;
+  const chest = Core.mergeCfg(seedRaw()).ex.bench.m.chest;
+  withDays(3, () => {
+    const W = seedW(), mass = Core.planned(W, cfgWith()), auto = Core.planned(W, cfgWith('auto'));
+    /* в эталоне жим лежа идёт волной: его четыре подхода — сила, и каждый за долю (cycleVol); в «Массе» они — полные подходы на массу */
+    assert.deepEqual([r2(mass.pv.chest), r2(mass.ps.chest)], [r2(ref.pv.chest - ref.ps.chest + 4 * chest), undefined]);
+    /* 4 × 4 на 83% — запас около двух повторов: подход считается целым */
+    assert.deepEqual([r2(auto.pv.chest), r2(auto.ps.chest)], [r2(mass.pv.chest), 4 * chest]);
+  });
+});
+
+test('время подхода: у базового на двойной прогрессии — 40 секунд, как у подсобки; разминка и отдых — как у базового', () => {
+  const ref = Core.estMinutes(Core.mergeCfg(seedRaw()), [{ ex: 'bench' }]);
+  withDays(3, () => {
+    assert.equal(Math.round((Core.estMinutes(cfgWith(), [{ ex: 'bench' }]) - ref) * 60), 4 * 15, 'четыре подхода, каждый на 15 секунд дольше');
+    assert.equal(Core.estMinutes(cfgWith('auto'), [{ ex: 'bench' }]), ref, 'сила по запасу — как базовое эталона');
+  });
+});
+

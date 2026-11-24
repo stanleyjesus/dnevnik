@@ -1,6 +1,7 @@
 /* Цели упражнений и волны базовых.
-   Перенесено из reference/src/core.js: тела функций без изменений. */
+   Перенесено из reference/src/core.js: тела функций без изменений, кроме методики под цель с днями «День N» (rules.ts, решение владельца 24 ноября 2026). */
 import { isLight, kindOf, LIGHT } from './config.ts';
+import { appGoal, appRules, HOLD } from './rules.ts';
 import { EASY, estRir } from './sets.ts';
 import type { Cfg, ExDef, Goal, PctMap, Range, Workout } from './types.ts';
 
@@ -8,6 +9,7 @@ import type { Cfg, ExDef, Goal, PctMap, Range, Workout } from './types.ts';
 export const GOALS: Record<string, Goal> = { mass: { n: 'масса', lo: 8, w: 4 }, both: { n: 'сила и масса', lo: 6, w: 4 }, strength: { n: 'приоритет силы' }, hold: { n: 'поддержание' }, auto: { n: 'сила по запасу' } };
 /* the mark counts only where it means something: a wave for a percentage lift, 8–12 or 6–10 for a multi-joint accessory, nothing for isolation */
 export const goalOf = (cfg: Cfg, id: string) => {
+  if (appRules()) return appGoal(cfg.ex[id]);                        // (в эталоне нет) в приложении отметка — только роль базового: сила по запасу или поддержание; диапазон — по типу упражнения
   const g = (cfg.ex[id] || {} as ExDef).goal, k = kindOf(cfg, id);
   if (!g) return null;
   if (k === 'base') return g === 'strength' || g === 'hold' || g === 'auto' ? g : null;
@@ -26,12 +28,14 @@ export const WAVE_S: { pct: PctMap; sets: Record<number, number>; inc: number } 
 export const AUTO = { pct: 83, reps: 4, sets: 4, aim: 2, down: 5 };
 export const LIGHT_A = { pct: 78, reps: 4, sets: 3 };
 export function waveOf(cfg: Cfg, id: string) {
+  /* (в эталоне нет) в приложении волны нет: базовое по проценту идёт силой по запасу или на поддержании — 3 × 4 на 83% от максимума, который не растёт */
+  if (appRules()) { const hold = goalOf(cfg, id) === 'hold', S = hold ? HOLD : AUTO; return { strong: false, hold, auto: !hold, keep: true, pct: { [S.reps]: S.pct } as PctMap, order: [S.reps], sets: (_r: number) => S.sets, inc: 0, perCycle: false }; }
   const g = goalOf(cfg, id), strong = g === 'strength', hold = g === 'hold', auto = g === 'auto', pct = auto ? { [AUTO.reps]: AUTO.pct } : strong ? WAVE_S.pct : cfg.cycle.pct;
   return { strong, hold, auto, keep: strong || hold || auto, pct, order: Object.keys(pct).map(Number).sort((a, b) => b - a),
     sets: (r: number) => auto ? AUTO.sets : strong ? (WAVE_S.sets[r] || 4) : hold ? Math.max(2, cfg.cycle.sets - 1) : cfg.cycle.sets, inc: auto ? 0 : strong ? WAVE_S.inc : hold ? 0 : cfg.cycle.inc, perCycle: strong };
 }
 /* the light day follows its lift: 3 × 5 at 75% beside a wave, 3 × 4 at 78% beside «сила по запасу» */
-export const lightOf = (cfg: Cfg, id: string) => goalOf(cfg, isLight(cfg, id) ? (cfg.ex[id] || {} as ExDef).of! : id) === 'auto' ? LIGHT_A : LIGHT;
+export const lightOf = (cfg: Cfg, id: string) => appRules() ? LIGHT_A : goalOf(cfg, isLight(cfg, id) ? (cfg.ex[id] || {} as ExDef).of! : id) === 'auto' ? LIGHT_A : LIGHT;
 export const cycleVol = (cfg: Cfg, id: string) => {
   if (isLight(cfg, id)) { const L = lightOf(cfg, id); return estRir(L.pct, L.reps) >= EASY ? 0.5 : 1; }
   const e = Object.entries(waveOf(cfg, id).pct);

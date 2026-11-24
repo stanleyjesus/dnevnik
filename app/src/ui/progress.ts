@@ -7,6 +7,7 @@ import { dbErr, toast } from './toast.ts';
 import { D, render } from './render.ts';
 import { barChart, chartHost, lineChart, setChip, spark } from './charts.ts';
 import { goalTag, STATUS } from './overview.ts';
+import { appRules } from '../core/rules.ts';
 import type { ExStat, Slot } from '../core/index.ts';
 import type { Point } from './types.ts';
 
@@ -44,7 +45,7 @@ export function vProgress() {
   return out;
 }
 export function exerciseDetail(s: ExStat, start: number) {
-  const ui = S.ui, cyc = C.isCycle(D.cfg, s.id), st = s.active ? STATUS[s.status] : null;
+  const ui = S.ui, cyc = C.isCycle(D.cfg, s.id) && (!appRules() || s.ss.every(x => x.item.cyc)), st = s.active ? STATUS[s.status] : null;   // (в эталоне нет) с днями «День N» у базового бывают записи и по двойной прогрессии: тогда график — как у подсобки
   const ex = D.cfg.ex[s.id] || { m: {} };
   const mus = Object.entries(ex.m || {}).sort((a, b) => b[1] - a[1]).map(e => (C.MUSCLE[e[0]] || {}).n + (e[1] < 1 ? ' ½' : '')).join(', ');
   const day = (x: { date: string }) => C.dnum(x.date);

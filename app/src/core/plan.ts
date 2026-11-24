@@ -1,10 +1,11 @@
 /* План следующей тренировки по правилам атлета.
-   Перенесено из reference/src/core.js: тела функций без изменений. */
+   Перенесено из reference/src/core.js: тела функций без изменений, кроме методики под цель с днями «День N» (rules.ts, решение владельца 24 ноября 2026). */
 import { SLOT, SLOTS } from './catalog.ts';
 import { DAYS, dayStale } from './days.ts';
 import { addDays, dow } from './dates.ts';
 import { isCycle, isLight } from './config.ts';
 import { e1, work } from './sets.ts';
+import { appRange, appRules, BASE_SETS, byPct, fromMax, logMax } from './rules.ts';
 import { AUTO, goalOf, goalRange, GOALS, lightOf, progPending, waveOf } from './goals.ts';
 import { sessions } from './stats.ts';
 import type { Cfg, ExDef, Item, ProgEntry, Range, SessRef, SetRec, Workout } from './types.ts';
@@ -28,7 +29,7 @@ export function inferStep(workouts: Workout[], exId: string) {
   for (let i = 1; i < ws.length; i++) { const d = +(ws[i] - ws[i - 1]).toFixed(3); if (d > 0 && (!step || d < step)) step = d; }
   return step || 2.5;
 }
-export const stepOf = (workouts: Workout[], cfg: Cfg, exId: string) => (cfg.ex[exId] && +cfg.ex[exId].step!) || inferStep(workouts, exId);
+export const stepOf = (workouts: Workout[], cfg: Cfg, exId: string) => (cfg.ex[exId] && +cfg.ex[exId].step!) || (appRules() && cfg.ex[exId] && +cfg.ex[exId].round!) || inferStep(workouts, exId);   // (в эталоне нет) базовое на двойной прогрессии: шаг его снаряда
 /* his formula: reps lost on a weight jump = step% / 2.5, lower bound 8, never narrower than 4 */
 export const formulaRange = (w: number, step: number, lo = 8) => w > 0 ? [lo, lo + Math.max(4, Math.round((step / w * 100) / 2.5))] : [lo, lo + 4];
 export function suggestSet(prev: SetRec | null | undefined, range: Range, step: number) {
@@ -42,9 +43,11 @@ export function suggestSet(prev: SetRec | null | undefined, range: Range, step: 
 export const roundTo = (v: number, q: number) => Math.round(v / q) * q;
 export function planCycle(workouts: Workout[], cfg: Cfg, exId: string, before?: string | null) {
   const wv = waveOf(cfg, exId), order = wv.order, first = order[0], ex = cfg.ex[exId] || {} as ExDef, q = +ex.round! || 2.5;
-  const ss = sessions(workouts.filter(w => !w.open && (!before || w.date < before)), cfg, exId).filter(s => s.item.cyc);
-  if (!ss.length) {                                                 // no sessions yet: from the maximum the athlete named, if any
-    const tm = knownMax(cfg, exId), p0 = wv.pct[first];
+  const all = sessions(workouts.filter(w => !w.open && (!before || w.date < before)), cfg, exId), ss = all.filter(s => s.item.cyc);
+  /* (в эталоне нет) с днями «День N» последняя запись упражнения — по двойной прогрессии: расчётный максимум из её подходов (Эпли с поправкой на запас) */
+  const fromLog = appRules() && all.length && !all[all.length - 1].item.cyc ? logMax(all[all.length - 1].item, cfg.rir) : null;
+  if (!ss.length || fromLog) {                                      // no sessions yet: from the maximum the athlete named, if any
+    const tm = fromLog || knownMax(cfg, exId), p0 = wv.pct[first];
     return { reps: first, pct: p0, sets: wv.sets(first), w: tm ? +roundTo(tm * p0 / 100, q).toFixed(3) : null, tm, prev: null, repeat: false, strong: wv.strong, hold: wv.hold, keep: wv.keep, known: !!tm, auto: wv.auto, verdict: wv.auto ? 'start' : undefined };
   }
   const last = ss[ss.length - 1], lr = last.item.cyc!.reps;
@@ -89,7 +92,7 @@ export function knownMax(cfg: Cfg, exId: string) {
   const e = cfg.ex[exId] || {} as ExDef;
   if (+e.max! > 0) return +e.max!;
   if (!(+e.work! > 0)) return null;
-  const r = +e.workR! > 0 ? +e.workR! : isCycle(cfg, exId) ? waveOf(cfg, exId).order[0] : Math.round(((+e.lo! || 8) + (+e.hi! || 12)) / 2);
+  const r = +e.workR! > 0 ? +e.workR! : byPct(cfg, exId) ? waveOf(cfg, exId).order[0] : Math.round(((+e.lo! || 8) + (+e.hi! || 12)) / 2);
   return e1(+e.work!, r + cfg.rir);
 }
 /* the weight a double-progression exercise starts with: the working weight as it is when its reps fit the range,
@@ -108,7 +111,7 @@ export function startOf(workouts: Workout[], cfg: Cfg, exId: string) {
   if (lastSessionItem(done, isLight(cfg, exId) ? e.of! : exId, null, null) || !(+own.max! > 0 || +own.work! > 0)) return null;
   const src = +own.max! > 0 ? 'max' : 'work';
   if (isLight(cfg, exId)) { const c = planLight(done, cfg, exId, null); return c.w ? { w: c.w, tm: c.tm, pct: c.pct, reps: c.reps, src } : null; }
-  if (isCycle(cfg, exId)) { const c = planCycle(done, cfg, exId, null); return c.w ? { w: c.w, tm: c.tm, pct: c.pct, reps: c.reps, src } : null; }
+  if (byPct(cfg, exId)) { const c = planCycle(done, cfg, exId, null); return c.w ? { w: c.w, tm: c.tm, pct: c.pct, reps: c.reps, src } : null; }
   const w = startWeight(done, cfg, exId, rangeOf(done, cfg, exId));
   return w ? { w, src: +e.work! > 0 && w === +e.work! ? 'work' : src } : null;
 }
@@ -118,9 +121,11 @@ export function hints(workouts: Workout[], cfg: Cfg, exId: string, slot?: string
   const p = lastSessionItem(workouts, exId, slot, before);
   const step = stepOf(workouts, cfg, exId);
   const g = goalOf(cfg, exId);
-  const range = (p && p.it.range) || (g && GOALS[g].lo ? goalRange(g, 0, step) : [ex.lo || 8, ex.hi || 12]);
+  const range = appRules() ? appRange(ex, p && p.it.range, p ? p.it.sets.reduce((m, x) => Math.max(m, x.w || 0), 0) : 0, step) : (p && p.it.range) || (g && GOALS[g].lo ? goalRange(g, 0, step) : [ex.lo || 8, ex.hi || 12]);
   const prevSets = p ? p.it.sets.filter(s => !s.warm) : [];
-  return { step, range, prevDate: p ? p.w.date : null, prevSlot: p ? p.w.slot : null, prevSkipped: p ? p.it.skip : false, prevSets, sets: prevSets.map(s => suggestSet(s, range, step)), start: p ? null : startWeight(workouts, cfg, exId, range) };
+  /* (в эталоне нет) прошлый раз упражнение шло по проценту, а теперь — по двойной прогрессии: каждый подход начинается с веса от расчётного максимума прошлого раза */
+  const tm = appRules() && p && p.it.cyc && !byPct(cfg, exId) ? logMax(p.it, cfg.rir) : null, w0 = tm ? fromMax(tm, range, cfg.rir, step) : null;
+  return { step, range, prevDate: p ? p.w.date : null, prevSlot: p ? p.w.slot : null, prevSkipped: p ? p.it.skip : false, prevSets, sets: prevSets.map(s => tm ? { w: w0, rule: 'new', target: range.slice() } : suggestSet(s, range, step)), start: p ? null : startWeight(workouts, cfg, exId, range) };
 }
 export function nextSlot(workouts: Workout[], today?: string | null) {
   const done = workouts.filter(w => !w.open && w.slot);
@@ -140,12 +145,13 @@ export function makeItem(workouts: Workout[], cfg: Cfg, exId: string, slot: stri
     const c = planLight(workouts, cfg, exId, date);
     return { ex: exId, cyc: { pct: c.pct, reps: c.reps }, range: null, sets: Array.from({ length: c.sets }, () => ({ w: c.w, r: null })), note: '', skip: false, rir: null, tm: c.tm ? +c.tm.toFixed(2) : null };
   }
-  if (isCycle(cfg, exId)) {
+  if (byPct(cfg, exId)) {
     const c = planCycle(workouts, cfg, exId, date);
     return { ex: exId, cyc: { pct: c.pct, reps: c.reps }, range: null, sets: Array.from({ length: c.sets }, () => ({ w: c.w, r: null })), note: '', skip: false, rir: null, tm: c.keep && c.tm ? +c.tm.toFixed(2) : null };
   }
   const h = hints(workouts, cfg, exId, slot, date);
   let sets = h.sets.map(x => ({ w: x.w, r: null }));
+  if (!(n! > 0) && appRules() && isCycle(cfg, exId)) n = BASE_SETS;  // (в эталоне нет) базовое на двойной прогрессии — четыре подхода
   if (n! > 0) { if (sets.length > n!) sets = sets.slice(0, n); while (sets.length < n!) sets.push({ w: sets.length ? sets[sets.length - 1].w : h.start, r: null }); }
   return { ex: exId, cyc: null, range: h.range.slice(), sets, note: '', skip: false, rir: null };
 }
@@ -161,6 +167,7 @@ export function plan(workouts: Workout[], cfg: Cfg, slot: string, date: string) 
 /* the range the next plan of a double-progression exercise ends up with (its goal may move it) */
 export function rangeOf(workouts: Workout[], cfg: Cfg, exId: string) {
   const p = lastSessionItem(workouts.filter(w => !w.open), exId, null, null), ex = cfg.ex[exId] || {} as ExDef, g = goalOf(cfg, exId);
+  if (appRules()) return appRange(ex, p && p.it.range, p ? p.it.sets.reduce((m, x) => Math.max(m, x.w || 0), 0) : 0, stepOf(workouts, cfg, exId));   // (в эталоне нет) по типу упражнения
   const cur = (p && p.it.range) || [ex.lo || 8, ex.hi || 12];
   if (g && GOALS[g].lo) {
     const top = p ? p.it.sets.reduce((m, x) => Math.max(m, x.w || 0), 0) : 0, R = goalRange(g, top, stepOf(workouts, cfg, exId));

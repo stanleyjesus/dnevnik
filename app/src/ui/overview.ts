@@ -8,6 +8,7 @@ import { D, go, render } from './render.ts';
 import { meter, spark, zonePill } from './charts.ts';
 
 import { importBox, pickBackup } from './importer.ts';
+import { appRules, byPct } from '../core/rules.ts';
 import type { Adapted, Cfg, Insight, Item } from '../core/index.ts';
 import type { Kid } from './types.ts';
 
@@ -135,16 +136,16 @@ export function vOverview() {
     top.length ? top.map(i => insightEl(i)) : h('p', { class: 'sub' }, 'Критичных замечаний нет.'));
   out.push(h('div', { class: 'grid2' }, nextCard, att));
 
-  /* wave lifts */
-  const cyc = D.stats.filter(s => C.isCycle(D.cfg, s.id) && s.active);
+  /* wave lifts (в приложении — базовые в силовой роли: сила по запасу и поддержание, решение владельца 24 ноября 2026) */
+  const cyc = D.stats.filter(s => byPct(D.cfg, s.id) && s.active), app = appRules();
   if (cyc.length) {
-    out.push(h('section', null, h('div', { class: 'sec-h' }, h('h2', null, 'Базовые'), h('span', { class: 'sub' }, 'волна ' + Object.entries(D.cfg.cycle.pct).sort((a: any, b: any) => b[0] - a[0]).map(e => e[1] + '% × ' + e[0]).join(' → ') + ', максимум +' + C.fmt(D.cfg.cycle.inc, 1) + '% в неделю' + (cyc.some(s => C.goalOf(D.cfg, s.id) === 'auto') ? ' · сила по запасу: 4 × 4, вес по запасу' : ''))),
+    out.push(h('section', null, h('div', { class: 'sec-h' }, h('h2', null, 'Базовые'), h('span', { class: 'sub' }, app ? [cyc.some(s => C.goalOf(D.cfg, s.id) === 'auto') ? 'сила по запасу: 4 × 4, вес по запасу' : '', cyc.some(s => C.goalOf(D.cfg, s.id) === 'hold') ? 'поддержание: 3 × 4, вес прежний' : ''].filter(Boolean).join(' · ') : 'волна ' + Object.entries(D.cfg.cycle.pct).sort((a: any, b: any) => b[0] - a[0]).map(e => e[1] + '% × ' + e[0]).join(' → ') + ', максимум +' + C.fmt(D.cfg.cycle.inc, 1) + '% в неделю' + (cyc.some(s => C.goalOf(D.cfg, s.id) === 'auto') ? ' · сила по запасу: 4 × 4, вес по запасу' : ''))),
       h('div', { class: 'grid3' }, cyc.map(s => {
         const p = C.planCycle(D.W, D.cfg, s.id, null);
         return h('button', { class: 'ex-card', onclick: () => { S.ui.exSel = s.id; go('progress'); } },
           h('span', { class: 'nm' }, C.exName(D.cfg, s.id), goalTag(D.cfg, s.id) ? h('span', { class: 'tag accent', style: 'margin-left:6px' }, goalTag(D.cfg, s.id)) : null),
-          h('div', { class: 'ln' }, h('div', null, h('div', { class: 'big' }, C.fmt(s.last.top.w) + ' × ' + s.last.top.r), h('div', { class: 'sub' }, C.fmtDate(s.last.date) + ' · ' + s.last.item.cyc!.pct + '%')), spark(s.ss.map(x => x.tm!))),
-          h('div', { class: 'sub' }, 'Расчётный максимум ' + C.fmt(s.last.tm, 1) + ' кг · дальше ', h('b', null, C.fmt(p.w) + ' × ' + p.reps), p.repeat ? ' (повтор недели)' : ''));
+          h('div', { class: 'ln' }, h('div', null, h('div', { class: 'big' }, C.fmt(s.last.top.w) + ' × ' + s.last.top.r), h('div', { class: 'sub' }, C.fmtDate(s.last.date) + (s.last.item.cyc ? ' · ' + s.last.item.cyc.pct + '%' : ''))), spark(s.ss.map(x => x.metric))),
+          h('div', { class: 'sub' }, 'Расчётный максимум ' + C.fmt(s.last.metric, 1) + ' кг · дальше ', h('b', null, C.fmt(p.w) + ' × ' + p.reps), p.repeat ? ' (повтор недели)' : ''));
       }))));
   }
 

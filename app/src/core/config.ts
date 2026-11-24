@@ -2,7 +2,7 @@
    Перенесено из reference/src/core.js: тела функций без изменений. */
 import { clone } from './records.ts';
 import { GEAR, NO_GEAR, placed } from './gear.ts';
-import { appEx } from './rules.ts';
+import { appCfg, appEx } from './rules.ts';
 import type { Cfg, ExDef } from './types.ts';
 
 /* ---------- config ---------- */
@@ -37,6 +37,7 @@ export function mergeCfg(raw: any): Cfg {
   c.caps = { day: 11, week: 100 };
   if (raw.caps) { if (+raw.caps.day > 0) c.caps.day = +raw.caps.day; if (+raw.caps.week > 0) c.caps.week = +raw.caps.week; }
   c.rest = +raw.rest >= 30 && +raw.rest <= 600 ? +raw.rest : 120;   // seconds of rest between sets, for the time estimate
+  appCfg(c);                                                         // (в эталоне нет) программа вокруг одного базового с «Растут как раньше»: остальные базовые — сила по запасу (решение владельца, 24 ноября 2026)
   return c;
 }
 export const exName = (cfg: Cfg, id: string) => (cfg.ex[id] && cfg.ex[id].n) || id;

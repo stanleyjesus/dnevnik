@@ -1,10 +1,11 @@
 /* Неделя по шаблонам дней: подходы по мышцам и лимиты атлета.
-   Перенесено из reference/src/core.js: тела функций без изменений. */
+   Перенесено из reference/src/core.js: тела функций без изменений, кроме базового на двойной прогрессии (rules.ts, решение владельца 24 ноября 2026). */
 import { MUSCLES, SLOTS } from './catalog.ts';
 import { nSets } from './format.ts';
 import { isCycle, isLight } from './config.ts';
 import { cycleVol, lightOf, progPending, waveSetsAvg } from './goals.ts';
 import { dayStale } from './days.ts';
+import { appRules, byPct } from './rules.ts';
 import type { Cfg, Week, Workout } from './types.ts';
 
 /* where a week of day templates breaks the athlete's limits */
@@ -25,7 +26,7 @@ export function tally(cfg: Cfg, t: Week) {
     for (const it of w.items) {
       const ex = cfg.ex[it.ex], wave = isCycle(cfg, it.ex), light = isLight(cfg, it.ex);
       const n = light ? lightOf(cfg, it.ex).sets : wave ? waveSetsAvg(cfg, it.ex) : it.sets ? it.sets.filter(x => !x.warm).length : (+it.n! || 0);
-      const heavy = !!(wave || light || it.cyc), f = ex && ex.uni ? 0.5 : 1, k = heavy ? cycleVol(cfg, it.ex) : 1;
+      const heavy = appRules() ? byPct(cfg, it.ex) || light : !!(wave || light || it.cyc), f = ex && ex.uni ? 0.5 : 1, k = heavy ? cycleVol(cfg, it.ex) : 1;
       load[sl.id] += n * f;
       if (!ex) continue;
       if (ex.pat) pp[ex.pat] = (pp[ex.pat] || 0) + n * f;

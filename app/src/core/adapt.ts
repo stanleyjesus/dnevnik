@@ -1,16 +1,16 @@
 /* Поправки дневника поверх правил атлета.
-   Перенесено из reference/src/core.js: тела функций без изменений. */
+   Перенесено из reference/src/core.js: тела функций без изменений, кроме методики под цель с днями «День N» (rules.ts, решение владельца 24 ноября 2026). */
 import { MUSCLE, MUSCLES, SLOTS } from './catalog.ts';
 import { dnum, fmtDate } from './dates.ts';
 import { fmt, nSets, plural } from './format.ts';
 import { clone } from './records.ts';
-import { exName, isCycle, isLight, kindOf } from './config.ts';
+import { exName, isLight, kindOf } from './config.ts';
 import { effReps, estRir, TARGET } from './sets.ts';
 import { goalOf, goalRange, GOALS, waveOf } from './goals.ts';
 import { allStats, exStats, program, sessions, stalledSets } from './stats.ts';
 import { formulaRange, hints, lastSessionItem, plan, planCycle, roundTo, startWeight, suggestSet } from './plan.ts';
 import { planned } from './tally.ts';
-import { appRules, rdlDef } from './rules.ts';
+import { appRules, byPct, rdlDef } from './rules.ts';
 import type { Tally } from './tally.ts';
 import type { Add, AddCtx, Addition, Cfg, Cyc, ExDef, MuscleMap, Prop, PropSet, Range, Session, Slot, Workout } from './types.ts';
 
@@ -57,7 +57,7 @@ export function additions(workouts: Workout[], cfg: Cfg, pl: Tally) {
 export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string) {
   const past = workouts.filter(w => !w.open && w.date < date);
   const base = plan(workouts, cfg, slot, date), z = cfg.zones, prog = program(past, cfg), pl = planned(past, cfg), props: Prop[] = [];
-  const dps = allStats(past, cfg).filter(s => s.active && !isCycle(cfg, s.id) && !isLight(cfg, s.id) && s.n >= 2);
+  const dps = allStats(past, cfg).filter(s => s.active && !byPct(cfg, s.id) && !isLight(cfg, s.id) && s.n >= 2);   // (в эталоне нет) с днями «День N» базовое на двойной прогрессии — среди упражнений двойной прогрессии
   const worse = dps.filter(s => s.last.metric < s.ss[s.n - 2].metric * 0.98);
   const deload = dps.length >= 6 && worse.length >= dps.length / 2;
   const short: Record<string, number> = {}, over: Record<string, number> = {}, used: Record<string, boolean> = {};
@@ -88,7 +88,7 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
         /* «сила по запасу» moves its own weight after every session: nothing to add here */
       } else if (ss.length >= 2 && failed(ss[ss.length - 1]) && failed(ss[ss.length - 2])) {
         const wv = waveOf(cfg, it.ex), r0 = wv.order[0], p0 = wv.pct[r0], n0 = wv.sets(r0), tm = c.prev.tm! * 0.9, w = flat(tm * p0 / 100);
-        push('Плато', ['два раза подряд подходы не закрыты: расчётный максимум −10% (до ' + fmt(tm, 1) + ' кг), волна заново с ' + n0 + ' × ' + r0 + ' по ' + fmt(w) + ' кг'], Array.from({ length: n0 }, () => ({ w, tg: [r0, r0] })), { pct: p0, reps: r0 });
+        push('Плато', ['два раза подряд подходы не закрыты: расчётный максимум −10% (до ' + fmt(tm, 1) + ' кг), ' + (appRules() ? 'дальше ' : 'волна заново с ') + n0 + ' × ' + r0 + ' по ' + fmt(w) + ' кг'], Array.from({ length: n0 }, () => ({ w, tg: [r0, r0] })), { pct: p0, reps: r0 });
       } else if (gap >= 14 && !c.repeat && !c.hard) {
         const w = flat(c.prev.tm! * c.pct / 100);
         if (w !== c.w) push('После перерыва', [q(gap) + ' без этого упражнения: ' + fmt(w) + ' кг вместо ' + fmt(c.w) + ', волна идёт дальше без прибавки к максимуму'], Array.from({ length: c.sets }, () => ({ w, tg: [c.reps, c.reps] })), { pct: c.pct, reps: c.reps });

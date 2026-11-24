@@ -11,6 +11,7 @@ import { goalTag } from './overview.ts';
 import { importBox, pickBackup } from './importer.ts';
 import { deviceNote } from './device.ts';
 import { dropExButton, starterTools } from './starter.ts';
+import { appRules } from '../core/rules.ts';
 import type { ExDef, ExGuess, MuscleMap } from '../core/index.ts';
 import type { Db, El, Kid, Profile, RawCfg } from './types.ts';
 import type { Backup } from '../data/backup.ts';
@@ -91,7 +92,7 @@ export function knownBlock() {
   };
   const inp = (id: string, k: 'work' | 'workR' | 'max', ph: string, lab: string) => h('input', { class: 'num sm', type: 'text', inputmode: k === 'workR' ? 'numeric' : 'decimal', id: 'kw-' + k + '-' + id, placeholder: ph, 'aria-label': lab + ': ' + C.exName(cfg, id), value: +cfg.ex[id][k]! > 0 ? C.fmt(+cfg.ex[id][k]!, 3) : '', disabled: ro, onchange: e => set(id, k, e.target) });
   const row = (id: string) => {
-    const p = logged(id), nm = h('div', { class: 'kw-n' }, C.exName(cfg, id), C.isCycle(cfg, id) ? h('span', { class: 'tag', style: 'margin-left:6px' }, 'волна') : null);
+    const p = logged(id), nm = h('div', { class: 'kw-n' }, C.exName(cfg, id), C.isCycle(cfg, id) ? h('span', { class: 'tag', style: 'margin-left:6px' }, appRules() ? 'базовое' : 'волна') : null);
     if (p) {
       const sets = p.it.sets.filter(x => !x.warm && x.w != null), top = sets.length ? sets.reduce((t, x) => x.w! > t.w! || (x.w === t.w && (x.r || 0) > (t.r || 0)) ? x : t, sets[0]) : null;
       return h('div', { class: 'kw-row' }, nm, h('div', { class: 'kw-log sub' }, 'Есть в журнале' + (top ? ': ' + C.fmt(top.w) + ' кг' + (top.r != null ? ' × ' + top.r : '') + ', ' + C.fmtDate(p.w.date) : '') + ' — веса берутся из него.'));
@@ -247,7 +248,7 @@ export function vSetup() {
     const e = cfg.ex[id];
     if (ui.exForm === id) { list.push(h('div', { class: 'card', style: 'margin:8px 0' }, exForm(id, () => { ui.exForm = null; render(true); }))); continue; }
     list.push(h('div', { class: 'plan-row' }, h('span', { class: 'n' }, e.n, D.prog.has(id) ? null : h('span', { class: 'muted' }, ' · не в программе')),
-      h('span', { class: 'sub', style: 'flex:2 1 220px' }, (goalTag(cfg, id) ? goalTag(cfg, id) + ' · ' : '') + (e.mode === 'light' ? C.lightOf(cfg, id).sets + ' × ' + C.lightOf(cfg, id).reps + ' на ' + C.lightOf(cfg, id).pct + '% от максимума в «' + C.exName(cfg, e.of!) + '»' : cfg.gear[C.gearOf(cfg, id)].n.toLowerCase() + ' · ' + (e.mode === 'cycle' ? 'волна, ' : '') + 'шаг ' + C.fmt((e.mode === 'cycle' ? e.round : e.step) || 2.5) + ' кг') + ' · ' + (musText(e.m) || 'мышцы не указаны')),
+      h('span', { class: 'sub', style: 'flex:2 1 220px' }, (goalTag(cfg, id) ? goalTag(cfg, id) + ' · ' : '') + (e.mode === 'light' ? C.lightOf(cfg, id).sets + ' × ' + C.lightOf(cfg, id).reps + ' на ' + C.lightOf(cfg, id).pct + '% от максимума в «' + C.exName(cfg, e.of!) + '»' : cfg.gear[C.gearOf(cfg, id)].n.toLowerCase() + ' · ' + (e.mode === 'cycle' ? (appRules() ? 'базовое, ' : 'волна, ') : '') + 'шаг ' + C.fmt((e.mode === 'cycle' ? e.round : e.step) || 2.5) + ' кг') + ' · ' + (musText(e.m) || 'мышцы не указаны')),
       ro || e.mode === 'light' ? null : h('button', { class: 'btn ghost sm', onclick: () => { ui.exForm = id; render(true); } }, 'Изменить'),
       dropExButton(id)));
   }
