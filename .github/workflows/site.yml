@@ -1,4 +1,5 @@
-# Проверки и сайт. На каждую отправку в main, в пробную ветку try/… и на каждый запрос на слияние — все проверки проекта;
+# Проверки и сайт. На каждую отправку в main, в пробную ветку try/… и на каждый запрос на слияние — все проверки проекта
+# (без браузера, в браузере со сверкой с эталоном и в браузере с днями «День N» — три задания идут одновременно);
 # из ветки main, если проверки прошли, — сборка и публикация сайта на GitHub Pages. Пробная ветка сайт не трогает.
 # Чтобы публикация заработала, в настройках репозитория: Settings → Pages → Source → GitHub Actions.
 name: Проверки и сайт
@@ -70,10 +71,37 @@ jobs:
         working-directory: app
         run: npm run screens
 
+  # Те же сценарии с днями приложения «День 1…N»: с эталоном их не сравнить, поэтому каждый шаг сверяется со снимком
+  # в app/snapshots/. Идёт рядом с проверками в браузере, а не после них, — ждать дольше не приходится.
+  days:
+    name: 'Проверки в браузере: дни «День N»'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Установка
+        working-directory: app
+        run: npm ci
+      - name: Все сценарии с днями «День N» и сверка со снимками
+        working-directory: app
+        run: npm run screens -- --дни
+      - name: Что получилось вместо снимков — чтобы сравнить без повторного прогона
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshots-now
+          path: app/.snapshots/
+          if-no-files-found: ignore
+
   build:
     name: Сборка сайта
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: [check, browser]
+    needs: [check, browser, days]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

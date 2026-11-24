@@ -19,7 +19,10 @@
    --шрифт-айфона   дать приложению размер шрифта в полях, как на iPhone: не станет ли страница шире экрана
    --кнопки    показать, что есть на экране там, где сценарий закончился или остановился
    --дни       все сценарии только в приложении и с его собственными днями «День 1…N»: без сравнения с эталоном, ловятся ошибки страницы,
-               страница шире экрана и шаги, которым не нашлось кнопки
+               страница шире экрана, шаги, которым не нашлось кнопки, и отличие от снимка — того, что приложение показало и записало
+               после каждого шага в прошлый раз (app/snapshots/, устройство снимков — scripts/snapshots.mjs)
+   --переписать   то же, что --дни, но снимки не сверяются, а пишутся заново — только когда приложение изменено намеренно.
+               С названиями сценариев переписываются только их снимки; без названий — все, а снимки убранных сценариев удаляются
 
    Дни программы. У артефакта их три, и это дни недели; у приложения — «День 1…N» без привязки к дням недели (решение владельца,
    19 ноября 2026). Сравнивать с эталоном можно только одинаковое, поэтому для общих сценариев приложение запускается с таблицей дней
@@ -32,6 +35,7 @@ import { build } from './build.mjs';
 import { serve } from './serve.mjs';
 import { launch, sleep } from './browser.mjs';
 import { RELOAD, SCENARIOS } from './scenarios.mjs';
+import { firstDiff, slug, snapshotText } from './snapshots.mjs';
 
 const app = path.dirname(path.dirname(fileURLToPath(import.meta.url))), root = path.dirname(app);
 const J = v => JSON.stringify(v);
@@ -62,9 +66,11 @@ const FACETS = [['hash', 'открыта другая вкладка'], ['view',
 
 
 /* записи для обеих страниц в виде резервной копии: примерные данные и тот же дневник неделей позже.
-   Часы страниц — 10 утра того дня, когда сделана копия: планы и недели не плывут вместе с календарём */
+   Часы страниц — 10 утра того дня, когда сделана копия: планы и недели не плывут вместе с календарём.
+   Часовой пояс у страниц — UTC на любом компьютере (TZ ниже): время в записях и снимки не зависят от того, где идёт проверка */
+const TZ = 'UTC';
 const json = rel => JSON.parse(fs.readFileSync(path.join(root, rel), 'utf8'));
-const clockOf = b => new Date((/^\d{4}-\d\d-\d\d/.test(b.exportedAt || '') ? b.exportedAt.slice(0, 10) : '2025-11-12') + 'T10:00:00').getTime();
+const clockOf = b => new Date((/^\d{4}-\d\d-\d\d/.test(b.exportedAt || '') ? b.exportedAt.slice(0, 10) : '2025-11-12') + 'T10:00:00Z').getTime();
 const pack = {
   format: 'training-diary-backup', version: 1, exportedAt: '2025-11-12T08:00:00.000Z', profiles: [
     { id: 'me', name: 'Мой дневник', config: json('data/config.json'), workouts: json('data/workouts.json').map(d => Object.assign({ id: d.date }, d)), body: [], coach: null },
@@ -113,6 +119,9 @@ function inPage(base, isRef, seed, known, pack) {
       claude = { use: async n => n === 'sample' ? null : n === 'downloads' ? { save: async o => { saved = { filename: o.filename, text: String(o.data) }; return { status: 'saved' }; } } : v.use(n) };
     } });
   } else {
+    /* обещает ли браузер хранить записи, зависит от его версии и настроек: здесь он всегда отвечает «нет» — строка о хранении
+       в «Настройке» → «Данные» одна и та же на любом компьютере */
+    try { if (navigator.storage) for (const k of ['persisted', 'persist']) Object.defineProperty(navigator.storage, k, { configurable: true, value: async () => false }); } catch (e) { /* останется как есть */ }
     /* приложение сохраняет файл обычным скачиванием: вместо скачивания запоминается имя и содержимое */
     const click = HTMLAnchorElement.prototype.click;
     HTMLAnchorElement.prototype.click = function () {
@@ -283,7 +292,7 @@ const initSource = (isRef, base, seed) => '(' + inPage.toString() + ')(' + base 
 
 /* сценарии: все или те, что названы в командной строке. Сценарий идёт на каждом наборе записей, для которого он годится:
    на примерных данных и на дневнике неделей позже; с data: 'empty' — один раз на пустом дневнике */
-const verbose = process.argv.includes('--шаги'), showControls = process.argv.includes('--кнопки'), SMOKE = process.argv.includes('--дни');
+const verbose = process.argv.includes('--шаги'), showControls = process.argv.includes('--кнопки'), REWRITE = process.argv.includes('--переписать'), SMOKE = REWRITE || process.argv.includes('--дни');
 /* --шрифт-айфона: приложение получает размер шрифта в полях, как на iPhone (там действует правило из конца style.css,
    а в Edge и Chrome оно выключено) — так проверка «страница не шире экрана» видит то, что увидит iPhone */
 const IOS_FONT = process.argv.includes('--шрифт-айфона') ? " document.addEventListener('DOMContentLoaded', () => { const st = document.createElement('style'); st.textContent = 'input:not(.gear-n), select, textarea { font-size: 16px !important; }'; document.head.appendChild(st); });" : '';
@@ -292,6 +301,11 @@ const runs = [];
 for (const sc of SCENARIOS) for (const id of sc.data ? [].concat(sc.data) : ['seed', 'copy']) if (DATA[id]) runs.push({ sc, data: DATA[id], name: sc.name + (id === 'empty' || id === 'tuned' ? '' : ' · ' + DATA[id].name) });
 const chosen = runs.filter(r => !words.length || words.some(w => r.name.toLowerCase().includes(w)));
 if (!chosen.length) { console.error('Нет сценария с таким названием. Есть: ' + SCENARIOS.map(s => s.name).join(', ')); process.exit(1); }
+/* снимки прогона с днями приложения: по файлу на сценарий и набор записей. Что получилось сейчас, когда снимок не совпал, —
+   в app/.snapshots/ рядом: его можно сравнить со снимком (git diff --no-index app/snapshots/<файл> app/.snapshots/<файл>) */
+const SNAP = path.join(app, 'snapshots'), NOW = path.join(app, '.snapshots');
+{ const names = new Map(); for (const r of runs) { const f = slug(r.name); if (names.has(f)) { console.error('У прогонов «' + names.get(f) + '» и «' + r.name + '» одно имя снимка: ' + f); process.exit(1); } names.set(f, r.name); r.file = f; } }
+if (SMOKE) { fs.rmSync(NOW, { recursive: true, force: true }); if (REWRITE) fs.mkdirSync(SNAP, { recursive: true }); }
 
 /* своя сборка в своей папке: правка исходников или открытое рядом приложение не меняют то, что проверяется */
 const out = path.join(app, '.screens');
@@ -299,13 +313,14 @@ await build({ dev: true, dir: out });
 const { server, url } = await serve(out, 0);
 /* у страниц разные адреса, чтобы у каждой была своя память браузера: черновик одной не должен попадать в другую */
 const APP = url, REF = url.replace('localhost', '127.0.0.1');
-let failed = 0, steps = 0, idle = 0, skipped = 0;
+let failed = 0, steps = 0, idle = 0, skipped = 0, written = 0;
 const started = Date.now();
 /* у каждой страницы свой браузер: обе на виду и в фокусе, ни одна не лежит фоновой вкладкой.
    Страница готова, когда её помощники на месте и записи загружены: значок в шапке стал «на связи» */
 const READY = '!!window.__t && !!document.querySelector("#sync.ok")';
 const ref = await launch('эталон', READY), mine = await launch('приложение', READY);
 try {
+  for (const p of [ref, mine]) await p.call('Emulation.setTimezoneOverride', { timezoneId: TZ });
 
   /* обе страницы запускаются заново с одними и теми же сохранёнными записями */
   /* noStore — приложение запускается так, будто база браузера недоступна (как в режиме «инкогнито» некоторых браузеров) */
@@ -343,10 +358,10 @@ try {
   const plural = (n, w) => n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? w[0] : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? w[1] : w[2]);
 
   console.log('Записи: ' + Object.values(DATA).filter(d => d.backup).map(d => d.name + ' (' + plural(d.backup.profiles.reduce((a, p) => a + p.workouts.length, 0), ['тренировка', 'тренировки', 'тренировок']) + ', часы страниц — ' + new Date(d.base).toLocaleDateString('ru-RU') + ')').join('; '));
-  for (const { sc, data, name } of chosen) {
+  for (const { sc, data, name, file } of chosen) {
     let bad = '', done = 0, was = null, tick = 0, miss = 0;
     const solo = !!sc.app || SMOKE;                                    // без сравнения с эталоном: приложение со своими днями
-    const log = [];
+    const log = [], shots = [];
     try {
       let [w, h] = sc.size || [390, 844];
       await ref.size(w, h); await mine.size(w, h);
@@ -365,6 +380,7 @@ try {
         const d = solo ? (b.errors ? 'ошибка в приложении: ' + b.errors : b.wide ? 'страница шире экрана: появилась горизонтальная прокрутка (' + b.wide + ')' : '') : differ(a, b);
         if (d) { bad = 'шаг ' + (done + 1) + ' «' + title + '» — ' + d; break; }
         done++;
+        if (SMOKE) shots.push({ title, look: b, skip: b.skip });
         /* что шаг изменил в приложении: шаг, после которого ничего не изменилось, скорее всего составлен неверно */
         const moved = was ? FACETS.filter(([k]) => k !== 'toast' && b[k] !== was[k]).map(([, n]) => n) : ['первый шаг'];
         if (b.skip) miss++;
@@ -372,6 +388,19 @@ try {
         was = b;
       }
     } catch (e) { bad = 'шаг ' + (done + 1) + (sc.steps[done] ? ' «' + sc.steps[done][0] + '»' : '') + ' — ' + (e && e.message || e); }
+    /* снимок: все шаги прошли — сверить с прежним или записать заново */
+    let text = '';
+    if (SMOKE && !bad) try { text = snapshotText(name, shots); } catch (e) { bad = 'снимок не составился: ' + (e && e.message || e); }
+    if (SMOKE && !bad) {
+      const at = path.join(SNAP, file);
+      if (REWRITE) { if (!fs.existsSync(at) || fs.readFileSync(at, 'utf8') !== text) { fs.writeFileSync(at, text); written++; } }
+      else {
+        const old = fs.existsSync(at) ? fs.readFileSync(at, 'utf8') : null, d = old == null ? '' : firstDiff(old, text);
+        if (old == null || d) { fs.mkdirSync(NOW, { recursive: true }); fs.writeFileSync(path.join(NOW, file), text); }
+        if (old == null) bad = 'снимка нет: app/snapshots/' + file + ' — сделать его: npm run screens -- --переписать "' + name + '"';
+        else if (d) bad = 'не как в снимке app/snapshots/' + file + ' (что сейчас — app/.snapshots/' + file + '): ' + d;
+      }
+    }
     /* --кнопки: что есть на экране эталона там, где сценарий остановился или закончился */
     if (showControls || /нет (кнопки|элемента|пункта)|в списке/.test(bad)) log.push('          на экране ' + (solo ? 'приложения' : 'эталона') + ':\n' + String(await (solo ? mine : ref).run('return __t.controls();').catch(e => e.message)).split('\n').map(l => '            ' + l).join('\n'));
     steps += done - miss; skipped += miss;
@@ -381,6 +410,14 @@ try {
     const lines = log.filter(l => verbose || l.includes('НИЧЕГО НЕ ИЗМЕНИЛОСЬ') || l.includes('          на экране '));
     if (lines.length) console.log(lines.join('\n'));
   }
+  /* снимки сценариев, которых больше нет: при полном прогоне — провал, при полной перезаписи они удаляются */
+  if (SMOKE && !words.length && fs.existsSync(SNAP)) {
+    const live = new Set(runs.map(r => r.file));
+    for (const f of fs.readdirSync(SNAP).filter(f => f.endsWith('.txt') && !live.has(f)).sort()) {
+      if (REWRITE) { fs.rmSync(path.join(SNAP, f)); written++; console.log('  убран снимок ' + f + ': такого сценария больше нет'); }
+      else { failed++; console.log('  FAIL  снимок app/snapshots/' + f + ' — такого сценария нет: убрать его — npm run screens -- --переписать'); }
+    }
+  }
 } catch (e) { failed++; console.log('  FAIL  ' + (e && e.message || e)); }
 await ref.close();
 await mine.close();
@@ -388,5 +425,5 @@ server.close();
 console.log('\nНамеренные отличия, которые в сравнение не входят:');
 for (const k of KNOWN) console.log('  · ' + k.what);
 if (idle) console.log('\nШагов, после которых в приложении ничего не изменилось: ' + idle + ' — они ничего не проверяют, сценарий нужно поправить');
-console.log(failed ? '\nНе совпало сценариев: ' + failed : idle ? '' : (SMOKE ? '\nВсе сценарии прошли в приложении с днями «День 1…N» (без сравнения с эталоном): шагов ' : '\nВсе сценарии совпали с эталоном: шагов ') + steps + (skipped ? ', пропущено ' + skipped : '') + ', ' + Math.round((Date.now() - started) / 1000) + ' с');
+console.log(failed ? '\nНе совпало сценариев: ' + failed : idle ? '' : (REWRITE ? '\nСнимки с днями «День 1…N» переписаны: изменилось ' + written + ' из ' + chosen.length + '; шагов ' : SMOKE ? '\nВсе сценарии прошли в приложении с днями «День 1…N» и совпали со снимками: шагов ' : '\nВсе сценарии совпали с эталоном: шагов ') + steps + (skipped ? ', пропущено ' + skipped : '') + ', ' + Math.round((Date.now() - started) / 1000) + ' с');
 process.exit(failed || idle ? 1 : 0);

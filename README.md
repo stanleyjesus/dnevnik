@@ -33,6 +33,7 @@ npm install
 npm run dev        # приложение для разработки: http://localhost:5173
 npm run check      # все проверки без браузера
 npm run screens    # сверка экранов с эталоном в браузере (нужен Chrome или Edge), около 15 минут
+npm run screens -- --дни   # те же сценарии с днями «День 1…N», сверка со снимками в app/snapshots/ (переписать: -- --переписать)
 npm run offline    # работа без сети и обновление сборки
 npm run build      # готовая сборка в app/dist
 ```
