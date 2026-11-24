@@ -106,10 +106,10 @@ test('заметка называет настоящую причину: при 
   const ref = Ref.buildProgram(W, Ref.mergeCfg(seedRaw()), { prio: 'legs' }), week = Core.buildProgram(W, Core.mergeCfg(seedRaw()), { prio: 'legs' });
   assert.deepEqual(plain(week.notes), plain(ref.notes));
   withDays(2, () => {
-    /* два дня, лимит 80: занято 68 — мешают девять упражнений в дне */
+    /* два дня, лимит 80: занято 67 — мешают девять упражнений в дне */
     const pr = Core.buildProgram(W, Core.mergeCfg(seedRaw()), { budget: 80 }), n = noteOf(pr, /^Нагрузка поровну/)!;
-    assert.equal(total(pr), 68);
-    assert.ok(n.x!.includes('предплечья выше не поднять — в каждой тренировке уже по девять упражнений. Поэтому уровень общий, но ниже. Лимит недели тут ни при чём: занято 68 подходов из 80. Поможет ещё один тренировочный день.'), String(n.x));
+    assert.equal(total(pr), 67);
+    assert.ok(n.x!.includes('предплечья выше не поднять — в каждой тренировке уже по девять упражнений. Поэтому уровень общий, но ниже. Лимит недели тут ни при чём: занято 67 подходов из 80. Поможет ещё один тренировочный день.'), String(n.x));
     assert.ok(!/увеличь лимит|не хватает лимита|Лимита \d+ подходов в неделю не хватает/.test(n.x!), String(n.x));
     /* второй профиль, приоритет «Грудь и плечи», лимит 70: занято 52 */
     const ch = Core.buildProgram([], Core.mergeCfg(p2Raw()), { prio: 'chest', budget: 70 }), c = noteOf(ch, /^Приоритет/)!;
@@ -187,22 +187,21 @@ test('с таблицей дней эталона время сборку не �
     assert.deepEqual(plain(Core.buildProgram(W, cfg, Object.assign({ time: 120 }, opts))), plain(Core.buildProgram(W, cfg, opts)), JSON.stringify(opts));
 });
 
-test('с днями «День N» и выбранным временем день заполняется до этого времени, а не до девяти упражнений: два дня, 2 ч — 71 подход, у каждой мышцы два дня, и так от 1 ч 15 мин', () => withDays(2, () => {
+test('с днями «День N» и выбранным временем день заполняется до этого времени, а не до девяти упражнений: два дня, 2 ч — 11 упражнений в дне, у каждой мышцы два дня, и так от 1 ч 30 мин', () => withDays(2, () => {
   const W = seedW(), cfg = Core.mergeCfg(seedRaw()), dayEx = (pr: Built) => Math.max(...Core.SLOTS.map(sl => pr.slots[sl.id].length));
   const mins = (pr: Built) => Core.SLOTS.map(sl => Core.fmtDur(Core.estMinutes(pr.cfg, pr.slots[sl.id])));
   const twoDays = (pr: Built) => Core.MUSCLES.filter(m => !cfg.ignore[m.id]).every(m => Core.SLOTS.filter(sl => (pr.after.day[sl.id][m.id] || 0) >= 2 - 0.01).length >= 2);
-  /* без времени — как было: девять мест в дне, и второй день достался не всем */
+  /* без времени — как было: девять мест в дне, и второй день достался не всем. В «Массе» базовыми не жертвуют (пункт 8, 24 ноября 2026): подтягивания стоят в дне 2 вместе с жимом ногами */
   const free = Core.buildProgram(W, cfg, {});
-  assert.deepEqual([total(free), dayEx(free), mins(free)], [68, 10, ['2 ч', '1 ч 45 мин']]);
+  assert.deepEqual([total(free), dayEx(free), mins(free)], [67, 10, ['1 ч 55 мин', '1 ч 55 мин']]);
   assert.ok(noteOf(free, /^Один день в неделю/)!.x!.includes('в каждой тренировке уже по девять упражнений'));
-  /* два часа: тринадцать упражнений в дне, тренировки не длиннее, второй день — у всех мышц */
+  /* два часа: одиннадцать упражнений в дне, тренировки не длиннее, второй день — у всех мышц */
   const two = Core.buildProgram(W, cfg, { time: 120 });
-  assert.deepEqual([total(two), dayEx(two), mins(two)], [71, 13, ['2 ч', '2 ч']]);
+  assert.deepEqual([total(two), dayEx(two), mins(two)], [67, 11, ['1 ч 55 мин', '2 ч']]);
   assert.ok(twoDays(two) && !noteOf(two, /^Один день в неделю/), two.notes.map(n => n.t).join(' | '));
-  /* больше времени — больше упражнений и подходов; каждая тренировка укладывается; второй день у каждой мышцы — от 1 ч 15 мин.
-     В 1 ч 30 мин подходов меньше, чем могло бы поместиться: уровнем выше у квадрицепса остался бы один день (заметка — в тесте ниже) */
+  /* больше времени — больше упражнений и подходов; каждая тренировка укладывается; второй день у каждой мышцы — от 1 ч 30 мин */
   const rows = TIMES.map(t => { const pr = Core.buildProgram(W, cfg, { time: t }); assert.ok(Core.SLOTS.every(sl => inTime(Core.estMinutes(pr.cfg, pr.slots[sl.id]), t)), t + ': ' + mins(pr)); return [t, total(pr), dayEx(pr), twoDays(pr)]; });
-  assert.deepEqual(rows, [[60, 31, 6, false], [75, 41, 8, true], [90, 48, 10, true], [105, 56, 11, true], [120, 71, 13, true]]);
+  assert.deepEqual(rows, [[60, 29, 6, false], [75, 39, 8, false], [90, 48, 10, true], [105, 60, 10, true], [120, 67, 11, true]]);
 }));
 
 test('с выбранным временем заметка называет время: что не поместилось и какое время поможет', () => {
@@ -215,8 +214,8 @@ test('с выбранным временем заметка называет в�
     assert.ok(!top || !top.x!.includes('время на тренировку от'), String(top && top.x));
   });
   withDays(2, () => {
-    /* уровень ниже ради второго дня: так и сказано */
-    const n = noteOf(Core.buildProgram(W, cfg, { time: 90 }), /^Нагрузка поровну/)!;
-    assert.ok(n.x!.includes('уровнем выше у части мышц (квадрицепс) остался бы один день в неделю, а в 1 ч 30 мин на тренировку не помещается и то и другое. Поэтому уровень общий, но ниже. Лимит недели тут ни при чём: занято 48 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 45 мин.'), String(n.x));
+    /* уровень ниже ради второго дня: так и сказано (на примерных данных — с приоритетом «Руки») */
+    const n = noteOf(Core.buildProgram(W, cfg, { prio: 'arms', time: 90 }), /^Приоритет/)!;
+    assert.ok(n.x!.includes('уровнем выше у части мышц (квадрицепс и бицепс бедра) остался бы один день в неделю, а в 1 ч 30 мин на тренировку не помещается и то и другое. Уровни ниже, пропорция та же. Лимит недели тут ни при чём: занято 46 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 45 мин.'), String(n.x));
   });
 });

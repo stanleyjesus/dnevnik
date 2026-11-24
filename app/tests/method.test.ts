@@ -8,7 +8,8 @@ import { Ref, plain, readJson } from './helpers.ts';
 import { Core } from '../src/core/index.ts';
 import { useDays } from '../src/core/days.ts';
 import { withStarter } from '../src/core/starter.ts';
-import { AUTO, LIGHT_A } from '../src/core/goals.ts';
+import { AUTO } from '../src/core/goals.ts';
+import { DAY_H, DAY_L, DAY_M } from '../src/core/strength.ts';
 import { HOLD, ORDER, TYPE, appRange, appRules, byPct, dayOrder, logMax } from '../src/core/rules.ts';
 import type { BuildOpts, Cfg, ExDef, Item, ProgEntry, ProgSlots, SetRec, Workout } from '../src/core/types.ts';
 
@@ -82,22 +83,33 @@ test('двойная прогрессия независимая: каждый �
   assert.deepEqual(sh(benchOf(W, cfgWith(), LATER)), { cyc: null, range: [6, 10], w: [85, 82.5, 82.5, 80] });
 }));
 
-test('«Сила»: базовое в силовой роли — 4 × 4 одним весом на 83%, вес решает запас в последнем подходе', () => withDays(3, () => {
+test('«Сила»: базовое в силовой роли — тяжёлый день 3 × 4 одним весом на 83%, вес решает запас в последнем подходе', () => withDays(3, () => {
   const W = seedW(), cfg = cfgWith('auto');
   assert.ok(byPct(cfg, 'bench'));
+  /* «Новая схема» (решение владельца, 24 ноября 2026): тяжёлый день — 3 × 4 на 83%, а не 4 × 4 */
+  assert.deepEqual([DAY_H, AUTO.aim, AUTO.down], [{ pct: 83, reps: 4, sets: 3 }, 2, 5]);
   /* максимум — 95 / 0.87 ≈ 109.2 кг; 83% — 90.6, до шага штанги — 90 */
-  assert.deepEqual(sh(benchOf(W, cfg)), { cyc: { pct: AUTO.pct, reps: AUTO.reps }, range: null, w: [90, 90, 90, 90] });
+  assert.deepEqual(sh(benchOf(W, cfg)), { cyc: { pct: DAY_H.pct, reps: DAY_H.reps }, range: null, w: [90, 90, 90] });
+  /* в журнале — прежние 4 × 4: запас последнего подхода решает так же */
   const next = (sets: SetRec[]) => benchOf(plus({ cyc: { pct: AUTO.pct, reps: AUTO.reps }, tm: 108.43, sets }), cfg, LATER).sets.map(s => s.w);
   assert.deepEqual([next(x4(90, 4, 3)), next(x4(90, 4, 2)), next(x4(90, 4, 1)), next(x4(90, 4, 0))].map(w => w[0]), [92.5, 92.5, 90, 85], 'запас 2 и больше — плюс шаг, 1 — тот же вес, 0 — минус 5%');
-  assert.deepEqual(next([{ w: 90, r: 4 }, { w: 90, r: 4 }, { w: 90, r: 4 }, { w: 90, r: 3, q: 0 }]), [85, 85, 85, 85], 'подход не закрыт — минус 5%');
+  assert.deepEqual(next([{ w: 90, r: 4 }, { w: 90, r: 4 }, { w: 90, r: 4 }, { w: 90, r: 3, q: 0 }]), [85, 85, 85], 'подход не закрыт — минус 5%');
+  assert.deepEqual(next([{ w: 90, r: 4 }, { w: 90, r: 4 }, { w: 90, r: 4, q: 2 }]).length, 3, 'после 3 × 4 — снова три подхода');
   /* прежняя отметка «приоритет силы» (тяжёлая волна) читается как сила по запасу */
   assert.deepEqual(sh(benchOf(W, cfgWith('strength'))), sh(benchOf(W, cfg)));
 }));
 
-test('«Сила»: лёгкий день — 3 × 4 на 78%, поддержание — 3 × 4 на 83% от максимума, который не растёт', () => withDays(3, () => {
+test('«Сила»: лёгкий день — 3 × 8 на 75%, средний — 3 × 6 на 79%, поддержание — 3 × 4 на 83% от максимума, который не растёт', () => withDays(3, () => {
   const W = seedW();
-  const cfg = cfgWith('auto', r => { r.ex.bench_light = { n: 'Жим лежа — лёгкий день', mode: 'light', of: 'bench', pat: 'h_push', m: r.ex.bench.m }; });
-  assert.deepEqual(sh(Core.makeItem(W, cfg, 'bench_light', 'wed', '2025-11-19')), { cyc: { pct: LIGHT_A.pct, reps: LIGHT_A.reps }, range: null, w: [85, 85, 85] }, '78% от 109.2 кг');
+  assert.deepEqual([DAY_L, DAY_M], [{ pct: 75, reps: 8, sets: 3 }, { pct: 79, reps: 6, sets: 3 }]);
+  const cfg = cfgWith('auto', r => {
+    r.ex.bench_light = { n: 'Жим лежа — лёгкий день', mode: 'light', of: 'bench', pat: 'h_push', m: r.ex.bench.m };
+    r.ex.bench_mid = { n: 'Жим лежа — средний день', mode: 'light', of: 'bench', mid: true, pat: 'h_push', m: r.ex.bench.m };
+  });
+  assert.deepEqual(sh(Core.makeItem(W, cfg, 'bench_light', 'wed', '2025-11-19')), { cyc: { pct: DAY_L.pct, reps: DAY_L.reps }, range: null, w: [82.5, 82.5, 82.5] }, '75% от 109.2 кг — 81.9, до шага штанги — 82.5');
+  assert.deepEqual(sh(Core.makeItem(W, cfg, 'bench_mid', 'fri', '2025-11-21')), { cyc: { pct: DAY_M.pct, reps: DAY_M.reps }, range: null, w: [87.5, 87.5, 87.5] }, '79% от 109.2 кг — 86.3, до шага штанги — 87.5');
+  /* запас по Эпли во всех трёх днях — около двух повторов */
+  assert.deepEqual([DAY_H, DAY_M, DAY_L].map(d => Core.estRir(d.pct, d.reps)), [2, 2, 2]);
   const hold = cfgWith('hold');
   assert.deepEqual(sh(benchOf(W, hold)), { cyc: { pct: HOLD.pct, reps: HOLD.reps }, range: null, w: [90, 90, 90] });
   const held = plus({ cyc: { pct: HOLD.pct, reps: HOLD.reps }, tm: 109.2, sets: [{ w: 90, r: 4 }, { w: 90, r: 4 }, { w: 90, r: 4 }] });
@@ -108,20 +120,23 @@ test('смена способа: после двойной прогрессии 
   const W = plus({ range: [6, 10], sets: [{ w: 85, r: 8 }, { w: 85, r: 8 }, { w: 85, r: 7 }, { w: 85, r: 7 }] });
   /* лучший подход — 85 × 8 с запасом по методике профиля (1): 85 × (1 + 9/30) = 110.5 кг; 83% — 91.7, до шага штанги — 92.5 */
   assert.equal(logMax(W.find(w => w.date === NEXT)!.items[0], 1), 110.5);
-  assert.deepEqual(sh(benchOf(W, cfgWith('auto'), LATER)), { cyc: { pct: 83, reps: 4 }, range: null, w: [92.5, 92.5, 92.5, 92.5] });
+  assert.deepEqual(sh(benchOf(W, cfgWith('auto'), LATER)), { cyc: { pct: 83, reps: 4 }, range: null, w: [92.5, 92.5, 92.5] });
   assert.deepEqual(sh(benchOf(W, cfgWith('hold'), LATER)).w, [92.5, 92.5, 92.5]);
   /* отмеченный запас — вместо запаса по методике: 85 × 8 с запасом 2 — 85 × (1 + 10/30) ≈ 113.3 кг */
   assert.equal(Core.fmt(logMax({ ex: 'bench', range: [6, 10], cyc: null, note: '', skip: false, rir: null, sets: [{ w: 85, r: 8, q: 2 }, { w: 85, r: 8 }] }, 1)!, 1), '113.3');
 }));
 
-test('сборка ставит роль базовых по цели: «Масса» — двойная прогрессия, «Сила» — сила по запасу, «Гибрид» — выбранное по запасу, остальные на поддержании', () => withDays(3, () => {
+test('сборка ставит роль базовых по цели: «Масса» — двойная прогрессия, «Сила» — по проценту только цель, «Гибрид» — цель по запасу, остальные на поддержании', () => withDays(3, () => {
   const W = seedW(), cfg = Core.mergeCfg(seedRaw());
   const roles = (o: BuildOpts) => { const pr = Core.buildProgram(W, cfg, o); return BASE.map(id => [pr.goals[id] ?? null, byPct(pr.cfg, id)]); };
   assert.deepEqual(roles({}), BASE.map(() => [null, false]), '«Масса»: базовых по проценту нет');
-  assert.deepEqual(roles({ strength: true }), BASE.map(() => ['auto', true]));
   assert.deepEqual(roles({ focus: 'bench' }), [['auto', true], ['hold', true], ['hold', true]]);
   assert.deepEqual(roles({ focus: 'bench', others: 'grow' }), BASE.map(() => ['auto', true]), '«Остальные растут» — сила по запасу раз в неделю');
-  assert.deepEqual(roles({ focus: 'bench', strength: true }), [['auto', true], ['hold', true], ['hold', true]], '«Сила: жим лежа»');
+  /* пункт 8 (решение владельца, 24 ноября 2026): под «Силой» по проценту идёт только цель, остальные базовые справочника — обычные упражнения */
+  assert.deepEqual(roles({ focus: 'bench', strength: true }), [['auto', true], [null, false], [null, false]], '«Сила: жим лежа»');
+  assert.deepEqual(roles({ strength: true, triad: true }), [['auto', true], [null, false], [null, false]], '«Сила: пауэрлифтерская тройка»: из базовых справочника в тройке только жим лежа');
+  /* прежний силовой режим «все базовые» в логике остался — его держит таблица дней эталона; с днями «День N» экран его не предлагает */
+  assert.deepEqual(roles({ strength: true }), BASE.map(() => ['auto', true]));
 }));
 
 test('программа вокруг одного базового, принятая с «Растут как раньше»: остальные базовые читаются как сила по запасу, хранилище не меняется', () => {
@@ -144,8 +159,8 @@ test('недельный объём: базовое на двойной прог
     const W = seedW(), mass = Core.planned(W, cfgWith()), auto = Core.planned(W, cfgWith('auto'));
     /* в эталоне жим лежа идёт волной: его четыре подхода — сила, и каждый за долю (cycleVol); в «Массе» они — полные подходы на массу */
     assert.deepEqual([r2(mass.pv.chest), r2(mass.ps.chest)], [r2(ref.pv.chest - ref.ps.chest + 4 * chest), undefined]);
-    /* 4 × 4 на 83% — запас около двух повторов: подход считается целым */
-    assert.deepEqual([r2(auto.pv.chest), r2(auto.ps.chest)], [r2(mass.pv.chest), 4 * chest]);
+    /* 3 × 4 на 83% — запас около двух повторов: подход считается целым; подходов на один меньше, чем на двойной прогрессии */
+    assert.deepEqual([r2(auto.pv.chest), r2(auto.ps.chest)], [r2(mass.pv.chest - chest), 3 * chest]);
   });
 });
 
@@ -153,7 +168,7 @@ test('время подхода: у базового на двойной про�
   const ref = Core.estMinutes(Core.mergeCfg(seedRaw()), [{ ex: 'bench' }]);
   withDays(3, () => {
     assert.equal(Math.round((Core.estMinutes(cfgWith(), [{ ex: 'bench' }]) - ref) * 60), 4 * 15, 'четыре подхода, каждый на 15 секунд дольше');
-    assert.equal(Core.estMinutes(cfgWith('auto'), [{ ex: 'bench' }]), ref, 'сила по запасу — как базовое эталона');
+    assert.equal(Math.round((ref - Core.estMinutes(cfgWith('auto'), [{ ex: 'bench' }])) * 60), 25 + 120 + 60, 'сила по запасу — как базовое эталона, но на подход меньше: 3 × 4 вместо 4 × 4');
   });
 });
 

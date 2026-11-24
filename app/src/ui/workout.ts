@@ -8,7 +8,7 @@ import { backupDraft, flushSave, saveCfg, saveT, setSaveState, touch, uniqueId }
 import { D, go, render } from './render.ts';
 import { dayTitle, durText, paintEta, planLegend, planRows, planSets, propList, restSelect, setWord, startWorkout } from './overview.ts';
 import { exForm } from './setup.ts';
-import { appRules } from '../core/rules.ts';
+import { appRules, heavyOf } from '../core/rules.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
 import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
 
@@ -207,16 +207,17 @@ export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string
   const w0 = it.sets[0] ? it.sets[0].w : null;
   const tmEl = h('b', null, '');
   const paintTm = () => { const w = it.sets[0] ? it.sets[0].w : null; tmEl.textContent = w ? C.fmt(it.tm || w / (it.cyc!.pct / 100), 1) + ' кг' : '–'; };
-  const auto = !light && wv.auto && it.cyc!.pct === C.AUTO.pct && it.cyc!.reps === C.AUTO.reps;
+  const A = appRules() ? heavyOf(D.cfg, it.ex) : C.AUTO;              // (в эталоне нет) с днями «День N» — тяжёлый день 3 × 4, у изоляции 3 × 6 («Новая схема», 24 ноября 2026)
+  const auto = !light && wv.auto && it.cyc!.pct === A.pct && it.cyc!.reps === A.reps;
   /* «сила по запасу»: what the last session decided, in the words of its rule */
   const said = !auto || !pc.prev || pc.verdict === 'start' ? null
     : pc.verdict === 'up' ? pill('good', (pc.rz == null ? 'в прошлый раз все подходы закрыты, запас не отмечен' : 'в прошлый раз запас ' + pc.rz + ' в последнем подходе') + ': плюс шаг')
     : pc.verdict === 'hold' ? pill('info', 'в прошлый раз запас 1 в последнем подходе: вес тот же')
     : pill('warn', (pc.closed ? 'в прошлый раз подход шёл в отказ' : 'в прошлый раз подходы не закрыты') + ': вес −' + C.AUTO.down + '%');
   card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
-    auto ? h('span', null, C.AUTO.sets + ' × ' + C.AUTO.reps + ' одним весом · цель — запас ' + C.AUTO.aim + ' в последнем подходе · расчётный максимум ', tmEl)
+    auto ? h('span', null, A.sets + ' × ' + A.reps + ' одним весом · цель — запас ' + C.AUTO.aim + ' в последнем подходе · расчётный максимум ', tmEl)
       : h('span', null, it.cyc!.pct + '% от расчётного максимума ' + (light && par ? 'в упражнении «' + C.exName(D.cfg, par) + '» ' : ''), tmEl),
-    light ? h('span', null, 'лёгкий день: техника и скорость, до отказа далеко') : null,
+    light ? h('span', null, !appRules() ? 'лёгкий день: техника и скорость, до отказа далеко' : (D.cfg.ex[it.ex] || {}).mid ? 'средний день: между тяжёлым и лёгким' : 'лёгкий день: вес меньше, повторов больше, чем в тяжёлом') : null,   // (в эталоне нет) «Новая схема»: запас и в лёгком дне около 2
     S.canWrite ? goalSelect(it) : null,
     pc.prev ? h('span', null, 'прошлый раз ' + C.fmtDate(pc.prev.date) + ': ' + C.fmt(pc.prev.top.w) + ' × ' + pc.prev.item.cyc!.reps) : null,
     said || (pc.repeat ? pill('warn', 'в прошлый раз подходы не закрыты: неделя повторяется') : pc.hard ? pill('warn', 'в прошлый раз был подход в отказ: максимум не повышен') : null)));

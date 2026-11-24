@@ -3,8 +3,11 @@
    С таблицей дней эталона — эталонные тесты и общие сценарии сверки экранов — всё считается как в эталоне.
    Держат tests/rules.test.ts и, для методики под цель и порядка в дне, tests/method.test.ts. */
 import { DAYS } from './days.ts';
+import { placed } from './gear.ts';
 import { e1, estRir, work } from './sets.ts';
-import type { Cfg, ExDef, Item, MuscleMap, Range } from './types.ts';
+import { STARTER, starterOf } from './starter.ts';
+import { DAY_H, ISO, TARGETS, TRIAD } from './strength.ts';
+import type { Cfg, ExDef, Item, MuscleMap, ProgramCfg, Range } from './types.ts';
 
 /** Выключатель для проверок: tests/days.test.ts сверяет дни «День 1…3» с таблицей эталона при одних и тех же правилах */
 export const RULES = { on: true };
@@ -59,7 +62,8 @@ export function appEx(e: ExDef): ExDef {
    считает от цели программы и типа упражнения. Волна 77–82–87 с прибавкой максимума +2% в неделю не действует: волна, записанная в профиле,
    остаётся в данных, но ничего не считает.
    - По проценту от расчётного максимума идёт только базовое в силовой роли, которую ставит сборка «Сила» или «Гибрид»: сила по запасу —
-     4 × 4 одним весом с запасом 2 (≈ 83%), лёгкий день 3 × 4 на 78%, вес решает запас в последнем подходе; или поддержание — 3 × 4 на 83%
+     тяжёлый день 3 × 4 одним весом с запасом 2 (≈ 83%), вес решает запас в последнем подходе, лёгкий день 3 × 8 на 75%, у «Силы: <движение>»
+     ещё средний день 3 × 6 на 79% («Новая схема», решение владельца 24 ноября 2026; strength.ts); или поддержание — 3 × 4 на 83%
      от максимума, который не растёт, то есть вес прежний.
    - Всё остальное, в том числе базовое в «Массе», идёт по независимой двойной прогрессии — каждый подход ведётся отдельно: многосуставные
      и базовые 6–10 повторов, изоляция 8–12 (владелец заменил ею 10–15 в тот же день), запас по методике профиля (1 повтор). Свой диапазон упражнения
@@ -70,7 +74,8 @@ export function appEx(e: ExDef): ExDef {
 export const TYPE = { compound: { lo: 6, w: 4 }, iso: { lo: 8, w: 4 } };
 /** Поддержание базового: 3 × 4 на 83% от расчётного максимума, который не растёт (83% — как у силы по запасу, AUTO.pct) */
 export const HOLD = { pct: 83, reps: 4, sets: 3 };
-/** Подходов у базового на двойной прогрессии — столько же, сколько в тяжёлом дне силы по запасу (AUTO.sets) */
+/** Подходов у базового на двойной прогрессии — 4, как в тяжёлом дне силы по запасу первой версии (AUTO.sets); тяжёлый день силовой роли
+    с «Новой схемой» — 3 подхода (strength.ts, DAY_H) */
 export const BASE_SETS = 4;
 /** Роль базового по его отметке: auto — сила по запасу (и прежняя тяжёлая волна «приоритет силы»), hold — поддержание, иначе двойная прогрессия */
 export function appGoal(e: ExDef | null | undefined): 'auto' | 'hold' | null {
@@ -147,11 +152,95 @@ export function dayOrder<T>(L: T[], tier: (e: T) => number, mains: (e: T) => str
   const out = seq.flatMap(i => units[i].items);
   return out.every((e, i) => e === L[i]) ? L : out;
 }
-/** Настройка, как её читает приложение; в хранилище ничего не переписывается. Программа вокруг одного базового, принятая с «Растут как раньше»
-    до 24 ноября 2026: остальные базовые в ней без отметки шли по обычной волне. Волны в приложении нет, а «растут» — это сила по запасу раз в неделю */
+/* Цели «Силы» и «Гибрида» (решение владельца, 24 ноября 2026, пункт 8 вопросов сборки; разбор — docs/03, раздел 15.4). С днями «День N»
+   «базовое» — не отметка в справочнике, а роль в программе: тяжёлый и лёгкий дни по проценту от расчётного максимума. Её получает только то,
+   что выбрано целью:
+   - под «Силой» — одно упражнение из списка (strength.ts, TARGETS) или «Пауэрлифтерская тройка» (TRIAD); всё остальное, в том числе базовые
+     справочника, — обычные упражнения по двойной прогрессии по типу упражнения: «Остальных базовых» под «Силой» нет;
+   - под «Гибридом» — одно упражнение из того же списка; остальные базовые справочника — как их ставит переключатель «Остальные базовые».
+   В «Массе» и «Вручную» справочник читается, как сохранён. Роль живёт в принятой программе (programRoles) и в условиях сборки, а не в справочнике:
+   в хранилище ничего не переписывается, а asStored возвращает справочник, как он сохранён. Цели нет в справочнике — сборка добавит её из встроенного */
+/** Упражнение справочника для цели t (id встроенного справочника): по id, иначе по названию; его нет — сам id цели */
+export function targetOf(cfg: Cfg, t: string) {
+  if (cfg.ex[t] && cfg.ex[t].mode !== 'light') return t;
+  return Object.keys(cfg.ex).find(id => cfg.ex[id].mode !== 'light' && starterOf(id, cfg.ex[id].n) === t) || t;
+}
+/** Цели по порядку списка на экране: id упражнений справочника, а тех, которых в нём нет, — id встроенного */
+export const targetIds = (cfg: Cfg) => TARGETS.map(t => targetOf(cfg, t));
+/** Пауэрлифтерская тройка: приседания, жим лежа, становая тяга */
+export const triadIds = (cfg: Cfg) => TRIAD.map(t => targetOf(cfg, t));
+/** Название цели: из справочника, а если её там нет — из встроенного */
+export const targetName = (cfg: Cfg, id: string) => (cfg.ex[id] && cfg.ex[id].n) || (STARTER[id] && STARTER[id].n) || id;
+/** Упражнение годится в цель: оно есть в справочнике и это не лёгкий день, или его знает встроенный */
+export const canTarget = (cfg: Cfg, id: string | null | undefined) => !!id && (cfg.ex[id] ? cfg.ex[id].mode !== 'light' : !!STARTER[id]);
+/** Изоляция в силовой роли — тяжёлый день 3 × 6 и лёгкий 3 × 10 (strength.ts, ISO и ISO_LIGHT); у лёгкого дня — по его базовому */
+export function isoLift(cfg: Cfg, id: string) {
+  if (!appRules()) return false;
+  const e = cfg.ex[id], x = e && e.mode === 'light' ? cfg.ex[e.of!] : e;
+  return !!x && x.mode === 'cycle' && x.pat === 'iso';
+}
+/** Тяжёлый день силовой роли: 3 × 4 одним весом на 83%, у изоляции 3 × 6 на 79%; вес решает запас в последнем подходе («Новая схема»,
+    решение владельца 24 ноября 2026; strength.ts, DAY_H и ISO). С таблицей дней эталона тяжёлый день — 4 × 4 (AUTO, goals.ts) */
+export const heavyOf = (cfg: Cfg, id: string) => isoLift(cfg, id) ? ISO : DAY_H;
+/** В вес входит тело: подтягивания, отжимания, брусья — по названию упражнения или его снаряда. Лёгкий день такого базового не легче
+    самого лёгкого веса в журнале (легче тела не бывает); у остальных он — ровно доля от расчётного максимума, и у новой цели тоже (пункт 8, 24 ноября 2026) */
+export const BODY_NAME = /подтяг|отжим|брус/;
+export function withBody(cfg: Cfg, id: string) {
+  const e = cfg.ex[id], g = e && e.gear ? cfg.gear[e.gear] : null;
+  return !!e && (BODY_NAME.test(String(e.n || '').toLowerCase()) || (!!g && BODY_NAME.test(String(g.n || '').toLowerCase())));
+}
+/** Роли программы: on — что идёт по проценту; plain — базовые справочника, кроме on, идут по двойной прогрессии */
+export interface Roles { on: string[]; plain: boolean }
+/** Роли принятой программы: «Сила: тройка» и «Сила: <упражнение>» — по проценту только цель; «Гибрид» — цель и, как раньше, остальные базовые справочника;
+    «Масса», «Вручную» и силовой режим «все базовые», принятый до 24 ноября 2026, — справочник как есть */
+export function programRoles(P: ProgramCfg | null | undefined): Roles | null {
+  if (!appRules() || !P) return null;
+  if (P.triad && P.triad.length) return { on: P.triad.slice(), plain: true };
+  return P.focus ? { on: [P.focus], plain: !!P.strength } : null;
+}
+/** Справочник под роли (меняет c.ex): цель — базовое, остальные базовые — по двойной прогрессии, если так велит роль. Сохранённый режим помнит
+    поле stored; шаг и округление — снова от снаряда, лёгкий день цели округляет, как она */
+export function applyRoles(c: Cfg, R: Roles | null) {
+  if (!R) return;
+  const set = (id: string, mode: string) => {
+    const e = c.ex[id], x: ExDef = Object.assign({}, e, { stored: e.stored !== undefined ? e.stored : e.mode || '' });
+    if (mode) x.mode = mode; else delete x.mode;
+    c.ex[id] = placed(c, x);
+  };
+  for (const id of Object.keys(c.ex)) {
+    const e = c.ex[id];
+    if (e.mode === 'light') continue;
+    if (R.on.includes(id)) { if (e.mode !== 'cycle') set(id, 'cycle'); }
+    else if (R.plain && e.mode === 'cycle') set(id, '');
+  }
+  for (const id of Object.keys(c.ex)) { const e = c.ex[id]; if (e.mode === 'light' && R.on.includes(e.of!)) c.ex[id] = placed(c, e); }
+}
+/** Настройка со справочником, как он сохранён: роли принятой программы сняты. Всегда копия — справочник и снаряды можно менять, не трогая c */
+export function asStored(c: Cfg): Cfg {
+  const out: Cfg = Object.assign({}, c, { ex: Object.assign({}, c.ex), gear: Object.assign({}, c.gear) }), back: string[] = [];
+  for (const id of Object.keys(out.ex)) {
+    const e = out.ex[id];
+    if (e.stored === undefined) continue;
+    const x = Object.assign({}, e);
+    if (e.stored) x.mode = e.stored; else delete x.mode;
+    delete x.stored;
+    out.ex[id] = placed(out, x); back.push(id);
+  }
+  for (const id of Object.keys(out.ex)) { const e = out.ex[id]; if (e.mode === 'light' && back.includes(e.of!)) out.ex[id] = placed(out, e); }
+  return out;
+}
+/** Настройка, как её читает приложение; в хранилище ничего не переписывается.
+    - Роли принятой программы (см. выше). Упражнение, которое в ней идёт по двойной прогрессии вместо базового, получает число подходов базового,
+      если в программе его нет: так программа, принятая до 24 ноября 2026, считается и планируется без пробелов.
+    - Программа вокруг одного базового, принятая с «Растут как раньше» до 24 ноября 2026: остальные базовые в ней без отметки шли по обычной волне.
+      Волны в приложении нет, а «растут» — это сила по запасу раз в неделю */
 export function appCfg(c: Cfg) {
   const P = c.program;
-  if (!appRules() || !P || !P.focus || P.others !== 'grow' || !P.slots) return;
+  if (!appRules() || !P || !P.slots) return;
+  const R = programRoles(P);
+  applyRoles(c, R);
+  if (R && R.plain) for (const sl of Object.keys(P.slots)) for (const e of P.slots[sl] || []) { const x = c.ex[e.ex]; if (x && x.stored === 'cycle' && !(+e.n! > 0)) e.n = BASE_SETS; }
+  if (!P.focus || P.others !== 'grow' || P.strength) return;
   for (const sl of Object.keys(P.slots)) for (const e of P.slots[sl] || []) {
     const x = c.ex[e.ex];
     if (x && x.mode === 'cycle' && e.ex !== P.focus && !x.goal) c.ex[e.ex] = Object.assign({}, x, { goal: 'auto' });

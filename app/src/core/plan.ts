@@ -5,7 +5,7 @@ import { DAYS, dayStale } from './days.ts';
 import { addDays, dow } from './dates.ts';
 import { isCycle, isLight } from './config.ts';
 import { e1, work } from './sets.ts';
-import { appRange, appRules, BASE_SETS, byPct, fromMax, logMax } from './rules.ts';
+import { appRange, appRules, BASE_SETS, byPct, fromMax, heavyOf, logMax, withBody } from './rules.ts';
 import { AUTO, goalOf, goalRange, GOALS, lightOf, progPending, waveOf } from './goals.ts';
 import { sessions } from './stats.ts';
 import type { Cfg, ExDef, Item, ProgEntry, Range, SessRef, SetRec, Workout } from './types.ts';
@@ -60,8 +60,8 @@ export function planCycle(workouts: Workout[], cfg: Cfg, exId: string, before?: 
     /* one weight, four by four: the last set says what the next week is */
     const lw = last.top.w, end = planned[planned.length - 1], rz = end && end.q != null ? end.q : null;
     const verdict = !done || hard ? 'down' : rz === 1 ? 'hold' : 'up';
-    const w = +(verdict === 'up' ? lw! + q : verdict === 'hold' ? lw! : Math.min(lw! - q, roundTo(lw! * (1 - AUTO.down / 100), q))).toFixed(3);
-    return { reps: AUTO.reps, pct: AUTO.pct, sets: AUTO.sets, w, tm: w / (AUTO.pct / 100), prev: last, repeat: false, hard: false, strong: false, hold: false, keep: true, auto: true, verdict, rz, closed: done };
+    const w = +(verdict === 'up' ? lw! + q : verdict === 'hold' ? lw! : Math.min(lw! - q, roundTo(lw! * (1 - AUTO.down / 100), q))).toFixed(3), A = appRules() ? heavyOf(cfg, exId) : AUTO;   // (в эталоне нет) с днями «День N» — тяжёлый день 3 × 4, у изоляции 3 × 6 (rules.ts, heavyOf)
+    return { reps: A.reps, pct: A.pct, sets: A.sets, w, tm: w / (A.pct / 100), prev: last, repeat: false, hard: false, strong: false, hold: false, keep: true, auto: true, verdict, rz, closed: done };
   }
   let reps: number, tm: number | null;
   if (!inWave) { reps = first; tm = last.tm; }                     // the wave was switched: start it from the top on the same maximum
@@ -79,7 +79,7 @@ export function planLight(workouts: Workout[], cfg: Cfg, exId: string, before?: 
   const ex = cfg.ex[exId] || {} as ExDef, par = ex.of, q = +ex.round! || +((cfg.ex[par!] || {} as ExDef).round)! || 2.5, LIGHT = lightOf(cfg, exId);
   const c = par ? planCycle(workouts, cfg, par, before) : null, tm = c && c.prev ? c.prev.tm : c && c.known ? c.tm : null;
   let w = tm ? +roundTo(tm * LIGHT.pct / 100, q).toFixed(3) : null;
-  if (w != null) {                                                    // never below the lightest weight ever logged in the lift (body weight in pull-ups)
+  if (w != null && (!appRules() || withBody(cfg, par!))) {           // never below the lightest weight ever logged in the lift (body weight in pull-ups); (в эталоне нет) с днями «День N» — только там, где в вес входит тело
     let min: number | null = null;
     for (const x of workouts) for (const it of x.items) if (it.ex === par) for (const k of work(it)) if (k.w! > 0 && (min == null || k.w! < min)) min = k.w;
     if (min != null && w < min) w = min;
@@ -151,7 +151,7 @@ export function makeItem(workouts: Workout[], cfg: Cfg, exId: string, slot: stri
   }
   const h = hints(workouts, cfg, exId, slot, date);
   let sets = h.sets.map(x => ({ w: x.w, r: null }));
-  if (!(n! > 0) && appRules() && isCycle(cfg, exId)) n = BASE_SETS;  // (в эталоне нет) базовое на двойной прогрессии — четыре подхода
+  if (!(n! > 0) && appRules() && (isCycle(cfg, exId) || (cfg.ex[exId] || {} as ExDef).stored === 'cycle')) n = BASE_SETS;  // (в эталоне нет) базовое на двойной прогрессии — четыре подхода; и базовое справочника, которое под «Силой» идёт обычным упражнением (rules.ts)
   if (n! > 0) { if (sets.length > n!) sets = sets.slice(0, n); while (sets.length < n!) sets.push({ w: sets.length ? sets[sets.length - 1].w : h.start, r: null }); }
   return { ex: exId, cyc: null, range: h.range.slice(), sets, note: '', skip: false, rir: null };
 }

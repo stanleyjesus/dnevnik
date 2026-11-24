@@ -45,6 +45,7 @@ export interface ExDef {
   pat?: string;                 // тип движения; iso — изоляция
   mode?: string;                // cycle — по процентам (волна), light — лёгкий день; пусто — двойная прогрессия
   of?: string;                  // у лёгкого дня: id его базового
+  mid?: boolean;                // (только приложение) у лёгкого дня: это средний день «Силы: <движение>» — 3 × 6 на 79% (strength.ts, DAY_M)
   gear?: string;                // снаряд, в котором лежит упражнение
   step?: number;                // шаг веса: берётся от снаряда
   round?: number;               // округление весов волны: тоже от снаряда
@@ -52,6 +53,7 @@ export interface ExDef {
   hi?: number;
   uni?: boolean;                // одна сторона: подход идёт за половину
   goal?: string;                // отметка цели
+  stored?: string;              // (только приложение) режим, как он сохранён, если роль в принятой программе его сменила: 'cycle' или '' (rules.ts, applyRoles)
   work?: number;                // известные веса: рабочий, на сколько повторов, разовый максимум
   workR?: number;
   max?: number;
@@ -73,8 +75,9 @@ export type ProgSlots = Record<string, ProgEntry[]>;
 /** Принятая программа: действует в дне, пока в нём не было тренировки с даты since.
     prev — к чему вернуться кнопкой «Вернуть прежнюю»: прежние отметки цели упражнений, прежняя программа и (только приложение) прежнее число дней
     в неделе, если перед принятием его меняли. fit (только приложение) — программа принята с лимитом недели, найденным по времени на тренировку:
-    время, отдых, режим сборки и число дней, при которых он найден; пока они те же, дневник большего лимита не ищет */
-export interface ProgramCfg { name?: string; focus?: string | null; others?: string | null; prio?: string; budget?: number; lean?: boolean; strength?: boolean; since: string; made?: string; slots: ProgSlots; prev?: { goals?: Record<string, string>; program?: ProgramCfg; days?: number }; fit?: { time: number; rest: number; mode: string; days: number }; drop?: string[] }
+    время, отдых, режим сборки и число дней, при которых он найден; пока они те же, дневник большего лимита не ищет.
+    triad (только приложение) — «Сила: пауэрлифтерская тройка», три движения по id: по проценту идут только они (rules.ts, programRoles) */
+export interface ProgramCfg { name?: string; focus?: string | null; others?: string | null; prio?: string; budget?: number; lean?: boolean; strength?: boolean; since: string; made?: string; slots: ProgSlots; prev?: { goals?: Record<string, string>; program?: ProgramCfg; days?: number }; fit?: { time: number; rest: number; mode: string; days: number }; drop?: string[]; triad?: string[] }
 /** Настройка профиля после mergeCfg: все значения по умолчанию подставлены */
 export interface Cfg {
   start: string | null;                       // понедельник первой недели программы
@@ -148,8 +151,9 @@ export interface Move { sl: Slot; e: ProgEntry | null; id: string; f: number; dn
 /** Сколько подходов день даёт мышце */
 export type DayOf = (d: string, m: string) => number;
 /** Что собрать: вокруг базового (focus), под приоритет мышц (prio) или вручную (manual); time — минут на тренировку, от них потолок упражнений в дне (rules.ts);
-    drop — базовые, которыми атлет жертвует, когда их больше, чем дней, по порядку (rules.ts) */
-export interface BuildOpts { focus?: string | null; others?: string; prio?: string; budget?: number | string; manual?: boolean; strength?: boolean; time?: number; drop?: string[] }
+    drop — базовые, которыми атлет жертвует, когда их больше, чем дней, по порядку (rules.ts); triad — с strength: «Пауэрлифтерская тройка» (rules.ts).
+    С днями «День N» focus — цель «Силы» или «Гибрида»: любое упражнение справочника или встроенного списка, базовым его делает роль */
+export interface BuildOpts { focus?: string | null; others?: string; prio?: string; budget?: number | string; manual?: boolean; strength?: boolean; time?: number; drop?: string[]; triad?: boolean }
 /** Строка пояснения сборки: заголовок и текст */
 export interface ProgNote { t: string; x?: string }
 

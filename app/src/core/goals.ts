@@ -1,8 +1,9 @@
 /* Цели упражнений и волны базовых.
    Перенесено из reference/src/core.js: тела функций без изменений, кроме методики под цель с днями «День N» (rules.ts, решение владельца 24 ноября 2026). */
 import { isLight, kindOf, LIGHT } from './config.ts';
-import { appGoal, appRules, HOLD } from './rules.ts';
+import { appGoal, appRules, BASE_SETS, heavyOf, HOLD, isoLift } from './rules.ts';
 import { EASY, estRir } from './sets.ts';
+import { DAY_L, DAY_M, ISO_LIGHT } from './strength.ts';
 import type { Cfg, ExDef, Goal, PctMap, Range, Workout } from './types.ts';
 
 /* what the athlete wants from one exercise. It sets the rep range of a double-progression exercise and the wave of a percentage lift */
@@ -28,14 +29,16 @@ export const WAVE_S: { pct: PctMap; sets: Record<number, number>; inc: number } 
 export const AUTO = { pct: 83, reps: 4, sets: 4, aim: 2, down: 5 };
 export const LIGHT_A = { pct: 78, reps: 4, sets: 3 };
 export function waveOf(cfg: Cfg, id: string) {
-  /* (в эталоне нет) в приложении волны нет: базовое по проценту идёт силой по запасу или на поддержании — 3 × 4 на 83% от максимума, который не растёт */
-  if (appRules()) { const hold = goalOf(cfg, id) === 'hold', S = hold ? HOLD : AUTO; return { strong: false, hold, auto: !hold, keep: true, pct: { [S.reps]: S.pct } as PctMap, order: [S.reps], sets: (_r: number) => S.sets, inc: 0, perCycle: false }; }
+  /* (в эталоне нет) в приложении волны нет: базовое по проценту идёт силой по запасу (тяжёлый день, heavyOf) или на поддержании — 3 × 4 на 83%
+     от максимума, который не растёт; базовое на двойной прогрессии — BASE_SETS подходов (rules.ts) */
+  if (appRules()) { const g = goalOf(cfg, id), hold = g === 'hold', S = hold ? HOLD : heavyOf(cfg, id), n = g ? S.sets : BASE_SETS; return { strong: false, hold, auto: !hold, keep: true, pct: { [S.reps]: S.pct } as PctMap, order: [S.reps], sets: (_r: number) => n, inc: 0, perCycle: false }; }
   const g = goalOf(cfg, id), strong = g === 'strength', hold = g === 'hold', auto = g === 'auto', pct = auto ? { [AUTO.reps]: AUTO.pct } : strong ? WAVE_S.pct : cfg.cycle.pct;
   return { strong, hold, auto, keep: strong || hold || auto, pct, order: Object.keys(pct).map(Number).sort((a, b) => b - a),
     sets: (r: number) => auto ? AUTO.sets : strong ? (WAVE_S.sets[r] || 4) : hold ? Math.max(2, cfg.cycle.sets - 1) : cfg.cycle.sets, inc: auto ? 0 : strong ? WAVE_S.inc : hold ? 0 : cfg.cycle.inc, perCycle: strong };
 }
-/* the light day follows its lift: 3 × 5 at 75% beside a wave, 3 × 4 at 78% beside «сила по запасу» */
-export const lightOf = (cfg: Cfg, id: string) => appRules() ? LIGHT_A : goalOf(cfg, isLight(cfg, id) ? (cfg.ex[id] || {} as ExDef).of! : id) === 'auto' ? LIGHT_A : LIGHT;
+/* the light day follows its lift: 3 × 5 at 75% beside a wave, 3 × 4 at 78% beside «сила по запасу»; (в эталоне нет) с днями «День N» — «Новая схема»
+   (решение владельца, 24 ноября 2026; strength.ts): лёгкий день 3 × 8 на 75%, средний день «Силы: <движение>» 3 × 6 на 79%, у изоляции 3 × 10 на 71% */
+export const lightOf = (cfg: Cfg, id: string) => appRules() ? ((cfg.ex[id] || {} as ExDef).mid ? DAY_M : isoLift(cfg, id) ? ISO_LIGHT : DAY_L) : goalOf(cfg, isLight(cfg, id) ? (cfg.ex[id] || {} as ExDef).of! : id) === 'auto' ? LIGHT_A : LIGHT;
 export const cycleVol = (cfg: Cfg, id: string) => {
   if (isLight(cfg, id)) { const L = lightOf(cfg, id); return estRir(L.pct, L.reps) >= EASY ? 0.5 : 1; }
   const e = Object.entries(waveOf(cfg, id).pct);

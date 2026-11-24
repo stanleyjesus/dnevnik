@@ -13,7 +13,7 @@ import type { RawCfg } from './types.ts';
 /* план и черновик программы посчитаны со старым справочником */
 const fresh = () => { S.ui.plan = null; if (S.ui.prog) S.ui.prog.draft = null; };
 /* свой снаряд встроенного списка заводится в профиле, когда на него кладут упражнение */
-const needGear = (raw: RawCfg, g: string) => { if (STARTER_GEAR[g] && !(raw.gear && raw.gear[g])) { raw.gear = raw.gear || {}; raw.gear[g] = C.clone(STARTER_GEAR[g]); } };
+export const needGear = (raw: RawCfg, g: string) => { if (STARTER_GEAR[g] && !(raw.gear && raw.gear[g])) { raw.gear = raw.gear || {}; raw.gear[g] = C.clone(STARTER_GEAR[g]); } };
 
 /** Упражнения профиля, лежащие «без снаряда», которым встроенный список знает место: id и снаряд */
 export function sortable() {

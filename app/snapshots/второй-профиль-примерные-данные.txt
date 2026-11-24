@@ -716,6 +716,8 @@
       span Цель
       div.seg.multi(role="group" aria-label="Цель программы")
        button#pg-mass(type="button" aria-pressed="true") Масса
+       button#pg-force(type="button" aria-pressed="false") Сила
+       button#pg-mix(type="button" aria-pressed="false") Гибрид
        button#pg-hand(type="button" aria-pressed="false") Вручную
      label.f
       span Мышцы в приоритете
@@ -1667,7 +1669,7 @@
   pr-new=
   pr-copy=true
 экран: правки к шагу 8
-@@ 4 -198 +35
+@@ 4 -200 +35
 +    h2 Упражнения
 +    button#ex-new.btn
 +     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
@@ -1703,7 +1705,7 @@
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Вертикальная тяга в тренажере")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
-@@ 203 -10 +49
+@@ 205 -10 +49
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Горизонтальная тяга в тренажере")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
@@ -1753,7 +1755,7 @@
 +        option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
 +        option(value="hip_thrust") Ягодичный мост со штангой (штанга)
 +       button#gear-btn-machine.btn.sm
-@@ 214 -22 +18
+@@ 216 -22 +18
 +        | Добавить
 +     div#gear-cable.pday
 +      div.pday-h(style="align-items:center")
@@ -1772,7 +1774,7 @@
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Кисть на блоке правая")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
-@@ 237 -10 +38
+@@ 239 -10 +38
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Трицепс из за головы на блоке с косичкой")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
@@ -1811,7 +1813,7 @@
 +        option(value="lat_raise_machine") Средние дельты в тренажере (тренажёр)
 +        option(value="hip_thrust") Ягодичный мост со штангой (штанга)
 +       button#gear-btn-cable.btn.sm
-@@ 248 -20 +10
+@@ 250 -20 +10
 +        | Добавить
 +     div#gear-barbell.pday
 +      div.pday-h(style="align-items:center")
@@ -1822,7 +1824,7 @@
 +         input#gear-step-barbell.num.sm(type="text" inputmode="decimal" aria-label="Шаг веса: Штанга")
 +      div.chips(style="justify-content:flex-start;margin:8px 0")
 +       span.chip
-@@ 269 -10 +52
+@@ 271 -10 +52
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Бицепс со штангой стоя")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
@@ -1875,7 +1877,7 @@
 +        option(value="tri_overhead") Трицепс из за головы на блоке с косичкой (блок)
 +        option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
 +       button#gear-btn-barbell.btn.sm
-@@ 280 -83 +22
+@@ 282 -83 +22
 +        | Добавить
 +     div#gear-dumbbell.pday
 +      div.pday-h(style="align-items:center")
@@ -1898,7 +1900,7 @@
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Жим гантелей под углом 45")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
-@@ 364 -8 +49
+@@ 366 -8 +49
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Жим гантелей сидя")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
@@ -1948,7 +1950,7 @@
 +        option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
 +        option(value="hip_thrust") Ягодичный мост со штангой (штанга)
 +       button#gear-btn-dumbbell.btn.sm
-@@ 373 -52 +43
+@@ 375 -52 +43
 +        | Добавить
 +     div#gear-none.pday.gear-loose
 +      div.pday-h(style="align-items:center")
@@ -1992,7 +1994,7 @@
 +         option(value="barbell") Штанга
 +         option(value="dumbbell") Гантель
 +       span.chip
-@@ 426 -503 +445
+@@ 428 -503 +445
 +        select#gear-to-leg_curl_lying.chip-sel(aria-label="Снаряд для: Сгибания ног лежа")
 +         option(value="") снаряд…
 +         option(value="machine") Тренажёр
@@ -5475,75 +5477,75 @@
 @@ 99 -1 +1
 -    span.sub 65 подходов в неделю · сейчас 55 · тренировка ≈ 1 ч
 +    span.sub 65 подходов в неделю · сейчас 54 · тренировка ≈ 1 ч
-@@ 155 -1 +1
+@@ 157 -1 +1
 -      span.sub 26 подходов · было 19 · ≈ 1 ч 10 мин
 +      span.sub 25 подходов · было 18 · ≈ 1 ч 5 мин
-@@ 160 -1 +1
+@@ 162 -1 +1
 -        | "3 × 6–10 · старт 60 кг · "
 +        | "2 × 6–10 · "
-@@ 173 -1 +1
+@@ 175 -1 +1
 -        | "4 × 6–10 · старт 80 кг · "
 +        | "4 × 6–10 · "
-@@ 189 -1 +1
+@@ 191 -1 +1
 -       div.sub 5 × 6–10 · старт 6 кг
 +       div.sub 5 × 6–10
-@@ 222 -1 +1
+@@ 224 -1 +1
 -        | "4 × 10–15 · старт 20 кг · "
 +        | "4 × 10–15 · "
-@@ 365 -1 +1
+@@ 367 -1 +1
 -       div.sub 5 × 6–10 · старт 6 кг
 +       div.sub 5 × 6–10
-@@ 428 -1 +1
+@@ 430 -1 +1
 -        | "2 × 10–15 · старт 20 кг · "
 +        | "2 × 10–15 · "
-@@ 473 -1 +1
+@@ 475 -1 +1
 -      span.sub 16 подходов · было 18 · ≈ 45 мин
 +      span.sub 17 подходов · было 18 · ≈ 50 мин
-@@ 502 -1 +1
+@@ 504 -1 +1
 -     div.prow.changed
 +     div.prow
-@@ 504 -3 +1
+@@ 506 -3 +1
 -       div.pn
 -        | Выпады с гантелями
 -        span.tag.accent −1 подход
 +       div.pn Выпады с гантелями
-@@ 508 -1 +1
+@@ 510 -1 +1
 -        | "3 × 6–10 · старт 10 кг · "
 +        | "4 × 6–10 · старт 10 кг · "
-@@ 606 -1 +1
+@@ 608 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#934daf344b
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#3ec2017f2c
-@@ 609 -1 +1
+@@ 611 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#bd49371f41
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#5ebe956a73
-@@ 642 -1 +1
+@@ 644 -1 +1
 -       div.sub 2 × 10–15. Бицепс бедра: было 9, станет 10.5 в неделю.
 +       div.sub 2 × 10–15. Бицепс бедра: было 8.5, станет 10 в неделю.
-@@ 653 -3 +0
+@@ 655 -3 +0
 -       b Убраны подходы
 -       div.sub Выпады с гантелями (день 3) −1. Эти мышцы получали заметно больше, чем им отведено.
 -      div.why
-@@ 666 -1 +1
+@@ 668 -1 +1
 -       div.sub Ягодичный мост со штангой — 60 кг; Жим ногами — 80 кг; Жим гантелей сидя — 6 кг; Горизонтальная тяга в тренажере — 25 кг; Сгибания ног лежа — 20 кг; Приседания со штангой — 40 кг (от разового максимума); Вертикальная тяга в тренажере — 30 кг; Махи гантелями в стороны — 4 кг; Румынская тяга — 35 кг; Выпады с гантелями — 10 кг. Первая тренировка начнётся с них, дальше веса ведёт журнал.
 +       div.sub Горизонтальная тяга в тренажере — 25 кг; Приседания со штангой — 40 кг (от разового максимума); Вертикальная тяга в тренажере — 30 кг; Махи гантелями в стороны — 4 кг; Румынская тяга — 35 кг; Выпады с гантелями — 10 кг. Первая тренировка начнётся с них, дальше веса ведёт журнал.
-@@ 866 -3 +1
+@@ 868 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") −1
 -          b 10
 +         td 11
-@@ 881 -1 +1
+@@ 883 -1 +1
 -         td.c-now 9
 +         td.c-now 8.5
-@@ 884 -1 +1
+@@ 886 -1 +1
 -          b 10.5
 +          b 10
-@@ 897 -1 +1
+@@ 899 -1 +1
 -         td.c-now 20
 +         td.c-now 19
-@@ 899 -1 +1
+@@ 901 -1 +1
 -          span.tag.accent(style="margin-right:6px") −7.5
 +          span.tag.accent(style="margin-right:6px") −6.5
-@@ 928 -1 +1
+@@ 930 -1 +1
 -    span.sub Ближайшая тренировка каждого дня будет построена по ней.
 +    span.sub Ближайшая тренировка каждого дня будет построена по ней, веса возьмутся из последних тренировок.
 

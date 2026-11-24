@@ -234,7 +234,7 @@ function inPage(base, isRef, seed, known, pack) {
         e.focus(); e.value = o.value; e.dispatchEvent(new Event('input', { bubbles: true })); e.dispatchEvent(new Event('change', { bubbles: true })); e.blur();
       };
       if (isRef) return choose('#pf');
-      const goal = pre ? (pre === 'm:' ? 'mass' : 'mix') : what === 'manual' ? 'hand' : what === 's' || what.startsWith('s:') ? 'force' : what.startsWith('l:') ? 'mix' : 'mass';
+      const goal = pre ? (pre === 'm:' ? 'mass' : 'mix') : what === 'manual' ? 'hand' : what === 's' || what === 'p' || what.startsWith('s:') ? 'force' : what.startsWith('l:') ? 'mix' : 'mass';
       const b = el('#pg-' + goal);
       if (b.getAttribute('aria-pressed') !== 'true') { b.click(); await pause(60); }
       if (goal !== 'hand') choose(goal === 'mass' ? '#pm' : goal === 'mix' ? '#pl' : '#ps');

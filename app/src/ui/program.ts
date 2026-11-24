@@ -9,11 +9,12 @@ import { D, render } from './render.ts';
 import { zonePill } from './charts.ts';
 import { restSelect } from './overview.ts';
 import { bodyMap } from './bodymap.ts';
-import { goalPicker, lostMode, mixText, modeBudget, modeKey, setMode, soloNow, soloText } from './goal.ts';
+import { goalPicker, lostMode, mixText, modeAfter, modeBudget, modeKey, setMode, soloNow, soloText } from './goal.ts';
+import { needGear } from './starter.ts';
 import { TIMES, fitBudget, timeOf } from './fit.ts';
 import { weekDays } from './platform.ts';
 import { DAY_COUNTS, awayDays, daysOf, useDays } from '../core/days.ts';
-import { BASE_SETS, HOLD, appRules, byPct } from '../core/rules.ts';
+import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift, targetIds } from '../core/rules.ts';
 import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../core/index.ts';
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
 
@@ -22,7 +23,7 @@ export const progSig = (slots: ProgSlots) => C.SLOTS.map(sl => (slots[sl.id] || 
 export function progScheme(cfg: Cfg, e: ProgEntry) {
   const k = C.kindOf(cfg, e.ex), s = C.startOf(D.W, cfg, e.ex), from = s ? ' · старт ' + C.fmt(s.w) + ' кг' : '';   // a weight named in the settings for an exercise new to the journal
   if (k === 'light') { const L = C.lightOf(cfg, e.ex); return L.sets + ' × ' + L.reps + ' на ' + L.pct + '% от максимума' + from; }
-  if (k === 'base' && appRules()) return (!byPct(cfg, e.ex) ? BASE_SETS + ' × ' + C.rangeOf(D.W, cfg, e.ex).join('–') : C.waveOf(cfg, e.ex).hold ? HOLD.sets + ' × ' + HOLD.reps + ', вес прежний' : C.AUTO.sets + ' × ' + C.AUTO.reps + ' одним весом, вес по запасу') + from;   // (в эталоне нет) методика под цель
+  if (k === 'base' && appRules()) { const A = heavyOf(cfg, e.ex); return (!byPct(cfg, e.ex) ? BASE_SETS + ' × ' + C.rangeOf(D.W, cfg, e.ex).join('–') : C.waveOf(cfg, e.ex).hold ? HOLD.sets + ' × ' + HOLD.reps + ', вес прежний' : A.sets + ' × ' + A.reps + ' одним весом, вес по запасу') + from; }   // (в эталоне нет) методика под цель; тяжёлый день — 3 × 4, у изоляции в силовой роли — 3 × 6 («Новая схема», 24 ноября 2026)
   if (k === 'base') { const wv = C.waveOf(cfg, e.ex); return (wv.auto ? C.AUTO.sets + ' × ' + C.AUTO.reps + ' одним весом, вес по запасу' : 'волна ' + wv.order.map(r => wv.sets(r) + '×' + r).join(' → ')) + from; }
   return e.n + ' × ' + C.rangeOf(D.W, cfg, e.ex).join('–') + from;
 }
@@ -71,7 +72,7 @@ export async function acceptProgram(pr: Built, name: string | null) {
   const since = lastDone && lastDone.date >= D.today ? C.addDays(lastDone.date, 1) : D.today;
   const was = S.ui.prog ? S.ui.prog.daysWas : 0, mode = S.ui.prog ? modeKey(S.ui.prog) : '';
   const ok = await saveCfg(raw => {
-    for (const [id, def] of Object.entries(pr.create)) if (!raw.ex[id]) raw.ex[id] = def;
+    for (const [id, def] of Object.entries(pr.create)) if (!raw.ex[id]) { if (def.gear) needGear(raw, def.gear); raw.ex[id] = def; }   // (в эталоне нет) цель из встроенного справочника приходит со своим снарядом: подтягивания
     const prev: Record<string, string> = {};
     for (const [id, g] of Object.entries(pr.goals)) { if (!raw.ex[id]) continue; prev[id] = raw.ex[id].goal || ''; if (g) raw.ex[id].goal = g; else delete raw.ex[id].goal; }
     const slots: ProgSlots = {};
@@ -85,6 +86,9 @@ export async function acceptProgram(pr: Built, name: string | null) {
     if (budget) raw.program.budget = budget;
     if (pr.manual || (keep && old.lean)) raw.program.lean = true;   // built by hand: extra sets and new exercises are offered, not switched on
     if (keep ? old.strength : pr.strength) { raw.program.strength = true; raw.program.lean = true; }   // силовой режим: подсобка ниже рабочей зоны намеренно, поэтому добавки плана только предлагаются
+    /* (в эталоне нет) «Сила: пауэрлифтерская тройка» (решение владельца, 24 ноября 2026, пункт 8): по проценту идут три движения, правка вручную их не меняет */
+    const triad = keep ? old.triad : pr.triad;
+    if (triad && triad.length) raw.program.triad = triad.slice();
     /* (в эталоне нет) число дней меняли перед принятием — «Вернуть прежнюю» вернёт и его; лимит недели, найденный по времени, программа держит,
        пока не изменилось то, по чему он найден: иначе сразу после «Принять» дневник предлагал бы уже другую программу с лимитом побольше */
     if (was && was !== C.SLOTS.length) raw.program.prev!.days = was;
@@ -127,6 +131,8 @@ export function vProgram() {
   for (const w of done) if (w.slot) lastOf[w.slot] = w;
   const pending = C.SLOTS.filter(sl => C.progPending(cfg, sl.id, lastOf[sl.id]));
   const lifts = Object.keys(cfg.ex).filter(id => C.isCycle(cfg, id));   // пауэрбилдинг предлагается для любого базового справочника: если его нет в программе, сборка поставит его сама
+  /* (в эталоне нет) с днями «День N» цель «Силы» и «Гибрида» — из своего списка (решение владельца, 24 ноября 2026, пункт 8): базовым её делает роль, а не справочник */
+  if (appRules()) lifts.splice(0, lifts.length, ...targetIds(cfg));
 
   /* what runs now */
   let state;
@@ -140,9 +146,12 @@ export function vProgram() {
     state = [h('p', { class: 'sub' }, 'Принята ' + C.fmtDate(P.made || P.since, true) + '. ',
       !pending.length ? (holes.length ? 'Её дни уже идут по ней.' : 'Все дни уже идут по ней: дальше каждый день строится от своей прошлой тренировки.') : started ? 'Ещё не было по ней: ' + C.list(pending.map(sl => sl.n.toLowerCase())) + '.' : 'По ней ещё не было ни одной тренировки.',
       holes.length ? ' ' + C.list(holes.map((sl, i) => i ? sl.n.toLowerCase() : sl.n)) + ' в ней ' + (holes.length > 1 ? 'пусты: заполнятся' : 'пуст: заполнится') + ', когда примешь программу ниже.' : '',
-      P.focus && cfg.ex[P.focus] ? ' Приоритет — «' + C.exName(cfg, P.focus) + '», остальные базовые ' + (P.others === 'grow' ? 'растут как раньше.' : 'на поддержании.') : '',
+      P.focus && cfg.ex[P.focus] && !(appRules() && P.strength) ? ' Приоритет — «' + C.exName(cfg, P.focus) + '», остальные базовые ' + (P.others === 'grow' ? 'растут как раньше.' : 'на поддержании.') : '',
       P.prio && C.PRIOS.some(g => g.id === P.prio) ? ' Приоритет — ' + C.PRIOS.find(g => g.id === P.prio)!.n.toLowerCase() + '.' : '',
-      P.strength ? (P.focus && cfg.ex[P.focus] ? (on > 1 ? ' Сила в одном базовом: ' + soloNow(on, C.SLOTS.length) + ', подсобка — ниже рабочей зоны.' : ' Сила в одном базовом, подсобка — ниже рабочей зоны.') : ' Силовой режим: каждое базовое идёт два раза в неделю, подсобка — ниже рабочей зоны.') : '',
+      /* (в эталоне нет) с днями «День N» под «Силой» по проценту идёт только цель: тройка или одно упражнение (пункт 8) */
+      P.strength && appRules() && P.triad && P.triad.length ? ' Сила в тройке: ' + C.list(P.triad.filter(id => cfg.ex[id]).map(id => C.exName(cfg, id).toLowerCase())) + ' — каждое два раза в неделю, остальные базовые — обычные упражнения, подсобка — ниже рабочей зоны.'
+        : P.strength && appRules() && P.focus && cfg.ex[P.focus] ? ' Сила: «' + C.exName(cfg, P.focus) + '»' + (on > 1 ? '. ' + soloNow(on, C.SLOTS.length).replace(/^о/, 'О') : '') + '; остальные базовые — обычные упражнения, подсобка — ниже рабочей зоны.'
+        : P.strength ? (P.focus && cfg.ex[P.focus] ? (on > 1 ? ' Сила в одном базовом: ' + soloNow(on, C.SLOTS.length) + ', подсобка — ниже рабочей зоны.' : ' Сила в одном базовом, подсобка — ниже рабочей зоны.') : ' Силовой режим: каждое базовое идёт два раза в неделю, подсобка — ниже рабочей зоны.') : '',
       P.budget ? ' Лимит недели — ' + P.budget + ' подходов.' : ''),
     !started && !ro && P.prev ? h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn sm', id: 'prog-undo', onclick: undoProgram }, 'Вернуть прежнюю')) : null];
   } else state = h('p', { class: 'sub' }, empty ? 'Программы пока нет. Собери её ниже: добавь упражнения в дни и нажми «Принять программу».' : 'Она ведётся по тренировкам: дневник берёт за основу последнюю тренировку каждого дня и строит по ней следующую.');
@@ -162,18 +171,19 @@ export function vProgram() {
   /* a new one */
   const ui = S.ui;
   const budgets = [40, 50, 60, 70, 80, 90, 100, 110, 120].filter(v => v < cfg.caps.week).concat(cfg.caps.week);
-  if (!ui.prog) ui.prog = { focus: P && P.strength && P.focus && lifts.includes(P.focus) ? 's:' + P.focus : P && P.strength && lifts.length ? 's' : P && P.focus && lifts.includes(P.focus) ? 'l:' + P.focus : P && P.prio && C.PRIOS.some(g => g.id === P.prio) ? 'm:' + P.prio : empty ? 'manual' : 'even',
+  if (!ui.prog) ui.prog = { focus: P && P.strength && P.triad && P.triad.length && appRules() ? 'p' : P && P.strength && P.focus && lifts.includes(P.focus) ? 's:' + P.focus : P && P.strength && lifts.length ? 's' : P && P.focus && lifts.includes(P.focus) ? 'l:' + P.focus : P && P.prio && C.PRIOS.some(g => g.id === P.prio) ? 'm:' + P.prio : empty ? 'manual' : 'even',
     others: P && P.others === 'grow' ? 'grow' : 'hold', budget: P && +P.budget! > 0 && +P.budget! <= cfg.caps.week ? +P.budget! : cfg.caps.week, draft: null, key: '' };
-  if (lostMode(ui.prog.focus, lifts)) setMode(ui.prog, 'even', cfg.caps.week);   // выбранного базового больше нет в справочнике: в эталоне экран оставался в режиме, которого уже не собрать
+  if (lostMode(ui.prog.focus, lifts)) setMode(ui.prog, modeAfter(ui.prog.focus, lifts), cfg.caps.week);   // выбранного базового больше нет в справочнике: в эталоне экран оставался в режиме, которого уже не собрать
   const st = ui.prog, manual = st.focus === 'manual', lift = st.focus.startsWith('l:') ? st.focus.slice(2) : null, prio = st.focus.startsWith('m:') ? st.focus.slice(2) : '';
   const strong = st.focus === 's';                                    // силовой режим: в эталоне его нет (решение владельца, 19 ноября 2026)
   const solo = st.focus.startsWith('s:') ? st.focus.slice(2) : null;  // сила в одном базовом: в эталоне нет (решение владельца, 19 ноября 2026)
+  const triad = st.focus === 'p';                                      // «Сила: пауэрлифтерская тройка»: в эталоне нет (решение владельца, 24 ноября 2026)
   if (!budgets.includes(st.budget)) st.budget = cfg.caps.week;
   /* время на тренировку (в эталоне нет: решение владельца, 19 ноября 2026): лимит недели — самый большой из списка, при котором самая длинная
      тренировка укладывается в названное время. Сборки-примерки считаются по одной на лимит и помнятся, пока не изменилось то, от чего они зависят */
   const time = manual ? 0 : timeOf(S.cfgRaw);
   /* (в эталоне нет) от времени зависит и число упражнений в дне (решение владельца, 23 ноября 2026): сборка получает его вместе с лимитом */
-  const build = (budget: number) => C.buildProgram(D.W, cfg, { manual, focus: lift || solo, others: st.others, prio, budget, strength: strong || !!solo, time, drop: st.drop });
+  const build = (budget: number) => C.buildProgram(D.W, cfg, { manual, focus: lift || solo, others: st.others, prio, budget, strength: strong || !!solo || triad, triad, time, drop: st.drop });
   let fit = null as ReturnType<typeof fitBudget> | null;
   if (time) {
     const fkey = st.focus + '|' + st.others + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + JSON.stringify(cfg.ex) + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + cfg.rest + '|' + time + '|' + C.SLOTS.length + '|' + awaySig + (st.drop ? '|' + st.drop.join(',') : '');
@@ -224,7 +234,7 @@ export function vProgram() {
   const avgMin = C.SLOTS.filter(sl => pr.slots[sl.id].length).map(sl => C.estMinutes(pr.cfg, pr.slots[sl.id], D.cfg.rest));
   const total = (t: ProgTally) => C.SLOTS.reduce((a, sl) => a + t.load[sl.id], 0);
   const used = total(pr.after), free = +(cap - used).toFixed(1), hand = pr.hand && pr.hand.length ? pr.hand : null;
-  const z = cfg.zones, fm = pr.focus ? (cfg.ex[pr.focus].m || {}) : pr.prio ? Object.fromEntries(C.PRIOS.find(g => g.id === pr.prio)!.m.map(m => [m, 1])) : {};
+  const z = cfg.zones, fm = pr.focus ? (pr.cfg.ex[pr.focus].m || {}) : pr.prio ? Object.fromEntries(C.PRIOS.find(g => g.id === pr.prio)!.m.map(m => [m, 1])) : {};
   /* a row is marked when its mode or goal differs from what runs now */
   const marked = (e: ProgEntry) => pr.goals[e.ex] !== undefined && (C.goalOf(cfg, e.ex) || null) !== pr.goals[e.ex];
   /* every muscle is listed, so the table reads as the whole week; muscles outside the goal are left out only while they get nothing */
@@ -239,14 +249,15 @@ export function vProgram() {
   out.push(h('section', { class: 'card' },
     h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow' }, 'Новая программа'), h('h2', null, manual ? 'Правка вручную' : pr.name)), h('span', { class: 'sub' }, loadText(total(pr.after)) + ' в неделю' + (empty && !pr.away ? '' : ' · сейчас ' + dayLoad(total(pr.before) + (pr.away || 0))) + (avgMin.length ? ' · тренировка ≈ ' + C.fmtDur(avgMin.reduce((a, b) => a + b, 0) / avgMin.length) : ''))),
     h('p', { class: 'note', style: 'margin-bottom:12px' }, manual ? 'Собери или поправь программу сам: добавляй упражнения в дни, меняй порядок и число подходов. Упражнений, которых нет в списке, сначала заведи в «Настройке». Записи в журнале не меняются.'
+      : triad && pr.strength ? 'Сила в тройке: ' + C.list((pr.triad || []).map(id => C.exName(pr.cfg, id).toLowerCase())) + '. Каждое движение идёт два дня в неделю: 4 × 4 с весом по запасу и лёгкий день. Остальные базовые — обычные упражнения, подсобка — чуть ниже рабочей зоны. ' + twice
       : strong && pr.strength ? 'Сила во всех базовых. Каждое идёт два дня в неделю: 4 × 4 с весом по запасу и лёгкий день. Подсобка — чуть ниже рабочей зоны: место в неделе отдано базовым. ' + twice
-      : solo && pr.strength ? 'Сила в одном базовом. ' + soloText(C.SLOTS.length) + ' Остальные базовые — раз в неделю, подсобка — чуть ниже рабочей зоны. ' + twice
-      : lift ? 'Масса и сила с акцентом на одном базовом. ' + mixText(C.SLOTS.length) + ' Остальные мышцы делят объём поровну' + (thin ? '. ' + twice : ', каждая работает минимум в два дня недели.')
+      : solo && pr.strength ? (appRules() ? 'Сила в одном движении. ' + soloText(C.SLOTS.length, isoLift(pr.cfg, solo)) + ' Его мышцам — в полтора раза больше подходов, чем остальным; остальные базовые — обычные упражнения, подсобка — чуть ниже рабочей зоны. ' : 'Сила в одном базовом. ' + soloText(C.SLOTS.length) + ' Остальные базовые — раз в неделю, подсобка — чуть ниже рабочей зоны. ') + twice
+      : lift ? 'Масса и сила с акцентом на одном базовом. ' + mixText(C.SLOTS.length, isoLift(pr.cfg, lift)) + ' Остальные мышцы делят объём поровну' + (thin ? '. ' + twice : ', каждая работает минимум в два дня недели.')
       : prio ? 'Приоритетные мышцы получают примерно в полтора раза больше остальных, остальные делят объём поровну. ' + twice + ' Лимиты недели и дня не нарушаются.'
       : 'Все мышцы в цели получают поровну, разброс — около двух подходов. ' + twice + ' Лимиты недели и дня не нарушаются.'),
     h('div', { class: 'row', style: 'margin-bottom:12px;align-items:flex-end' },
       goalPicker(st, cfg, lifts, pick),                               // вместо списка «Как собрать»: кнопки цели и один уточняющий список (решение владельца, 19 ноября 2026)
-      lift || solo ? h('div', { class: 'pf' }, h('span', null, 'Остальные базовые'), h('div', { class: 'seg multi', role: 'group', 'aria-label': 'Остальные базовые упражнения' },
+      lift || (solo && !appRules()) ? h('div', { class: 'pf' }, h('span', null, 'Остальные базовые'), h('div', { class: 'seg multi', role: 'group', 'aria-label': 'Остальные базовые упражнения' },
         h('button', { type: 'button', id: 'po-hold', 'aria-pressed': String(st.others === 'hold'), onclick: () => pick(st.focus, 'hold') }, 'Поддержание'),
         h('button', { type: 'button', id: 'po-grow', 'aria-pressed': String(st.others === 'grow'), onclick: () => pick(st.focus, 'grow') }, 'Растут как раньше'))) : null,
       /* сколько дней в неделе (в эталоне нет: решение владельца, 19 ноября 2026): выбор хранится в профиле, программа пересобирается под это число.
