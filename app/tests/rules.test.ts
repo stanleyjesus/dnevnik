@@ -167,8 +167,9 @@ test('баланс движений не считается: с днями «Д�
       assert.ok(!app.bal.some(t => t.startsWith('В программе нет')), name + ': ' + app.bal.join(' | '));
       assert.ok(!app.adds.includes('rdl') && !app.adds.includes('ohp'), name + ': ' + app.adds.join(', '));
       assert.ok(app.adds.includes('rear'), name + ': поправки по объёму мышц остаются');
-      /* разница сторон — не баланс движений: замечание остаётся */
-      assert.deepEqual(app.bal, week.bal.filter(t => !t.startsWith('В программе нет')), name);
+      /* разница сторон — не баланс движений: замечание остаётся (процент — от максимума по подходам, он с днями «День N» свой) */
+      const side = (l: string[]) => l.map(t => t.replace(/ на [\d.]+%$/, ''));
+      assert.deepEqual(side(app.bal), side(week.bal.filter(t => !t.startsWith('В программе нет'))), name);
     });
   }
 });

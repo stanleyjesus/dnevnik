@@ -46,12 +46,13 @@ export function vProgress() {
 }
 export function exerciseDetail(s: ExStat, start: number) {
   const ui = S.ui, cyc = C.isCycle(D.cfg, s.id) && (!appRules() || s.ss.every(x => x.item.cyc)), st = s.active ? STATUS[s.status] : null;   // (в эталоне нет) с днями «День N» у базового бывают записи и по двойной прогрессии: тогда график — как у подсобки
+  const wave = cyc && !appRules();   // (в эталоне нет) с днями «День N» максимум у всех упражнений — по подходам: подписи как у подсобки
   const ex = D.cfg.ex[s.id] || { m: {} };
   const mus = Object.entries(ex.m || {}).sort((a, b) => b[1] - a[1]).map(e => (C.MUSCLE[e[0]] || {}).n + (e[1] < 1 ? ' ½' : '')).join(', ');
   const day = (x: { date: string }) => C.dnum(x.date);
   let chart;
   if (ui.metric === 'e1') {
-    chart = chartHost((el, W) => lineChart(el, W, { label: 'Расчётный максимум', start, unit: ' кг', series: [{ name: cyc ? 'Расчётный максимум по волне' : 'Расчётный 1ПМ лучшего подхода', color: 'var(--s1)', area: true, end: true, pts: s.ss.map(x => ({ x: day(x), y: x.metric })) }] }));
+    chart = chartHost((el, W) => lineChart(el, W, { label: 'Расчётный максимум', start, unit: ' кг', series: [{ name: wave ? 'Расчётный максимум по волне' : 'Расчётный 1ПМ лучшего подхода', color: 'var(--s1)', area: true, end: true, pts: s.ss.map(x => ({ x: day(x), y: x.metric })) }] }));
   } else if (cyc) {
     const cols = ['var(--s1)', 'var(--s2)', 'var(--s3)', 'var(--s4)'], order = Array.from(new Set(s.ss.map(x => x.item.cyc!.reps))).sort((a, b) => b - a).slice(0, 4);
     const pctOf = (r: number) => { const l = s.ss.filter(x => x.item.cyc!.reps === r); return l[l.length - 1].item.cyc!.pct; };
@@ -64,14 +65,14 @@ export function exerciseDetail(s: ExStat, start: number) {
       tip: x => { const q = s.ss.find(k => day(k) === x); return q ? q.sets.map((t, i) => ({ color: t === q.top ? 'var(--s1)' : 'var(--deemph)', v: C.fmt(t.w) + ' × ' + t.r, k: 'подход ' + (i + 1) })) : []; } }));
   }
   const rows = s.ss.slice().reverse(), lim = ui.hist ? rows.length : 6;
-  const tbl = h('table', null, h('thead', null, h('tr', null, h('th', null, 'Дата'), h('th', { style: 'text-align:left' }, 'Подходы'), h('th', null, cyc ? 'Максимум' : 'Расч. 1ПМ'), h('th', null, 'К прошлой'))),
+  const tbl = h('table', null, h('thead', null, h('tr', null, h('th', null, 'Дата'), h('th', { style: 'text-align:left' }, 'Подходы'), h('th', null, wave ? 'Максимум' : 'Расч. 1ПМ'), h('th', null, 'К прошлой'))),
     h('tbody', null, rows.slice(0, lim).map((x, i) => { const p = rows[i + 1]; return h('tr', null, h('td', null, C.fmtDate(x.date) + ', ' + ((C.SLOT[x.slot!] || {} as Slot).s || '')), h('td', { class: 'wrapc' }, h('div', { class: 'chips', style: 'justify-content:flex-start' }, x.item.sets.map(t => setChip(t)))), h('td', null, C.fmt(x.metric, 1)), h('td', null, p ? C.signed(C.pct(x.metric, p.metric), 1) + '%' : '–')); })));
   return h('div', { class: 'card', id: 'ex-detail' },
     h('div', { class: 'sec-h' }, h('div', null, h('h3', { style: 'font-size:18px', text: C.exName(D.cfg, s.id) }), h('p', { class: 'sub' }, (mus || 'мышцы не указаны') + (goalTag(D.cfg, s.id) ? ' · ' + goalTag(D.cfg, s.id) : ''))),
       h('div', { class: 'row' }, st ? pill(st[0], st[1]) : h('span', { class: 'tag' }, 'не в программе'), h('div', { class: 'seg', role: 'group', 'aria-label': 'Что показать на графике' }, h('button', { 'aria-pressed': String(ui.metric === 'w'), onclick: () => { ui.metric = 'w'; render(true); } }, 'Рабочий вес'), h('button', { 'aria-pressed': String(ui.metric === 'e1'), onclick: () => { ui.metric = 'e1'; render(true); } }, 'Максимум')))),
     h('div', { class: 'kv' },
       h('div', null, h('b', null, C.fmt(s.last.best.w) + ' × ' + s.last.best.r), h('span', null, 'лучший подход, ' + C.fmtDate(s.last.date))),
-      h('div', null, h('b', null, C.fmt(s.last.metric, 1) + ' кг'), h('span', null, cyc ? 'расчётный максимум по волне' : 'расчётный 1ПМ (по Эпли)')),
+      h('div', null, h('b', null, C.fmt(s.last.metric, 1) + ' кг'), h('span', null, wave ? 'расчётный максимум по волне' : 'расчётный 1ПМ (по Эпли)')),
       h('div', null, h('b', null, C.signed(s.delta) + '%'), h('span', null, 'с ' + C.fmtDate(s.first.date) + ' (' + C.fmt(s.first.best.w) + ' × ' + s.first.best.r + ')')),
       h('div', null, h('b', null, s.n), h('span', null, C.plural(s.n, ['тренировка', 'тренировки', 'тренировок'])))),
     chart,

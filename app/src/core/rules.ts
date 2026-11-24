@@ -7,7 +7,7 @@ import { placed } from './gear.ts';
 import { e1, estRir, work } from './sets.ts';
 import { STARTER, starterOf } from './starter.ts';
 import { DAY_H, ISO, TARGETS, TRIAD } from './strength.ts';
-import type { Cfg, ExDef, Item, MuscleMap, ProgramCfg, Range } from './types.ts';
+import type { Cfg, ExDef, Item, MuscleMap, ProgramCfg, Range, SetRec } from './types.ts';
 
 /** Выключатель для проверок: tests/days.test.ts сверяет дни «День 1…3» с таблицей эталона при одних и тех же правилах */
 export const RULES = { on: true };
@@ -93,14 +93,18 @@ export function appRange(e: ExDef | null | undefined, last: Range | null | undef
   const k = Math.min(8, Math.max(t.w, w > 0 ? Math.round(step / w * 100 / 2.5) : 0));
   return [t.lo, t.lo + k];
 }
-/** Расчётный максимум по подходам одной записи — лучший по Эпли с поправкой на запас: отмеченный, у подхода по проценту — по проценту,
-    иначе запас по методике профиля. null — рабочих подходов нет */
+/** Расчётный максимум одного подхода — Эпли от повторов плюс запас: отмеченный, у подхода по проценту — по проценту,
+    иначе запас по методике профиля */
+export function setMax(s: SetRec, it: Item, rir: number) {
+  const q = s.q != null ? s.q : it.cyc && it.cyc.pct ? Math.max(0, estRir(it.cyc.pct, s.r!)) : rir;
+  return e1(s.w!, s.r! + q);
+}
+/** Лучший подход записи по расчётному максимуму (setMax): при равенстве — первый */
+export const maxSet = (it: Item, sets: SetRec[], rir: number) => sets.reduce((t, s) => setMax(s, it, rir) > setMax(t, it, rir) ? s : t, sets[0]);
+/** Расчётный максимум по подходам одной записи — лучший подход по Эпли с поправкой на запас (setMax). null — рабочих подходов нет */
 export function logMax(it: Item, rir: number) {
   let best = 0;
-  for (const s of work(it)) {
-    const q = s.q != null ? s.q : it.cyc && it.cyc.pct ? Math.max(0, estRir(it.cyc.pct, s.r!)) : rir;
-    best = Math.max(best, e1(s.w!, s.r! + q));
-  }
+  for (const s of work(it)) best = Math.max(best, setMax(s, it, rir));
   return best > 0 ? best : null;
 }
 /** Вес подхода двойной прогрессии от расчётного максимума: середина диапазона с запасом по методике, вниз до шага снаряда */

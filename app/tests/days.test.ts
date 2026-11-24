@@ -326,7 +326,7 @@ test('прежние записи при другом числе дней не �
   const cfg = Core.mergeCfg(seedRaw()), W = seedW(), before = JSON.stringify(W);
   const start = Object.assign({}, cfg, { start: Core.mondayOf(W[0].date) });
   const stats = () => plain(Core.allStats(W, start)).map(v => Object.assign({}, v, { active: undefined }));
-  const vol = plain(Core.volume(W, start)), base = stats(), mon = plain(Core.currentSlots(W, start).mon);
+  const vol = plain(Core.volume(W, start)), base = withDays(3, stats), mon = plain(Core.currentSlots(W, start).mon);   // прогресс — от трёх дней «День N»: максимум в нём по подходам, а не как в эталоне (решение владельца, 24 ноября 2026)
   const lastFri = W.filter(w => w.slot === 'fri').pop()!;
   assert.ok(lastFri && Core.program(W, start).has('pullup'), 'в записях есть третий день с подтягиваниями');
   for (const n of [2, 4]) withDays(n, () => {

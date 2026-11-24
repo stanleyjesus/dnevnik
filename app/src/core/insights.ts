@@ -90,7 +90,7 @@ export function insights(st: State) {
     for (const s of cyc) {
       const p = planCycle(workouts, cfg, s.id, null);
       const wk = Math.max(1, Math.round((dnum(s.last.date) - dnum(s.first.date)) / 7));
-      const t0 = s.first.tm || s.first.metric, t1 = s.last.tm || s.last.metric;   // (в эталоне нет) в журнале бывают записи и по двойной прогрессии: у них максимум по Эпли
+      const t0 = app ? s.first.metric : s.first.tm || s.first.metric, t1 = app ? s.last.metric : s.last.tm || s.last.metric;   // (в эталоне нет) с днями «День N» максимум — по подходам (sessions)
       lines.push(exName(cfg, s.id) + ': расчётный максимум ' + fmt(t0, 1) + ' → ' + fmt(t1, 1) + ' кг (' + signed(pct(t1, t0)) + '% за ' + wk + ' ' + plural(wk, ['неделю', 'недели', 'недель']) + '), дальше ' + fmt(p.w) + ' × ' + p.reps + (p.auto ? ' — сила по запасу: ' + (app ? heavyOf(cfg, s.id) : AUTO).sets + ' × ' + (app ? heavyOf(cfg, s.id) : AUTO).reps + ' одним весом, вес по запасу в последнем подходе' : p.strong ? ' — приоритет силы, тяжёлая волна, максимум +' + fmt(WAVE_S.inc, 1) + '% раз в цикл' : p.hold ? ' — поддержание, максимум не растёт' : ''));
       if (p.repeat) bad.push(exName(cfg, s.id) + ' — не все подходы закрыты ' + fmtDate(s.last.date, true) + ', неделя повторяется без прибавки');
       else if (p.hard) bad.push(exName(cfg, s.id) + ' — подход шёл в отказ, максимум на следующую неделю не повышается');
