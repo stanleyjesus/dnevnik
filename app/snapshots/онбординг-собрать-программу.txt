@@ -63,14 +63,13 @@
 поля: целиком
   pm=even
   pt=0
-  onb-rest=120
 экран: правки к шагу 1
 @@ 5 -2 +2
 -     div#onb-n.eyebrow Шаг 1 из 5
 -     h2 С чего начнём?
 +     div#onb-n.eyebrow Шаг 2 из 5
 +     h2 Цель и время
-@@ 8 -14 +44
+@@ 8 -14 +38
 +   p.note(style="margin-bottom:12px") Выбери цель, сколько дней в неделю тренируешься и сколько времени готов уделять тренировке. На следующем шаге программу можно поправить.
 +   div.row(style="align-items:flex-end;margin-bottom:10px")
 +    div#pg.pf
@@ -105,16 +104,10 @@
 +      option(value="90") до 1 ч 30 мин
 +      option(value="105") до 1 ч 45 мин
 +      option(value="120") до 2 ч
-+    label.f
-+     span Отдых между подходами
-+     select#onb-rest
-+      option(value="60") 1:00 мин
-+      option(value="90") 1:30 мин
-+      option(value="120" selected="") 2:00 мин
-+      option(value="150") 2:30 мин
-+      option(value="180") 3:00 мин
++      option(value="135") до 2 ч 15 мин
++      option(value="150") до 2 ч 30 мин
 +   p#onb-goal-note.sub Масса: больше мышц — подходы делятся между мышцами, вес растёт с повторами.
-+   p#onb-sum.sub(style="margin-top:6px") Получится: 68 подходов в неделю, самая длинная тренировка ≈ 1 ч 30 мин.
++   p#onb-sum.sub(style="margin-top:6px") Получится: 68 подходов в неделю, самая длинная тренировка ≈ 1 ч 20 мин.
 @@ 23 -2 +2
 -    span
 -    span
@@ -125,7 +118,6 @@
 поля: целиком
   pl=l:bench
   pt=0
-  onb-rest=120
 экран: правки к шагу 2
 @@ 13 -1 +1
 -      button#pg-mass(type="button" aria-pressed="true") Масса
@@ -144,9 +136,9 @@
 +      option(value="l:hip_thrust") Ягодичный мост со штангой
 +      option(value="l:ohp") Жим штанги стоя
 +      option(value="l:barbell_curl") Бицепс со штангой стоя
-@@ 50 -2 +2
+@@ 44 -2 +2
 -   p#onb-goal-note.sub Масса: больше мышц — подходы делятся между мышцами, вес растёт с повторами.
--   p#onb-sum.sub(style="margin-top:6px") Получится: 68 подходов в неделю, самая длинная тренировка ≈ 1 ч 30 мин.
+-   p#onb-sum.sub(style="margin-top:6px") Получится: 68 подходов в неделю, самая длинная тренировка ≈ 1 ч 20 мин.
 +   p#onb-goal-note.sub Гибрид: сила в одном движении и масса во всём остальном.
 +   p#onb-sum.sub(style="margin-top:6px") Получится: 70 подходов в неделю, самая длинная тренировка ≈ 1 ч 30 мин.
 
@@ -159,15 +151,14 @@
 -      button#pd-3(type="button" aria-pressed="true") 3
 +      button#pd-2(type="button" aria-pressed="true") 2
 +      button#pd-3(type="button" aria-pressed="false") 3
-@@ 51 -1 +1
+@@ 45 -1 +1
 -   p#onb-sum.sub(style="margin-top:6px") Получится: 70 подходов в неделю, самая длинная тренировка ≈ 1 ч 30 мин.
-+   p#onb-sum.sub(style="margin-top:6px") Получится: 66 подходов в неделю, самая длинная тренировка ≈ 1 ч 50 мин.
++   p#onb-sum.sub(style="margin-top:6px") Получится: 66 подходов в неделю, самая длинная тренировка ≈ 1 ч 55 мин.
 
 === 5. время на тренировку: полтора часа
-поля: правки к шагу 4
-@@ 2 -1 +1
-- pt=0
-+ pt=90
+поля: целиком
+  pl=l:bench
+  pt=90
 записи:
   + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"}},"gear":{"g_pullup":{"n":"Подтягивания","step":1}},"days":2,"time":90}
 экран: правки к шагу 4
@@ -177,9 +168,9 @@
 @@ 39 -1 +1
 -      option(value="90") до 1 ч 30 мин
 +      option(value="90" selected="") до 1 ч 30 мин
-@@ 51 -1 +1
--   p#onb-sum.sub(style="margin-top:6px") Получится: 66 подходов в неделю, самая длинная тренировка ≈ 1 ч 50 мин.
-+   p#onb-sum.sub(style="margin-top:6px") Получится: 55 подходов в неделю, самая длинная тренировка ≈ 1 ч 30 мин.
+@@ 45 -1 +1
+-   p#onb-sum.sub(style="margin-top:6px") Получится: 66 подходов в неделю, самая длинная тренировка ≈ 1 ч 55 мин.
++   p#onb-sum.sub(style="margin-top:6px") Получится: 49 подходов в неделю, самая длинная тренировка ≈ 1 ч 30 мин.
 
 === 6. дальше: программа
 поля: целиком
@@ -191,14 +182,14 @@
 -     h2 Цель и время
 +     div#onb-n.eyebrow Шаг 3 из 5
 +     h2 Программа
-@@ 8 -44 +452
+@@ 8 -38 +452
 +   p.note(style="margin-bottom:12px") Так дневник раскладывает упражнения по дням. Любое можно заменить на похожее, поменять число подходов или порядок.
-+   p#onb-sum.sub(style="margin-bottom:8px") 55 подходов в неделю · самая длинная тренировка ≈ 1 ч 30 мин
++   p#onb-sum.sub(style="margin-bottom:8px") 49 подходов в неделю · самая длинная тренировка ≈ 1 ч 30 мин
 +   div.grid2.even
 +    div.pday
 +     div.pday-h
 +      b День 1
-+      span.sub 27 подходов · ≈ 1 ч 30 мин
++      span.sub 24 подхода · ≈ 1 ч 30 мин
 +     div.prow.changed
 +      div.grow
 +       div.pn
@@ -230,7 +221,7 @@
 +        | Приседания со штангой
 +        span.tag.accent новое
 +       div.sub
-+        | "4 × 6–10 · "
++        | "3 × 6–10 · "
 +        button#sw-mon-2.linkbtn(type="button" aria-label="Заменить упражнение: Приседания со штангой") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Приседания со штангой")
@@ -264,7 +255,7 @@
 +        | Жим гантелей сидя
 +        span.tag.accent новое
 +       div.sub
-+        | "3 × 6–10 · "
++        | "2 × 6–10 · "
 +        button#sw-mon-4.linkbtn(type="button" aria-label="Заменить упражнение: Жим гантелей сидя") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим гантелей сидя")
@@ -315,7 +306,7 @@
 +        | Обратная бабочка
 +        span.tag.accent новое
 +       div.sub
-+        | "3 × 8–12 · "
++        | "2 × 8–12 · "
 +        button#sw-mon-7.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Обратная бабочка")
@@ -421,7 +412,7 @@
 +    div.pday
 +     div.pday-h
 +      b День 2
-+      span.sub 28 подходов · ≈ 1 ч 30 мин
++      span.sub 25 подходов · ≈ 1 ч 25 мин
 +     div.prow.changed
 +      div.grow
 +       div.pn
@@ -437,7 +428,7 @@
 +        | Жим в тренажере на грудь
 +        span.tag.accent новое
 +       div.sub
-+        | "4 × 6–10 · "
++        | "3 × 6–10 · "
 +        button#sw-wed-1.linkbtn(type="button" aria-label="Заменить упражнение: Жим в тренажере на грудь") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим в тренажере на грудь")
@@ -488,7 +479,7 @@
 +        | Подтягивания
 +        span.tag.accent новое
 +       div.sub
-+        | "3 × 6–10 · "
++        | "2 × 6–10 · "
 +        button#sw-wed-4.linkbtn(type="button" aria-label="Заменить упражнение: Подтягивания") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Подтягивания")
@@ -573,7 +564,7 @@
 +        | Бицепс бедра сидя в тренажере
 +        span.tag.accent новое
 +       div.sub
-+        | "3 × 8–12 · "
++        | "2 × 8–12 · "
 +        button#sw-wed-9.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс бедра сидя в тренажере")
@@ -644,7 +635,7 @@
 +       svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       | В день
 +   p.sub(style="margin-top:8px") Нагрузка по мышцам и подходы в неделю — на вкладке «Программа», когда закончишь.
-@@ 54 -1 +1
+@@ 48 -1 +1
 -    button#onb-next.btn.primary(type="button") Дальше
 +    button#onb-accept.btn.primary(type="button") Принять программу
 
@@ -679,6 +670,12 @@
 сообщение: "День 1: Горизонтальная тяга в тренажере → Горизонтальная тяга Т-бар"
 курсор: ""
 экран: правки к шагу 7
+@@ 9 -1 +1
+-   p#onb-sum.sub(style="margin-bottom:8px") 49 подходов в неделю · самая длинная тренировка ≈ 1 ч 30 мин
++   p#onb-sum.sub(style="margin-bottom:8px") 49 подходов в неделю · самая длинная тренировка ≈ 1 ч 35 мин
+@@ 14 -1 +1
+-      span.sub 24 подхода · ≈ 1 ч 30 мин
++      span.sub 24 подхода · ≈ 1 ч 35 мин
 @@ 23 -1 +1
 -     div.prow.changed.swapping
 +     div.prow.changed
@@ -754,9 +751,9 @@
   kw-max-rdl=
 сообщение: "Программа принята: следующие тренировки пойдут по ней"
 записи:
-  + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1}},"days":2,"time":90,"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"tbar_row","n":3},{"ex":"squat","n":4},{"ex":"pullup","n":2},{"ex":"db_ohp","n":3},{"ex":"leg_press","n":2},{"ex":"lat_raise","n":3},{"ex":"x_rear","n":3},{"ex":"leg_curl_seated","n":2},{"ex":"barbell_curl","n":2}],"wed":[{"ex":"bench_light"},{"ex":"chest_press","n":4},{"ex":"row_machine","n":3},{"ex":"rdl","n":3},{"ex":"pullup","n":3},{"ex":"leg_press","n":2},{"ex":"db_ohp","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":3}]},"prev":{"goals":{"bench":""}},"budget":100,"fit":{"time":90,"rest":120,"mode":"l:bench|plain","days":2}}}
+  + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1}},"days":2,"time":90,"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"tbar_row","n":3},{"ex":"squat","n":3},{"ex":"pullup","n":2},{"ex":"db_ohp","n":2},{"ex":"leg_press","n":2},{"ex":"lat_raise","n":3},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":2},{"ex":"barbell_curl","n":2}],"wed":[{"ex":"bench_light"},{"ex":"chest_press","n":3},{"ex":"row_machine","n":3},{"ex":"rdl","n":3},{"ex":"pullup","n":2},{"ex":"leg_press","n":2},{"ex":"db_ohp","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":2}]},"prev":{"goals":{"bench":""}},"budget":100,"fit":{"time":90,"rest":120,"mode":"l:bench|plain","days":2}}}
 экран: правки к шагу 5
-@@ 5 -47 +110
+@@ 5 -41 +110
 +     div#onb-n.eyebrow Шаг 4 из 5
 +     h2 Веса
 +   div.eyebrow(style="margin-bottom:4px") Шаг веса
@@ -880,7 +877,7 @@
 сообщение: ""
 курсор: ""
 записи:
-  + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1},"barbell":{"step":2.5}},"days":2,"time":90,"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"tbar_row","n":3},{"ex":"squat","n":4},{"ex":"pullup","n":2},{"ex":"db_ohp","n":3},{"ex":"leg_press","n":2},{"ex":"lat_raise","n":3},{"ex":"x_rear","n":3},{"ex":"leg_curl_seated","n":2},{"ex":"barbell_curl","n":2}],"wed":[{"ex":"bench_light"},{"ex":"chest_press","n":4},{"ex":"row_machine","n":3},{"ex":"rdl","n":3},{"ex":"pullup","n":3},{"ex":"leg_press","n":2},{"ex":"db_ohp","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":3}]},"prev":{"goals":{"bench":""}},"budget":100,"fit":{"time":90,"rest":120,"mode":"l:bench|plain","days":2}}}
+  + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1},"barbell":{"step":2.5}},"days":2,"time":90,"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"tbar_row","n":3},{"ex":"squat","n":3},{"ex":"pullup","n":2},{"ex":"db_ohp","n":2},{"ex":"leg_press","n":2},{"ex":"lat_raise","n":3},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":2},{"ex":"barbell_curl","n":2}],"wed":[{"ex":"bench_light"},{"ex":"chest_press","n":3},{"ex":"row_machine","n":3},{"ex":"rdl","n":3},{"ex":"pullup","n":2},{"ex":"leg_press","n":2},{"ex":"db_ohp","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":2}]},"prev":{"goals":{"bench":""}},"budget":100,"fit":{"time":90,"rest":120,"mode":"l:bench|plain","days":2}}}
 экран: правки к шагу 9
 @@ 13 -1 +1
 -     button#onb-step-usual-barbell.btn.ghost.sm(type="button" style="min-width:96px") обычно 2.5
@@ -896,7 +893,7 @@
 + onb-step-dumbbell=2
 + onb-step-machine=2.5
 записи:
-  + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1},"barbell":{"step":2.5},"dumbbell":{"step":2},"machine":{"step":2.5}},"days":2,"time":90,"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"tbar_row","n":3},{"ex":"squat","n":4},{"ex":"pullup","n":2},{"ex":"db_ohp","n":3},{"ex":"leg_press","n":2},{"ex":"lat_raise","n":3},{"ex":"x_rear","n":3},{"ex":"leg_curl_seated","n":2},{"ex":"barbell_curl","n":2}],"wed":[{"ex":"bench_light"},{"ex":"chest_press","n":4},{"ex":"row_machine","n":3},{"ex":"rdl","n":3},{"ex":"pullup","n":3},{"ex":"leg_press","n":2},{"ex":"db_ohp","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":3}]},"prev":{"goals":{"bench":""}},"budget":100,"fit":{"time":90,"rest":120,"mode":"l:bench|plain","days":2}}}
+  + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1},"barbell":{"step":2.5},"dumbbell":{"step":2},"machine":{"step":2.5}},"days":2,"time":90,"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"tbar_row","n":3},{"ex":"squat","n":3},{"ex":"pullup","n":2},{"ex":"db_ohp","n":2},{"ex":"leg_press","n":2},{"ex":"lat_raise","n":3},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":2},{"ex":"barbell_curl","n":2}],"wed":[{"ex":"bench_light"},{"ex":"chest_press","n":3},{"ex":"row_machine","n":3},{"ex":"rdl","n":3},{"ex":"pullup","n":2},{"ex":"leg_press","n":2},{"ex":"db_ohp","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":2}]},"prev":{"goals":{"bench":""}},"budget":100,"fit":{"time":90,"rest":120,"mode":"l:bench|plain","days":2}}}
 экран: правки к шагу 11
 @@ 17 -1 +1
 -     button#onb-step-usual-g_pullup.btn.ghost.sm(type="button" style="min-width:96px") обычно 1
@@ -914,7 +911,7 @@
 - kw-max-bench=
 + kw-max-bench=100
 записи:
-  + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto","max":100},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1},"barbell":{"step":2.5},"dumbbell":{"step":2},"machine":{"step":2.5}},"days":2,"time":90,"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"tbar_row","n":3},{"ex":"squat","n":4},{"ex":"pullup","n":2},{"ex":"db_ohp","n":3},{"ex":"leg_press","n":2},{"ex":"lat_raise","n":3},{"ex":"x_rear","n":3},{"ex":"leg_curl_seated","n":2},{"ex":"barbell_curl","n":2}],"wed":[{"ex":"bench_light"},{"ex":"chest_press","n":4},{"ex":"row_machine","n":3},{"ex":"rdl","n":3},{"ex":"pullup","n":3},{"ex":"leg_press","n":2},{"ex":"db_ohp","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":3}]},"prev":{"goals":{"bench":""}},"budget":100,"fit":{"time":90,"rest":120,"mode":"l:bench|plain","days":2}}}
+  + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto","max":100},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1},"barbell":{"step":2.5},"dumbbell":{"step":2},"machine":{"step":2.5}},"days":2,"time":90,"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"tbar_row","n":3},{"ex":"squat","n":3},{"ex":"pullup","n":2},{"ex":"db_ohp","n":2},{"ex":"leg_press","n":2},{"ex":"lat_raise","n":3},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":2},{"ex":"barbell_curl","n":2}],"wed":[{"ex":"bench_light"},{"ex":"chest_press","n":3},{"ex":"row_machine","n":3},{"ex":"rdl","n":3},{"ex":"pullup","n":2},{"ex":"leg_press","n":2},{"ex":"db_ohp","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":2}]},"prev":{"goals":{"bench":""}},"budget":100,"fit":{"time":90,"rest":120,"mode":"l:bench|plain","days":2}}}
 экран: правки к шагу 12
 @@ 42 -1 +1
 -     div#kw-out-bench.kw-out.sub вес подберёшь на первой тренировке
@@ -925,103 +922,103 @@
 
 === 14. дальше: программа готова
 поля: —
-экран: правки к шагу 7
-@@ 5 -5 +4
+экран: правки к шагу 13
+@@ 5 -110 +105
 +     div#onb-n.eyebrow Шаг 5 из 5
 +     h2 Программа готова
 +    button#onb-end.btn.ghost.sm(type="button") В дневник
-+   p.note(style="margin-bottom:12px") «Пауэрбилдинг: жим лежа»: 55 подходов в неделю. По ней пойдут следующие тренировки.
-@@ 15 -1 +1
--     div.prow.changed
++   p.note(style="margin-bottom:12px") «Пауэрбилдинг: жим лежа»: 49 подходов в неделю. По ней пойдут следующие тренировки.
++   div.grid2.even
++    div.pday
++     div.pday-h
++      b День 1
++      span.sub 24 подхода · ≈ 1 ч 35 мин
 +     div.prow
-@@ 19 -1 +0
--        span.tag.accent новое
-@@ 21 -3 +2
--       div.sub 3 × 4 одним весом, вес по запасу
--      div.pctl
--     div.prow.changed.swapping
++      div.grow
++       div.pn
++        | Жим лежа
++        span.tag.accent сила по запасу
 +       div.sub 3 × 4 одним весом, вес по запасу · старт 82.5 кг
 +     div.prow
-@@ 25 -3 +1
--       div.pn
--        | Горизонтальная тяга в тренажере
--        span.tag.accent новое
++      div.grow
 +       div.pn Горизонтальная тяга Т-бар
-@@ 29 -20 +1
++       div.sub 3 × 6–10
 +     div.prow
-@@ 50 -16 +3
++      div.grow
 +       div.pn Приседания со штангой
-+       div.sub 4 × 6–10
++       div.sub 3 × 6–10
 +     div.prow
-@@ 67 -16 +3
++      div.grow
 +       div.pn Подтягивания
 +       div.sub 2 × 6–10
 +     div.prow
-@@ 84 -16 +3
++      div.grow
 +       div.pn Жим гантелей сидя
-+       div.sub 3 × 6–10 · старт ≈ 18 кг
++       div.sub 2 × 6–10 · старт ≈ 18 кг
 +     div.prow
-@@ 101 -16 +3
++      div.grow
 +       div.pn Жим ногами
 +       div.sub 2 × 6–10
 +     div.prow
-@@ 118 -16 +3
++      div.grow
 +       div.pn Махи гантелями в стороны
 +       div.sub 3 × 10–20
 +     div.prow
-@@ 135 -16 +3
++      div.grow
 +       div.pn Обратная бабочка
-+       div.sub 3 × 8–12
++       div.sub 2 × 8–12
 +     div.prow
-@@ 152 -16 +3
++      div.grow
 +       div.pn Бицепс бедра сидя в тренажере
 +       div.sub 2 × 8–12
 +     div.prow
-@@ 169 -73 +2
++      div.grow
 +       div.pn Бицепс со штангой стоя
 +       div.sub 2 × 8–12
-@@ 246 -1 +1
--     div.prow.changed
++    div.pday
++     div.pday-h
++      b День 2
++      span.sub 25 подходов · ≈ 1 ч 25 мин
 +     div.prow
-@@ 248 -8 +3
++      div.grow
 +       div.pn Жим лежа — лёгкий день
 +       div.sub 3 × 8 на 75% от максимума · старт 75 кг
 +     div.prow
-@@ 257 -16 +3
++      div.grow
 +       div.pn Жим в тренажере на грудь
-+       div.sub 4 × 6–10
++       div.sub 3 × 6–10
 +     div.prow
-@@ 274 -16 +3
++      div.grow
 +       div.pn Горизонтальная тяга в тренажере
 +       div.sub 3 × 6–10
 +     div.prow
-@@ 291 -16 +3
++      div.grow
 +       div.pn Румынская тяга
 +       div.sub 3 × 6–10
 +     div.prow
-@@ 308 -16 +3
++      div.grow
 +       div.pn Подтягивания
-+       div.sub 3 × 6–10
++       div.sub 2 × 6–10
 +     div.prow
-@@ 325 -16 +3
++      div.grow
 +       div.pn Жим ногами
 +       div.sub 2 × 6–10
 +     div.prow
-@@ 342 -16 +3
++      div.grow
 +       div.pn Жим гантелей сидя
 +       div.sub 3 × 6–10 · старт ≈ 18 кг
 +     div.prow
-@@ 359 -16 +3
++      div.grow
 +       div.pn Махи гантелями в стороны
 +       div.sub 2 × 10–20
 +     div.prow
-@@ 376 -16 +3
++      div.grow
 +       div.pn Обратная бабочка
 +       div.sub 2 × 8–12
 +     div.prow
-@@ 393 -75 +12
++      div.grow
 +       div.pn Бицепс бедра сидя в тренажере
-+       div.sub 3 × 8–12
++       div.sub 2 × 8–12
 +   div(style="margin-top:12px")
 +    div.why
 +     b Записывай вес и повторы каждого подхода
@@ -1032,8 +1029,8 @@
 +    div.why
 +     b Программу можно поправить
 +     div.sub Дни, упражнения и подходы — на вкладке «Программа», шаг веса и веса — в «Настройке».
-@@ 470 -1 +1
--    button#onb-accept.btn.primary(type="button") Принять программу
+@@ 117 -1 +1
+-    button#onb-next.btn.primary(type="button") Дальше
 +    button#onb-go.btn.primary(type="button") Открыть первую тренировку
 
 === 15. открыть первую тренировку
@@ -1046,100 +1043,95 @@
 + a(href="#workout" aria-current="page") Тренировка
 поля: целиком
   np-date=2025-11-12
-  np-rest=120
-экран: правки к шагу 5
-@@ 2 -1 +1
--  section#onb.card(style="max-width:760px;margin:0 auto;width:100%")
-+  div.card
-@@ 5 -11 +3
-+     div.eyebrow Новая тренировка
-+     h2 Среда, 12 ноября
-+   div.row(style="margin-bottom:12px")
-@@ 17 -16 +2
-+     span Дата
-+     input#np-date(type="date")
-@@ 34 -8 +4
-+     span День программы
-+     div.seg(role="group" aria-label="День программы")
-+      button(type="button" aria-pressed="true") День 1
-+      button(type="button" aria-pressed="false") День 2
-@@ 44 -1 +1
--     select#onb-rest
-+     select#np-rest
-@@ 50 -5 +73
-+   p.sub(style="margin-bottom:6px") Основа — программа «Пауэрбилдинг: жим лежа»: в этот день она идёт первый раз, вес в каждом упражнении подбирается на месте. В плане 27 подходов. Всё можно поправить по ходу. Поправок нет: дневник не видит причин отходить от правил.
-+   p.sub(style="margin-bottom:6px")
-+    b Время: ≈ 1 ч 30 мин
-+    | " — разминка, 27 подходов и отдых по 2:00 (в базовых на минуту дольше)."
-+   div.plan-list
-+    div.plan-row
-+     span.n
-+      | Жим лежа
-+      span.tag(style="margin-left:6px") сила по запасу
-+     div.chips
-+      span.chip 3 × 4 по 82.5 кг
-+      span.tag 83%
-+      span.tag(title="Рабочий вес или разовый максимум из «Настройки»: в журнале этого упражнения ещё нет") вес из настроек
-+    div.plan-row
-+     span.n Горизонтальная тяга Т-бар
-+     div.chips
-+      span.chip 3 × 6–10
-+      span.tag вес подбирается
-+    div.plan-row
-+     span.n Приседания со штангой
-+     div.chips
-+      span.chip 4 × 6–10
-+      span.tag вес подбирается
-+    div.plan-row
-+     span.n Подтягивания
-+     div.chips
-+      span.chip 2 × 6–10
-+      span.tag вес подбирается
-+    div.plan-row
-+     span.n Жим гантелей сидя
-+     div.chips
-+      span.chip 3 × 6–10 по 18 кг
-+      span.tag(title=#589495b673) оценка
-+    div.plan-row
-+     span.n Жим ногами
-+     div.chips
-+      span.chip 2 × 6–10
-+      span.tag вес подбирается
-+    div.plan-row
-+     span.n Махи гантелями в стороны
-+     div.chips
-+      span.chip 3 × 10–20
-+      span.tag вес подбирается
-+    div.plan-row
-+     span.n Обратная бабочка
-+     div.chips
-+      span.chip 3 × 8–12
-+      span.tag вес подбирается
-+    div.plan-row
-+     span.n Бицепс бедра сидя в тренажере
-+     div.chips
-+      span.chip 2 × 8–12
-+      span.tag вес подбирается
-+    div.plan-row
-+     span.n Бицепс со штангой стоя
-+     div.chips
-+      span.chip 2 × 8–12
-+      span.tag вес подбирается
-+   div.legend-line
-+    span
-+     span.chip.up 40 ↑
-+     | " прошлый раз взят верх диапазона, вес повышен"
-+    span
-+     span.chip
-+      | 40
-+      small 11+
-+     | " тот же вес, цель по повторам"
-+    span
-+     span.chip.down 40 ↓
-+     | " было ниже диапазона"
-+   div.row(style="margin-top:14px")
-+    button.btn.primary Начать тренировку
-+    button.btn Начать с пустого листа
+экран: целиком
+  div.wrap.stack
+   div.card
+    div.sec-h
+     div
+      div.eyebrow Новая тренировка
+      h2 Среда, 12 ноября
+    div.row(style="margin-bottom:12px")
+     label.f
+      span Дата
+      input#np-date(type="date")
+     label.f
+      span День программы
+      div.seg(role="group" aria-label="День программы")
+       button(type="button" aria-pressed="true") День 1
+       button(type="button" aria-pressed="false") День 2
+    p.sub(style="margin-bottom:6px") Основа — программа «Пауэрбилдинг: жим лежа»: в этот день она идёт первый раз, вес в каждом упражнении подбирается на месте. В плане 24 подхода. Всё можно поправить по ходу. Поправок нет: дневник не видит причин отходить от правил.
+    p.sub(style="margin-bottom:6px")
+     b Время: ≈ 1 ч 35 мин
+     | " — разминка, 24 подхода и отдых: у каждого упражнения свой, от 2 до 5 мин."
+    div.plan-list
+     div.plan-row
+      span.n
+       | Жим лежа
+       span.tag(style="margin-left:6px") сила по запасу
+      div.chips
+       span.chip 3 × 4 по 82.5 кг
+       span.tag 83%
+       span.tag(title="Рабочий вес или разовый максимум из «Настройки»: в журнале этого упражнения ещё нет") вес из настроек
+     div.plan-row
+      span.n Горизонтальная тяга Т-бар
+      div.chips
+       span.chip 3 × 6–10
+       span.tag вес подбирается
+     div.plan-row
+      span.n Приседания со штангой
+      div.chips
+       span.chip 3 × 6–10
+       span.tag вес подбирается
+     div.plan-row
+      span.n Подтягивания
+      div.chips
+       span.chip 2 × 6–10
+       span.tag вес подбирается
+     div.plan-row
+      span.n Жим гантелей сидя
+      div.chips
+       span.chip 2 × 6–10 по 18 кг
+       span.tag(title=#589495b673) оценка
+     div.plan-row
+      span.n Жим ногами
+      div.chips
+       span.chip 2 × 6–10
+       span.tag вес подбирается
+     div.plan-row
+      span.n Махи гантелями в стороны
+      div.chips
+       span.chip 3 × 10–20
+       span.tag вес подбирается
+     div.plan-row
+      span.n Обратная бабочка
+      div.chips
+       span.chip 2 × 8–12
+       span.tag вес подбирается
+     div.plan-row
+      span.n Бицепс бедра сидя в тренажере
+      div.chips
+       span.chip 2 × 8–12
+       span.tag вес подбирается
+     div.plan-row
+      span.n Бицепс со штангой стоя
+      div.chips
+       span.chip 2 × 8–12
+       span.tag вес подбирается
+    div.legend-line
+     span
+      span.chip.up 40 ↑
+      | " прошлый раз взят верх диапазона, вес повышен"
+     span
+      span.chip
+       | 40
+       small 11+
+      | " тот же вес, цель по повторам"
+     span
+      span.chip.down 40 ↓
+      | " было ниже диапазона"
+    div.row(style="margin-top:14px")
+     button.btn.primary Начать тренировку
+     button.btn Начать с пустого листа
 
 === 16. обзор: первая тренировка
 адрес: "#overview"
@@ -1154,7 +1146,7 @@
        div.eyebrow Первая тренировка
        h2 Среда, 12 ноября
       a.btn.primary(href="#workout") Открыть план
-     p.sub(style="margin-bottom:6px") По программе «Пауэрбилдинг: жим лежа»: 27 подходов, ≈ 1 ч 30 мин при отдыхе 2:00. День и дату можно сменить в плане.
+     p.sub(style="margin-bottom:6px") По программе «Пауэрбилдинг: жим лежа»: 24 подхода, ≈ 1 ч 35 мин с отдыхом по упражнению. День и дату можно сменить в плане.
      div.plan-list
       div.plan-row
        span.n
@@ -1172,7 +1164,7 @@
       div.plan-row
        span.n Приседания со штангой
        div.chips
-        span.chip 4 × 6–10
+        span.chip 3 × 6–10
         span.tag вес подбирается
       div.plan-row
        span.n Подтягивания
@@ -1182,7 +1174,7 @@
       div.plan-row
        span.n Жим гантелей сидя
        div.chips
-        span.chip 3 × 6–10 по 18 кг
+        span.chip 2 × 6–10 по 18 кг
         span.tag(title=#589495b673) оценка
       div.plan-row
        span.n Жим ногами
@@ -1197,7 +1189,7 @@
       div.plan-row
        span.n Обратная бабочка
        div.chips
-        span.chip 3 × 8–12
+        span.chip 2 × 8–12
         span.tag вес подбирается
       div.plan-row
        span.n Бицепс бедра сидя в тренажере

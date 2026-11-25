@@ -31,7 +31,6 @@
   a(href="#setup") Настройка
 поля: целиком
   np-date=2025-11-12
-  np-rest=120
   pp-leg_press=true
   pp-tbar_row=true
   pp-barbell_curl=true
@@ -92,14 +91,6 @@
       div.seg(role="group" aria-label="Вариант плана")
        button(type="button" aria-pressed="true") С поправками дневника
        button(type="button" aria-pressed="false") Только по моим правилам
-     label.f
-      span Отдых между подходами
-      select#np-rest
-       option(value="60") 1:00 мин
-       option(value="90") 1:30 мин
-       option(value="120" selected="") 2:00 мин
-       option(value="150") 2:30 мин
-       option(value="180") 3:00 мин
     div.adj-box(style="margin-bottom:12px")
      div.eyebrow(style="margin-bottom:2px") Что дневник меняет в плане и почему
      p.sub Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.
@@ -137,8 +128,8 @@
         div.sub 3 подхода по 8–12: задние дельты работают только косвенно: 2 подхода в неделю при рабочей зоне от 10
     p.sub(style="margin-bottom:6px") Основа — тренировка 5 ноября. В плане 25 подходов (по правилам было бы 21). Всё можно поправить по ходу.
     p.sub(style="margin-bottom:6px")
-     b Время: ≈ 1 ч 30 мин
-     | " — разминка, 25 подходов и отдых по 2:00 (в базовых на минуту дольше)."
+     b Время: ≈ 1 ч 25 мин
+     | " — разминка, 25 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин."
     div.plan-list
      div.plan-row
       span.n Разгибания ног в тренажере
@@ -1969,14 +1960,12 @@
 поля: целиком
   pm=even
   pt=0
-  pb-budget=100
-  prog-rest=120
   pa-mon=pec_fly
   pa-wed=pec_fly
   pa-fri=leg_curl_seated
 сообщение: ""
 экран: правки к шагу 5
-@@ 4 -54 +268
+@@ 4 -54 +252
 +    div
 +     div.eyebrow Действует сейчас
 +     h2 Своя программа
@@ -2046,7 +2035,7 @@
 +    div.pday
 +     div.pday-h
 +      b День 3
-+      span.sub 24 подхода · ≈ 1 ч 25 мин
++      span.sub 24 подхода · ≈ 1 ч 20 мин
 +     div.prow
 +      div.grow
 +       div.pn Подтягивания
@@ -2120,24 +2109,8 @@
 +      option(value="90") до 1 ч 30 мин
 +      option(value="105") до 1 ч 45 мин
 +      option(value="120") до 2 ч
-+    label.f
-+     span Подходов в неделю, не больше
-+     select#pb-budget
-+      option(value="40") 40
-+      option(value="50") 50
-+      option(value="60") 60
-+      option(value="70") 70
-+      option(value="80") 80
-+      option(value="90") 90
-+      option(value="100" selected="") 100 — твой лимит
-+    label.f
-+     span Отдых между подходами
-+     select#prog-rest
-+      option(value="60") 1:00 мин
-+      option(value="90") 1:30 мин
-+      option(value="120" selected="") 2:00 мин
-+      option(value="150") 2:30 мин
-+      option(value="180") 3:00 мин
++      option(value="135") до 2 ч 15 мин
++      option(value="150") до 2 ч 30 мин
 +   div.grid3
 +    div.pday
 +     div.pday-h
@@ -2322,7 +2295,7 @@
 +    div.pday
 +     div.pday-h
 +      b День 2
-+      span.sub 28 подходов · было 21 · ≈ 1 ч 35 мин
++      span.sub 27 подходов · было 21 · ≈ 1 ч 30 мин
 +     div.prow
 +      div.grow
 +       div.pn Жим ногами
@@ -2357,7 +2330,7 @@
 +       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Ягодичный мост со штангой")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
 +       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Ягодичный мост со штангой")
-@@ 378 -46 +84
+@@ 378 -46 +69
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Ягодичный мост со штангой")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +     div.prow
@@ -2381,7 +2354,7 @@
 +        | Приседания со штангой
 +        span.tag.accent новое
 +       div.sub
-+        | "2 × 6–10 · "
++        | "4 × 6–10 · "
 +        button#sw-wed-4.linkbtn(type="button" aria-label="Заменить упражнение: Приседания со штангой") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Приседания со штангой")
@@ -2407,21 +2380,6 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс со штангой стоя")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-+     div.prow
-+      div.grow
-+       div.pn Разгибания ног в тренажере
-+       div.sub
-+        | "3 × 8–12 · "
-+        button#sw-wed-6.linkbtn(type="button" aria-label="Заменить упражнение: Разгибания ног в тренажере") заменить
-+      div.pctl
-+       button.icon-btn(title="Выше" aria-label="Переместить выше: Разгибания ног в тренажере")
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
-+       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Разгибания ног в тренажере")
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Разгибания ног в тренажере")
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Разгибания ног в тренажере")
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +     div.prow.changed
 +      div.grow
 +       div.pn
@@ -2429,7 +2387,7 @@
 +        span.tag.accent новое
 +       div.sub
 +        | "2 × 8–12 · "
-+        button#sw-wed-7.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
++        button#sw-wed-6.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Обратная бабочка")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
@@ -2446,14 +2404,14 @@
 +        span.tag.accent новое
 +       div.sub
 +        | "2 × 8–16 · "
-+        button#sw-wed-8.linkbtn(type="button" aria-label="Заменить упражнение: Махи с гантелями на плечи") заменить
++        button#sw-wed-7.linkbtn(type="button" aria-label="Заменить упражнение: Махи с гантелями на плечи") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Махи с гантелями на плечи")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
 +       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Махи с гантелями на плечи")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
 +       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Махи с гантелями на плечи")
-@@ 502 -80 +84
+@@ 502 -80 +85
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Махи с гантелями на плечи")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +     div.row(style="margin-top:8px;flex-wrap:nowrap")
@@ -2492,6 +2450,7 @@
 +       option(value="abs") Пресс
 +       option(value="pullover_cable") Пуловер на верхнем блоке
 +       option(value="db_fly") Разводка гантелей лежа
++       option(value="leg_ext") Разгибания ног в тренажере
 +       option(value="rdl") Румынская тяга
 +       option(value="db_rdl") Румынская тяга с гантелями
 +       option(value="cable_fly") Сведение рук в кроссовере
@@ -2518,7 +2477,7 @@
 +    div.pday
 +     div.pday-h
 +      b День 3
-+      span.sub 25 подходов · было 24 · ≈ 1 ч 30 мин
++      span.sub 26 подходов · было 24 · ≈ 1 ч 25 мин
 +     div.prow
 +      div.grow
 +       div.pn Подтягивания
@@ -2538,7 +2497,7 @@
 +       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим гантелей сидя")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
 +       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим гантелей сидя")
-@@ 583 -754 +484
+@@ 583 -754 +489
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим гантелей сидя")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +     div.prow
@@ -2603,11 +2562,13 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс Bayesian curl")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-+     div.prow
++     div.prow.changed
 +      div.grow
-+       div.pn Разгибания ног в тренажере
++       div.pn
++        | Разгибания ног в тренажере
++        span.tag.accent +1 подход
 +       div.sub
-+        | "3 × 8–12 · "
++        | "4 × 8–12 · "
 +        button#sw-fri-6.linkbtn(type="button" aria-label="Заменить упражнение: Разгибания ног в тренажере") заменить
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Разгибания ног в тренажере")
@@ -2711,7 +2672,7 @@
 +      button#pb-fri.btn.sm
 +       svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       | В день
-+   p.sub(style="margin-top:8px") Полоса слева — то, что меняется. Время — разминка, подходы и отдых по 2:00.
++   p.sub(style="margin-top:8px") Полоса слева — то, что меняется. Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
 +   hr.rule
 +   div.grid2.even
 +    div(style="min-width:0")
@@ -2721,16 +2682,19 @@
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#1c12fecca0
 +       figcaption Вид спереди
 +      figure.bm-fig
-+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
++       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#470e21f41b
 +       figcaption Вид сзади
 +     details#prog-why.whybox
 +      summary Что изменилось и почему
++      div.why
++       b Дни выровнены по длине
++       div.sub Разгибания ног в тренажере (день 2 → день 3, 1 подход). Упражнение или подход переезжает из самого длинного дня в самый короткий, пока разница между ними больше 10 минут: объём за неделю тот же, меняется только день.
 +      div.why
 +       b Все мышцы в рабочей зоне, поровну
 +       div.sub Каждая мышца в цели получает от 10 до 12 подходов в неделю, ни одна не выделяется. Всего 80 подходов при лимите 100.
 +      div.why
 +       b Новое в день 1: Румынская тяга
-+       div.sub 2 × 6–10. Бицепс бедра: было 7, станет 11 в неделю; Ягодицы: было 2, станет 10 в неделю.
++       div.sub 2 × 6–10. Бицепс бедра: было 7, станет 11 в неделю; Ягодицы: было 2, станет 12 в неделю.
 +      div.why
 +       b Новое в день 1: Жим гантелей сидя
 +       div.sub 2 × 6–10. Передние дельты: было 6, станет 10 в неделю.
@@ -2739,10 +2703,10 @@
 +       div.sub 4 × 8–12. Задние дельты: было 2, станет 10 в неделю.
 +      div.why
 +       b Новое в день 2: Ягодичный мост со штангой
-+       div.sub 4 × 6–10. Ягодицы: было 2, станет 10 в неделю.
++       div.sub 4 × 6–10. Ягодицы: было 2, станет 12 в неделю.
 +      div.why
 +       b Новое в день 2: Приседания со штангой
-+       div.sub 2 × 6–10. Квадрицепс: было 10, станет 12 в неделю; Ягодицы: было 2, станет 10 в неделю.
++       div.sub 4 × 6–10. Квадрицепс: было 10, станет 12 в неделю; Ягодицы: было 2, станет 12 в неделю.
 +      div.why
 +       b Новое в день 2: Обратная бабочка
 +       div.sub 2 × 8–12. Задние дельты: было 2, станет 10 в неделю.
@@ -2768,8 +2732,8 @@
 +       b Убрано из программы
 +       div.sub Молотки с гантелями (день 1): эти упражнения давали лишнее мышцам, которые и так выше своего уровня, или не помещались в лимит недели.
 +      div.why
-+       b Порядок упражнений: день 2
-+       div.sub Сначала базовое дня, многосуставные — раньше изоляции, соседние упражнения — на разные мышцы. По исследованиям в упражнении ближе к началу тренировки больше повторов и сильнее растёт сила; чередование мышц — правило дневника. Свой порядок — в «Вручную»: там сборка его не трогает.
++       b Одно упражнение вместо двух
++       div.sub Приседания со штангой (день 2) +2 вместо Разгибания ног в тренажере. В длинном дне подходы на мышцу собраны в одно упражнение: для роста считаются подходы, а каждое упражнение — это ещё разминка и настройка снаряда.
 +    div(style="min-width:0")
 +     div#prog-free.free.some(role="status")
 +      div.free-main
@@ -2993,8 +2957,8 @@
 +         td Ягодицы
 +         td.c-now 2
 +         td
-+          span.tag.accent(style="margin-right:6px") +8
-+          b 10
++          span.tag.accent(style="margin-right:6px") +10
++          b 12
 +         td.c-zone(style="text-align:left")
 +          span.pill.good
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
