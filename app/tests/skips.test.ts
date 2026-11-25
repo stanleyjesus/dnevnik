@@ -57,7 +57,7 @@ test('«Не делал два раза»: перенос — упражнени
   const p = fixOf(A, 'leg_ext')!;
   assert.ok(p && p.drop, 'поправка в плане дня');
   assert.deepEqual([p.fix!.kind, p.fix!.to, p.fix!.n], ['move', 'mon', 2]);
-  assert.match(p.notes[0], /^два раза подряд не сделано \(12 ноя и 19 ноя\): переезжает в День 1 — с ним там ≈ 1 ч, не дольше тренировок, которые ты успеваешь целиком$/);
+  assert.match(p.notes[0], /^два раза подряд не сделано \(12 ноя и 19 ноя\): переезжает в День 1 — с ним там ≈ 1 ч 5 мин, не дольше тренировок, которые ты успеваешь целиком$/);
   assert.ok(!Core.applyAdapt(A, A.off0).items.some(it => it.ex === 'leg_ext'), 'с поправкой упражнения в плане нет');
   assert.ok(Core.applyAdapt(A, { [p.key]: true }).items.some(it => it.ex === 'leg_ext'), 'поправка снимается галочкой');
   const before = pvOf(cfg, Core.currentSlots(W, cfg));
@@ -168,11 +168,11 @@ test('программа под выбранное время: прибавки 
   const free = withFit(null), A0 = Core.adapt(W, free, 'mon', date);
   const on0 = more(A0).filter(k => !A0.off0[k]);
   assert.equal(on0.length, 3, 'без выбранного времени в дне 1 включены три прибавки');
-  assert.equal(Math.round(Core.estMinutes(free, A0.base.items)), 73);
-  assert.equal(Math.round(Core.estMinutes(free, Core.applyAdapt(A0, A0.off0).items)), 87, 'с ними тренировка — 87 минут');
-  const cut = withFit(75), A1 = Core.adapt(W, cut, 'mon', date);
+  assert.equal(Math.round(Core.estMinutes(free, A0.base.items)), 77);
+  assert.equal(Math.round(Core.estMinutes(free, Core.applyAdapt(A0, A0.off0).items)), 92, 'с ними тренировка — 92 минуты');
+  const cut = withFit(80), A1 = Core.adapt(W, cut, 'mon', date);
   assert.deepEqual(more(A1), more(A0), 'прибавки те же и в плане остаются');
-  assert.ok(Core.fmtDur(Core.estMinutes(cut, Core.applyAdapt(A1, A1.off0).items)) === '1 ч 15 мин', 'под 1 ч 15 мин включено столько, сколько влезает');
+  assert.ok(Core.fmtDur(Core.estMinutes(cut, Core.applyAdapt(A1, A1.off0).items)) === '1 ч 20 мин', 'под 1 ч 20 мин включено столько, сколько влезает');
   assert.equal(more(A1).filter(k => !A1.off0[k]).length, 1, 'включена одна из трёх, две — галочкой');
   const wide = withFit(150), A2 = Core.adapt(W, wide, 'mon', date);
   assert.deepEqual(A2.off0, A0.off0, 'когда время с запасом, включено то же, что без него');

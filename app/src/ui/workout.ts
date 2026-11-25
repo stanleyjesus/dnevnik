@@ -12,6 +12,7 @@ import { appRules, HEAVY, heavyOf, LIGHT_RIR, lightWhy, restTag, rirOf } from '.
 import { okMin } from '../core/pace.ts';
 import { goneOf, movesOf, skipProgram } from './skipfix.ts';
 import { minField, paceText } from './pace.ts';
+import { warmLine } from './warmup.ts';
 import { trimLine, trimProgram } from './trim.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
 import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
@@ -176,6 +177,8 @@ export function exerciseCard(d: Workout, it: Item, idx: number, A: Adapted | nul
   if (it.skip) { card.appendChild(h('p', { class: 'sub' }, 'Отмечено «не делал». План: ' + it.sets.map(s => C.fmt(s.w)).join(' · ') + ' кг.')); return card; }
   const prop = A ? A.props.find(p => p.ex === it.ex && !p.drop) : null;   // (в эталоне нет) возвращённое упражнение, которое убрала поправка «Не делал два раза», идёт по правилу
   if (prop) card.appendChild(adjBox(it, prop, A!));
+  const warm = appRules() && d.open ? warmLine(d, it, idx) : null;   // (в эталоне нет) раскладка разминки (просьба владельца, 25 ноября 2026; warmup.ts)
+  if (warm) card.appendChild(warm);
   if (it.cyc) cycleBlock(card, d, it, prim); else dpBlock(card, d, it, prim, idx, prop, A);
   card.appendChild(h('input', { type: 'text', id: 'ex-note-' + idx, style: 'width:100%;margin-top:8px', placeholder: 'Заметка к упражнению', 'aria-label': 'Заметка к упражнению', value: it.note || '', oninput: e => { it.note = e.target.value; touch(); } }));
   return card;

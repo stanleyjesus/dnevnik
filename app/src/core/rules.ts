@@ -343,6 +343,44 @@ export function restOf(cfg: Cfg, id: string, def?: ExDef) {
   if (!e.pat || e.pat === 'iso') return REST.iso;
   return freeLift(cfg, id, e) ? REST.free : REST.other;
 }
+/* Разминочные подходы по типу упражнения (решение владельца, 25 ноября 2026; docs/03, раздел 20). Их одинаково считают оценка времени тренировки
+   (time.ts, estMinutes) и раскладка разминки в карточке упражнения. С днями «День N»:
+   - тяжёлый день силовой роли и поддержание — 4 подхода;
+   - лёгкий и средний день, изоляция в силовой роли, базовое на двойной прогрессии — 2;
+   - многосуставное со свободным весом (freeLift) первым на свою основную мышцу — 2;
+   - любое другое упражнение первым на свою основную мышцу — 1;
+   - основная мышца в этой тренировке уже работала (основной или помогающей) — 0.
+   Подход разминки вместе с отдыхом и сменой веса — 1 мин 30 с. Правило тренерское [Т] */
+export const WARM = { heavy: 4, light: 2, free: 2, first: 1, sec: 90 };
+/** Сколько разминочных подходов у упражнения id; fresh — его основная мышца в этой тренировке ещё не работала */
+export function warmSets(cfg: Cfg, id: string, fresh: boolean) {
+  const e = cfg.ex[id];
+  if (!e) return fresh ? WARM.first : 0;
+  if (e.mode === 'light') return WARM.light;
+  if (e.mode === 'cycle') return byPct(cfg, id) && !isoLift(cfg, id) ? WARM.heavy : WARM.light;
+  if (!fresh) return 0;
+  return freeLift(cfg, id, e) ? WARM.free : WARM.first;
+}
+/** Есть ли у упражнения основная мышца, которой нет среди уже работавших в этой тренировке (warm) */
+export const freshFor = (m: MuscleMap | undefined, warm: Set<string>) => Object.entries(m || {}).some(([k, c]) => c >= 1 && !warm.has(k));
+/** Раскладка разминки (просьба владельца, 25 ноября 2026; docs/03, раздел 17): по числу разминочных подходов — доля рабочего веса в процентах и повторы.
+    [И] разминка в том же упражнении — около 40–80% рабочего веса, повторов мало, последний подход ближе к рабочему весу (Ribeiro и соавт., 2021;
+    Abad и соавт., 2011: 50% × 8 и 70% × 3 от максимума); [Т] лесенка и повторы: каждый следующий подход тяжелее и короче, чтобы не устать до рабочих */
+export const WARM_STEPS: Record<number, [number, number][]> = { 1: [[70, 5]], 2: [[50, 6], [80, 3]], 4: [[40, 6], [60, 4], [75, 2], [90, 1]] };
+export interface WarmSet { pct: number; r: number; w: number | null }
+/** Разминочные подходы перед рабочим весом w: вес вниз до шага снаряда, подходы с тем же весом или не легче рабочего не повторяются.
+    Без рабочего веса или когда в вес входит тело — w: null (доля рабочего веса или «полегче») */
+export function warmPlan(cfg: Cfg, id: string, n: number, w: number | null | undefined, step: number): WarmSet[] {
+  const L = n <= 0 ? [] : WARM_STEPS[n] || WARM_STEPS[n >= 4 ? 4 : n >= 2 ? 2 : 1];
+  if (!w || w <= 0 || withBody(cfg, id)) return L.map(([pct, r]) => ({ pct, r, w: null }));
+  const out: WarmSet[] = [];
+  for (const [pct, r] of L) {
+    const x = step > 0 ? Math.floor(w * pct / 100 / step + 1e-9) * step : Math.floor(w * pct / 100);
+    const v = Math.round(x * 1000) / 1000;
+    if (v > 0 && v < w && !out.some(o => o.w === v)) out.push({ pct, r, w: v });
+  }
+  return out;
+}
 /** Отдых словами: «4 мин», «2 мин 30 с» */
 export const restWords = (sec: number) => Math.floor(sec / 60) + ' мин' + (sec % 60 ? ' ' + (sec % 60) + ' с' : '');
 /* метка отдыха в карточке упражнения. Стороны в паре идут по очереди: пока работает одна, отдыхает другая, — поэтому между сторонами отдых вдвое короче,
