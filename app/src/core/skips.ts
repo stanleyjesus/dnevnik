@@ -22,7 +22,7 @@ import { exName, isCycle, isLight } from './config.ts';
 import { dayStale } from './days.ts';
 import { planned, tally } from './tally.ts';
 import { estMinutes, fmtDur } from './time.ts';
-import { appRules, byPct, MAX_EX, MAX_SETS, sameMuscles, shown, TIME_EX } from './rules.ts';
+import { appRules, byPct, MAX_EX, MAX_SETS, PACE, sameMuscles, shown, TIME_EX } from './rules.ts';
 import type { Cfg, ExDef, Item, MuscleMap, ProgEntry, ProgSlots, SkipFix, Workout } from './types.ts';
 
 export const SKIP = { times: 2, tag: 'Не делал два раза' };
@@ -126,7 +126,9 @@ export function skipFixes(workouts: Workout[], cfg: Cfg, slot: string, date: str
     const pv = tally(cfg, Object.fromEntries(SLOTS.map(s => [s.id, { items: W[s.id] }]))).pv;
     each({ kind: 'drop', left: M.length ? vol : 0, notes: [why + ': уходит из программы — ' + cause
       + (M.length ? '; по программе ' + M.map(m => MUSCLE[m].n.toLowerCase() + ' — ' + nSets(+(pv[m] || 0).toFixed(1))).join(', ') + ' в неделю' : '')]
-      .concat(slow ? ['не успеваешь и другие дни — выбери на «Программе» ' + (P && P.fit ? 'время на тренировку меньше ' + fmtDur(P.fit.time) : 'время на тренировку') + ': дни станут короче'] : []) });
+      .concat(slow ? [!(P && P.fit) ? 'не успеваешь и другие дни — выбери на «Программе» время на тренировку: дни станут короче'
+        : PACE.k > 1 ? 'тренировки идут дольше расчёта — на «Программе» дневник соберёт программу под ' + fmtDur(P.fit.time) + ' с твоим темпом: дни станут короче'
+        : 'не успеваешь и другие дни — называй в конце тренировки, сколько она шла: дневник подстроит дни под твой темп, или выбери на «Программе» время меньше ' + fmtDur(P.fit.time)] : []) });
   }
   return out;
 }
