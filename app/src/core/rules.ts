@@ -406,3 +406,45 @@ export function appCfg(c: Cfg) {
     if (x && x.mode === 'cycle' && e.ex !== P.focus && !x.goal) c.ex[e.ex] = Object.assign({}, x, { goal: 'auto' });
   }
 }
+
+/* Оценка стартового веса по похожему упражнению (решение владельца, 25 ноября 2026, онбординг). В эталоне этого нет.
+   Пока упражнения нет в журнале и для него ничего не названо, дневник берёт названный вес похожего упражнения той же семьи —
+   разовый максимум или рабочий вес с повторами (через Эпли, как в «Известных весах») — и переносит максимум долей из таблицы.
+   Только штанга и гантели: вес в тренажёре и на блоке зависит от рычагов и плиток конкретного тренажёра, по штанге его не угадать.
+   Доли — ниже типичных, чтобы первая тренировка была скорее легче: двойная прогрессия сама поднимет вес. Откуда числа — docs/03, раздел 15.6:
+   гантели в жиме лежа — исследование (две гантели вместе ≈ 83% штанги, Saeterbakken 2011), остальное — тренерские соотношения. */
+/** Семьи упражнений встроенного справочника: максимум каждого — доля максимума первого в семье; у гантелей — на одну гантель */
+export const KIN: Record<string, Record<string, number>> = {
+  press: { bench: 1, close_grip_bench: 0.9, incline_bench: 0.8, db_bench: 0.4, incline_db: 0.33, ohp: 0.6, db_ohp: 0.25 },
+  squat: { squat: 1, lunge: 0.2, bulgarian: 0.2 },
+  hinge: { deadlift: 1, rdl: 0.7, db_rdl: 0.3 },
+  row: { barbell_row: 1, db_row: 0.4 },
+  curl: { barbell_curl: 1, preacher_curl: 0.85, db_curl: 0.4, hammer: 0.4 }
+};
+/** Семья упражнения профиля и его доля: по id или названию встроенного справочника; не в семье — null */
+export function kinOf(cfg: Cfg, id: string): { fam: string; k: number } | null {
+  const e = cfg.ex[id];
+  if (!e || e.mode === 'light') return null;
+  const s = starterOf(id, e.n);
+  if (!s) return null;
+  for (const [fam, ks] of Object.entries(KIN)) if (ks[s]) return { fam, k: ks[s] };
+  return null;
+}
+/** Максимум упражнения id по названным весам похожих: named(x) — названный максимум упражнения x без оценки (null — ничего не названо).
+    Оценка идёт только от упражнения с долей не меньше, чем у этого, — от тяжёлого к лёгкому: доли взяты с запасом вниз,
+    и деление на долю лёгкого упражнения завысило бы вес. Из нескольких названных берётся меньшая оценка.
+    { max, of } — оценка и упражнение, от которого она; null — оценить не из чего */
+export function kinMax(cfg: Cfg, id: string, named: (x: string) => number | null): { max: number; of: string } | null {
+  if (!appRules()) return null;
+  const me = kinOf(cfg, id);
+  if (!me) return null;
+  let best: { max: number; of: string } | null = null;
+  for (const x of Object.keys(cfg.ex)) {
+    if (x === id) continue;
+    const o = kinOf(cfg, x), mx = o && o.fam === me.fam ? named(x) : null;
+    if (!o || !mx || o.k < me.k) continue;
+    const v = +(mx / o.k * me.k).toFixed(3);
+    if (!best || v < best.max) best = { max: v, of: x };
+  }
+  return best;
+}

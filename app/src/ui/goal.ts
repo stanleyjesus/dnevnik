@@ -64,8 +64,8 @@ export const mixText = (n: number, iso?: boolean) => n === 2 ? 'Оно идёт 
 export const modeKey = (st: { focus: string; others: string }) => st.focus + (st.focus.startsWith('l:') || (st.focus.startsWith('s:') && !appRules()) ? '|' + st.others : '');
 
 /** Кнопки цели и уточняющий список для строки выбора сценария; pick — выбрать режим сборки по его значению.
-    Нажатие на уже выбранную цель ничего не делает: черновик с правками вручную остаётся */
-export function goalPicker(st: ProgUi, cfg: Cfg, lifts: string[], pick: (focus: string) => void) {
+    Нажатие на уже выбранную цель ничего не делает: черновик с правками вручную остаётся. noHand — без кнопки «Вручную» (онбординг, onboard.ts) */
+export function goalPicker(st: ProgUi, cfg: Cfg, lifts: string[], pick: (focus: string) => void, noHand?: boolean) {
   const now = goalOf(st.focus);
   /* выбор под целью запоминается: вернувшись к ней, попадаешь на те же мышцы или то же базовое */
   if (now === 'mass') st.mass = st.focus; else if (now === 'mix') st.mix = st.focus; else if (now === 'force') st.force = st.focus;
@@ -73,7 +73,7 @@ export function goalPicker(st: ProgUi, cfg: Cfg, lifts: string[], pick: (focus: 
   /* (в эталоне нет) с днями «День N» в списках — цели «Силы» и «Гибрида»: упражнение, которого нет в справочнике, называется по встроенному */
   const name = (id: string) => appRules() ? targetName(cfg, id) : C.exName(cfg, id);
   /* сила и гибрид строятся вокруг базовых: без базовых в справочнике этих целей нет */
-  const goals = GOALS.filter(g => lifts.length || (g[0] !== 'force' && g[0] !== 'mix'));
+  const goals = GOALS.filter(g => (lifts.length || (g[0] !== 'force' && g[0] !== 'mix')) && !(noHand && g[0] === 'hand'));   // noHand — онбординг: «своя программа» там выбирается на первом шаге
   const list = (id: string, label: string, items: string[][]) => h('label', { class: 'f' }, h('span', null, label),
     h('select', { id, onchange: e => pick(e.target.value) }, items.map(o => h('option', { value: o[0], selected: o[0] === st.focus, text: o[1] }))));
   return [

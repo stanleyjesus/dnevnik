@@ -93,6 +93,10 @@ const progNote = '[...document.querySelectorAll("#view section.card")].pop().que
 const accepted = expect('document.getElementById("toast").textContent.startsWith("Программа принята")', 'сообщение «Программа принята»');
 const cfgMain = '(JSON.parse(' + stored + ').find(x => x[0] === "config/main") || [0, {}])[1]';
 const journal = n => expect('document.querySelectorAll(".wo").length === ' + n, 'записей в журнале: ' + n);
+/* онбординг (решение владельца, 25 ноября 2026): какой шаг на экране, видны ли вкладки, строка «что возьмёт дневник» у упражнения */
+const onbAt = (n, of) => '!!document.getElementById("onb") && document.getElementById("onb-n").textContent === "Шаг ' + n + ' из ' + of + '"';
+const tabsOff = 'getComputedStyle(document.querySelector(".tabs")).display === "none"';
+const outIs = (id, text) => expect('document.getElementById("kw-out-' + id + '").textContent === ' + J(text), id + ': ' + text);
 /* вкладка открылась: нарисована, без сообщения о сбое. Ошибку в коде страницы и страницу шире экрана проверка ловит сама на каждом шаге */
 const opens = (v, note = '') => [v + (note ? ' ' + note : '') + ': открывается', go(v) + settle + expect('location.hash === "#' + v + '" && !document.querySelector(".banner.crit") && document.querySelector("#view .wrap").children.length > 0', 'вкладка ' + v + ' открылась')];
 
@@ -255,7 +259,11 @@ export const SCENARIOS = [
   /* только в приложении: пустой дневник начинается со встроенного справочника упражнений, разложенного по снарядам.
      Программу можно собрать сразу; в хранилище список попадает только с первым сохранением настройки */
   { name: 'пустой дневник', data: 'empty', app: true, steps: [
-    ['обзор: записей нет', go('overview') + settle + expect('!!document.querySelector(".card.empty")', 'карточка «В дневнике пока пусто»') + expect(stored + ' === "[]"', 'в хранилище пусто')],
+    /* (решение владельца, 25 ноября 2026) пустой профиль начинается с онбординга; «Пропустить» возвращает прежний пустой «Обзор» */
+    ['обзор: онбординг вместо пустого обзора', go('overview') + settle + expect(onbAt(1, 5), 'онбординг, шаг 1 из 5') + expect(tabsOff, 'вкладок не видно') + expect(stored + ' === "[]"', 'в хранилище пусто')],
+    ['пропустить: прежний пустой обзор', click('#onb-skip') + settle + expect('!!document.querySelector(".card.empty") && !!document.getElementById("onb-again")', 'карточка «В дневнике пока пусто» с кнопкой «Настроить по шагам»') + expect('!(' + tabsOff + ')', 'вкладки на месте')],
+    ['настроить по шагам: снова онбординг', click('#onb-again') + settle + expect(onbAt(1, 5) + ' && ' + tabsOff, 'онбординг, шаг 1 из 5, без вкладок')],
+    ['и снова пропустить', click('#onb-skip') + settle + expect('!!document.querySelector(".card.empty")', 'карточка «В дневнике пока пусто»')],
     ...TABS.slice(1).map(v => opens(v)),
     ['настройка: справочник заполнен и разложен по снарядам', go('setup') + settle + expect(chips + ' === 63', '63 упражнения на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')
       + expect('!!document.getElementById("gear-g_pullup")', 'есть снаряд «Подтягивания»') + expect('!document.getElementById("starter-tools")', 'кнопок справочника нет: раскладывать и добавлять нечего')
@@ -662,6 +670,53 @@ export const SCENARIOS = [
   /* только в приложении: цель, которой нет в справочнике, — из встроенного (решение владельца, 24 ноября 2026, пункт 8). Упражнение, вокруг которого выбран
      «Гибрид» или «Сила», убрано из справочника, — выбор остаётся, а сборка ставит его сама; без базовых в справочнике цели «Сила» и «Гибрид» остаются;
      после «Принять» цель возвращается в справочник со своим снарядом */
+  /* только в приложении: онбординг пустого профиля (решение владельца, 25 ноября 2026). Цель и время — программа — шаг веса и известные веса —
+     готовая программа. Пустые упражнения со штангой и гантелями дневник оценивает по похожим (жим лежа 100 на раз — гантели лёжа с 30 кг),
+     тренажёры и блоки — нет */
+  { name: 'онбординг: собрать программу', data: 'empty', app: true, steps: [
+    ['старт', go('overview') + settle + expect(onbAt(1, 5) + ' && ' + tabsOff, 'онбординг, шаг 1 из 5, без вкладок')],
+    ['собрать программу: цель и время', click('#onb-build') + settle + expect(onbAt(2, 5), 'шаг 2 из 5') + expect(goalIs('mass') + ' && ' + listIs('pm', 'even'), 'цель «Масса», «Всем поровну»')
+      + expect(goals + ' === "Масса,Сила,Гибрид"', 'кнопки цели без «Вручную»: своя программа выбирается на старте')],
+    ['гибрид вокруг жима лежа', click('#pg-mix') + settle + expect(goalIs('mix') + ' && ' + listIs('pl', 'l:bench'), 'цель «Гибрид», жим лежа')],
+    ['два дня в неделю', click('#pd-2') + settle + expect('document.getElementById("pd-2").getAttribute("aria-pressed") === "true" && ' + cfgMain + '.days === 2', 'два дня, число дней в настройке профиля')],
+    ['время на тренировку: полтора часа', pick('#pt', 90) + settle + expect(cfgMain + '.time === 90', 'время 90 минут в настройке профиля')
+      + expect('/^Получится: \\d+ подход\\S* в неделю, самая длинная тренировка ≈ /.test(document.getElementById("onb-sum").textContent)', 'строка «Получится: … в неделю, самая длинная тренировка ≈ …»')],
+    ['дальше: программа', click('#onb-next') + settle + expect(onbAt(3, 5), 'шаг 3 из 5') + 'const r = ' + draftRows + ';'
+      + expect('r.length === 2 && r[0][0].startsWith("Жим лежа") && r[1][0].startsWith("Жим лежа — лёгкий день")', 'два дня: день 1 — жим лежа на силу, день 2 — его лёгкий день')
+      + expect('!document.getElementById("prog-free") && !document.querySelector("#view .mtab")', 'таблицы мышц и счётчика подходов в онбординге нет')],
+    ['заменить упражнение: список', click('#view .linkbtn') + settle + expect('!!document.querySelector("#view .swaprow select")', 'список замены открыт')],
+    ['заменить упражнение', pickAt('#view .swaprow select', 1) + settle + expect('document.getElementById("toast").textContent.includes("→")', 'сообщение о замене')],
+    ['принять программу', click('#onb-accept') + settle + accepted + expect(onbAt(4, 5), 'шаг 4 из 5: веса') + expect(cfgMain + '.program.focus === "bench"', 'программа вокруг жима лежа в хранилище')],
+    ['дальше без шага веса', click('#onb-next') + settle + expect('document.getElementById("toast").textContent.startsWith("Укажи шаг веса: ")', 'сообщение «Укажи шаг веса»') + expect(onbAt(4, 5), 'остались на шаге 4')],
+    ['шаг штанги — свой', type('#onb-step-barbell', '2,5') + settle + expect('document.getElementById("onb-step-barbell").value === "2.5" && !document.getElementById("onb-step-usual-barbell")', 'шаг штанги 2.5, подсказки «обычно» больше нет')],
+    ['шаг остальных — обычный', clickAll('[id^="onb-step-usual-"]') + settle + expect('!document.querySelector("[id^=onb-step-usual-]") && [...document.querySelectorAll("#onb-gear input")].every(e => e.value)', 'у всех снарядов программы шаг введён')],
+    ['жим лежа 100 на раз', type('#kw-max-bench', 100) + settle + expect('document.getElementById("kw-out-bench").textContent.includes("% от максимума 100")', 'старт жима — от максимума 100')
+      + expect('[...document.querySelectorAll("#known .kw-out")].some(e => e.textContent.includes("— оценка по «Жим лежа»"))', 'у похожего упражнения с гантелями — оценка по жиму лежа')
+      + expect('[...document.querySelectorAll("#known .kw-out")].filter(e => /в тренажере|на блоке|блока/.test(e.parentNode.querySelector(".kw-n").textContent)).every(e => e.textContent === "вес подберёшь на первой тренировке")', 'тренажёры и блоки не оцениваются')],
+    ['дальше: программа готова', click('#onb-next') + settle + expect(onbAt(5, 5), 'шаг 5 из 5') + expect('document.getElementById("view").textContent.includes("старт ≈ ")', 'в программе есть старт по оценке')],
+    ['открыть первую тренировку', click('#onb-go') + settle + expect('location.hash === "#workout" && !(' + tabsOff + ')', 'вкладка «Тренировка», вкладки на месте')
+      + expect('document.getElementById("view").textContent.includes("Начать тренировку")', 'план первой тренировки')],
+    ['обзор: первая тренировка', go('overview') + settle + expect('!document.getElementById("onb") && document.getElementById("view").textContent.includes("Первая тренировка")', 'обычный обзор: карточка «Первая тренировка»')],
+    ['после перезагрузки онбординга нет', RELOAD],
+    ['обзор после перезагрузки', go('overview') + settle + expect('!document.getElementById("onb") && document.getElementById("view").textContent.includes("Первая тренировка")', 'карточка «Первая тренировка»')
+      + 'const c = ' + cfgMain + ';' + expect('c.ex.bench.max === 100 && c.gear.barbell.step === 2.5 && c.days === 2 && c.program.focus === "bench"', 'в настройке профиля: максимум жима, шаг штанги, два дня, программа')]
+  ] },
+
+  /* только в приложении: онбординг, своя программа — дни заполняются из справочника */
+  { name: 'онбординг: своя программа', data: 'empty', app: true, steps: [
+    ['своя программа', go('overview') + settle + click('#onb-own') + settle + expect(onbAt(2, 4), 'шаг 2 из 4: своя программа') + expect('!!document.getElementById("pa-mon") && document.getElementById("onb-accept").disabled', 'список упражнений в днях, «Принять» выключена')],
+    ['в день 1', pick('#pa-mon', 'db_bench') + click('#pb-mon') + settle + expect('!document.getElementById("onb-accept").disabled', '«Принять» включена')],
+    ['в день 2', pick('#pa-wed', 'bench') + click('#pb-wed') + settle],
+    ['принять', click('#onb-accept') + settle + accepted + expect(onbAt(3, 4), 'шаг 3 из 4: веса')],
+    ['назад: программа принята, «Дальше»', click('#onb-back') + settle + expect(onbAt(2, 4) + ' && !!document.getElementById("onb-next")', 'шаг 2 из 4, кнопка «Дальше»')],
+    ['снова веса', click('#onb-next') + settle + expect(onbAt(3, 4), 'шаг 3 из 4')],
+    ['шаг веса', clickAll('[id^="onb-step-usual-"]') + settle],
+    ['жим лежа: рабочий вес', type('#kw-work-bench', 80) + type('#kw-workR-bench', 8) + settle + outIs('db_bench', 'старт: ≈ 32 кг на 6–10 повторов — оценка по «Жим лежа»')],
+    ['готово', click('#onb-next') + settle + expect(onbAt(4, 4), 'шаг 4 из 4')],
+    ['в дневник', click('#onb-end') + settle + expect('!document.getElementById("onb") && document.getElementById("view").textContent.includes("Первая тренировка") && !(' + tabsOff + ')', 'обычный обзор с вкладками')
+      + expect('[...document.querySelectorAll("#view .tag")].some(e => e.textContent === "оценка")', 'в плане первой тренировки пометка «оценка»')]
+  ] },
+
   { name: 'программа: цели нет в справочнике', data: 'empty', app: true, steps: [
     ['гибрид вокруг жима лежа', go('program') + settle + mode('l:bench') + settle + expect(goalIs('mix') + ' && ' + listIs('pl', 'l:bench'), 'цель «Гибрид», жим лежа') + expect(progTitle + ' === "Пауэрбилдинг: жим лежа"', 'название программы')],
     ['убрать жим лежа из справочника', go('setup') + settle + click('#setup-more > summary') + settle + click('#ex-del-bench') + settle + expect(toastIs('Убрано из справочника: Жим лежа'), 'сообщение «Убрано из справочника»')],
@@ -916,7 +971,7 @@ export const SCENARIOS = [
 
   /* только в приложении: загрузка резервной копии с экрана */
   { name: 'загрузка копии', data: 'empty', app: true, steps: [
-    ['пустое приложение: есть кнопка загрузки', go('overview') + settle + expect('!!document.getElementById("import-first")', 'в пустом дневнике есть кнопка «Загрузить резервную копию»')],
+    ['пустое приложение: есть кнопка загрузки', go('overview') + settle + expect('!!document.getElementById("onb-import")', 'в онбординге пустого дневника есть кнопка «Перенести записи из файла»')],
     ['не тот файл', loadCopy('"это не копия"') + settle + expect(box + ' && ' + box + '.textContent.includes("Копия не загружена")', 'сообщение «Копия не загружена»')],
     ['понятно', press('Понятно') + settle + expect('!' + box, 'сообщение закрыто')],
     ['чужой файл', loadCopy('JSON.stringify({ format: "other", version: 1 })') + settle + expect(box + ' && ' + box + '.textContent.includes("Копия не загружена")', 'чужой файл не принят') + press('Понятно')],

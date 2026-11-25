@@ -11,6 +11,7 @@ import { goalTag } from './overview.ts';
 import { importBox, pickBackup } from './importer.ts';
 import { deviceNote } from './device.ts';
 import { dropExButton, starterTools } from './starter.ts';
+import { startLine } from './onboard.ts';
 import { appRules } from '../core/rules.ts';
 import type { ExDef, ExGuess, MuscleMap } from '../core/index.ts';
 import type { Db, El, Kid, Profile, RawCfg } from './types.ts';
@@ -74,12 +75,7 @@ export function knownBlock() {
   const rest = Object.keys(cfg.ex).filter(id => live(id) && !inProg.includes(id)).sort((a, b) => C.exName(cfg, a).localeCompare(C.exName(cfg, b), 'ru'));
   const logged = (id: string) => C.lastSessionItem(done, id, null, null);
   /* what the first plan will take; read from the fresh config, so the line follows the typing without redrawing the page */
-  const startText = (id: string) => {
-    const c = S.cfg, s = C.startOf(D.W, c, id);
-    if (!s) return 'вес подберёшь на первой тренировке';
-    if (s.pct) return 'старт: ' + C.fmt(s.w) + ' кг — ' + s.pct + '% от максимума ' + C.fmt(s.tm, 1) + ', ' + C.waveOf(c, id).sets(s.reps) + ' × ' + s.reps;
-    return 'старт: ' + C.fmt(s.w) + ' кг на ' + C.rangeOf(D.W, c, id).join('–') + ' повторов' + (s.src === 'work' ? '' : ' (от максимума ' + C.fmt(C.knownMax(c, id), 1) + ')');
-  };
+  const startText = startLine;                                       // (в эталоне нет) строка общая с онбордингом: с оценкой по похожему упражнению (onboard.ts)
   const set = async (id: string, k: 'work' | 'workR' | 'max', el: El) => {
     const txt = el.value.trim(), v = toNum(txt);
     if (txt && !(v! > 0)) { toast('Нужно число больше нуля'); el.value = ''; return; }

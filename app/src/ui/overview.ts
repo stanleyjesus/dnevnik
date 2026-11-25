@@ -8,6 +8,8 @@ import { D, go, render } from './render.ts';
 import { meter, spark, zonePill } from './charts.ts';
 
 import { importBox, pickBackup } from './importer.ts';
+import { onbAgain, onbOn, vOnboard } from './onboard.ts';
+import { weekDays } from './platform.ts';
 import { appRules, byPct, isoLift } from '../core/rules.ts';
 import type { Adapted, Cfg, Insight, Item } from '../core/index.ts';
 import type { Kid } from './types.ts';
@@ -32,7 +34,8 @@ export function planRows(items: Item[], slot: string, date: string, A: Adapted |
     const add = A && idx >= A.base.items.length ? A.adds.find(a => a.exId === it.ex && on(a.key)) : null;
     const baseIt = prop ? A!.base.items[prop.idx] : null;
     let right;
-    const named = !prop && C.startOf(D.W, D.cfg, it.ex) ? h('span', { class: 'tag', title: 'Рабочий вес или разовый максимум из «Настройки»: в журнале этого упражнения ещё нет' }, 'вес из настроек') : null;
+    const so = !prop ? C.startOf(D.W, D.cfg, it.ex) : null;           // (в эталоне нет) вес, оценённый по похожему упражнению, помечен «оценка»
+    const named = so ? so.src === 'est' ? h('span', { class: 'tag', title: 'Вес оценён по весу похожего упражнения из «Настройки» (' + C.exName(D.cfg, so.of!) + '): в журнале этого упражнения ещё нет' }, 'оценка') : h('span', { class: 'tag', title: 'Рабочий вес или разовый максимум из «Настройки»: в журнале этого упражнения ещё нет' }, 'вес из настроек') : null;
     if (add) right = h('div', { class: 'chips' }, h('span', { class: 'chip adj' }, it.sets.length + ' × ' + it.range![0] + '–' + it.range![1] + (it.sets[0] && it.sets[0].w != null ? ' по ' + C.fmt(it.sets[0].w) + ' кг' : '')));
     else if (it.cyc) {
       const w = it.sets[0] ? it.sets[0].w : null;
@@ -85,12 +88,14 @@ export function startWorkout(p: { slot: string, date: string, items: Item[] }) {
 export function vOverview() {
   const out: Kid[] = [];
   if (S.conn !== 'ready' && !D.W.length) return out;
+  if (onbOn()) return vOnboard();                                    // (в эталоне нет) пустой профиль с днями «День N» начинается с онбординга (onboard.ts)
   const done = D.W.filter(w => w.items.some(it => C.work(it).length));
   if (!done.length && !(S.draft && S.draft.open)) {
     if (!D.cfg.program) {
       out.push(h('div', { class: 'card empty' }, h('h2', null, 'В дневнике пока пусто'), h('p', { style: 'margin:8px 0 14px' }, 'Собери программу во вкладке «Программа» или сразу запиши первую тренировку — после неё появятся план, графики и расчёт нагрузки.'),
         S.canWrite ? h('div', { class: 'row', style: 'justify-content:center' }, h('a', { class: 'btn primary', href: '#program' }, 'Собрать программу'), h('a', { class: 'btn', href: '#workout' }, 'Записать тренировку'),
-          h('button', { class: 'btn', id: 'import-first', onclick: pickBackup }, 'Загрузить резервную копию')) : null,
+          h('button', { class: 'btn', id: 'import-first', onclick: pickBackup }, 'Загрузить резервную копию'),
+          appRules() && !weekDays() ? h('button', { class: 'btn', id: 'onb-again', onclick: onbAgain }, 'Настроить по шагам') : null) : null,
         importBox()));
       return out;
     }

@@ -5,7 +5,7 @@ import { DAYS, dayStale } from './days.ts';
 import { addDays, dow } from './dates.ts';
 import { isCycle, isLight } from './config.ts';
 import { e1, work } from './sets.ts';
-import { appRange, appRules, BASE_SETS, byPct, fromMax, HEAVY, heavyOf, heavyStep, lightShift, logMax, rirOf, withBody } from './rules.ts';
+import { appRange, appRules, BASE_SETS, byPct, fromMax, HEAVY, heavyOf, heavyStep, kinMax, lightShift, logMax, rirOf, withBody } from './rules.ts';
 import { AUTO, goalOf, goalRange, GOALS, lightOf, progPending, waveOf } from './goals.ts';
 import { sessions } from './stats.ts';
 import type { Cfg, ExDef, Item, ProgEntry, Range, SessRef, SetRec, Workout } from './types.ts';
@@ -102,10 +102,10 @@ export function planLight(workouts: Workout[], cfg: Cfg, exId: string, before?: 
 }
 /* ---------- weights the athlete names before there is a journal: a one-rep maximum or a working weight ---------- */
 /* the maximum an exercise without sessions is planned from: the named one, else the working weight raised by Epley over its reps plus the method's reserve */
-export function knownMax(cfg: Cfg, exId: string) {
+export function knownMax(cfg: Cfg, exId: string, own?: boolean): number | null {
   const e = cfg.ex[exId] || {} as ExDef;
   if (+e.max! > 0) return +e.max!;
-  if (!(+e.work! > 0)) return null;
+  if (!(+e.work! > 0)) { if (own) return null; const k = kinMax(cfg, exId, x => knownMax(cfg, x, true)); return k ? k.max : null; }   // (в эталоне нет) ничего не названо — оценка по похожему упражнению (rules.ts, kinMax); own — только свой названный вес
   const r = +e.workR! > 0 ? +e.workR! : byPct(cfg, exId) ? waveOf(cfg, exId).order[0] : Math.round(((+e.lo! || 8) + (+e.hi! || 12)) / 2);
   return e1(+e.work!, r + rirOf(cfg, exId));                       // (в эталоне нет) с днями «День N» запас по упражнению (вывод 10 аудита)
 }
@@ -120,14 +120,15 @@ export function startWeight(workouts: Workout[], cfg: Cfg, exId: string, range: 
   return v > 0 ? +v.toFixed(3) : null;
 }
 /* what the first plan of an exercise without sessions starts from: { w, tm, pct, reps, src } or null (there is a journal, or nothing is named) */
-export function startOf(workouts: Workout[], cfg: Cfg, exId: string) {
+export function startOf(workouts: Workout[], cfg: Cfg, exId: string): { w: number; tm?: number | null; pct?: number; reps?: number; src: string; of?: string } | null {
   const done = workouts.filter(w => !w.open), e = cfg.ex[exId] || {} as ExDef, own = isLight(cfg, exId) ? cfg.ex[e.of!] || {} as ExDef : e;
-  if (lastSessionItem(done, isLight(cfg, exId) ? e.of! : exId, null, null) || !(+own.max! > 0 || +own.work! > 0)) return null;
-  const src = +own.max! > 0 ? 'max' : 'work';
-  if (isLight(cfg, exId)) { const c = planLight(done, cfg, exId, null); return c.w ? { w: c.w, tm: c.tm, pct: c.pct, reps: c.reps, src } : null; }
-  if (byPct(cfg, exId)) { const c = planCycle(done, cfg, exId, null); return c.w ? { w: c.w, tm: c.tm, pct: c.pct, reps: c.reps, src } : null; }
+  const est = +own.max! > 0 || +own.work! > 0 ? null : kinMax(cfg, isLight(cfg, exId) ? e.of! : exId, x => knownMax(cfg, x, true));   // (в эталоне нет) ничего не названо — оценка по похожему упражнению
+  if (lastSessionItem(done, isLight(cfg, exId) ? e.of! : exId, null, null) || !(+own.max! > 0 || +own.work! > 0 || est)) return null;
+  const src = +own.max! > 0 ? 'max' : est ? 'est' : 'work', of: { of?: string } = est ? { of: est.of } : {};   // of — от какого упражнения оценка: есть только у оценки
+  if (isLight(cfg, exId)) { const c = planLight(done, cfg, exId, null); return c.w ? Object.assign({ w: c.w, tm: c.tm, pct: c.pct, reps: c.reps, src }, of) : null; }
+  if (byPct(cfg, exId)) { const c = planCycle(done, cfg, exId, null); return c.w ? Object.assign({ w: c.w, tm: c.tm, pct: c.pct, reps: c.reps, src }, of) : null; }
   const w = startWeight(done, cfg, exId, rangeOf(done, cfg, exId));
-  return w ? { w, src: +e.work! > 0 && w === +e.work! ? 'work' : src } : null;
+  return w ? Object.assign({ w, src: +e.work! > 0 && w === +e.work! ? 'work' : src }, of) : null;
 }
 /* hints for one exercise in a workout being planned or edited */
 export function hints(workouts: Workout[], cfg: Cfg, exId: string, slot?: string | null, before?: string | null) {

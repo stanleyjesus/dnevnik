@@ -9,19 +9,20 @@ import { D, render } from './render.ts';
 import { zonePill } from './charts.ts';
 import { restSelect } from './overview.ts';
 import { bodyMap } from './bodymap.ts';
-import { goalPicker, lostMode, mixText, modeAfter, modeBudget, modeKey, setMode, soloNow, soloText } from './goal.ts';
+import { goalPicker, mixText, modeBudget, modeKey, soloNow, soloText } from './goal.ts';
 import { needGear } from './starter.ts';
-import { TIMES, fitBudget, timeOf } from './fit.ts';
+import { TIMES, timeOf } from './fit.ts';
+import { progDraft, progLifts } from './draft.ts';
 import { weekDays } from './platform.ts';
 import { DAY_COUNTS, awayDays, daysOf, useDays } from '../core/days.ts';
-import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift, targetIds } from '../core/rules.ts';
+import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift } from '../core/rules.ts';
 import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../core/index.ts';
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
 
 /* ---------- UI: the programme — what runs now, and a new one: by hand or built around a priority ---------- */
 export const progSig = (slots: ProgSlots) => C.SLOTS.map(sl => (slots[sl.id] || []).map(e => e.ex + ':' + (e.n || '')).join(',')).join('|');
 export function progScheme(cfg: Cfg, e: ProgEntry) {
-  const k = C.kindOf(cfg, e.ex), s = C.startOf(D.W, cfg, e.ex), from = s ? ' · старт ' + C.fmt(s.w) + ' кг' : '';   // a weight named in the settings for an exercise new to the journal
+  const k = C.kindOf(cfg, e.ex), s = C.startOf(D.W, cfg, e.ex), from = s ? ' · старт ' + (s.src === 'est' ? '≈ ' : '') + C.fmt(s.w) + ' кг' : '';   // a weight named in the settings for an exercise new to the journal; (в эталоне нет) «≈» — оценка по похожему упражнению
   if (k === 'light') { const L = C.lightOf(cfg, e.ex); return L.sets + ' × ' + L.reps + ' на ' + L.pct + '% от максимума' + from; }
   if (k === 'base' && appRules()) { const A = heavyOf(cfg, e.ex); return (!byPct(cfg, e.ex) ? BASE_SETS + ' × ' + C.rangeOf(D.W, cfg, e.ex).join('–') : C.waveOf(cfg, e.ex).hold ? HOLD.sets + ' × ' + HOLD.reps + ', вес прежний' : A.sets + ' × ' + A.reps + ' одним весом, вес по запасу') + from; }   // (в эталоне нет) методика под цель; тяжёлый день — 3 × 4, у изоляции в силовой роли — 3 × 6 («Новая схема», 24 ноября 2026)
   if (k === 'base') { const wv = C.waveOf(cfg, e.ex); return (wv.auto ? C.AUTO.sets + ' × ' + C.AUTO.reps + ' одним весом, вес по запасу' : 'волна ' + wv.order.map(r => wv.sets(r) + '×' + r).join(' → ')) + from; }
@@ -130,9 +131,7 @@ export function vProgram() {
   const lastOf: Record<string, Workout> = {};
   for (const w of done) if (w.slot) lastOf[w.slot] = w;
   const pending = C.SLOTS.filter(sl => C.progPending(cfg, sl.id, lastOf[sl.id]));
-  const lifts = Object.keys(cfg.ex).filter(id => C.isCycle(cfg, id));   // пауэрбилдинг предлагается для любого базового справочника: если его нет в программе, сборка поставит его сама
-  /* (в эталоне нет) с днями «День N» цель «Силы» и «Гибрида» — из своего списка (решение владельца, 24 ноября 2026, пункт 8): базовым её делает роль, а не справочник */
-  if (appRules()) lifts.splice(0, lifts.length, ...targetIds(cfg));
+  const lifts = progLifts(cfg);                                      // базовые для «Силы» и «Гибрида» (draft.ts)
 
   /* what runs now */
   let state;
@@ -169,56 +168,7 @@ export function vProgram() {
   if (ro) return out;
 
   /* a new one */
-  const ui = S.ui;
-  const budgets = [40, 50, 60, 70, 80, 90, 100, 110, 120].filter(v => v < cfg.caps.week).concat(cfg.caps.week);
-  if (!ui.prog) ui.prog = { focus: P && P.strength && P.triad && P.triad.length && appRules() ? 'p' : P && P.strength && P.focus && lifts.includes(P.focus) ? 's:' + P.focus : P && P.strength && lifts.length ? 's' : P && P.focus && lifts.includes(P.focus) ? 'l:' + P.focus : P && P.prio && C.PRIOS.some(g => g.id === P.prio) ? 'm:' + P.prio : empty ? 'manual' : 'even',
-    others: P && P.others === 'grow' ? 'grow' : !appRules() || (P && P.others === 'hold') ? 'hold' : 'plain', budget: P && +P.budget! > 0 && +P.budget! <= cfg.caps.week ? +P.budget! : cfg.caps.week, draft: null, key: '' };
-  if (lostMode(ui.prog.focus, lifts)) setMode(ui.prog, modeAfter(ui.prog.focus, lifts), cfg.caps.week);   // выбранного базового больше нет в справочнике: в эталоне экран оставался в режиме, которого уже не собрать
-  const st = ui.prog, manual = st.focus === 'manual', lift = st.focus.startsWith('l:') ? st.focus.slice(2) : null, prio = st.focus.startsWith('m:') ? st.focus.slice(2) : '';
-  const strong = st.focus === 's';                                    // силовой режим: в эталоне его нет (решение владельца, 19 ноября 2026)
-  const solo = st.focus.startsWith('s:') ? st.focus.slice(2) : null;  // сила в одном базовом: в эталоне нет (решение владельца, 19 ноября 2026)
-  const triad = st.focus === 'p';                                      // «Сила: пауэрлифтерская тройка»: в эталоне нет (решение владельца, 24 ноября 2026)
-  if (!budgets.includes(st.budget)) st.budget = cfg.caps.week;
-  /* время на тренировку (в эталоне нет: решение владельца, 19 ноября 2026): лимит недели — самый большой из списка, при котором самая длинная
-     тренировка укладывается в названное время. Сборки-примерки считаются по одной на лимит и помнятся, пока не изменилось то, от чего они зависят */
-  const time = manual ? 0 : timeOf(S.cfgRaw);
-  /* (в эталоне нет) от времени зависит и число упражнений в дне (решение владельца, 23 ноября 2026): сборка получает его вместе с лимитом */
-  const build = (budget: number) => C.buildProgram(D.W, cfg, { manual, focus: lift || solo, others: st.others, prio, budget, strength: strong || !!solo || triad, triad, time, drop: st.drop });
-  let fit = null as ReturnType<typeof fitBudget> | null;
-  if (time) {
-    const fkey = st.focus + '|' + st.others + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + JSON.stringify(cfg.ex) + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + cfg.rest + '|' + time + '|' + C.SLOTS.length + '|' + awaySig + (st.drop ? '|' + st.drop.join(',') : '');
-    if (!st.fit || st.fit.key !== fkey) st.fit = { key: fkey, max: {} };
-    const max = st.fit.max, longest = (b: number) => { if (max[b] == null) { const t = build(b); st.fit!.made = { b, t }; max[b] = Math.max(...C.SLOTS.map(sl => C.estMinutes(t.cfg, t.slots[sl.id], cfg.rest))); } return max[b]; };
-    const F = P && P.fit, held = F && F.time === time && F.rest === cfg.rest && F.mode === modeKey(st) && F.days === C.SLOTS.length ? budgets.filter(b => b <= +P.budget!) : [];
-    fit = fitBudget(held.length ? held : budgets, longest, time);
-    st.budget = fit.budget;
-  }
-  const key = st.focus + '|' + st.others + '|' + st.budget + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + Object.keys(cfg.ex).length + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + C.SLOTS.length + '|' + awaySig + (time ? '|' + time + '/' + cfg.rest : '') + (st.drop ? '|' + st.drop.join(',') : '');
-  /* (в эталоне нет) черновик — та же сборка, что примерка по времени в этом показе, если лимит тот же: сборка с выбранным временем дольше (время заполняется подходами), и дважды её не считаем */
-  const made = st.fit && st.fit.made; if (st.fit) delete st.fit.made;
-  if (!st.draft || st.key !== key) { st.draft = made && made.b === st.budget ? made.t : build(st.budget); st.key = key; st.edited = false; st.name = null; st.swapAt = null; }
-  const pr = st.draft, changed = !pr.same || progSig(pr.slots) !== progSig(pr.cur);
-  const recount = () => { pr.after = C.progTally(pr.cfg, pr.slots); st.edited = true; render(true); };
-  const edit: ProgEdit = {
-    manual,
-    sets: (slot, i, k) => { const e = pr.slots[slot][i]; e.n = Math.max(1, Math.min(6, e.n! + k)); e.chg = (e.chg || 0) + k; recount(); },
-    drop: (slot, i) => { st.swapAt = null; pr.slots[slot].splice(i, 1); recount(); },
-    up: (slot, i) => { st.swapAt = null; const L = pr.slots[slot]; L.splice(i - 1, 0, L.splice(i, 1)[0]); recount(); },
-    add: (slot, id) => { if (!id || !pr.cfg.ex[id]) return; pr.slots[slot].push(C.isCycle(pr.cfg, id) ? { ex: id, isNew: true } : { ex: id, n: 3, isNew: true }); recount(); },
-    /* the exercise in this place changes, its sets stay; going back to the first one clears the mark */
-    swapAt: st.swapAt || null,
-    swapOpen: (slot, i) => { st.swapAt = slot == null ? null : slot + ':' + i; render(true); if (slot != null) setTimeout(() => { const el = $('sw-' + slot + '-' + i + '-to'); if (el) el.focus(); }, 0); },
-    swap: (slot, i, x) => {
-      const e = pr.slots[slot][i], old = e.ex, first = e.was || old;
-      if (!x || x.id === old) return;
-      if (!pr.cfg.ex[x.id]) { if (!x.def) return; pr.create[x.id] = C.clone(x.def); pr.cfg.ex[x.id] = C.placed(pr.cfg, Object.assign({ n: x.id }, x.def)); }
-      e.ex = x.id; if (x.id === first) delete e.was; else e.was = first;
-      st.swapAt = null;
-      (pr.hand = pr.hand || []).push({ m: C.SLOT[slot].s, t: 'замена: ' + C.exName(pr.cfg, old) + ' → ' + C.exName(pr.cfg, x.id) });
-      toast(C.SLOT[slot].s + ': ' + C.exName(pr.cfg, old) + ' → ' + C.exName(pr.cfg, x.id));
-      recount();
-    }
-  };
+  const { st, pr, edit, fit, time, budgets, manual, lift, prio, strong, solo, triad, changed, recount, pick } = progDraft(cfg, cur, empty, lifts, awaySig);   // черновик — общий с онбордингом (draft.ts)
   /* one click on a muscle: the diary itself finds the set or the exercise to add or to take away */
   /* the pool of the week: the limit chosen for this build (the profile's own limit in the manual and strength modes) */
   const cap = manual ? cfg.caps.week : st.budget;
@@ -231,8 +181,6 @@ export function vProgram() {
     (pr.hand = pr.hand || []).push({ m: m.n, t: r.text });
     recount();
   };
-  /* силовой режим предлагается со своим лимитом недели: он меньше обычного, потому что подсобке в нём отведено меньше (setMode) */
-  const pick = (f: string, o?: 'hold' | 'grow' | 'plain') => { setMode(st, f, cfg.caps.week); if (o) st.others = o; st.draft = null; render(true); };
   const avgMin = C.SLOTS.filter(sl => pr.slots[sl.id].length).map(sl => C.estMinutes(pr.cfg, pr.slots[sl.id], D.cfg.rest));
   const total = (t: ProgTally) => C.SLOTS.reduce((a, sl) => a + t.load[sl.id], 0);
   const used = total(pr.after), free = +(cap - used).toFixed(1), hand = pr.hand && pr.hand.length ? pr.hand : null;
