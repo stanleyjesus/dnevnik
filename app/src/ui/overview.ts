@@ -92,10 +92,10 @@ export function vOverview() {
   const done = D.W.filter(w => w.items.some(it => C.work(it).length));
   if (!done.length && !(S.draft && S.draft.open)) {
     if (!D.cfg.program) {
-      out.push(h('div', { class: 'card empty' }, h('h2', null, 'В дневнике пока пусто'), h('p', { style: 'margin:8px 0 14px' }, 'Собери программу во вкладке «Программа» или сразу запиши первую тренировку — после неё появятся план, графики и расчёт нагрузки.'),
-        S.canWrite ? h('div', { class: 'row', style: 'justify-content:center' }, h('a', { class: 'btn primary', href: '#program' }, 'Собрать программу'), h('a', { class: 'btn', href: '#workout' }, 'Записать тренировку'),
-          h('button', { class: 'btn', id: 'import-first', onclick: pickBackup }, 'Загрузить резервную копию'),
-          appRules() && !weekDays() ? h('button', { class: 'btn', id: 'onb-again', onclick: onbAgain }, 'Настроить по шагам') : null) : null,
+      const onb = appRules() && !weekDays();                           // (в эталоне нет) с днями «День N» две кнопки: «Собрать программу» открывает онбординг, и резервная копия
+      out.push(h('div', { class: 'card empty' }, h('h2', null, 'В дневнике пока пусто'), h('p', { style: 'margin:8px 0 14px' }, onb ? 'Собери программу по шагам или перенеси записи из резервной копии.' : 'Собери программу во вкладке «Программа» или сразу запиши первую тренировку — после неё появятся план, графики и расчёт нагрузки.'),
+        S.canWrite ? h('div', { class: 'row', style: 'justify-content:center' }, onb ? h('button', { class: 'btn primary', id: 'onb-again', onclick: onbAgain }, 'Собрать программу') : h('a', { class: 'btn primary', href: '#program' }, 'Собрать программу'), onb ? null : h('a', { class: 'btn', href: '#workout' }, 'Записать тренировку'),
+          h('button', { class: 'btn', id: 'import-first', onclick: pickBackup }, 'Загрузить резервную копию')) : null,
         importBox()));
       return out;
     }

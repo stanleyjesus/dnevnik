@@ -262,8 +262,10 @@ export const SCENARIOS = [
   { name: 'пустой дневник', data: 'empty', app: true, steps: [
     /* (решение владельца, 25 ноября 2026) пустой профиль начинается с онбординга; «Пропустить» возвращает прежний пустой «Обзор» */
     ['обзор: онбординг вместо пустого обзора', go('overview') + settle + expect(onbAt(1, 5), 'онбординг, шаг 1 из 5') + expect(tabsOff, 'вкладок не видно') + expect(stored + ' === "[]"', 'в хранилище пусто')],
-    ['пропустить: прежний пустой обзор', click('#onb-skip') + settle + expect('!!document.querySelector(".card.empty") && !!document.getElementById("onb-again")', 'карточка «В дневнике пока пусто» с кнопкой «Настроить по шагам»') + expect('!(' + tabsOff + ')', 'вкладки на месте')],
-    ['настроить по шагам: снова онбординг', click('#onb-again') + settle + expect(onbAt(1, 5) + ' && ' + tabsOff, 'онбординг, шаг 1 из 5, без вкладок')],
+    /* (решение владельца, 25 ноября 2026) в карточке пустого «Обзора» две кнопки: «Собрать программу» открывает онбординг, вторая — резервная копия */
+    ['пропустить: пустой обзор с двумя кнопками', click('#onb-skip') + settle + expect('!!document.querySelector(".card.empty")', 'карточка «В дневнике пока пусто»')
+      + expect('[...document.querySelectorAll(".card.empty .btn")].map(b => b.id + ":" + b.textContent).join() === "onb-again:Собрать программу,import-first:Загрузить резервную копию"', 'в карточке две кнопки: «Собрать программу» и «Загрузить резервную копию»') + expect('!(' + tabsOff + ')', 'вкладки на месте')],
+    ['собрать программу: снова онбординг', click('#onb-again') + settle + expect(onbAt(1, 5) + ' && ' + tabsOff, 'онбординг, шаг 1 из 5, без вкладок')],
     ['и снова пропустить', click('#onb-skip') + settle + expect('!!document.querySelector(".card.empty")', 'карточка «В дневнике пока пусто»')],
     ...TABS.slice(1).map(v => opens(v)),
     ['настройка: справочник заполнен и разложен по снарядам', go('setup') + settle + expect(chips + ' === 63', '63 упражнения на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')
