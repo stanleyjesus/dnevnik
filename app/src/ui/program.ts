@@ -209,7 +209,7 @@ export function vProgram() {
       goalPicker(st, cfg, lifts, pick),                               // вместо списка «Как собрать»: кнопки цели и один уточняющий список (решение владельца, 19 ноября 2026)
       lift || (solo && !appRules()) ? h('div', { class: 'pf' }, h('span', null, 'Остальные базовые'), h('div', { class: 'seg multi', role: 'group', 'aria-label': 'Остальные базовые упражнения' },
         appRules() ? h('button', { type: 'button', id: 'po-plain', 'aria-pressed': String(st.others === 'plain'), onclick: () => pick(st.focus, 'plain') }, 'Как подсобка') : null,   // (в эталоне нет) решение владельца, 25 ноября 2026
-        h('button', { type: 'button', id: 'po-hold', 'aria-pressed': String(st.others === 'hold'), onclick: () => pick(st.focus, 'hold') }, 'Поддержание'),
+        appRules() ? null : h('button', { type: 'button', id: 'po-hold', 'aria-pressed': String(st.others === 'hold'), onclick: () => pick(st.focus, 'hold') }, 'Поддержание'),   // (в эталоне есть) с днями «День N» его нет: два варианта (решение владельца, 25 ноября 2026)
         h('button', { type: 'button', id: 'po-grow', 'aria-pressed': String(st.others === 'grow'), onclick: () => pick(st.focus, 'grow') }, 'Растут как раньше'))) : null,
       /* сколько дней в неделе (в эталоне нет: решение владельца, 19 ноября 2026): выбор хранится в профиле, программа пересобирается под это число.
          При сверке с эталоном дней всегда три, и выбора нет */
