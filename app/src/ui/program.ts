@@ -188,13 +188,15 @@ export function vProgram() {
   if (time) {
     const fkey = st.focus + '|' + st.others + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + JSON.stringify(cfg.ex) + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + cfg.rest + '|' + time + '|' + C.SLOTS.length + '|' + awaySig + (st.drop ? '|' + st.drop.join(',') : '');
     if (!st.fit || st.fit.key !== fkey) st.fit = { key: fkey, max: {} };
-    const max = st.fit.max, longest = (b: number) => { if (max[b] == null) { const t = build(b); max[b] = Math.max(...C.SLOTS.map(sl => C.estMinutes(t.cfg, t.slots[sl.id], cfg.rest))); } return max[b]; };
+    const max = st.fit.max, longest = (b: number) => { if (max[b] == null) { const t = build(b); st.fit!.made = { b, t }; max[b] = Math.max(...C.SLOTS.map(sl => C.estMinutes(t.cfg, t.slots[sl.id], cfg.rest))); } return max[b]; };
     const F = P && P.fit, held = F && F.time === time && F.rest === cfg.rest && F.mode === modeKey(st) && F.days === C.SLOTS.length ? budgets.filter(b => b <= +P.budget!) : [];
     fit = fitBudget(held.length ? held : budgets, longest, time);
     st.budget = fit.budget;
   }
   const key = st.focus + '|' + st.others + '|' + st.budget + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + Object.keys(cfg.ex).length + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + C.SLOTS.length + '|' + awaySig + (time ? '|' + time + '/' + cfg.rest : '') + (st.drop ? '|' + st.drop.join(',') : '');
-  if (!st.draft || st.key !== key) { st.draft = build(st.budget); st.key = key; st.edited = false; st.name = null; st.swapAt = null; }
+  /* (в эталоне нет) черновик — та же сборка, что примерка по времени в этом показе, если лимит тот же: сборка с выбранным временем дольше (время заполняется подходами), и дважды её не считаем */
+  const made = st.fit && st.fit.made; if (st.fit) delete st.fit.made;
+  if (!st.draft || st.key !== key) { st.draft = made && made.b === st.budget ? made.t : build(st.budget); st.key = key; st.edited = false; st.name = null; st.swapAt = null; }
   const pr = st.draft, changed = !pr.same || progSig(pr.slots) !== progSig(pr.cur);
   const recount = () => { pr.after = C.progTally(pr.cfg, pr.slots); st.edited = true; render(true); };
   const edit: ProgEdit = {

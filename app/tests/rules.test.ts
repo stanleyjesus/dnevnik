@@ -9,8 +9,8 @@ import { useDays } from '../src/core/days.ts';
 import { withStarter } from '../src/core/starter.ts';
 import { ADDS } from '../src/core/adapt.ts';
 import { LIB } from '../src/core/program.ts';
-import { RDL_M, TIMES, appRules, inTime, isRdl, moreTime } from '../src/core/rules.ts';
-import type { BuildOpts, Cfg, ExDef, MuscleMap, Workout } from '../src/core/types.ts';
+import { RDL_M, TIMES, TIME_EX, appRules, fillTop, inTime, isRdl, moreTime } from '../src/core/rules.ts';
+import type { BuildOpts, Cfg, ExDef, MuscleMap, ProgSlots, Workout } from '../src/core/types.ts';
 
 type Raw = { ex: Record<string, ExDef> };
 type Built = ReturnType<typeof Core.buildProgram>;
@@ -97,7 +97,8 @@ test('в один день сборка не ставит второе упра�
     }
   });
   /* на встроенном списке с приоритетом ног без этого правила в один день вставали две румынские тяги и две горизонтальные тяги: 87 подходов, приоритет 15–20 (docs/04, раздел 3.8) */
-  withDays(3, () => { const pr = Core.buildProgram([], Core.mergeCfg(withStarter(null)), { prio: 'legs' }); assert.deepEqual([total(pr), spanOf(pr, ['quads', 'hams', 'glutes'])], [86, '15–17.5']); });
+  /* с 25 ноября 2026 в «Массе» с мышцами в приоритете базовые справочника с нуля сами не встают: 87 подходов */
+  withDays(3, () => { const pr = Core.buildProgram([], Core.mergeCfg(withStarter(null)), { prio: 'legs' }); assert.deepEqual([total(pr), spanOf(pr, ['quads', 'hams', 'glutes'])], [87, '15–17.5']); });
 });
 
 test('заметка называет настоящую причину: при свободных подходах не советует увеличить лимит недели', () => {
@@ -208,8 +209,8 @@ test('с днями «День N» и выбранным временем ден
 test('с выбранным временем заметка называет время: что не поместилось и какое время поможет', () => {
   const W = seedW(), cfg = Core.mergeCfg(seedRaw());
   withDays(3, () => {
-    const n = noteOf(Core.buildProgram(W, cfg, { time: 90 }), /^Нагрузка поровну/)!;
-    assert.ok(n.x!.includes('предплечья выше не поднять — в 1 ч 30 мин на тренировку больше не помещается. Поэтому уровень общий, но ниже. Лимит недели тут ни при чём: занято 77 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 45 мин.'), String(n.x));
+    const n = noteOf(Core.buildProgram(W, cfg, { time: 75 }), /^Нагрузка поровну/)!;
+    assert.ok(n.x!.includes('задние дельты выше не поднять — в 1 ч 15 мин на тренировку больше не помещается. Поэтому уровень общий, но ниже. Лимит недели тут ни при чём: занято 62 подхода из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 30 мин.'), String(n.x));
     /* два часа — последний пункт списка: больше времени не советуется */
     const top = noteOf(Core.buildProgram(W, cfg, { time: 120 }), /^Нагрузка поровну/);
     assert.ok(!top || !top.x!.includes('время на тренировку от'), String(top && top.x));
@@ -218,5 +219,87 @@ test('с выбранным временем заметка называет в�
     /* уровень ниже ради второго дня: так и сказано (на примерных данных — с приоритетом «Руки») */
     const n = noteOf(Core.buildProgram(W, cfg, { prio: 'arms', time: 90 }), /^Приоритет/)!;
     assert.ok(n.x!.includes('уровнем выше у части мышц (квадрицепс и бицепс бедра) остался бы один день в неделю, а в 1 ч 30 мин на тренировку не помещается и то и другое. Уровни ниже, пропорция та же. Лимит недели тут ни при чём: занято 46 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 45 мин.'), String(n.x));
+  });
+});
+
+/* Время заполняется подходами, «Масса» с приоритетом без базовых, не больше десяти упражнений в тренировке (решения владельца, 25 ноября 2026; rules.ts, fillTop и TIME_EX).
+   Числа — встроенный справочник, профиль без записей, три дня, отдых 2:00; те же — в docs/04, раздел 3.8, правило 7 */
+const places = (pr: Built, sl: string) => pr.slots[sl].reduce((a, e) => a + (pr.cfg.ex[e.ex].uni ? 0.5 : 1), 0);
+const lifts = (pr: Built) => [...new Set(Core.SLOTS.flatMap(sl => pr.slots[sl.id].filter(e => Core.isCycle(pr.cfg, e.ex)).map(e => e.ex)))];
+/* так программу принимает экран (acceptProgram), как в days.test.ts */
+function acceptAs(raw: Raw, pr: Built, since: string): Cfg {
+  const r = plain(raw) as Raw & { program?: unknown }; Object.assign(r.ex, plain(pr.create));
+  for (const [id, g] of Object.entries(pr.goals)) { if (!r.ex[id]) continue; if (g) r.ex[id].goal = g; else delete r.ex[id].goal; }
+  const slots: ProgSlots = {}; for (const id of Object.keys(pr.slots)) slots[id] = pr.slots[id].map(e => e.n ? { ex: e.ex, n: e.n } : { ex: e.ex });
+  r.program = { name: pr.name, focus: pr.focus || '', others: pr.others || '', prio: pr.prio, budget: pr.budget, since, made: since, slots };
+  return Core.mergeCfg(r);
+}
+
+test('потолок заполнения времени: верх рабочей зоны, а с приоритетом — пока он в полтора раза выше', () => {
+  assert.deepEqual([fillTop({ high: 20 }, false, 1.5), fillTop({ high: 20 }, true, 1.5)], [18, 12]);
+  assert.deepEqual(TIME_EX, { day: 10, muscle: 2, prio: 3, next: 3 });
+});
+
+test('с выбранным временем время заполняется подходами: уровень выше 10, пока дни укладываются во время и неделя — в лимит', () => withDays(3, () => {
+  const raw = withStarter(null) as Raw, cfg = Core.mergeCfg(plain(raw)), tracked = Core.MUSCLES.filter(m => !cfg.ignore[m.id]).map(m => m.id), rest = tracked.filter(m => m !== 'glutes');
+  /* «Масса», ягодицы в приоритете: без времени — до 10 (приоритет 15), как было; с 2 ч — до 12 (приоритет 18) */
+  const free = Core.buildProgram([], cfg, { prio: 'glutes' }), two = Core.buildProgram([], cfg, { prio: 'glutes', time: 120 });
+  assert.deepEqual([total(free), spanOf(free, rest)], [77, '10–13.5']);
+  assert.deepEqual([total(two), spanOf(two, rest), spanOf(two, ['glutes'])], [93, '11.5–15', '20–20']);
+  assert.ok(Core.SLOTS.every(sl => inTime(Core.estMinutes(two.cfg, two.slots[sl.id]), 120)));
+  assert.ok(noteOf(two, /^Приоритет/)!.x!.includes('Время на тренировку заполнено подходами: общий уровень поднят с 10 до 12 подходов в неделю, у приоритета — до 18, пока каждая тренировка укладывается в 2 ч. Выше не поднимается: у приоритета потолок 18 подходов, и с остальными выше 12 он перестал бы быть в полтора раза больше.'));
+  /* «Равномерно», 2 ч: до 13 — дальше не пускает лимит недели */
+  const even = Core.buildProgram([], cfg, { time: 120 });
+  assert.deepEqual([total(even), spanOf(even, tracked)], [100, '13–16']);
+  assert.ok(noteOf(even, /^Все мышцы в рабочей зоне/)!.x!.includes('общий уровень поднят с 10 до 13 подходов в неделю, пока каждая тренировка укладывается в 2 ч. Выше не даёт лимит 100 подходов в неделю.'));
+  /* под «Силой» подсобка по-прежнему ниже рабочей зоны: время подходами не заполняется */
+  const str = Core.buildProgram([], cfg, { focus: 'bench', strength: true, time: 120 });
+  assert.ok(!str.notes.some(n => /заполнено подходами/.test(n.x || '')) && spanOf(str, tracked.filter(m => !['chest'].includes(m))) === '8–12', spanOf(str, tracked));
+  /* сразу после «Принять» сборка предлагает ту же программу */
+  for (const opts of [{ prio: 'glutes', time: 120 }, { time: 120 }] as BuildOpts[]) {
+    const pr = Core.buildProgram([], cfg, opts), again = Core.buildProgram([], acceptAs(raw, pr, '2025-11-20'), opts);
+    assert.deepEqual([again.same, total(again)], [true, total(pr)], JSON.stringify(opts));
+  }
+}));
+
+test('«Масса» с мышцами в приоритете: базовые справочника с нуля сами не встают; «Всем поровну» и «Гибрид» — как были', () => withDays(3, () => {
+  const cfg = Core.mergeCfg(withStarter(null));
+  for (const prio of ['glutes', 'legs', 'arms']) {
+    const pr = Core.buildProgram([], cfg, { prio });
+    assert.deepEqual(lifts(pr), [], prio);
+    assert.ok(!noteOf(pr, /^Базовые — первыми/), prio);
+  }
+  assert.deepEqual(lifts(Core.buildProgram([], cfg, {})), ['bench', 'leg_press', 'pullup']);
+  assert.ok(lifts(Core.buildProgram([], cfg, { focus: 'bench' })).includes('bench'));
+  /* ягодицы в приоритете: первыми в каждом дне — упражнения на ягодицы */
+  const pr = Core.buildProgram([], cfg, { prio: 'glutes', time: 120 });
+  for (const sl of Core.SLOTS) assert.ok((pr.cfg.ex[pr.slots[sl.id][0].ex].m.glutes || 0) >= 1, sl.n + ': ' + pr.slots[sl.id][0].ex);
+  /* базовое, которое в программе уже стоит, остаётся: с таблицей дней эталона и в программе не с нуля сборка его не убирает */
+  const W = seedW(), seed = Core.buildProgram(W, Core.mergeCfg(seedRaw()), { prio: 'glutes' });
+  assert.ok(lifts(seed).length > 0);
+}));
+
+test('с выбранным временем в тренировке не больше десяти упражнений, на мышцу — не больше двух (у приоритета трёх); без времени — девять, как было', () => {
+  const cfg = Core.mergeCfg(withStarter(null));
+  for (const n of [2, 3, 4]) withDays(n, () => {
+    for (const opts of [{}, { prio: 'glutes' }, { prio: 'legs' }, { focus: 'bench' }, { focus: 'bench', strength: true }, { strength: true, triad: true }] as BuildOpts[]) for (const time of [60, 90, 120]) {
+      if (opts.triad && n < 3) continue;
+      const pr = Core.buildProgram([], cfg, Object.assign({ time }, opts)), prio = opts.prio ? Core.PRIOS.find(g => g.id === opts.prio)!.m : [];
+      const what = n + ' дня, ' + JSON.stringify(opts) + ', ' + time;
+      for (const sl of Core.SLOTS) {
+        assert.ok(places(pr, sl.id) <= TIME_EX.day, what + ', ' + sl.n + ': ' + places(pr, sl.id) + ' упражнений');
+        for (const m of Core.MUSCLES) if (!cfg.ignore[m.id]) {
+          const k = pr.slots[sl.id].filter(e => (pr.cfg.ex[e.ex].m[m.id] || 0) >= 1 && !pr.cfg.ex[e.ex].uni).length;
+          assert.ok(k <= (prio.includes(m.id) ? TIME_EX.prio : TIME_EX.muscle), what + ', ' + sl.n + ', ' + m.n + ': ' + k + ' упражнений');
+        }
+      }
+    }
+    for (const sl of Core.SLOTS) assert.ok(places(Core.buildProgram([], cfg, {}), sl.id) <= 9, n + ' дня без времени');
+  });
+  /* было: 2 ч, ягодицы — 14–15 упражнений в дне, три из четырёх по два подхода; стало — по десять, по два подхода — меньше половины */
+  withDays(3, () => {
+    const pr = Core.buildProgram([], cfg, { prio: 'glutes', time: 120 }), all = Core.SLOTS.flatMap(sl => pr.slots[sl.id]);
+    assert.deepEqual(Core.SLOTS.map(sl => places(pr, sl.id)), [10, 10, 10]);
+    assert.ok(all.filter(e => e.n === 2).length * 2 < all.length, all.filter(e => e.n === 2).length + ' из ' + all.length);
   });
 });
