@@ -13,7 +13,7 @@ import { ADDS } from './adapt.ts';
 import { DAY_H, DAY_L, DAY_M, DL_LIGHT, SOLO, STRONG } from './strength.ts';
 import { STARTER, STARTER_GEAR } from './starter.ts';
 import { DAYS, awayDays, dayNo } from './days.ts';
-import { BASE_SETS, EVEN, HEAVY, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayOrder, fillTop, heavyOf, inTime, MANY_EX, MAX_SETS, OFF_APP, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, rirText, roomFor, sameMuscles, stretchOf, triadIds } from './rules.ts';
+import { BASE_SETS, EVEN, HEAVY, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayOrder, fillTop, heavyOf, inTime, MANY_EX, MAX_SETS, OFF_APP, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, restOf, REST, rirText, roomFor, sameMuscles, stretchOf, triadIds } from './rules.ts';
 import { estMinutes, fmtDur } from './time.ts';
 import type { Tally } from './tally.ts';
 import type { Roles } from './rules.ts';
@@ -182,7 +182,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
        пока укладывается в это время по оценке дневника (estMinutes) — подход с отдыхом, у пары сторон по подходу на каждую, минута на упражнение (rules.ts).
        Второй день мышцы тогда ищется с первого шага: время делят подходы и второй день, и второй день — требование (каждая мышца больше одного раза в неделю) */
     let fq = !!o.time;
-    const rest = c2.rest || 120, setSec = (id: string) => info(id).uni ? 80 + rest : 40 + rest;
+    const rest = c2.rest || 120, setSec = (id: string) => { const r = same ? restOf(c2, id, info(id)) : rest; return info(id).uni ? 80 + r : 40 + r; };   // (в эталоне нет) с днями «День N» — отдых упражнения (rules.ts, restOf)
     /* (в эталоне нет) вывод 8 аудита, без выбранного времени (решение владельца, 25 ноября 2026; rules.ts, MANY_EX): когда поиск больше ничего не находит,
        в дне от шести упражнений упражнение в два подхода отдаёт их другому упражнению на ту же основную мышцу — если баланс недели от этого не хуже,
        второй день ни у кого не пропадает и лимиты дня соблюдены. Слитое в этот день поиск обратно не ставит, и поиск идёт дальше */
@@ -731,7 +731,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     /* (в эталоне нет) в дне нет места ещё одному упражнению по два подхода: в нём девять упражнений, а с выбранным временем — оно уже не укладывается */
     const places = (L: ProgEntry[]) => L.reduce((a, e) => a + ((c2.ex[e.ex] || {} as ExDef).uni ? 0.5 : 1), 0);
     const crowded = (L: ProgEntry[]) => places(L) + 1 > (time ? TIME_EX.day : MAX_EX) + 0.6;   // (в эталоне нет) с выбранным временем — десять упражнений (rules.ts)
-    const full = (L: ProgEntry[]) => crowded(L) || (!!time && !inTime(estMinutes(c2, L) + (60 + 2 * (40 + (c2.rest || 120))) / 60, time));
+    const full = (L: ProgEntry[]) => crowded(L) || (!!time && !inTime(estMinutes(c2, L) + (60 + 2 * (40 + (appRules() ? REST.other : c2.rest || 120))) / 60, time));
     /* 8а. Выравнивание дней. (в эталоне нет) Дни 1…N: когда дней не три или в неделе появился новый день, тренировки выравниваются по длине —
            упражнение двойной прогрессии целиком переезжает из самого нагруженного дня в самый свободный, пока разница больше трёх подходов.
            Недельный объём мышц тот же; лимит на мышцу за тренировку не нарушается, и ни одна мышца не теряет тренировочный день.
@@ -761,13 +761,14 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
         if (shape() === was) break;
       }
       for (let g = 0; g < 60; g++) {
-        const T1 = progTally(c2, S), len = (sl: Slot) => byTime ? estMinutes(c2, S[sl.id], c2.rest) : T1.load[sl.id];
-        const byLoad = SLOTS.slice().sort((a, b) => len(b) - len(a)), hi = byLoad[0], lo = byLoad[byLoad.length - 1], diff = len(hi) - len(lo);
+        const T1 = progTally(c2, S), len = (sl: Slot) => byTime ? estMinutes(c2, S[sl.id]) : T1.load[sl.id];
+        const byLoad = SLOTS.slice().sort((a, b) => len(b) - len(a)), lo = byLoad[byLoad.length - 1];
+        let hi = byLoad[0], diff = len(hi) - len(lo);
         if (diff <= (byTime ? EVEN.min : 3)) break;
         const got = (sl: Slot, m: string) => (T1.day[sl.id] || {} as Record<string, number>)[m] || 0;
         const trained = (m: string, dh: number, dl: number) => SLOTS.filter(sl => got(sl, m) + (sl === hi ? dh : sl === lo ? dl : 0) >= 2 - 0.01).length;   // дней, где мышце два подхода и больше
         /* сколько упражнение занимает в длинном дне: подходы, а с днями «День N» — минуты по оценке времени */
-        const own = (e: ProgEntry) => byTime ? len(hi) - estMinutes(c2, S[hi.id].filter(x => x !== e), c2.rest) : e.n!;
+        const own = (e: ProgEntry) => byTime ? len(hi) - estMinutes(c2, S[hi.id].filter(x => x !== e)) : e.n!;
         const fits = (e: ProgEntry) => {
           if (own(e) >= diff || (time ? !inTime(estMinutes(c2, S[lo.id].concat([e])), time) || crowded(S[lo.id]) || !roomFor(S[lo.id], e.ex, mOf, prio, cfg.ignore, x => x.n!) : S[lo.id].length >= MAX_EX) || S[lo.id].some(x => x.ex === e.ex || sameMuscles(mOf(x.ex), mOf(e.ex)))) return false;   // и не туда, где уже стоит упражнение с теми же мышцами
           for (const [m, c] of Object.entries(mOf(e.ex))) {
@@ -783,11 +784,11 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
         };
         /* (в эталоне нет) с днями «День N» переезжает и один подход: из упражнения длинного дня в то же упражнение короткого дня или в упражнение
            с теми же мышцами. Так выравниваются дни, где упражнения на каждую мышцу уже стоят в обоих днях (при двух днях — всегда) */
-        const less = (L: ProgEntry[], e: ProgEntry) => estMinutes(c2, L.map(x => x === e ? Object.assign({}, x, { n: x.n! - 1 }) : x), c2.rest);
+        const less = (L: ProgEntry[], e: ProgEntry) => estMinutes(c2, L.map(x => x === e ? Object.assign({}, x, { n: x.n! - 1 }) : x));
         const oneSet = (e: ProgEntry) => len(hi) - less(S[hi.id], e);
         const into = (e: ProgEntry) => S[lo.id].find(x => free(x) && x.n! < MAX_SETS && (x.ex === e.ex || sameMuscles(mOf(x.ex), mOf(e.ex)))) || null;
         const shifts = (e: ProgEntry, x: ProgEntry) => {
-          if (oneSet(e) >= diff || (time && !inTime(estMinutes(c2, S[lo.id].map(y => y === x ? Object.assign({}, y, { n: y.n! + 1 }) : y), c2.rest), time))) return false;
+          if (oneSet(e) >= diff || (time && !inTime(estMinutes(c2, S[lo.id].map(y => y === x ? Object.assign({}, y, { n: y.n! + 1 }) : y)), time))) return false;
           for (const [m, c] of Object.entries(mOf(e.ex))) {
             if (!(c > 0)) continue;
             if (got(lo, m) + c > caps.day + 0.01) return false;
@@ -798,23 +799,50 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
           }
           return true;
         };
-        const moves: { e: ProgEntry; to: ProgEntry | null; t: number }[] = S[hi.id].filter(e => free(e) && fits(e)).map(e => ({ e, to: null, t: own(e) }));
-        if (byTime) for (const e of S[hi.id]) { if (!free(e) || e.n! <= 2) continue; const x = into(e); if (x && shifts(e, x)) moves.push({ e, to: x, t: oneSet(e) }); }
-        const mv = moves.sort((a, b) => Math.abs(diff / 2 - a.t) - Math.abs(diff / 2 - b.t))[0];
+        /* (в эталоне нет) с днями «День N» упражнения меняются днями: упражнение длинного дня уходит в короткий, а упражнение короткого с меньшим числом подходов —
+           в длинный. Так выравниваются дни, когда в коротком дне уже десять упражнений и новому места нет. Проверки — те же, что у переезда целиком */
+        const swaps = (e: ProgEntry, f: ProgEntry) => {
+          const H = S[hi.id].map(x => x === e ? f : x), L = S[lo.id].map(x => x === f ? e : x), t = len(hi) - estMinutes(c2, H);
+          if (!(t > 0.01) || t >= diff || !(Math.abs(estMinutes(c2, H) - estMinutes(c2, L)) < diff - 0.01) || (time && !inTime(estMinutes(c2, L), time))) return null;
+          const clash = (D: ProgEntry[], a: ProgEntry) => D.some(x => x !== a && (x.ex === a.ex || sameMuscles(mOf(x.ex), mOf(a.ex))));
+          if (clash(L, e) || clash(H, f)) return null;
+          if (time && (!roomFor(L.filter(x => x !== e), e.ex, mOf, prio, cfg.ignore, x => x.n!) || !roomFor(H.filter(x => x !== f), f.ex, mOf, prio, cfg.ignore, x => x.n!))) return null;
+          const after = (sl: Slot, m: string) => got(sl, m) + (sl === hi ? 1 : sl === lo ? -1 : 0) * ((mOf(f.ex)[m] || 0) * f.n! - (mOf(e.ex)[m] || 0) * e.n!);
+          for (const m of new Set(Object.keys(mOf(e.ex)).concat(Object.keys(mOf(f.ex))))) {
+            if (after(hi, m) > Math.max(caps.day, got(hi, m)) + 0.01 || after(lo, m) > Math.max(caps.day, got(lo, m)) + 0.01) return null;
+            if (!cfg.ignore[m] && SLOTS.filter(sl => after(sl, m) >= 2 - 0.01).length < Math.min(2, trained(m, 0, 0))) return null;
+          }
+          return t;
+        };
+        const find = () => {
+          const moves: { e: ProgEntry; to: ProgEntry | null; with?: ProgEntry; t: number }[] = S[hi.id].filter(e => free(e) && fits(e)).map(e => ({ e, to: null, t: own(e) }));
+          if (byTime) for (const e of S[hi.id]) { if (!free(e) || e.n! <= 2) continue; const x = into(e); if (x && shifts(e, x)) moves.push({ e, to: x, t: oneSet(e) }); }
+          if (byTime && !moves.length) for (const e of S[hi.id]) for (const f of S[lo.id]) { if (!free(e) || !free(f) || f.n! >= e.n!) continue; const t = swaps(e, f); if (t != null) moves.push({ e, to: null, with: f, t }); }
+          return moves.sort((a, b) => Math.abs(diff / 2 - a.t) - Math.abs(diff / 2 - b.t))[0] || null;
+        };
+        let mv = find();
+        /* (в эталоне нет) с днями «День N»: из самого длинного дня переносить нечего — в короткий день идёт что-то из следующего по длине: короткий день растёт, разница сжимается */
+        if (!mv && byTime) for (const src of byLoad.slice(1, -1)) { hi = src; diff = len(hi) - len(lo); if (diff <= 0.01) break; mv = find(); if (mv) break; }
         if (!mv) break;
+        const whole = (cand: ProgEntry, from: Slot, to: Slot) => {
+          S[from.id].splice(S[from.id].indexOf(cand), 1);
+          const src = cand.isNew ? cand.from : from.id;                  // новое упражнение ниоткуда не переезжало: о нём скажет заметка «Новое …»
+          if (src && src !== to.id && (cur[src] || []).some(x => x.ex === cand.ex)) ev.text.push(nm(cand.ex) + ' (' + SLOT[src].s.toLowerCase() + ' → ' + to.s.toLowerCase() + ')');
+          if (!cand.isNew) { cand.isNew = true; cand.from = from.id; }
+          insertIn(S[to.id], cand); ev.evened.push(cand);
+        };
+        if (mv.with) { whole(mv.e, hi, lo); whole(mv.with, lo, hi); continue; }
         if (mv.to) {
           const e = mv.e, x = mv.to;
           e.n!--; e.chg = (e.chg || 0) - 1; x.n!++; x.chg = (x.chg || 0) + 1;
-          ev.shifted.set(e, (ev.shifted.get(e) || 0) - 1); ev.shifted.set(x, (ev.shifted.get(x) || 0) + 1);
-          if (!e.isNew || !x.isNew) { const k = nm(e.ex) + (x.ex !== e.ex ? ' → ' + nm(x.ex) : '') + ' (' + hi.s.toLowerCase() + ' → ' + lo.s.toLowerCase() + ')'; ev.shiftText.set(k, (ev.shiftText.get(k) || 0) + 1); }
+          /* переезд подхода назван, когда оба упражнения уже стояли в программе; у нового упражнения его подходы называет заметка «Новое …», а у прежнего — прибавка или убавка */
+          if (!e.isNew && !x.isNew) {
+            ev.shifted.set(e, (ev.shifted.get(e) || 0) - 1); ev.shifted.set(x, (ev.shifted.get(x) || 0) + 1);
+            const k = nm(e.ex) + (x.ex !== e.ex ? ' → ' + nm(x.ex) : '') + ' (' + hi.s.toLowerCase() + ' → ' + lo.s.toLowerCase() + ')'; ev.shiftText.set(k, (ev.shiftText.get(k) || 0) + 1);
+          }
           continue;
         }
-        const cand = mv.e;
-        S[hi.id].splice(S[hi.id].indexOf(cand), 1);
-        const src = cand.isNew ? cand.from : hi.id;                      // новое упражнение ниоткуда не переезжало: о нём скажет заметка «Новое …»
-        if (src && src !== lo.id && (cur[src] || []).some(x => x.ex === cand.ex)) ev.text.push(nm(cand.ex) + ' (' + SLOT[src].s.toLowerCase() + ' → ' + lo.s.toLowerCase() + ')');
-        if (!cand.isNew) { cand.isNew = true; cand.from = hi.id; }
-        insertIn(S[lo.id], cand); ev.evened.push(cand);
+        whole(mv.e, hi, lo);
       }
       }
     };

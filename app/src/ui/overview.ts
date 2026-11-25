@@ -68,6 +68,7 @@ export function propList(A: Adapted, off: Record<string, boolean>, toggle: (key:
 }
 /* rest between sets: one of a few values, kept in the profile and used for every time estimate */
 export function restSelect(id: string) {
+  if (appRules()) return null;   // (в эталоне нет) с днями «День N» отдых ставит дневник по упражнению (rules.ts, restOf; просьба владельца, 25 ноября 2026)
   const opts = C.REST_OPTS.includes(D.cfg.rest) ? C.REST_OPTS : C.REST_OPTS.concat(D.cfg.rest).sort((a, b) => a - b);
   return h('label', { class: 'f' }, h('span', null, 'Отдых между подходами'), h('select', { id, onchange: async e => { const v = +e.target.value; await saveCfg(raw => { raw.rest = v; }); render(true); } }, opts.map(v => h('option', { value: v, selected: v === D.cfg.rest, text: C.fmtRest(v) + ' мин' }))));
 }
@@ -102,7 +103,7 @@ export function vOverview() {
     const A = C.adapt(D.W, D.cfg, D.slot, D.date), sel = C.applyAdapt(A, A.off0), q = D.cfg.rir;
     out.push(h('div', { class: 'grid2' },
       h('div', { class: 'card' }, h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow' }, 'Первая тренировка'), h('h2', null, dayTitle(D.date))), S.canWrite ? h('a', { class: 'btn primary', href: '#workout' }, 'Открыть план') : null),
-        h('p', { class: 'sub', style: 'margin-bottom:6px' }, 'По программе «' + D.cfg.program.name + '»: ' + setWord(planSets(sel.items)) + ', ' + durText(sel.items) + ' при отдыхе ' + C.fmtRest(D.cfg.rest) + '. День и дату можно сменить в плане.'),
+        h('p', { class: 'sub', style: 'margin-bottom:6px' }, 'По программе «' + D.cfg.program.name + '»: ' + setWord(planSets(sel.items)) + ', ' + durText(sel.items) + (appRules() ? ' с отдыхом по упражнению' : ' при отдыхе ' + C.fmtRest(D.cfg.rest)) + '. День и дату можно сменить в плане.'),
         planRows(sel.items, D.slot, D.date, A, sel.used)),
       h('div', { class: 'card' }, h('div', { class: 'sec-h' }, h('h2', null, 'С чего начать')),
         h('div', { class: 'why' }, h('b', null, 'Вес подбирается на первой тренировке'), h('div', { class: 'sub' }, 'В каждом упражнении возьми вес, с которым повторы попадают в диапазон, а в запасе остаётся ' + (q >= 2 ? q + '–' + (q + 1) : 'один-два') + ' ' + (q >= 2 ? 'повтора' : 'повтора') + '. Лучше начать легче: дневник сам поднимет вес, когда возьмёшь верх диапазона.')),
@@ -133,7 +134,7 @@ export function vOverview() {
     const A = C.adapt(D.W, D.cfg, D.slot, D.date), sel = C.applyAdapt(A, A.off0), n = sel.used.length, more = A.props.length + A.adds.length - n;
     nextCard = h('div', { class: 'card' }, h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow' }, 'Следующая тренировка'), h('h2', null, dayTitle(D.date))),
       S.canWrite ? h('a', { class: 'btn primary', href: '#workout' }, 'Открыть план') : null),
-      h('p', { class: 'sub', style: 'margin-bottom:6px' }, sel.items.length ? setWord(planSets(sel.items)) + ', ' + durText(sel.items) + ' при отдыхе ' + C.fmtRest(D.cfg.rest) + '. ' : '', A.base.prog ? 'Первый раз по программе «' + D.cfg.program!.name + '»: веса взяты из последних тренировок каждого упражнения. ' : '', n ? (A.base.prog ? 'В план' : 'План по твоим правилам, в него') + ' уже внесены поправки дневника: ' + n + '.' + (more ? ' Ещё ' + more + ' можно включить перед стартом.' : ' Перед стартом можно снять любую.') : (A.base.prog ? '' : 'План по твоим правилам от прошлой тренировки этого дня.') + (more ? ' Дневник предлагает поправки: ' + more + ', включить их можно перед стартом.' : ' Поправок дневник не предлагает.')),
+      h('p', { class: 'sub', style: 'margin-bottom:6px' }, sel.items.length ? setWord(planSets(sel.items)) + ', ' + durText(sel.items) + (appRules() ? ' с отдыхом по упражнению' : ' при отдыхе ' + C.fmtRest(D.cfg.rest)) + '. ' : '', A.base.prog ? 'Первый раз по программе «' + D.cfg.program!.name + '»: веса взяты из последних тренировок каждого упражнения. ' : '', n ? (A.base.prog ? 'В план' : 'План по твоим правилам, в него') + ' уже внесены поправки дневника: ' + n + '.' + (more ? ' Ещё ' + more + ' можно включить перед стартом.' : ' Перед стартом можно снять любую.') : (A.base.prog ? '' : 'План по твоим правилам от прошлой тренировки этого дня.') + (more ? ' Дневник предлагает поправки: ' + more + ', включить их можно перед стартом.' : ' Поправок дневник не предлагает.')),
       planRows(sel.items, D.slot, D.date, A, sel.used), planLegend(n > 0));
   }
   const top = D.ins.filter(i => i.sev === 'crit' || i.sev === 'warn').slice(0, 4);

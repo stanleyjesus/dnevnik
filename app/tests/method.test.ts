@@ -11,7 +11,7 @@ import { useDays } from '../src/core/days.ts';
 import { withStarter } from '../src/core/starter.ts';
 import { AUTO } from '../src/core/goals.ts';
 import { DAY_H, DAY_L, DAY_M } from '../src/core/strength.ts';
-import { HOLD, ORDER, TYPE, appRange, appRules, byPct, dayOrder, logMax } from '../src/core/rules.ts';
+import { HOLD, ORDER, REST, TYPE, appRange, appRules, byPct, dayOrder, logMax, restOf } from '../src/core/rules.ts';
 import type { BuildOpts, Cfg, ExDef, Item, ProgEntry, ProgSlots, SetRec, Workout } from '../src/core/types.ts';
 
 type Raw = { ex: Record<string, ExDef>; program?: unknown };
@@ -206,11 +206,16 @@ test('недельный объём: базовое на двойной прог
   });
 });
 
-test('время подхода: у базового на двойной прогрессии — 40 секунд, как у подсобки; разминка и отдых — как у базового', () => {
+test('время подхода: у базового на двойной прогрессии — 40 секунд, как у подсобки; разминка — как у базового; отдых с днями «День N» — по упражнению', () => {
   const ref = Core.estMinutes(Core.mergeCfg(seedRaw()), [{ ex: 'bench' }]);
+  /* эталон: пять минут на разминку всей тренировки, минута на упражнение и три — на разминку базового, четыре подхода по 25 секунд и отдых 2:00 + минута */
+  assert.equal(Math.round(ref * 60), 300 + 60 + 180 + 4 * (25 + 120 + 60));
   withDays(3, () => {
-    assert.equal(Math.round((Core.estMinutes(cfgWith(), [{ ex: 'bench' }]) - ref) * 60), 4 * 15, 'четыре подхода, каждый на 15 секунд дольше');
-    assert.equal(Math.round((ref - Core.estMinutes(cfgWith('auto'), [{ ex: 'bench' }])) * 60), 25 + 120 + 60, 'сила по запасу — как базовое эталона, но на подход меньше: 3 × 4 вместо 4 × 4');
+    /* отдых ставит дневник (просьба владельца, 25 ноября 2026; rules.ts, REST): в «Массе» жим — многосуставное, на примерных данных без снаряда — 2 мин;
+       тяжёлый день силовой роли — 5 мин (выбор владельца тем же днём) */
+    assert.equal(Math.round(Core.estMinutes(cfgWith(), [{ ex: 'bench' }]) * 60), 300 + 60 + 180 + 4 * (40 + REST.other), 'четыре подхода по 40 секунд и отдых многосуставного');
+    assert.equal(Math.round(Core.estMinutes(cfgWith('auto'), [{ ex: 'bench' }]) * 60), 300 + 60 + 180 + 3 * (25 + REST.heavy), 'сила по запасу: 3 × 4, отдых тяжёлого дня');
+    assert.deepEqual([restOf(cfgWith(), 'bench'), restOf(cfgWith('auto'), 'bench'), REST], [120, 300, { heavy: 300, light: 180, free: 150, other: 120, iso: 120 }]);
   });
 });
 

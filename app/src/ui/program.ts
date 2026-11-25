@@ -230,13 +230,14 @@ export function vProgram() {
       /* время на тренировку: выбор запоминается в профиле; «не ограничено» — лимит выбирается списком рядом, как в эталоне */
       !manual ? h('label', { class: 'f' }, h('span', null, 'Время на тренировку'), h('select', { id: 'pt', onchange: async e => { const v = +e.target.value; await saveCfg(raw => { if (v) raw.time = v; else delete raw.time; }); if (!v) { st.budget = modeBudget(st.focus, cfg.caps.week); delete st.keep; } st.draft = null; render(true); } },
         [0].concat(TIMES.includes(time) || !time ? TIMES : TIMES.concat(time).sort((a, b) => a - b)).map(v => h('option', { value: v, selected: v === time, text: v ? 'до ' + C.fmtDur(v) : 'не ограничено' })))) : null,
-      /* лимит, выбранный вручную, снимает время на тренировку: два списка задают одно и то же, действует последний выбор */
-      !manual ? h('label', { class: 'f' }, h('span', null, 'Подходов в неделю, не больше'), h('select', { id: 'pb-budget', onchange: async e => { st.budget = +e.target.value; st.draft = null; if (time) { delete st.keep; await saveCfg(raw => { delete raw.time; }); } render(true); } }, budgets.map(v => h('option', { value: v, selected: v === st.budget, text: v + (time && v === st.budget ? ' — по времени' : v === cfg.caps.week ? ' — твой лимит' : '') })))) : null,
+      /* лимит, выбранный вручную, снимает время на тренировку: два списка задают одно и то же, действует последний выбор.
+         (в эталоне нет) С днями «День N» списка нет: подходы дневник считает сам от времени, дней и цели, а лимит недели — потолок методики (просьба владельца, 25 ноября 2026) */
+      !manual && !appRules() ? h('label', { class: 'f' }, h('span', null, 'Подходов в неделю, не больше'), h('select', { id: 'pb-budget', onchange: async e => { st.budget = +e.target.value; st.draft = null; if (time) { delete st.keep; await saveCfg(raw => { delete raw.time; }); } render(true); } }, budgets.map(v => h('option', { value: v, selected: v === st.budget, text: v + (time && v === st.budget ? ' — по времени' : v === cfg.caps.week ? ' — твой лимит' : '') })))) : null,
       restSelect('prog-rest'),
       manual ? h('label', { class: 'f grow' }, h('span', null, 'Название программы'), h('input', { type: 'text', id: 'prog-name', value: st.name != null ? st.name : pr.name, oninput: e => { st.name = e.target.value; } })) : null),
-    fit && !fit.fits ? h('p', { class: 'sub', id: 'pt-note', role: 'status', style: 'margin:-4px 0 12px' }, 'За ' + C.fmtDur(time) + ' не уложиться: даже ' + fit.budget + ' подходов в неделю — это тренировка ≈ ' + C.fmtDur(fit.min) + '. Увеличь время или сократи отдых.') : null,
+    fit && !fit.fits ? h('p', { class: 'sub', id: 'pt-note', role: 'status', style: 'margin:-4px 0 12px' }, 'За ' + C.fmtDur(time) + ' не уложиться: даже ' + fit.budget + ' подходов в неделю — это тренировка ≈ ' + C.fmtDur(fit.min) + (appRules() ? '. Выбери больше времени или больше дней в неделю.' : '. Увеличь время или сократи отдых.')) : null,
     h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], empty ? null : pr.before.load[sl.id], edit, marked))),
-    h('p', { class: 'sub', style: 'margin-top:8px' }, 'Полоса слева — то, что меняется. Время — разминка, подходы и отдых по ' + C.fmtRest(cfg.rest) + '.'),
+    h('p', { class: 'sub', style: 'margin-top:8px' }, 'Полоса слева — то, что меняется. Время — разминка, подходы и отдых ' + (appRules() ? 'по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.' : 'по ' + C.fmtRest(cfg.rest) + '.')),
     rulesBox(C.ruleBreaks(pr.cfg, pr.after)),
 
     h('hr', { class: 'rule' }),

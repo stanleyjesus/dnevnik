@@ -83,7 +83,10 @@ const listOf = id => '[...document.getElementById(' + J(id) + ').options].map(o 
 const progTitle = '[...document.querySelectorAll("#view section.card")].pop().querySelector("h2").textContent';
 /* время на тренировку: минуты каждого дня черновика (из заголовков дней), подпись выбранного лимита недели, настройка профиля в хранилище */
 const dayMins = '[...[...document.querySelectorAll("#view section.card")].pop().querySelectorAll(".pday-h .sub")].map(e => { const m = e.textContent.match(/≈ (?:(\\d+) ч)?\\s*(?:(\\d+) мин)?/); return m ? (+m[1] || 0) * 60 + (+m[2] || 0) : 0; })';
-const limitText = 'document.getElementById("pb-budget").selectedOptions[0].textContent';
+/* лимит недели черновика — «В программе N из лимита» под счётчиком свободных подходов: с днями «День N» списка «Подходов в неделю» нет, подходы дневник
+   считает от времени, дней и цели (просьба владельца, 25 ноября 2026); нет и выбора отдыха — его дневник ставит упражнению сам */
+const capOf = '+((document.querySelector("#prog-free .sub").textContent.match(/ из (\\d+)/) || [])[1])';
+const noPicks = '!document.getElementById("pb-budget") && !document.getElementById("prog-rest")';
 /* новая программа: сколько подходов в неделю (число в начале её заголовка) и сколько упражнений в самом полном дне */
 const draftSets = 'parseFloat([...document.querySelectorAll("#view section.card")].pop().querySelector(".sec-h .sub").textContent)';
 const dayEx = 'Math.max(...[...[...document.querySelectorAll("#view section.card")].pop().querySelectorAll(".pday")].map(d => d.querySelectorAll(".prow").length))';
@@ -139,7 +142,7 @@ export const SCENARIOS = [
     ['снять первую поправку', maybe(click('input[id^="pp-"]'))],
     ['снять вторую поправку', maybe(click('input[id^="pp-"]', 1))],
     ['вернуть первую поправку', maybe(click('input[id^="pp-"]'))],
-    ['отдых 3 минуты', pick('#np-rest', 180)],
+    ['отдых 3 минуты', maybe(pick('#np-rest', 180))],                                  // с днями «День N» выбора отдыха нет: его ставит дневник
     ['пятница', press('Пятница')],
     ['пустой лист', press('Начать с пустого листа')],
     ['упражнение в пустой лист', pickAt('#add-ex', 0) + press('Добавить упражнение')],
@@ -183,7 +186,7 @@ export const SCENARIOS = [
     ['новое упражнение: сохранить', pick('#xf-new-m-forearms', '1') + pick('#xf-new-m-upper_back', '0.5') + type('#xf-new-lo', 10) + type('#xf-new-hi', 15) + click('#xf-new-uni') + press('Сохранить упражнение')],
     ['дата тренировки: вчера', typeDay('#wk-date', -1)],
     ['день программы: пятница', press('Пт')],
-    ['отдых 2 минуты', pick('#wk-rest', 120)],
+    ['отдых 2 минуты', maybe(pick('#wk-rest', 120))],
     ['заметки', type('input[id^="ex-note-"]', 'хват уже') + type('#wk-note', 'мало спал')],
     ['автосохранение', wait(AUTOSAVE)],
     ['после перезагрузки всё на месте', RELOAD],
@@ -333,11 +336,11 @@ export const SCENARIOS = [
     ['остальные базовые растут', click('#po-grow')],
     ['остальные базовые на поддержании', click('#po-hold')],
     ['пауэрбилдинг: последнее базовое', mode({ lift: -1 })],
-    ['лимит недели: самый малый', pickAt('#pb-budget', 0)],
-    ['лимит недели: 70', pick('#pb-budget', 70)],
+    ['лимит недели: самый малый', maybe(pickAt('#pb-budget', 0))],                     // с днями «День N» списка «Подходов в неделю» нет (просьба владельца, 25 ноября 2026)
+    ['лимит недели: 70', maybe(pick('#pb-budget', 70))],
     ['равномерно при лимите 70', mode('even')],
-    ['лимит недели: свой', pickAt('#pb-budget', -1)],
-    ['отдых 2 минуты', pick('#prog-rest', 120)],
+    ['лимит недели: свой', maybe(pickAt('#pb-budget', -1))],
+    ['отдых 2 минуты', maybe(pick('#prog-rest', 120))],
     ['большой экран', size(...BIG)],
     ['пауэрбилдинг на большом экране', mode({ lift: -2 })]
   ] },
@@ -456,7 +459,7 @@ export const SCENARIOS = [
   { name: 'свои лимиты и методика из записей', data: 'tuned', steps: [
     ...tabs('со своими лимитами'),
     ['программа: пауэрбилдинг при своих лимитах', go('program') + settle + mode({ lift: -1 })],
-    ['лимит недели: самый малый', pickAt('#pb-budget', 0)],
+    ['лимит недели: самый малый', maybe(pickAt('#pb-budget', 0))],
     ['равномерно', mode('even')],
     ['план понедельника', go('workout') + settle + press('Понедельник')],
     ['после перезагрузки то же', RELOAD]
@@ -509,7 +512,7 @@ export const SCENARIOS = [
   { name: 'сила: пауэрлифтерская тройка — сборка и недели по программе', app: true, steps: [
     ['среди целей есть «Сила»', 'sessionStorage.clear();' + go('program') + settle
       + expect(goals + ' === "Масса,Сила,Гибрид,Вручную"', 'цель «Сила» стоит между массой и гибридом')],
-    ['сила: пауэрлифтерская тройка', mode('p') + settle + expect('document.getElementById("pb-budget").value === "80"', 'лимит недели стал 80')
+    ['сила: пауэрлифтерская тройка', mode('p') + settle + expect(noPicks + ' && ' + capOf + ' === 80', 'списков «Подходов в неделю» и отдыха нет, лимит недели — 80')
       + expect(goalIs('force') + ' && ' + listIs('ps', 'p') + ' && document.getElementById("ps").selectedOptions[0].textContent === "Пауэрлифтерская тройка"', 'цель «Сила», в уточняющем списке выбрана тройка')
       + expect(progTitle + ' === "Сила: пауэрлифтерская тройка"', 'название новой программы') + 'const r = ' + draftRows + ';'
       + expect(TRIAD_DAYS, 'каждое движение тройки — один тяжёлый день по запасу и один лёгкий; день начинается тяжёлым днём одного движения, за ним — лёгкий день другого')
@@ -520,8 +523,6 @@ export const SCENARIOS = [
       + expect('t.includes("Становая тяга — в программу в день") && t.includes("В программе этого движения не было. Оно в тройке")', 'становой в справочнике нет: сборка поставила её сама и сказала об этом')
       + expect('t.includes("Подсобка — ") && t.includes("в 8 подходов в неделю вместо 10") && t.includes("Точные повторы — правило дневника")', 'заметка о подсобке и честное «правило дневника»: точные повторы — не вывод исследования')
       + expect('!t.includes("undefined")', 'в заметках нет «undefined»')],
-    ['лимит недели 70', pick('#pb-budget', 70) + settle + expect(goalIs('force') + ' && ' + listIs('ps', 'p') + ' && parseFloat(document.getElementById("prog-free").textContent.replace(/[^0-9.,-]/g, "").replace(",", ".")) >= 0', 'режим тот же, лимит не превышен')],
-    ['лимит недели снова 80', pick('#pb-budget', 80)],
     ['прибавить подход мышце под «Силой»', click('#mp-biceps') + settle + expect('document.getElementById("toast").textContent.length > 0', 'дневник ответил, что сделал или почему не может')],
     ['сбросить правки', maybe(click('#prog-reset'))],
     ['принять программу', click('#prog-accept') + settle + expect('document.getElementById("toast").textContent.startsWith("Программа принята")', 'сообщение «Программа принята»')
@@ -547,7 +548,7 @@ export const SCENARIOS = [
      остальные базовые — обычные упражнения, переключателя «Остальные базовые» нет, дня «на массу» нет, подсобка ниже рабочей зоны. У изоляции дня два:
      3 × 6 и лёгкий 3 × 10. Сборка, заметки, принятие, две недели по программе */
   { name: 'сила в одном движении: сборка и недели по программе', app: true, steps: [
-    ['сила: жим лежа', 'sessionStorage.clear();' + go('program') + settle + mode('s:bench') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && ' + listIs('pb-budget', '80'), 'цель «Сила», в списке — жим лежа, лимит недели 80')
+    ['сила: жим лежа', 'sessionStorage.clear();' + go('program') + settle + mode('s:bench') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && ' + capOf + ' === 80', 'цель «Сила», в списке — жим лежа, лимит недели 80')
       + expect(progTitle + ' === "Сила: жим лежа"', 'название новой программы') + 'const r = ' + draftRows + ';'
       + expect('r[0][0].startsWith("Жим лежа") && !r[0][0].startsWith("Жим лежа — лёгкий день") && r[0][0].includes("сила по запасу")', 'день 1 начинается с жима лежа на силу по запасу')
       + expect('r[2][0].startsWith("Жим лежа — лёгкий день") && !r[1][0].startsWith("Жим лежа")', 'день 3 начинается с лёгкого дня жима, в дне 2 жима нет: два дня, тяжёлый и лёгкий (выводы аудита)')
@@ -563,8 +564,6 @@ export const SCENARIOS = [
       + expect('r.flat().filter(t => t.startsWith("Бицепс со штангой стоя — лёгкий день")).length === 1 && r.flat().filter(t => t.startsWith("Бицепс со штангой стоя") && t.includes("сила по запасу")).length === 1', 'у изоляции дня два: тяжёлый по запасу и лёгкий')
       + expect(progNote + '.startsWith("Сила в одном движении. Оно идёт два дня из трёх: тяжёлый день 3 × 6 с весом по запасу и лёгкий день.")', 'пояснение режима: два дня из трёх, 3 × 6')],
     ['снова жим лежа', mode('s:bench') + settle + expect(listIs('ps', 's:bench') + ' && ' + progTitle + ' === "Сила: жим лежа"', 'выбран жим лежа')],
-    ['лимит недели 70', pick('#pb-budget', 70) + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && parseFloat(document.getElementById("prog-free").textContent.replace(/[^0-9.,-]/g, "").replace(",", ".")) >= 0', 'режим тот же, лимит не превышен')],
-    ['лимит недели снова 80', pick('#pb-budget', 80)],
     ['принять программу', click('#prog-accept') + settle + expect('document.getElementById("toast").textContent.startsWith("Программа принята")', 'сообщение «Программа принята»')
       + 'const c = JSON.parse(' + stored + ').find(x => x[0] === "config/main")[1];'
       + expect('c.program.strength === true && c.program.lean === true && c.program.budget === 80 && c.program.focus === "bench" && !c.program.triad', 'в записи программы: сила, цель — жим лежа, скромные поправки, лимит 80')
@@ -592,7 +591,7 @@ export const SCENARIOS = [
     ['сила: в списке — тройка и восемь движений', go('program') + settle + click('#pg-force') + settle
       + expect(listOf('ps') + ' === "p,s:bench,s:squat,s:leg_press,s:pullup,s:deadlift,s:hip_thrust,s:ohp,s:barbell_curl" && ' + listIs('ps', 'p'), 'в списке «Силы» — тройка и восемь движений, по кнопке выбрана тройка')
       + expect('[...document.getElementById("ps").options].map(o => o.textContent).join("|") === "Пауэрлифтерская тройка|Жим лежа|Приседания со штангой|Жим ногами|Подтягивания|Становая тяга|Ягодичный мост со штангой|Жим штанги стоя|Бицепс со штангой стоя"', 'названия: того, чего в справочнике нет, — по встроенному')],
-    ['выбрать становую тягу', pick('#ps', 's:deadlift') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:deadlift') + ' && ' + listIs('pb-budget', '80') + ' && ' + progTitle + ' === "Сила: становая тяга"', 'цель «Сила», становая тяга, лимит 80')
+    ['выбрать становую тягу', pick('#ps', 's:deadlift') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:deadlift') + ' && ' + capOf + ' === 80 && ' + progTitle + ' === "Сила: становая тяга"', 'цель «Сила», становая тяга, лимит 80')
       + 'const r = ' + draftRows + ';'
       + expect('r[1][0].startsWith("Становая тяга") && r[1][0].includes("новое") && r[1][0].includes("сила по запасу") && r[0][0].startsWith("Становая тяга — лёгкий день") && !r.flat().some(t => t.includes("средний день"))', 'тяжёлый день — первым в день 2, лёгкий — первым в день 1, среднего нет (выводы аудита)')
       + expect('!r.flat().some(t => t.includes("поддержание")) && !document.getElementById("po-hold")', 'остальные базовые — обычные упражнения, переключателя нет')
@@ -634,10 +633,10 @@ export const SCENARIOS = [
       + expect(progTitle + ' === "Приоритет: плечи"', 'название программы')],
     ['масса: спина в приоритете', pick('#pm', 'm:back') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back'), 'цель та же, в списке — спина')
       + expect(progTitle + ' === "Приоритет: спина"', 'название программы')],
-    ['лимит недели 70', pick('#pb-budget', 70) + settle + expect(listIs('pb-budget', '70') + ' && ' + listIs('pm', 'm:back'), 'лимит 70, выбор тот же')],
+    ['лимит недели — сам', expect(noPicks + ' && ' + capOf + ' === 100', 'списка «Подходов в неделю» нет: лимит недели — 100, потолок методики')],
     ['гибрид: первая цель', click('#pg-mix') + settle + expect(goalIs('mix') + ' && ' + listOf('pl') + ' === "l:bench,l:squat,l:leg_press,l:pullup,l:deadlift,l:hip_thrust,l:ohp,l:barbell_curl" && ' + listIs('pl', 'l:bench') + ' && !document.querySelector("#pm, #ps")', 'цель «Гибрид»: в списке восемь движений, выбрано первое')
       + expect('[...document.getElementById("pl").options].map(o => o.textContent).join("|") === "Жим лежа|Приседания со штангой|Жим ногами|Подтягивания|Становая тяга|Ягодичный мост со штангой|Жим штанги стоя|Бицепс со штангой стоя"', 'в списке — названия; того, чего в справочнике нет, — по встроенному')
-      + expect('!!document.getElementById("po-hold") && ' + listIs('pb-budget', '70'), 'есть переключатель «Остальные базовые», лимит прежний')
+      + expect('!!document.getElementById("po-hold") && ' + capOf + ' === 100', 'есть переключатель «Остальные базовые», лимит прежний')
       + expect(progTitle + ' === "Пауэрбилдинг: жим лежа"', 'название программы')],
     ['гибрид: остальные базовые — поддержание', expect('document.getElementById("po-plain").getAttribute("aria-pressed") === "true"', 'по умолчанию остальные базовые — «Как подсобка» (вывод 5 аудита)') + click('#po-hold') + settle
       + expect('document.getElementById("po-hold").getAttribute("aria-pressed") === "true"', 'выбрано «Поддержание»')],
@@ -647,16 +646,16 @@ export const SCENARIOS = [
     ['обратно к гибриду: то же базовое', click('#pg-mix') + settle + expect(goalIs('mix') + ' && ' + listIs('pl', 'l:leg_press'), 'выбор под целью «Гибрид» запомнен')],
     ['сила: тройка или одно движение, свой лимит недели', click('#pg-force') + settle + expect(goalIs('force') + ' && ' + listOf('ps') + ' === "p,s:bench,s:squat,s:leg_press,s:pullup,s:deadlift,s:hip_thrust,s:ohp,s:barbell_curl" && ' + listIs('ps', 'p') + ' && !document.querySelector("#pm, #pl") && !document.getElementById("po-hold")', 'цель «Сила»: в списке тройка и восемь движений, выбрана тройка; переключателя остальных базовых нет')
       + expect('[...document.getElementById("ps").options].map(o => o.textContent).join("|") === "Пауэрлифтерская тройка|Жим лежа|Приседания со штангой|Жим ногами|Подтягивания|Становая тяга|Ягодичный мост со штангой|Жим штанги стоя|Бицепс со штангой стоя"', 'названия пунктов')
-      + expect(listIs('pb-budget', '80'), 'лимит недели — 80, число силового режима') + expect(progTitle + ' === "Сила: пауэрлифтерская тройка"', 'название программы')],
-    ['сила в одном движении: жим лежа', pick('#ps', 's:bench') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && !document.getElementById("po-hold") && ' + listIs('pb-budget', '80'), 'цель та же, в списке — жим лежа; переключателя остальных базовых нет и здесь: под «Силой» они обычные упражнения; лимит тот же')
+      + expect(capOf + ' === 80', 'лимит недели — 80, число силового режима') + expect(progTitle + ' === "Сила: пауэрлифтерская тройка"', 'название программы')],
+    ['сила в одном движении: жим лежа', pick('#ps', 's:bench') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && !document.getElementById("po-hold") && ' + capOf + ' === 80', 'цель та же, в списке — жим лежа; переключателя остальных базовых нет и здесь: под «Силой» они обычные упражнения; лимит тот же')
       + expect(progTitle + ' === "Сила: жим лежа"', 'название программы')],
-    ['к гибриду и обратно к силе: базовое на месте', click('#pg-mix') + settle + expect(listIs('pb-budget', '70'), 'у гибрида лимит прежний — 70') + click('#pg-force') + settle
-      + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && ' + listIs('pb-budget', '80'), 'выбор под целью «Сила» запомнен, лимит снова 80')],
-    ['из силы к массе: лимит недели вернулся', click('#pg-mass') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back') + ' && ' + listIs('pb-budget', '70'), 'лимит снова 70 — тот, что стоял до силового режима')],
+    ['к гибриду и обратно к силе: базовое на месте', click('#pg-mix') + settle + expect(capOf + ' === 100', 'у гибрида лимит прежний — 100') + click('#pg-force') + settle
+      + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && ' + capOf + ' === 80', 'выбор под целью «Сила» запомнен, лимит снова 80')],
+    ['из силы к массе: лимит недели вернулся', click('#pg-mass') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back') + ' && ' + capOf + ' === 100', 'лимит снова 100 — лимит профиля')],
     ['правка мышцы', click('#mn-chest') + settle + expect('!!document.getElementById("prog-reset")', 'правка принята: есть «Сбросить правки»')],
     ['нажатие на выбранную цель правку не сбрасывает', click('#pg-mass') + settle + expect('!!document.getElementById("prog-reset") && ' + goalIs('mass') + ' && ' + listIs('pm', 'm:back'), 'черновик с правкой на месте')],
     ['вручную: списка и лимита нет, есть название', click('#pg-hand') + settle + expect(goalIs('hand') + ' && !document.querySelector("#pm, #pl, #ps, #pb-budget") && !!document.getElementById("prog-name")', 'цель «Вручную»: без уточняющего списка и лимита, с полем названия')],
-    ['снова масса: спина и лимит на месте', click('#pg-mass') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back') + ' && ' + listIs('pb-budget', '70'), 'выбор и лимит те же')],
+    ['снова масса: спина и лимит на месте', click('#pg-mass') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back') + ' && ' + capOf + ' === 100', 'выбор и лимит те же')],
     ['узкий телефон: 360', size(360, 740)],
     ['гибрид на узком телефоне', click('#pg-mix') + settle + expect(goalIs('mix') + ' && !!document.getElementById("po-grow")', 'гибрид с переключателем остальных базовых')],
     ['большой экран', size(...BIG)],
@@ -741,7 +740,7 @@ export const SCENARIOS = [
     ['убрать жим лежа из справочника', go('setup') + settle + click('#setup-more > summary') + settle + click('#ex-del-bench') + settle + expect(toastIs('Убрано из справочника: Жим лежа'), 'сообщение «Убрано из справочника»')],
     ['программа: гибрид вокруг жима на месте', go('program') + settle + expect(goalIs('mix') + ' && ' + listIs('pl', 'l:bench') + ' && ' + listOf('pl') + ' === "l:bench,l:squat,l:leg_press,l:pullup,l:deadlift,l:hip_thrust,l:ohp,l:barbell_curl"', 'выбор тот же, жим лежа в списке остался')
       + expect(progTitle + ' === "Пауэрбилдинг: жим лежа" && ' + draftRows + '[0][0].startsWith("Жим лежа")', 'жим лежа — первым в день 1: сборка взяла его из встроенного справочника')],
-    ['сила в подтягиваниях со своим лимитом недели', click('#pg-force') + settle + pick('#ps', 's:pullup') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:pullup') + ' && ' + listIs('pb-budget', '80'), 'цель «Сила», подтягивания, лимит 80') + expect(progTitle + ' === "Сила: подтягивания"', 'название программы')],
+    ['сила в подтягиваниях со своим лимитом недели', click('#pg-force') + settle + pick('#ps', 's:pullup') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:pullup') + ' && ' + capOf + ' === 80', 'цель «Сила», подтягивания, лимит 80') + expect(progTitle + ' === "Сила: подтягивания"', 'название программы')],
     ['убрать оставшиеся базовые', go('setup') + settle + click('#ex-del-leg_press') + settle + click('#ex-del-pullup') + settle + expect(toastIs('Убрано из справочника: Подтягивания'), 'сообщение «Убрано из справочника»')],
     ['программа: базовых в справочнике нет, а «Сила» и «Гибрид» есть', go('program') + settle + expect(goals + ' === "Масса,Сила,Гибрид,Вручную"', 'цели «Сила» и «Гибрид» на месте: их цель сборка берёт из встроенного справочника')
       + expect(goalIs('force') + ' && ' + listIs('ps', 's:pullup') + ' && ' + progTitle + ' === "Сила: подтягивания"', 'выбор тот же: «Сила», подтягивания')
@@ -754,48 +753,47 @@ export const SCENARIOS = [
 
   /* только в приложении: время на тренировку. Атлет называет время — сборка ставит в каждый день столько упражнений и подходов, сколько в него помещается
      (решение владельца, 23 ноября 2026: упражнений в дне — от времени), а лимит недели — самый большой, при котором самая длинная тренировка укладывается;
-     время зависит от отдыха; лимит, выбранный вручную, время снимает; выбор помнится в профиле. С 25 ноября 2026 (решение владельца) время заполняется подходами выше 10 на мышцу,
-     а в тренировке не больше десяти упражнений. Числа — те же, что в app/tests/fit.test.ts для дней «День 1…3» */
+     выбор помнится в профиле. С 25 ноября 2026 (решение владельца) время заполняется подходами выше 10 на мышцу, а в тренировке не больше десяти упражнений;
+     тем же днём (просьба владельца) время — до 2 ч 30 мин, отдых дневник ставит упражнению сам, а списка «Подходов в неделю» нет: подходы — от времени, дней и цели.
+     Числа — те же, что в app/tests/fit.test.ts для дней «День 1…3» */
   { name: 'программа: время на тренировку', data: 'seed', app: true, steps: [
-    ['программа: время не ограничено', go('program') + settle + expect(listOf('pt') + ' === "0,60,75,90,105,120" && ' + listIs('pt', '0'), 'список времени: не ограничено и от часа до двух; выбрано «не ограничено»')
-      + expect('[...document.getElementById("pt").options].map(o => o.textContent).join("|") === "не ограничено|до 1 ч|до 1 ч 15 мин|до 1 ч 30 мин|до 1 ч 45 мин|до 2 ч"', 'названия пунктов')
-      + expect(limitText + ' === "100 — твой лимит" && !("time" in ' + cfgMain + ')', 'лимит недели — свой, времени в настройке нет')
+    ['программа: время не ограничено', go('program') + settle + expect(listOf('pt') + ' === "0,60,75,90,105,120,135,150" && ' + listIs('pt', '0'), 'список времени: не ограничено и от часа до двух с половиной; выбрано «не ограничено»')
+      + expect('[...document.getElementById("pt").options].map(o => o.textContent).join("|") === "не ограничено|до 1 ч|до 1 ч 15 мин|до 1 ч 30 мин|до 1 ч 45 мин|до 2 ч|до 2 ч 15 мин|до 2 ч 30 мин"', 'названия пунктов')
+      + expect(noPicks + ' && ' + capOf + ' === 100 && !("time" in ' + cfgMain + ')', 'списков «Подходов в неделю» и отдыха нет, лимит недели — 100, времени в настройке нет')
+      + expect('document.getElementById("view").textContent.includes("отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных")', 'под днями сказано, какой отдых дневник ставит упражнению')
       + expect(dayEx + ' === 9', 'без времени в дне девять упражнений, как в первой версии')],
-    ['до полутора часов', pick('#pt', 90) + settle + expect(listIs('pt', '90') + ' && ' + limitText + ' === "100 — по времени"', 'лимит недели — по времени: сборка сама укладывает дни в полтора часа')
+    ['до полутора часов', pick('#pt', 90) + settle + expect(listIs('pt', '90') + ' && ' + capOf + ' === 100', 'лимит недели — по времени: сборка сама укладывает дни в полтора часа')
       + expect('Math.max(...' + dayMins + ') <= 90 && ' + dayMins + '.length === 3', 'ни одна тренировка не длиннее полутора часов')
-      + expect(draftSets + ' === 80 && ' + dayEx + ' === 9', 'в неделе 80 подходов, в дне до девяти упражнений')
+      + expect(draftSets + ' === 83 && ' + dayEx + ' === 9', 'в неделе 83 подхода, в дне до девяти упражнений')
       + expect(cfgMain + '.time === 90', 'время записано в настройку профиля')],
-    ['до двух часов', pick('#pt', 120) + settle + expect(limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 120', 'тренировки до двух часов')
-      + expect(draftSets + ' === 100 && ' + dayEx + ' === 10', 'в неделе 100 подходов, в дне десять упражнений: время заполнено подходами')],
-    ['до часа пятнадцати', pick('#pt', 75) + settle + expect(limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 75 && !document.getElementById("pt-note")', 'тренировки до часа пятнадцати, подсказки «не уложиться» нет')
-      + expect(draftSets + ' === 66 && ' + dayEx + ' === 6', 'в неделе 66 подходов, в дне до шести упражнений')],
-    ['отдых полторы минуты: в то же время помещается больше', pick('#prog-rest', 90) + settle + expect(listIs('pt', '75') + ' && Math.max(...' + dayMins + ') <= 75', 'время то же, тренировки до часа пятнадцати')
-      + expect(draftSets + ' === 78 && ' + dayEx + ' === 9', 'при отдыхе 1:30 — 78 подходов и до девяти упражнений')],
-    ['отдых три минуты, час: подходов меньше, но укладывается', pick('#prog-rest', 180) + settle + pick('#pt', 60) + settle + expect(limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 60 && !document.getElementById("pt-note")', 'тренировки до часа')
-      + expect(draftSets + ' === 36 && ' + dayEx + ' === 5', '36 подходов, до пяти упражнений в дне')],
+    ['до двух часов', pick('#pt', 120) + settle + expect(capOf + ' === 100 && Math.max(...' + dayMins + ') <= 120', 'тренировки до двух часов')
+      + expect(draftSets + ' === 100 && ' + dayEx + ' === 10', 'в неделе 100 подходов, в дне десять упражнений: время заполнено подходами до лимита недели')],
+    ['до двух с половиной часов', pick('#pt', 150) + settle + expect(listIs('pt', '150') + ' && ' + capOf + ' === 100 && Math.max(...' + dayMins + ') <= 150 && ' + draftSets + ' === 100', 'больше 100 подходов в неделю не бывает и при двух с половиной часах')],
+    ['до часа пятнадцати', pick('#pt', 75) + settle + expect(capOf + ' === 100 && Math.max(...' + dayMins + ') <= 75 && !document.getElementById("pt-note")', 'тренировки до часа пятнадцати, подсказки «не уложиться» нет')
+      + expect(draftSets + ' === 68 && ' + dayEx + ' === 8', 'в неделе 68 подходов, в дне до восьми упражнений')],
+    ['час: подходов меньше, но укладывается', pick('#pt', 60) + settle + expect(capOf + ' === 100 && Math.max(...' + dayMins + ') <= 60 && !document.getElementById("pt-note")', 'тренировки до часа')
+      + expect(draftSets + ' === 53 && ' + dayEx + ' === 6', '53 подхода, до шести упражнений в дне')],
     ['узкий телефон: 360', size(360, 740)],
-    ['отдых две минуты, полтора часа', pick('#prog-rest', 120) + settle + pick('#pt', 90) + settle + expect(limitText + ' === "100 — по времени" && !document.getElementById("pt-note") && ' + draftSets + ' === 80', 'снова 80 подходов, подсказки нет')],
+    ['снова полтора часа', pick('#pt', 90) + settle + expect(capOf + ' === 100 && !document.getElementById("pt-note") && ' + draftSets + ' === 83', 'снова 83 подхода, подсказки нет')],
     ['телефон', size(390, 844)],
-    ['гибрид: время то же', mode('l:bench') + settle + expect(listIs('pt', '90') + ' && ' + limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 90', 'у гибрида при полутора часах тренировки тоже до полутора часов')],
-    ['сила: лимит по времени, а не 80 по умолчанию', pick('#pt', 105) + settle + mode('p') + settle + expect(listIs('pt', '105') + ' && ' + limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 105', 'время на месте, лимит 100: выше своей цели подсобка всё равно не идёт')],
+    ['гибрид: время то же', mode('l:bench') + settle + expect(listIs('pt', '90') + ' && ' + capOf + ' === 100 && Math.max(...' + dayMins + ') <= 90', 'у гибрида при полутора часах тренировки тоже до полутора часов')],
+    ['сила: лимит по времени, а не 80 по умолчанию', pick('#pt', 105) + settle + mode('p') + settle + expect(listIs('pt', '105') + ' && ' + capOf + ' === 100 && Math.max(...' + dayMins + ') <= 105', 'время на месте, лимит 100: выше своей цели подсобка всё равно не идёт')],
     ['вручную: времени и лимита нет', click('#pg-hand') + settle + expect('!document.getElementById("pt") && !document.getElementById("pb-budget")', 'в правке вручную нет ни времени, ни лимита')],
-    ['масса: время на месте', click('#pg-mass') + settle + expect(listIs('pt', '105') + ' && ' + limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 105 && ' + draftSets + ' === 96', 'у «Равномерно» при часе сорока пяти — 96 подходов, тренировки до часа сорока пяти')],
-    ['лимит вручную снимает время', pick('#pb-budget', 70) + settle + expect(listIs('pt', '0') + ' && ' + limitText + ' === "70" && !("time" in ' + cfgMain + ')', 'лимит 70, время — «не ограничено», в настройке его нет')
-      + expect(dayEx + ' <= 10', 'без времени — снова девять мест в дне')],
-    /* лимит, найденный по времени, не должен пережить само время: под «Силой» он лежит в запасе до возврата к массе */
-    ['сила при времени, лимит вручную — и назад к массе', pick('#pt', 90) + settle + expect(limitText + ' === "100 — по времени"', 'масса при полутора часах — по времени') + click('#pg-force') + settle + pick('#pb-budget', 60) + settle
-      + expect(listIs('pt', '0') + ' && ' + limitText + ' === "60"', 'лимит 60 выбран вручную, время снято') + click('#pg-mass') + settle
-      + expect(limitText + ' === "100 — твой лимит"', 'у массы — свой лимит, а не найденный по времени, которого уже нет')],
-    ['снова по времени и принять', pick('#pt', 105) + settle + expect(limitText + ' === "100 — по времени"', 'при часе сорока пяти — по времени') + click('#prog-accept') + settle + accepted
+    ['масса: время на месте', click('#pg-mass') + settle + expect(listIs('pt', '105') + ' && ' + capOf + ' === 100 && Math.max(...' + dayMins + ') <= 105 && ' + draftSets + ' === 99', 'у «Равномерно» при часе сорока пяти — 99 подходов, тренировки до часа сорока пяти')],
+    /* лимит, найденный по времени, не должен пережить само время: под «Силой» без времени — снова 80, у массы — 100 */
+    ['сила без времени — 80, масса — 100', mode('p') + settle + pick('#pt', 0) + settle + expect(listIs('pt', '0') + ' && ' + capOf + ' === 80 && !("time" in ' + cfgMain + ')', 'под «Силой» без времени лимит — 80, времени в настройке нет')
+      + click('#pg-mass') + settle + expect(capOf + ' === 100 && ' + dayEx + ' <= 9', 'у массы — лимит профиля; без времени — снова девять мест в дне')],
+    ['снова по времени и принять', pick('#pt', 105) + settle + expect(capOf + ' === 100', 'при часе сорока пяти — по времени') + click('#prog-accept') + settle + accepted
       + expect(cfgMain + '.time === 105 && ' + cfgMain + '.program.budget === 100', 'в настройке — время 105 и программа с лимитом 100')
       + expect('JSON.stringify(' + cfgMain + '.program.fit) === JSON.stringify({ time: 105, rest: 120, mode: "even", days: 3 })', 'с программой записано, по чему найден лимит')
-      + expect(limitText + ' === "100 — по времени" && document.getElementById("prog-accept").disabled', 'сразу после «Принять» лимит тот же, и новая программа совпадает с принятой')],
+      + expect(capOf + ' === 100 && document.getElementById("prog-accept").disabled', 'сразу после «Принять» лимит тот же, и новая программа совпадает с принятой')],
     ['после перезагрузки время помнится', RELOAD],
-    ['программа после перезагрузки', go('program') + settle + expect(listIs('pt', '105') + ' && ' + limitText + ' === "100 — по времени" && Math.max(...' + dayMins + ') <= 105', 'время — час сорок пять, лимит по времени тот же, тренировки не длиннее')
+    ['программа после перезагрузки', go('program') + settle + expect(listIs('pt', '105') + ' && ' + capOf + ' === 100 && Math.max(...' + dayMins + ') <= 105', 'время — час сорок пять, лимит по времени тот же, тренировки не длиннее')
       + expect('document.getElementById("prog-accept").disabled', 'новая программа по-прежнему совпадает с принятой')],
     ['второй профиль: своё время', pick('#prof', 'p2') + settle + go('program') + settle + expect(listIs('pt', '0'), 'у второго профиля время не ограничено')],
     ['первый профиль: не ограничено — лимит снова свой', pick('#prof', 'me') + settle + go('program') + settle + pick('#pt', 0) + settle
-      + expect(listIs('pt', '0') + ' && ' + limitText + ' === "100 — твой лимит" && !("time" in ' + cfgMain + ')', 'лимит недели — свой, времени в настройке нет')]
+      + expect(listIs('pt', '0') + ' && ' + capOf + ' === 100 && !("time" in ' + cfgMain + ')', 'лимит недели — 100, времени в настройке нет')],
+    ['отдых в карточке упражнения', go('workout') + settle + press('Начать тренировку') + settle + expect('[...document.querySelectorAll("#view .ex-meta .tag")].some(e => /^отдых \\d+ мин/.test(e.textContent)) && !document.getElementById("wk-rest")', 'у упражнения в тренировке — отдых, который поставил дневник; выбора отдыха нет')]
   ] },
 
   /* только в приложении: дни «День 1…N» без привязки к дням недели и их число — два, три или четыре. Программа пересобирается под выбранное число:
@@ -820,8 +818,8 @@ export const SCENARIOS = [
       + expect('/Порядок упражнений: [^.]*день 2/.test(t)', 'заметка о порядке: во втором дне базовое встало перед разгибаниями ног')
       + expect('t.includes("Один день в неделю") && t.includes("в каждой тренировке уже по девять упражнений")', 'второй день достался не всем мышцам — и названа настоящая причина')
       + expect(progNote + '.includes("Второй день достался не всем мышцам") && !' + progNote + '.includes("Каждая мышца работает минимум")', 'пояснение режима не обещает второй день каждой мышце')],
-    ['два дня и полтора часа на тренировку', pick('#pt', 90) + settle + expect(limitText + '.endsWith(" — по времени") && ' + dayMins + '.length === 2 && Math.max(...' + dayMins + ') <= 90', 'лимит по времени, обе тренировки не длиннее полутора часов')],
-    ['время снова не ограничено', pick('#pt', 0) + settle + expect(limitText + ' === "100 — твой лимит"', 'лимит снова свой')],
+    ['два дня и полтора часа на тренировку', pick('#pt', 90) + settle + expect(noPicks + ' && ' + capOf + ' === 100 && ' + dayMins + '.length === 2 && Math.max(...' + dayMins + ') <= 90', 'лимит по времени, обе тренировки не длиннее полутора часов')],
+    ['время снова не ограничено', pick('#pt', 0) + settle + expect(capOf + ' === 100', 'лимит — лимит профиля')],
     ['вручную при дне вне недели: принять можно', click('#pg-hand') + settle + expect('!!document.getElementById("pd-away") && !document.getElementById("prog-accept").disabled', 'подсказка на месте, «Принять программу» доступна: неделя из двух дней — уже другая программа')
       + expect(draftRows + '.every(d => !d.some(t => t.startsWith("Подтягивания")))', 'в «Вручную» дневник неделю не пересобирает: подтягиваний в днях нет, пока их не добавишь')],
     /* в «Гибриде» остальные базовые по умолчанию — как подсобка (вывод 5 аудита): по проценту идёт только жим, и подтягивания переезжают, как в «Массе» */
@@ -905,8 +903,8 @@ export const SCENARIOS = [
     ['вручную', mode('manual')],
     ['равномерно', mode('even')],
     ['приоритет: ягодицы', mode('m:glutes')],
-    ['лимит недели 50', pick('#pb-budget', 50)],
-    ['лимит недели 60', pick('#pb-budget', 60)],
+    ['лимит недели 50', maybe(pick('#pb-budget', 50))],
+    ['лимит недели 60', maybe(pick('#pb-budget', 60))],
     ['что изменилось и почему', maybe(click('#prog-why > summary'))],
     ['убавить передним дельтам', click('#mn-delt_front')],
     ['прибавить разгибателям спины', click('#mp-erectors')],

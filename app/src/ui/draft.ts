@@ -6,7 +6,7 @@ import { S } from './state.ts';
 import { toast } from './toast.ts';
 import { D, render } from './render.ts';
 import { progSig } from './program.ts';
-import { lostMode, modeAfter, modeKey, setMode } from './goal.ts';
+import { lostMode, modeAfter, modeBudget, modeKey, setMode } from './goal.ts';
 import { fitBudget, timeOf } from './fit.ts';
 import { appRules, targetIds } from '../core/rules.ts';
 import type { Cfg, ProgSlots } from '../core/index.ts';
@@ -49,6 +49,9 @@ export function progDraft(cfg: Cfg, cur: ProgSlots, empty: boolean, lifts: strin
     fit = fitBudget(held.length ? held : budgets, longest, time);
     st.budget = fit.budget;
   }
+  /* (в эталоне нет) с днями «День N» списка «Подходов в неделю» нет (просьба владельца, 25 ноября 2026): без выбранного времени лимит — потолок методики,
+     лимит профиля (100), а под «Силой» — 80, как с первого дня силового режима; с выбранным временем — по времени, как выше */
+  else if (appRules()) st.budget = modeBudget(st.focus, cfg.caps.week);
   const key = st.focus + '|' + st.others + '|' + st.budget + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + Object.keys(cfg.ex).length + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + C.SLOTS.length + '|' + awaySig + (time ? '|' + time + '/' + cfg.rest : '') + (st.drop ? '|' + st.drop.join(',') : '');
   /* (в эталоне нет) черновик — та же сборка, что примерка по времени в этом показе, если лимит тот же: сборка с выбранным временем дольше (время заполняется подходами), и дважды её не считаем */
   const made = st.fit && st.fit.made; if (st.fit) delete st.fit.made;

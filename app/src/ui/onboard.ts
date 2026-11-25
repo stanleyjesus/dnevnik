@@ -2,7 +2,7 @@
    Пока в профиле нет ни тренировок, ни программы, «Обзор» — не карточка «В дневнике пока пусто», а мастер на весь экран, без вкладок:
      1. Старт — собрать программу, разложить свою по дням, вставить её текстом или перенести записи из файла копии;
         текст дневник делит на дни и упражнения (core/paste.ts), названия сверяет со справочником, незнакомые атлет выбирает сам;
-     2. Цель — масса, сила или гибрид с тем же уточняющим списком, что на «Программе», дни в неделю, время на тренировку, отдых;
+     2. Цель — масса, сила или гибрид с тем же уточняющим списком, что на «Программе», дни в неделю, время на тренировку (отдых между подходами дневник ставит упражнению сам);
      3. Программа — дни собранного черновика (тот же черновик и те же правки, что на «Программе», draft.ts); «Принять» принимает её;
      4. Веса — шаг веса снарядов этой программы (атлет вводит его сам) и известные веса её упражнений; пустые дневник оценивает
         по похожим упражнениям со штангой и гантелями (core/rules.ts, kinMax), остальные подбираются на первой тренировке;
@@ -14,7 +14,6 @@ import { S } from './state.ts';
 import { toast } from './toast.ts';
 import { saveCfg } from './storage.ts';
 import { D, go, render } from './render.ts';
-import { restSelect } from './overview.ts';
 import { acceptProgram, loadText, progDay } from './program.ts';
 import { progDraft, progLifts } from './draft.ts';
 import { goalOf, goalPicker, modeBudget } from './goal.ts';
@@ -191,8 +190,7 @@ function vGoal(): View {
       goalPicker(st, cfg, progLifts(cfg), d.pick, true),
       daysRow(),
       h('label', { class: 'f' }, h('span', null, 'Время на тренировку'), h('select', { id: 'pt', onchange: async e => { const v = +e.target.value; await saveCfg(raw => { if (v) raw.time = v; else delete raw.time; }); if (!v) { st.budget = modeBudget(st.focus, cfg.caps.week); delete st.keep; } st.draft = null; render(true); } },
-        [0].concat(TIMES.includes(time) || !time ? TIMES : TIMES.concat(time).sort((a, b) => a - b)).map(v => h('option', { value: v, selected: v === time, text: v ? 'до ' + C.fmtDur(v) : 'не ограничено' })))),
-      restSelect('onb-rest')),
+        [0].concat(TIMES.includes(time) || !time ? TIMES : TIMES.concat(time).sort((a, b) => a - b)).map(v => h('option', { value: v, selected: v === time, text: v ? 'до ' + C.fmtDur(v) : 'не ограничено' }))))),
     h('p', { class: 'sub', id: 'onb-goal-note' }, say),
     h('p', { class: 'sub', id: 'onb-sum', style: 'margin-top:6px' }, 'Получится: ' + loadText(total(pr.after.load)) + ' в неделю' + (mins.length ? ', самая длинная тренировка ≈ ' + C.fmtDur(Math.max(...mins)) : '') + '.')],
     () => to('start'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('prog') }, 'Дальше'))];
@@ -214,7 +212,7 @@ function vProg(): View {
     text ? 'Так разложилась твоя программа. Поправь подходы и порядок, добавь недостающее из списка.'
       : own ? 'Добавь в каждый день свои упражнения из списка, поставь подходы и порядок. Нет нужного упражнения — заведёшь его в «Настройке».'
       : 'Так дневник раскладывает упражнения по дням. Любое можно заменить на похожее, поменять число подходов или порядок.', [
-    own ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, daysRow(), restSelect('onb-rest')) : null,
+    own ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, daysRow()) : null,
     h('p', { class: 'sub', id: 'onb-sum', style: 'margin-bottom:8px' }, loadText(total(pr.after.load)) + ' в неделю' + (mins.length ? ' · самая длинная тренировка ≈ ' + C.fmtDur(Math.max(...mins)) : '')),
     h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null))),
     h('p', { class: 'sub', style: 'margin-top:8px' }, 'Нагрузка по мышцам и подходы в неделю — на вкладке «Программа», когда закончишь.')],

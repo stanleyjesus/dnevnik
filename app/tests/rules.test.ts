@@ -9,7 +9,7 @@ import { useDays } from '../src/core/days.ts';
 import { withStarter } from '../src/core/starter.ts';
 import { ADDS } from '../src/core/adapt.ts';
 import { LIB } from '../src/core/program.ts';
-import { EVEN, RDL_M, TIMES, TIME_EX, appRules, fillTop, inTime, isRdl, moreTime } from '../src/core/rules.ts';
+import { EVEN, RDL_M, REST, TIMES, TIME_EX, appRules, fillTop, inTime, isRdl, moreTime, restOf, restWords } from '../src/core/rules.ts';
 import type { BuildOpts, Cfg, ExDef, MuscleMap, ProgSlots, Workout } from '../src/core/types.ts';
 
 type Raw = { ex: Record<string, ExDef> };
@@ -182,12 +182,38 @@ test('баланс движений не считается: с днями «Д�
   }
 });
 
+/* ---------- отдых между подходами дневник ставит упражнению сам (просьба владельца, 25 ноября 2026) ---------- */
+
+test('отдых между подходами — по упражнению: тяжёлый день 5 мин, лёгкий день и тяжёлый день изоляции 3 мин, многосуставные со штангой 2 мин 30 с, остальные 2 мин', () => {
+  assert.deepEqual(REST, { heavy: 300, light: 180, free: 150, other: 120, iso: 120 });
+  assert.deepEqual([300, 180, 150, 120].map(restWords), ['5 мин', '3 мин', '2 мин 30 с', '2 мин']);
+  const cfg = Core.mergeCfg(withStarter(null));
+  withDays(3, () => {
+    const bench = Core.buildProgram([], cfg, { focus: 'bench', strength: true }), curl = Core.buildProgram([], cfg, { focus: 'barbell_curl', strength: true });
+    const of = (pr: Built, ids: string[]) => ids.map(id => restOf(pr.cfg, id));
+    /* цель «Силы»: тяжёлый день и лёгкий; у изоляции в силовой роли тяжёлый день — 3 × 6 на 79%, отдых как у лёгкого */
+    assert.deepEqual([of(bench, ['bench', 'bench_light']), of(curl, ['barbell_curl', 'barbell_curl_light'])], [[300, 180], [180, 180]]);
+    /* остальное — по типу упражнения: штанга и тяга от пола с гантелями — 2 мин 30 с, тренажёр, блок, гантели, вес тела и изоляция — 2 мин; ягодичный мост и гиперэкстензия — не «свободный вес» */
+    assert.deepEqual(of(bench, ['squat', 'rdl', 'db_rdl', 'ohp', 'leg_press', 'pullup', 'db_ohp', 'hip_thrust', 'back_ext', 'lat_raise', 'skullcrusher']), [150, 150, 150, 150, 120, 120, 120, 120, 120, 120, 120]);
+    /* время тренировки берёт отдых упражнения, а не профиля: с отдыхом профиля 1:00 и 3:00 — одно и то же */
+    const items = [{ ex: 'squat', n: 3 }, { ex: 'lat_raise', n: 3 }], fast = Core.mergeCfg(withStarter(null)); fast.rest = 60;
+    assert.equal(Math.round(Core.estMinutes(cfg, items) * 60), 300 + 2 * 60 + 3 * (40 + 150) + 3 * (40 + 120));
+    assert.deepEqual([Core.estMinutes(fast, items), Core.estMinutes(cfg, items, 180)], [Core.estMinutes(cfg, items), Core.estMinutes(cfg, items)]);
+    /* у пары сторон отдых между сторонами — половина */
+    assert.equal(Math.round(Core.estMinutes(cfg, [{ ex: 'wrist_db_r', n: 2 }]) * 60), 300 + 60 + 2 * (40 + 60));
+  });
+  /* с таблицей дней эталона — отдых профиля, как в эталоне */
+  const ref = Core.mergeCfg(withStarter(null));
+  assert.notEqual(Core.estMinutes(ref, [{ ex: 'squat', n: 3 }], 60), Core.estMinutes(ref, [{ ex: 'squat', n: 3 }], 180));
+  assert.equal(Math.round(Core.estMinutes(ref, [{ ex: 'squat', n: 3 }], 90) * 60), 300 + 60 + 3 * (40 + 90));
+});
+
 /* ---------- упражнений в дне — от времени на тренировку (решение владельца, 23 ноября 2026) ---------- */
 
 test('время сравнивается так, как оно показано в заголовке дня; следующее время — следующий пункт списка', () => {
-  assert.deepEqual(TIMES, [60, 75, 90, 105, 120]);
+  assert.deepEqual(TIMES, [60, 75, 90, 105, 120, 135, 150]);   // до 2 ч 30 мин — просьба владельца, 25 ноября 2026
   assert.deepEqual([102.4, 102.5, 107.4, 107.5].map(m => inTime(m, 105)), [true, true, true, false], '107 минут показаны как 1 ч 45 мин — укладываются');
-  assert.deepEqual([60, 75, 90, 105, 120, 45].map(moreTime), [75, 90, 105, 120, 0, 60]);
+  assert.deepEqual([60, 75, 90, 105, 120, 135, 150, 45].map(moreTime), [75, 90, 105, 120, 135, 150, 0, 60]);
 });
 
 test('с таблицей дней эталона время сборку не меняет: в дне девять упражнений, как в эталоне', () => {
@@ -202,30 +228,31 @@ test('с днями «День N» и выбранным временем ден
   const twoDays = (pr: Built) => Core.MUSCLES.filter(m => !cfg.ignore[m.id]).every(m => Core.SLOTS.filter(sl => (pr.after.day[sl.id][m.id] || 0) >= 2 - 0.01).length >= 2);
   /* без времени — как было: девять мест в дне, и второй день достался не всем. В «Массе» базовыми не жертвуют (пункт 8, 24 ноября 2026): подтягивания стоят в дне 2 вместе с жимом ногами */
   const free = Core.buildProgram(W, cfg, {});
-  assert.deepEqual([total(free), dayEx(free), mins(free)], [68, 9, ['1 ч 50 мин', '2 ч']]);
+  assert.deepEqual([total(free), dayEx(free), mins(free)], [68, 9, ['1 ч 50 мин', '1 ч 55 мин']]);
   assert.ok(noteOf(free, /^Один день в неделю/)!.x!.includes('в каждой тренировке уже по девять упражнений'));
-  /* два часа: десять упражнений в дне, тренировки не длиннее, второй день — у всех мышц */
+  /* два часа: десять упражнений в дне, тренировки не длиннее, второй день — у всех мышц. Дальше грудь не растёт: в базовом подходов столько, сколько их,
+     во втором упражнении — пять (MAX_SETS), третьему места нет — в тренировке десять упражнений; поэтому от 2 ч до 2 ч 30 мин программа та же */
   const two = Core.buildProgram(W, cfg, { time: 120 });
-  assert.deepEqual([total(two), dayEx(two), mins(two)], [72, 10, ['2 ч', '2 ч']]);
+  assert.deepEqual([total(two), dayEx(two), mins(two)], [68, 10, ['1 ч 50 мин', '1 ч 50 мин']]);
   assert.ok(twoDays(two) && !noteOf(two, /^Один день в неделю/), two.notes.map(n => n.t).join(' | '));
   /* больше времени — больше упражнений и подходов; каждая тренировка укладывается; второй день у каждой мышцы — от 1 ч 15 мин (с предплечьями вне расчёта, вывод 2 аудита) */
   const rows = TIMES.map(t => { const pr = Core.buildProgram(W, cfg, { time: t }); assert.ok(Core.SLOTS.every(sl => inTime(Core.estMinutes(pr.cfg, pr.slots[sl.id]), t)), t + ': ' + mins(pr)); return [t, total(pr), dayEx(pr), twoDays(pr)]; });
-  assert.deepEqual(rows, [[60, 30, 6, false], [75, 40, 8, true], [90, 50, 10, true], [105, 61, 10, true], [120, 72, 10, true]]);
+  assert.deepEqual(rows, [[60, 33, 7, false], [75, 41, 9, true], [90, 46, 10, true], [105, 64, 10, true], [120, 68, 10, true], [135, 68, 10, true], [150, 68, 10, true]]);
 }));
 
 test('с выбранным временем заметка называет время: что не поместилось и какое время поможет', () => {
   const W = seedW(), cfg = appCfg(seedRaw());
   withDays(3, () => {
     const n = noteOf(Core.buildProgram(W, cfg, { time: 75 }), /^Нагрузка поровну/)!;
-    assert.ok(n.x!.includes('задние дельты и бицепс бедра выше не поднять — в 1 ч 15 мин на тренировку больше не помещается. Поэтому уровень общий, но ниже. Лимит недели тут ни при чём: занято 66 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 30 мин.'), String(n.x));
-    /* два часа — последний пункт списка: больше времени не советуется */
-    const top = noteOf(Core.buildProgram(W, cfg, { time: 120 }), /^Нагрузка поровну/);
+    assert.ok(n.x!.includes('грудь, задние дельты, бицепс и квадрицепс выше не поднять — в 1 ч 15 мин на тренировку больше не помещается. Поэтому уровень общий, но ниже. Лимит недели тут ни при чём: занято 68 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 30 мин.'), String(n.x));
+    /* два с половиной часа — последний пункт списка: больше времени не советуется */
+    const top = noteOf(Core.buildProgram(W, cfg, { time: 150 }), /^Нагрузка поровну/);
     assert.ok(!top || !top.x!.includes('время на тренировку от'), String(top && top.x));
   });
   withDays(2, () => {
     /* уровень ниже ради второго дня: так и сказано (на примерных данных — с приоритетом «Руки») */
     const n = noteOf(Core.buildProgram(W, cfg, { prio: 'arms', time: 90 }), /^Приоритет/)!;
-    assert.ok(n.x!.includes('уровнем выше у части мышц (квадрицепс и бицепс бедра) остался бы один день в неделю, а в 1 ч 30 мин на тренировку не помещается и то и другое. Уровни ниже, пропорция та же. Лимит недели тут ни при чём: занято 47 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 45 мин.'), String(n.x));
+    assert.ok(n.x!.includes('уровнем выше у части мышц (квадрицепс) остался бы один день в неделю, а в 1 ч 30 мин на тренировку не помещается и то и другое. Уровни ниже, пропорция та же. Лимит недели тут ни при чём: занято 46 подходов из 100. Поможет ещё один тренировочный день или время на тренировку от 1 ч 45 мин.'), String(n.x));
   });
 });
 
@@ -273,11 +300,12 @@ test('с выбранным временем время заполняется �
 /* Дни выравниваются по длине тренировки (просьба владельца, 25 ноября 2026; rules.ts, EVEN): с днями «День N» — при любом числе дней и по оценке времени.
    Пример владельца — встроенный справочник, профиль без записей, «Сила: жим лежа», три дня, 2 ч, отдых 2:00: было 29 / 16 / 13 подходов, 1 ч 40 мин, 55 и 45 мин */
 const minutes = (pr: Built) => Core.SLOTS.map(sl => Core.estMinutes(pr.cfg, pr.slots[sl.id]));
-test('дни выравниваются по длине: «Сила: жим лежа», три дня, 2 ч — 1 ч 10 мин, 1 ч 5 мин и 1 ч 5 мин; подходов и объёма мышц столько же, сразу после «Принять» — та же программа', () => withDays(3, () => {
+test('дни выравниваются по длине: «Сила: жим лежа», три дня, 2 ч — 1 ч 10 мин, 1 ч 15 мин и 1 ч 10 мин; подходов и объёма мышц столько же, сразу после «Принять» — та же программа', () => withDays(3, () => {
   const raw = withStarter(null) as Raw, cfg = Core.mergeCfg(plain(raw)), tracked = Core.MUSCLES.filter(m => !cfg.ignore[m.id]).map(m => m.id), opts: BuildOpts = { focus: 'bench', strength: true, time: 120, budget: 100 };
   const pr = Core.buildProgram([], cfg, opts);
-  assert.deepEqual([Core.SLOTS.map(sl => pr.after.load[sl.id]), total(pr)], [[20, 19, 19], 58]);
-  assert.deepEqual(minutes(pr).map(m => Core.fmtDur(m)), ['1 ч 10 мин', '1 ч 5 мин', '1 ч 5 мин']);
+  assert.deepEqual([Core.SLOTS.map(sl => pr.after.load[sl.id]), total(pr)], [[18, 21, 19], 58]);
+  /* отдых — по упражнению (rules.ts, REST): у тяжёлого дня жима 5 мин, у лёгкого 3 мин — в днях с ними подходов меньше */
+  assert.deepEqual(minutes(pr).map(m => Core.fmtDur(m)), ['1 ч 10 мин', '1 ч 15 мин', '1 ч 10 мин']);
   /* уровень мышц тот же, что до выравнивания: под «Силой» подсобка 8, грудь — мышца цели — 12 (выбор владельца 25 ноября 2026: время подходами не заполняется) */
   assert.deepEqual([spanOf(pr, ['chest']), spanOf(pr, tracked.filter(m => m !== 'chest'))], ['12–12', '8–11']);
   for (const m of tracked) assert.ok(Core.SLOTS.filter(sl => ((pr.after.day[sl.id] || {})[m] || 0) >= 2 - 0.01).length >= 2, m + ': меньше двух дней в неделю');
@@ -300,15 +328,19 @@ test('дни выравниваются по длине при любом чис
 });
 
 test('выравнивание дней: подход переезжает в то же упражнение или в упражнение с теми же мышцами другого дня — и это названо одной заметкой, а не прибавкой и убавкой', () => {
-  const cfg = appCfg(seedRaw());
+  const cfg = appCfg(seedRaw()), named = (pr: Built, name: string) => [/^Прибавлены подходы/, /^Убраны подходы/].every(t => { const v = noteOf(pr, t); return !v || !v.x!.includes(name); });
   withDays(3, () => {
-  const pr = Core.buildProgram(seedW(), cfg, { prio: 'back' });
-  const n = noteOf(pr, /^Дни выровнены по длине/)!;
-  assert.ok(n.x!.startsWith('Разгибания ног в тренажере (день 2 → день 3, 1 подход). Упражнение или подход переезжает из самого длинного дня в самый короткий, пока разница между ними больше 10 минут: объём за неделю тот же, меняется только день.'), String(n.x));
-  assert.deepEqual([pr.slots.wed.find(e => e.ex === 'leg_ext')!.n, pr.slots.fri.find(e => e.ex === 'leg_ext')!.n], [2, 4]);
-  for (const t of [/^Прибавлены подходы/, /^Убраны подходы/]) { const v = noteOf(pr, t); assert.ok(!v || !v.x!.includes('Разгибания ног'), String(v && v.x)); }
-  const bench = Core.buildProgram(seedW(), cfg, { focus: 'bench' });
-  assert.ok(noteOf(bench, /^Дни выровнены по длине/)!.x!.startsWith('Бицепс бедра сидя в тренажере → Бицепс бедра на тренажере лежа на животе (день 1 → день 3, 1 подход).'));
+    const pr = Core.buildProgram(seedW(), cfg, { prio: 'legs' });
+    const n = noteOf(pr, /^Дни выровнены по длине/)!;
+    assert.ok(n.x!.startsWith('Бицепс бедра сидя в тренажере → Бицепс бедра на тренажере лежа на животе (день 1 → день 3, 1 подход). Упражнение или подход переезжает из самого длинного дня в самый короткий, пока разница между ними больше 10 минут: объём за неделю тот же, меняется только день.'), String(n.x));
+    assert.deepEqual([pr.slots.mon.find(e => e.ex === 'leg_curl_seated')!.n, pr.slots.fri.find(e => e.ex === 'leg_curl_lying')!.n], [3, 4]);
+    assert.ok(named(pr, 'Бицепс бедра'), pr.notes.map(v => v.t + ': ' + v.x).join(' | '));
+  });
+  /* подход ушёл в новое упражнение: его называет заметка «Новое …», у прежнего упражнения в итоге столько подходов, сколько было, — ни переезда, ни прибавки */
+  withDays(2, () => {
+    const pr = Core.buildProgram(seedW(), cfg, { prio: 'legs' });
+    assert.ok(!noteOf(pr, /^Дни выровнены по длине/) && named(pr, 'Разгибания ног') && pr.slots.wed.find(e => e.ex === 'leg_ext')!.n === 3, pr.notes.map(v => v.t + ': ' + v.x).join(' | '));
+    assert.ok(pr.notes.some(v => v.t === 'Новое в день 1: Разгибания ног в тренажере'), pr.notes.map(v => v.t).join(' | '));
   });
 });
 
