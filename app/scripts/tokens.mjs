@@ -134,10 +134,14 @@ const ADDED_CSS = {
   '.pdots {': 'точки дней над каруселью: день бывает длиннее экрана',
   '.pdots button {': 'точка дня — кнопка 20×24 px, открывает свой день',
   '.pdots button::after': 'сама точка: 8 px, скругление 3 px, как в образце',
-  '.pdots button[aria-current="true"]::after': 'открытый день — полоса 80 px цвета акцента'
+  '.pdots button[aria-current="true"]::after': 'открытый день — полоса 80 px цвета акцента',
+  'html { -webkit-tap-highlight-color: transparent; }': 'нажатие на iPhone не мигает серой заливкой (просьба владельца, 25 ноября 2026: «при нажатии экран моргает»)',
+  '.btn, .seg button, .ex-card, .tabs a {': 'кнопки, карточки выбора и вкладки меняют вид плавно',
+  '.btn:not([disabled]):active': 'нажатая кнопка, карточка или вкладка чуть утапливается — нажатие видно, пока палец на ней',
+  '.ghost .pslot': 'тающий на мгновение прежний экран (smooth.ts) не доигрывает переходы карусели дней'
 };
 /* новые файлы экранов: в эталоне их нет (types.ts — только типы, без исполняемого кода) */
-const NEW_UI = ['platform.ts', 'importer.ts', 'pwa.ts', 'types.ts', 'device.ts', 'starter.ts', 'goal.ts', 'fit.ts', 'draft.ts', 'onboard.ts', 'builtday.ts', 'care.ts'];   // draft.ts — черновик новой программы, вынесенный из vProgram: его же собирает онбординг (onboard.ts, решение владельца 25 ноября 2026); builtday.ts — день программы, которую собрал дневник: только «Заменить» (онбординг и «Программа» с днями «День N»)
+const NEW_UI = ['platform.ts', 'importer.ts', 'pwa.ts', 'types.ts', 'device.ts', 'starter.ts', 'goal.ts', 'fit.ts', 'draft.ts', 'onboard.ts', 'builtday.ts', 'care.ts', 'smooth.ts'];   // draft.ts — черновик новой программы, вынесенный из vProgram: его же собирает онбординг (onboard.ts, решение владельца 25 ноября 2026); builtday.ts — день программы, которую собрал дневник: только «Заменить» (онбординг и «Программа» с днями «День N»)
 
 const read = f => fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
 const parse = (code, sourceType) => { const toks = []; const ast = acorn.parse(code, { ecmaVersion: 'latest', sourceType, onToken: toks }); return { ast, toks }; };

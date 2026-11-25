@@ -29,10 +29,10 @@ export function careBox(ro?: boolean) {
   const can = Object.keys(cfg.ex).filter(id => !cfg.ex[id].stop && cfg.ex[id].mode !== 'light').sort((a, b) => C.exName(cfg, a).localeCompare(C.exName(cfg, b), 'ru'));
   return h('div', { id: 'care' },
     h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Что болит'),
-    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Упражнения, которые нагружают отмеченное место, останутся в программе с красной пометкой: заменить их ты решишь сам.'),
+    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Упражнения на это место останутся с красной пометкой — заменишь сам.'),
     h('div', { class: 'picks', role: 'group', 'aria-label': 'Что болит' }, ZONES.map(z => h('button', { type: 'button', class: 'btn sm', id: 'care-' + z.id, disabled: !!ro, 'aria-pressed': String(care.includes(z.id)), onclick: () => zone(z.id) }, z.n))),
     h('div', { class: 'eyebrow', style: 'margin:14px 0 4px' }, 'Стоп-упражнения'),
-    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Их дневник не поставит в программу и не предложит в заменах.'),
+    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Их не будет в программе и в заменах.'),
     stops.length ? h('div', { class: 'picks', id: 'stop-list', style: 'margin-bottom:8px' }, stops.map(id => h('span', { class: 'tag crit stop' }, C.exName(cfg, id),
       ro ? null : h('button', { type: 'button', class: 'x', id: 'stop-off-' + id, 'aria-label': 'Убрать из стоп-упражнений: ' + C.exName(cfg, id), onclick: () => stop(id, false) }, '×')))) : null,
     ro ? null : h('select', { id: 'stop-add', 'aria-label': 'Добавить стоп-упражнение', onchange: e => { if (e.target.value) stop(e.target.value, true); } },

@@ -466,3 +466,7 @@ input.gear-n { flex: 1 1 110px; min-width: 0; min-height: 32px; padding: 2px 8px
 .pdots button { height: 24px; padding: 0 6px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
 .pdots button::after { content: ""; width: 8px; height: 8px; border-radius: 3px; background: var(--line-2); transition: width .3s ease-out, background-color .3s; }
 .pdots button[aria-current="true"]::after { width: 80px; background: var(--accent); }
+html { -webkit-tap-highlight-color: transparent; }   /* на iPhone нажатие не мигает серой заливкой */
+.btn, .seg button, .ex-card, .tabs a { transition: transform .12s ease-out, background-color .15s, border-color .15s, color .15s, box-shadow .15s; }
+.btn:not([disabled]):active, .seg button:active, .ex-card:active, .tabs a:active { transform: scale(.97); }
+.ghost .pslot, .ghost .pday, .ghost .pnotch, .ghost .plab { transition: none; }

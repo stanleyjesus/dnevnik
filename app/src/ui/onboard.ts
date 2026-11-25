@@ -18,10 +18,11 @@ import { dbErr, toast } from './toast.ts';
 import { saveCfg } from './storage.ts';
 import { D, go, render } from './render.ts';
 import { acceptProgram, loadText, progDay } from './program.ts';
-import { builtDay } from './builtday.ts';   // у программы, которую собрал дневник, только «Заменить» (решение владельца, 25 ноября 2026)
+import { builtDay } from './builtday.ts';
+import { bodyMap } from './bodymap.ts';   // фигура с нагрузкой мышц на последнем шаге (просьба владельца, 25 ноября 2026)   // у программы, которую собрал дневник, только «Заменить» (решение владельца, 25 ноября 2026)
 import { careBox, pairsRow } from './care.ts';   // что беречь и дни подряд (решение владельца, 25 ноября 2026)
 import { progDraft, progLifts } from './draft.ts';
-import { goalOf, goalPicker, modeBudget } from './goal.ts';
+import { goalPicker, modeBudget } from './goal.ts';
 import { TIMES, timeOf } from './fit.ts';
 import { weekDays } from './platform.ts';
 import { importBox, pickBackup } from './importer.ts';
@@ -77,9 +78,11 @@ function skip() { skipped.add(S.profile); O!.done = true; render(); }
 /* мастер закончен: дальше — обычные вкладки */
 function finish(view: string) { O!.done = true; S.ui.plan = null; go(view); }
 /* шаг мастера: номер, заголовок, пояснение в одну-две строки, содержимое и кнопки внизу */
+let shown = '';   // шаг, который на экране: появление шага (data-enter) — только при переходе на него, а не при каждой перерисовке внутри шага
 function frame(title: string, text: string | null, body: Kid[], back: (() => void) | null, next: Kid) {
-  const o = O!, all = seq(o), n = all.indexOf(o.step) + 1;
-  return h('section', { class: 'card', id: 'onb', style: 'max-width:760px;margin:0 auto;width:100%' },
+  const o = O!, all = seq(o), n = all.indexOf(o.step) + 1, enter = shown !== o.step;
+  shown = o.step;
+  return h('section', { class: 'card', id: 'onb', 'data-enter': enter ? '' : null, style: 'max-width:760px;margin:0 auto;width:100%' },
     h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow', id: 'onb-n' }, 'Шаг ' + n + ' из ' + all.length), h('h2', null, title)),
       o.step === 'start' || o.step === 'goal' || o.step === 'care' || o.step === 'paste' || o.step === 'prog' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-skip', onclick: skip }, 'Пропустить')
         : o.step === 'done' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-end', onclick: () => finish('overview') }, 'В дневник') : null),
@@ -132,12 +135,12 @@ const daysRow = () => h('div', { class: 'pf', id: 'pd' }, h('span', null, 'Дн�
 
 function vStart(): View {
   const opt = (id: string, title: string, text: string, act: () => void) => h('button', { type: 'button', class: 'ex-card', id, onclick: act }, h('span', { class: 'nm' }, title), h('span', { class: 'sub' }, text));
-  return [frame('С чего начнём?', 'Дневник ведёт твои тренировки, строит план следующей и подсказывает веса. Записи хранятся только на этом устройстве.', [
+  return [frame('С чего начнём?', 'Записи хранятся только на этом устройстве.', [
     h('div', { class: 'stack', style: 'gap:8px' },
-      opt('onb-build', 'Собрать программу', 'Дневник подберёт упражнения по дням под твою цель и время.', () => { O!.path = 'build'; if (O!.focus === 'manual') O!.focus = 'even'; S.ui.prog = null; to('goal'); }),
-      opt('onb-own', 'У меня своя программа', 'Разложишь свои упражнения по дням сам.', () => { O!.path = 'own'; O!.focus = 'manual'; S.ui.prog = null; to('prog'); }),
-      opt('onb-paste', 'Вставить программу текстом', 'Из заметок: дни и упражнения с подходами — дневник разложит их сам.', () => { O!.path = 'paste'; O!.focus = 'manual'; to('paste'); }),
-      opt('onb-import', 'Перенести записи из файла', 'Резервная копия этого дневника с другого устройства.', pickBackup)),
+      opt('onb-build', 'Собрать программу', 'Под твою цель и время.', () => { O!.path = 'build'; if (O!.focus === 'manual') O!.focus = 'even'; S.ui.prog = null; to('goal'); }),
+      opt('onb-own', 'У меня своя программа', 'Свои упражнения по дням.', () => { O!.path = 'own'; O!.focus = 'manual'; S.ui.prog = null; to('prog'); }),
+      opt('onb-paste', 'Вставить программу текстом', 'Из заметок — дневник разложит сам.', () => { O!.path = 'paste'; O!.focus = 'manual'; to('paste'); }),
+      opt('onb-import', 'Перенести записи из файла', 'Резервная копия с другого устройства.', pickBackup)),
     importBox()], null, h('span'))];
 }
 
@@ -177,36 +180,30 @@ function vPaste(): View {
     if (named.length && !(await saveCfg(raw => { for (const x of named) if (raw.ex[x.id] && !raw.ex[x.id].work) { raw.ex[x.id].work = x.it.w; raw.ex[x.id].workR = x.it.lo; } }))) return;
     S.ui.prog = null; S.ui.plan = null; P.fill = true; to('prog');
   };
-  return [frame('Программа текстом', 'Вставь программу из заметок: дни — строками «День 1», «День 2», под ними упражнения, по одному в строке, можно с подходами и весом.', [
+  return [frame('Программа текстом', 'Дни — строками «День 1», «День 2», под ними упражнения по одному в строке.', [
     h('textarea', { id: 'onb-text', rows: 9, placeholder: EXAMPLE, 'aria-label': 'Программа текстом', oninput: e => { P.text = e.target.value; } }, P.text),
     h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { type: 'button', class: 'btn', id: 'onb-parse', onclick: parse }, 'Разобрать')),
     days ? h('div', { id: 'onb-parsed', style: 'margin-top:12px' },
-      h('p', { class: 'sub', style: 'margin-bottom:8px' }, 'Дней: ' + P.days!.length + '.' + (P.days!.length > 4 ? ' Дневник ведёт от двух до четырёх дней — возьмутся первые четыре.' : P.days!.length < 2 ? ' Дневник ведёт от двух дней — второй заполнишь на следующем шаге.' : '') + ' Проверь, что дневник узнал: незнакомое выбери из списка или добавь новым.'),
+      h('p', { class: 'sub', style: 'margin-bottom:8px' }, 'Дней: ' + P.days!.length + '.' + (P.days!.length > 4 ? ' Возьмутся первые четыре.' : P.days!.length < 2 ? ' Второй заполнишь дальше.' : '') + ' Незнакомое выбери из списка.'),
       days.map((d, n) => h('div', { style: 'margin-bottom:10px' }, h('b', null, 'День ' + (n + 1) + (d.name ? ' · ' + d.name : '')), d.items.map((it, i) => row(n, it, i))))) : null],
     () => to('start'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', disabled: !chosen, onclick: next }, 'Дальше'))];
 }
 
 function vGoal(): View {
-  const cfg = D.cfg, d = draft(), st = d.st, pr = d.pr, time = timeOf(S.cfgRaw);
-  const mins = C.SLOTS.filter(sl => pr.slots[sl.id].length).map(sl => C.estMinutes(pr.cfg, pr.slots[sl.id], cfg.rest));
-  const goal = goalOf(st.focus);
-  const say = goal === 'force' ? 'Сила: больше вес в одном движении или в тройке — тяжёлый и лёгкий день, остальное подсобка.'
-    : goal === 'mix' ? 'Гибрид: сила в одном движении и масса во всём остальном.' : 'Масса: больше мышц — подходы делятся между мышцами, вес растёт с повторами.';
-  return [frame('Цель и время', 'Выбери цель, сколько дней в неделю тренируешься и сколько времени готов уделять тренировке. На следующем шаге программу можно поправить.', [
+  const cfg = D.cfg, d = draft(), st = d.st, time = timeOf(S.cfgRaw);
+  return [frame('Цель и время', null, [
     h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' },
       goalPicker(st, cfg, progLifts(cfg), d.pick, true),
       daysRow(),
       pairsRow(),
       h('label', { class: 'f' }, h('span', null, 'Время на тренировку'), h('select', { id: 'pt', onchange: async e => { const v = +e.target.value; await saveCfg(raw => { if (v) raw.time = v; else delete raw.time; }); if (!v) { st.budget = modeBudget(st.focus, cfg.caps.week); delete st.keep; } st.draft = null; render(true); } },
-        [0].concat(TIMES.includes(time) || !time ? TIMES : TIMES.concat(time).sort((a, b) => a - b)).map(v => h('option', { value: v, selected: v === time, text: v ? 'до ' + C.fmtDur(v) : 'не ограничено' }))))),
-    h('p', { class: 'sub', id: 'onb-goal-note' }, say),
-    h('p', { class: 'sub', id: 'onb-sum', style: 'margin-top:6px' }, 'Получится: ' + loadText(total(pr.after.load)) + ' в неделю' + (mins.length ? ', самая длинная тренировка ≈ ' + C.fmtDur(Math.max(...mins)) : '') + '.')],
+        [0].concat(TIMES.includes(time) || !time ? TIMES : TIMES.concat(time).sort((a, b) => a - b)).map(v => h('option', { value: v, selected: v === time, text: v ? 'до ' + C.fmtDur(v) : 'не ограничено' })))))],
     () => to('start'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('care') }, 'Дальше'))];
 }
 
 /* что беречь: больные места и стоп-упражнения; ничего не отмечать — тоже ответ */
 function vCare(): View {
-  return [frame('Что беречь', 'Отметь, что болит, и упражнения, которые тебе нельзя. Нечего отмечать — просто нажми «Дальше».', [careBox()],
+  return [frame('Что беречь', 'Нечего отмечать — жми «Дальше».', [careBox()],
     () => to('goal'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('prog') }, 'Дальше'))];
 }
 
@@ -279,7 +276,6 @@ function dayCarousel(days: HTMLElement[]): Kid[] {
 
 function vProg(): View {
   const cfg = D.cfg, d = draft(), pr = d.pr, P = cfg.program, own = O!.path !== 'build', text = O!.path === 'paste';
-  const mins = C.SLOTS.filter(sl => pr.slots[sl.id].length).map(sl => C.estMinutes(pr.cfg, pr.slots[sl.id], cfg.rest));
   const accept = async () => {
     O!.step = 'weights'; O!.took = true;                                // до перерисовки внутри acceptProgram: мастер не должен закончиться, увидев программу
     await acceptProgram(pr, d.manual ? pr.name : null);
@@ -289,14 +285,9 @@ function vProg(): View {
   const next = d.changed ? h('button', { type: 'button', class: 'btn primary', id: 'onb-accept', onclick: accept }, 'Принять программу')
     : P ? h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('weights') }, 'Дальше')
     : h('button', { type: 'button', class: 'btn primary', id: 'onb-accept', disabled: true }, 'Принять программу');
-  return [frame(own ? 'Твоя программа' : 'Программа',
-    text ? 'Так разложилась твоя программа. Поправь подходы и порядок, добавь недостающее из списка.'
-      : own ? 'Добавь в каждый день свои упражнения из списка, поставь подходы и порядок. Нет нужного упражнения — заведёшь его в «Настройке».'
-      : 'Так дневник раскладывает упражнения по дням: порядок и подходы он посчитал сам. Любое упражнение можно заменить на похожее.', [
+  return [frame(own ? 'Твоя программа' : 'Программа', null, [   // на шаге только дни программы (просьба владельца, 25 ноября 2026)
     own ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, daysRow()) : null,
-    h('p', { class: 'sub', id: 'onb-sum', style: 'margin-bottom:8px' }, loadText(total(pr.after.load)) + ' в неделю' + (mins.length ? ' · самая длинная тренировка ≈ ' + C.fmtDur(Math.max(...mins)) : '')),
-    dayCarousel(C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit))),
-    h('p', { class: 'sub', style: 'margin-top:8px' }, 'Нагрузка по мышцам и подходы в неделю — на вкладке «Программа», когда закончишь.')],
+    dayCarousel(C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit)))],
     () => to(text ? 'paste' : own ? 'start' : 'care'), next)];
 }
 
@@ -379,7 +370,7 @@ function vWeights(): View {
   };
   const bodyBox = bodyIds.length ? [
     h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Упражнения с весом тела'),
-    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'В подтягиваниях вес — это ты сам: дневник возьмёт вес тела и сколько раз подряд у тебя получается.'),
+    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Вес тела и сколько раз подряд получается.'),
     h('div', { class: 'row', id: 'onb-bw', style: 'flex-wrap:nowrap;gap:8px;margin-bottom:8px' }, h('span', { class: 'grow', style: 'min-width:0' }, 'Вес тела'),
       h('input', { class: 'num sm', type: 'text', inputmode: 'decimal', id: 'onb-bw-kg', placeholder: 'кг', 'aria-label': 'Вес тела, кг', value: bw ? C.fmt(bw, 1) : '', onchange: e => setBw(e.target) }), h('span', { class: 'sub', style: 'min-width:96px' }, 'кг')),
     h('div', { class: 'kw', id: 'onb-body', style: 'margin-bottom:16px' }, bodyIds.map(bodyRow))] : null;
@@ -391,29 +382,28 @@ function vWeights(): View {
   };
   return [frame('Веса', null, [
     h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Шаг веса'),
-    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'На сколько прибавляется вес на снаряде в твоём зале. Не знаешь — нажми обычное значение.'),
+    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Прибавка веса на снаряде в твоём зале.'),
     h('div', { class: 'stack', id: 'onb-gear', style: 'gap:6px;margin-bottom:16px' }, gears.map(g => h('div', { class: 'row', style: 'flex-wrap:nowrap;gap:8px' },
       h('span', { class: 'grow', style: 'min-width:0' }, cfg.gear[g].n),
       h('input', { class: 'num sm', type: 'text', inputmode: 'decimal', id: 'onb-step-' + g, placeholder: 'кг', 'aria-label': 'Шаг веса, кг: ' + cfg.gear[g].n, value: o.steps[g] ? C.fmt(cfg.gear[g].step, 3) : '', onchange: e => setStep(g, e.target.value) }),
       o.steps[g] ? h('span', { class: 'sub', style: 'min-width:96px' }, 'кг') : h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-step-usual-' + g, style: 'min-width:96px', onclick: () => setStep(g, String(usual(g))) }, 'обычно ' + C.fmt(usual(g)))))),
     bodyBox,
     h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Веса упражнений'),
-    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Заполни то, что уже делал: рабочий вес с повторами или разовый максимум. Пустые со штангой и гантелями дневник оценит по похожим, остальные подберёшь на первой тренировке.'),
+    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Что знаешь: рабочий вес с повторами или разовый максимум.'),
     h('div', { class: 'kw', id: 'known' }, head, ids.filter(id => !bodyIds.includes(id)).map(row))],
     () => { S.ui.prog = null; to('prog'); }, h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: next }, 'Дальше'))];
 }
 
+/* программа готова: дни с весами старта — той же каруселью, под ними фигура с недельной нагрузкой мышц (просьба владельца, 25 ноября 2026) */
 function vDone(): View {
-  const cfg = D.cfg, P = cfg.program, cur = C.currentSlots(D.W, cfg), load = C.progTally(cfg, cur).load;
-  const tip = (t: string, x: string) => h('div', { class: 'why' }, h('b', null, t), h('div', { class: 'sub' }, x));
-  return [frame('Программа готова', P ? '«' + P.name + '»: ' + loadText(total(load)) + ' в неделю. По ней пойдут следующие тренировки.' : null, [
-    h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => progDay(cfg, sl, cur[sl.id], load[sl.id], null, null, null))),
-    h('div', { style: 'margin-top:12px' },
-      Object.keys(O!.away).filter(id => cfg.ex[id] && cfg.ex[O!.away[id].to]).map(id => tip('Вместо «' + C.exName(cfg, id) + '» пока «' + C.exName(cfg, O!.away[id].to) + '»',
-        'Подходы идут от ' + C.rangeOf(D.W, cfg, id)[0] + ' повторов, а у тебя пока ' + O!.reps[id] + '. Тяга нагружает те же мышцы, и вес в ней подбирается. Когда получится больше, верни их на «Программе» кнопкой «Заменить».')),
-      tip('Записывай вес и повторы каждого подхода', 'Со второй тренировки дневник подставляет веса сам и показывает цель по повторам.'),
-      tip('Вес без старта подбирается на первой тренировке', 'Возьми вес, с которым повторы попадают в диапазон, а в запасе остаётся один-два повтора. Лучше начать легче.'),
-      tip('Программу можно поправить', 'Дни, упражнения и подходы — на вкладке «Программа», шаг веса и веса — в «Настройке».'))],
+  const cfg = D.cfg, cur = C.currentSlots(D.W, cfg), t = C.progTally(cfg, cur);
+  const tip = (x: string, y: string) => h('div', { class: 'why' }, h('b', null, x), h('div', { class: 'sub' }, y));
+  return [frame('Программа готова', null, [
+    dayCarousel(C.SLOTS.map(sl => progDay(cfg, sl, cur[sl.id], t.load[sl.id], null, null, null))),
+    Object.keys(O!.away).filter(id => cfg.ex[id] && cfg.ex[O!.away[id].to]).map(id => tip('Вместо «' + C.exName(cfg, id) + '» пока «' + C.exName(cfg, O!.away[id].to) + '»',
+      'У тебя пока ' + O!.reps[id] + ' повторов, нужно от ' + C.rangeOf(D.W, cfg, id)[0] + '. Вернёшь кнопкой «Заменить» на «Программе».')),
+    h('div', { id: 'onb-body-map', style: 'margin-top:14px' }, h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Нагрузка мышц за неделю: ' + loadText(total(t.load))),
+      bodyMap(t.pv, { z: cfg.zones, ignore: cfg.ignore, sel: null, pick: null }))],
     () => to('weights'), h('button', { type: 'button', class: 'btn primary', id: 'onb-go', onclick: () => finish('workout') }, 'Открыть первую тренировку'))];
 }
 

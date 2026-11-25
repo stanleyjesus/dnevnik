@@ -3,6 +3,7 @@
 import { readDevice } from './device.ts';
 import { softRender } from './render.ts';
 import { toast } from './toast.ts';
+import { smooth } from './smooth.ts';
 
 declare const __DEV__: boolean;
 
@@ -18,3 +19,4 @@ if (!__DEV__ && 'serviceWorker' in navigator) {
   });
 }
 void readDevice(softRender);
+smooth();   // нажатия и смена экрана — плавно, без моргания (smooth.ts, просьба владельца 25 ноября 2026)
