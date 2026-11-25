@@ -892,7 +892,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
      (решение владельца, 24 ноября 2026, пункт 8) */
   if (roles && roles.plain) {
     const off = [...new Set(all().map(e => e.ex))].filter(id => cfg.ex[id] && cfg.ex[id].stored === 'cycle' && cfg.ex[id].mode !== 'cycle' && cfg0.ex[id] && cfg0.ex[id].mode === 'cycle');
-    if (off.length) note(list(off.map(nm)) + ' — по двойной прогрессии', 'Под «Силой» по проценту идёт только цель. ' + (off.length > 1 ? 'Остальные базовые — обычные многосуставные' : 'Это базовое — обычное многосуставное') + ': ' + TYPE.compound.lo + '–' + (TYPE.compound.lo + TYPE.compound.w) + ' повторов ' + rirText(cfg, off) + ', после цели, подходов — сколько нужно мышцам.');
+    if (off.length) note(list(off.map(nm)) + ' — по двойной прогрессии', (opts.strength ? 'Под «Силой»' : 'В «Гибриде» с остальными базовыми «как подсобка»') + ' по проценту идёт только цель. ' + (off.length > 1 ? 'Остальные базовые — обычные многосуставные' : 'Это базовое — обычное многосуставное') + ': ' + TYPE.compound.lo + '–' + (TYPE.compound.lo + TYPE.compound.w) + ' повторов ' + rirText(cfg, off) + ', после цели, подходов — сколько нужно мышцам.');
   }
   if (appRules()) {
     const own = MUSCLES.filter(m => !cfg.ignore[m.id]).map(m => m.id), pm = group && !own.every(m => group.m.includes(m)) ? group.m.filter(m => !cfg.ignore[m]) : aimM.length && !own.every(m => aimM.includes(m)) ? aimM : [];
