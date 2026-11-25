@@ -411,7 +411,7 @@ function vDone(): View {
 
 /** Мастер вместо пустого «Обзора» */
 export function vOnboard(): View {
-  if (!O || O.gen !== S.gen) O = { gen: S.gen, step: 'start', path: 'build', focus: 'even', steps: {}, took: false, done: false, paste: { text: '', days: null, pick: {}, gear: {}, fill: false }, reps: {}, away: {}, day: 0 };
+  if (!O || O.gen !== S.gen) { shown = ''; O = { gen: S.gen, step: 'start', path: 'build', focus: 'even', steps: {}, took: false, done: false, paste: { text: '', days: null, pick: {}, gear: {}, fill: false }, reps: {}, away: {}, day: 0 }; }
   const v = O.step === 'goal' ? vGoal() : O.step === 'care' ? vCare() : O.step === 'paste' ? vPaste() : O.step === 'prog' ? vProg() : O.step === 'weights' ? vWeights() : O.step === 'done' ? vDone() : vStart();
   return v;
 }
