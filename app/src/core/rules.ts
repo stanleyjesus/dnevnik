@@ -5,7 +5,7 @@
 import { DAYS } from './days.ts';
 import { placed } from './gear.ts';
 import { e1, estRir, work } from './sets.ts';
-import { STARTER, starterOf } from './starter.ts';
+import { STARTER, exKey, starterOf } from './starter.ts';
 import { DAY_H, DAY_L, DL_LIGHT, ISO, ISO_LIGHT, TARGETS, TRIAD } from './strength.ts';
 import type { Cfg, ExDef, Item, MuscleMap, ProgramCfg, Range, SetRec } from './types.ts';
 
@@ -488,4 +488,120 @@ export function kinMax(cfg: Cfg, id: string, named: (x: string) => number | null
     if (!best || v < best.max) best = { max: v, of: x };
   }
   return best;
+}
+
+/* Что беречь (решение владельца, 25 ноября 2026, пункт 2 разбора «Чего не хватает сборке программы»). В эталоне этого нет.
+   Атлет отмечает больные места и стоп-упражнения. Больное место ничего не убирает: упражнение, которое его нагружает, остаётся в программе,
+   а рядом с ним и в списке замен стоит красная пилюля с названием места — атлет сам видит, на что заменить. Стоп-упражнение сборка
+   не ставит, в заменах не предлагает, а если оно стоит в программе — меняет на похожее. Какие упражнения нагружают какое место — тренерская
+   таблица по названию (docs/03, раздел 18): исследования не говорят, что при хронической боли нагрузку на больное место нужно убирать
+   (Smith и соавт., 2017), поэтому решает атлет. */
+/** Места, которые можно беречь: id, название на пилюле и упражнения по названию (название — как exKey: без регистра, «ё» как «е», без знаков) */
+export const ZONES: { id: string; n: string; re: RegExp }[] = [
+  { id: 'shoulder', n: 'Плечо', re: /жим штанги стоя|жим гантелей сидя|жим в тренажере на плечи|жим над головой|(?<!французский )жим лежа|жим штанги под углом|брусь/ },
+  { id: 'elbow', n: 'Локоть', re: /французск|из за головы|узким хват|скотт|брусь/ },
+  { id: 'wrist', n: 'Запястье', re: /бицепс со штанг|сгибан\S* рук со штанг|кист|узким хват|отжиман/ },
+  { id: 'lowback', n: 'Поясница', re: /станов|румынск|штанг\S* в наклоне|т бар|присед\S* со штанг|жим штанги стоя|гиперэкст/ },
+  { id: 'hip', n: 'Тазобедренный сустав', re: /присед\S* со штанг|выпад|станов/ },
+  { id: 'knee', n: 'Колено', re: /присед|гакк|выпад|разгибан\S* ног|жим ногами/ }
+];
+/** Места, которые нагружает упражнение с таким названием, по порядку ZONES */
+export const zonesOf = (name: string | null | undefined) => { const s = ' ' + exKey(name) + ' '; return ZONES.filter(z => z.re.test(s)).map(z => z.id); };
+/** Больные места профиля из настройки, как она сохранена: только известные, без повторов, по порядку ZONES */
+export const careList = (raw: unknown) => Array.isArray(raw) ? ZONES.map(z => z.id).filter(id => raw.includes(id)) : [];
+/** Больные места атлета, которые нагружает упражнение (id из справочника или определение упражнения, которого в справочнике ещё нет).
+    С таблицей дней эталона — ничего */
+export function careOf(cfg: Cfg, id: string, def?: { n?: string } | null): string[] {
+  if (!appRules() || !cfg.care || !cfg.care.length) return [];
+  const e = cfg.ex[id] || def;
+  return e ? zonesOf(e.n || id).filter(z => cfg.care!.includes(z)) : [];
+}
+export const zoneName = (id: string) => (ZONES.find(z => z.id === id) || { n: id }).n;
+/** Стоп-упражнения: признак «не ставить и не предлагать» для упражнения справочника или для типового упражнения сборки, которого в справочнике нет.
+    Типовое с тем же названием, что и стоп-упражнение справочника, — тоже стоп. С таблицей дней эталона стоп-упражнений нет */
+export function stopOf(cfg: Cfg): (id: string, def?: { n?: string } | null) => boolean {
+  const own = appRules() ? Object.keys(cfg.ex).filter(id => cfg.ex[id].stop) : [];
+  if (!own.length) return () => false;
+  const names = new Set(own.map(id => exKey(cfg.ex[id].n)));
+  return (id, def) => { const e = cfg.ex[id]; return e ? !!e.stop || names.has(exKey(e.n)) : !!def && names.has(exKey(def.n)); };
+}
+
+/* Дни подряд (решение владельца, 25 ноября 2026, пункт 6 разбора «Чего не хватает сборке программы», вариант «Мышца в одном из двух»). В эталоне этого нет.
+   Дни программы — «День 1…N» без дней недели, поэтому какие из них идут подряд, атлет отмечает сам: пары соседних дней по кругу (1–2, 2–3, 3–1).
+   В двух днях подряд мышца основная только в одном: второй её день в неделе — другой, не соседний. Где иначе нельзя — второй день мышце важнее,
+   и сборка пишет заметку. Это тренерское правило: исследований, что сутки отдыха после тяжёлой работы на мышцу меняют рост, нет (docs/03, раздел 19).
+   Пары дней лежат в настройке profile.pairs строками «mon-wed»; пара, дней которой нет или которые при выбранном числе дней не соседние, не действует.
+   При двух днях пар нет: каждая мышца и так идёт в оба дня, и разнести её некуда. */
+const PAIR_RE = /^(mon|wed|fri|d4)-(mon|wed|fri|d4)$/;
+/** Пары дней подряд из настройки, как она сохранена: только годные строки, без повторов */
+export const pairList = (raw: unknown) => Array.isArray(raw) ? [...new Set(raw.filter((x): x is string => typeof x === 'string' && PAIR_RE.test(x) && x.split('-')[0] !== x.split('-')[1]))] : [];
+/** Соседние дни выбранной недели по кругу: [день, следующий]; при двух днях — ничего */
+export function dayLinks(slots: { id: string }[]) {
+  return slots.length < 3 ? [] : slots.map((s, i) => [s.id, slots[(i + 1) % slots.length].id] as [string, string]);
+}
+/** Пары дней подряд, которые действуют сейчас: с днями «День N», от трёх дней, соседние по кругу, и не все сразу */
+export function pairsOf(cfg: Cfg, slots: { id: string }[]): [string, string][] {
+  if (!appRules() || !cfg.pairs || !cfg.pairs.length) return [];
+  const L = dayLinks(slots).filter(([a, b]) => cfg.pairs!.includes(a + '-' + b));
+  return L.length >= slots.length ? [] : L;
+}
+/** Место дня в неделе с учётом дней подряд: между днями подряд — сутки, остальное поровну. По нему лёгкий день встаёт подальше от тяжёлого */
+export function dayPlaces(cfg: Cfg, slots: { id: string; dow: number }[]): Record<string, number> {
+  const P = pairsOf(cfg, slots), n = slots.length;
+  if (!P.length) return Object.fromEntries(slots.map(s => [s.id, s.dow]));
+  const free = n - P.length, rest = 7 - P.length, out: Record<string, number> = {};
+  let at = 1, k = 0;
+  for (let i = 0; i < n; i++) {
+    out[slots[i].id] = at;
+    const linked = P.some(p => p[0] === slots[i].id);
+    at += linked ? 1 : Math.floor(rest / free) + (k++ < rest % free ? 1 : 0);
+  }
+  return out;
+}
+/** Сколько суток между двумя днями программы по кругу недели */
+export function dayGap(cfg: Cfg, slots: { id: string; dow: number }[], a: string, b: string) {
+  const at = dayPlaces(cfg, slots), d = Math.abs((at[a] || 0) - (at[b] || 0));
+  return Math.min(d, 7 - d);
+}
+/** Мышцы, основные в обоих днях пары подряд: основная — с долей 1 хотя бы в одном упражнении дня; мышцы вне расчёта не считаются.
+    ids — упражнения дня по его id; повтор мышцы в разных парах считается в каждой */
+export function pairClash(links: [string, string][], ids: (d: string) => string[], mOf: (id: string) => MuscleMap, ign: Record<string, number>) {
+  const main = (d: string) => { const s = new Set<string>(); for (const id of ids(d)) for (const [m, c] of Object.entries(mOf(id))) if (c >= 1 && !ign[m]) s.add(m); return s; };
+  const out: { m: string; a: string; b: string }[] = [];
+  for (const [a, b] of links) { const B = main(b); for (const m of main(a)) if (B.has(m)) out.push({ m, a, b }); }
+  return out;
+}
+/** Цена одной мышцы, основной в двух днях подряд, в поиске сборки: меньше штрафа за недостающий второй день (4, с выбранным временем 10) —
+    второй день мышце важнее, — но больше, чем стоит перенос упражнения в другой день */
+export const PAIR_PEN = 2.5;
+/** Группы мышц, которые в днях подряд идут вместе: жимы, тяги, ноги и средние дельты. Мышцы одной группы основные в одних и тех же упражнениях
+    (приседания — квадрицепс и ягодицы, жим лежа — грудь, трицепс помогает), поэтому день группе выбирается один на всех. Тренерское деление */
+export const PAIR_GROUPS: string[][] = [['chest', 'delt_front', 'triceps'], ['lats', 'upper_back', 'delt_rear', 'biceps'], ['quads', 'glutes', 'hams'], ['delt_mid']];
+/** Дни, в которых мышца может быть основной, когда есть дни подряд: каждой группе — не меньше двух дней, без двух дней подряд,
+    дни без упражнений не остаются, а стороны каждой пары по объёму примерно равны. fixed — основные мышцы того, что сборка не двигает
+    (базовые, лёгкие дни, закреплённое), по дням: его дни группе остаются. Нет такого деления (три дня подряд из трёх) — null: тогда мышца
+    может быть в обоих днях, а сборка пишет заметку */
+export function pairSplit(links: [string, string][], days: string[], fixed: (d: string) => string[], vol: (m: string) => number, ign: Record<string, number>): Record<string, string[]> | null {
+  if (!links.length) return null;
+  const G = PAIR_GROUPS.map(g => g.filter(m => !ign[m])).filter(g => g.length), V = G.reduce((a, g) => a + g.reduce((t, m) => t + vol(m), 0), 0) || 1;
+  const subsets: string[][] = [];
+  for (let k = 1; k < 1 << days.length; k++) { const s = days.filter((_, i) => k & (1 << i)); if (s.length >= 2 && !links.some(([a, b]) => s.includes(a) && s.includes(b))) subsets.push(s); }
+  let best: { sc: number; pick: string[][] } | null = null;
+  const pick: string[][] = [];
+  const score = () => {
+    if (days.some(d => !pick.some(s => s.includes(d)))) return null;
+    let sc = 0;
+    G.forEach((g, i) => { for (const d of days) if (!pick[i].includes(d) && fixed(d).some(m => g.includes(m))) sc += 4; });
+    for (const [a, b] of links) { const side = (x: string, y: string) => G.reduce((t, g, i) => t + (pick[i].includes(x) && !pick[i].includes(y) ? g.reduce((u, m) => u + vol(m), 0) : 0), 0); sc += 2 * Math.abs(side(a, b) - side(b, a)) / V; }
+    return sc - 0.01 * pick.reduce((t, s) => t + s.length, 0);
+  };
+  const walk = (i: number) => {
+    if (i === G.length) { const sc = score(); if (sc != null && (!best || sc < best.sc - 1e-9)) best = { sc, pick: pick.slice() }; return; }
+    for (const s of subsets) { pick[i] = s; walk(i + 1); }
+  };
+  walk(0);
+  if (!best) return null;
+  const out: Record<string, string[]> = {};
+  G.forEach((g, i) => { for (const m of g) out[m] = best!.pick[i]; });
+  return out;
 }

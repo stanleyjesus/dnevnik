@@ -14,6 +14,7 @@ import { needGear } from './starter.ts';
 import { TIMES, timeOf } from './fit.ts';
 import { progDraft, progLifts } from './draft.ts';
 import { builtDay } from './builtday.ts';
+import { pairsRow } from './care.ts';
 import { weekDays } from './platform.ts';
 import { DAY_COUNTS, awayDays, daysOf, useDays } from '../core/days.ts';
 import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift } from '../core/rules.ts';
@@ -221,6 +222,7 @@ export function vProgram() {
           await saveCfg(raw => { if (n === 3) delete raw.days; else raw.days = n; });
           useDays(n, false); st.draft = null; S.ui.plan = null; render(true);
         } }, String(n))))),
+      weekDays() || manual ? null : pairsRow(),                       // (в эталоне нет) какие дни идут подряд (решение владельца, 25 ноября 2026; care.ts)
       /* (в эталоне нет) базовых больше, чем дней (решение владельца, 23 ноября 2026): в тренировке одно базовое, лишнее уходит из программы.
          Каким жертвовать, выбирает атлет; пока не выбрал — стоит то, что сборка убрала по правилу. Выбор живёт, пока страница открыта, и уходит с принятой программой */
       !manual ? pr.dropped.map((x, i) => h('label', { class: 'f' }, h('span', null, 'Без базового'), h('select', { id: 'pd-drop' + (i ? '-' + i : ''), onchange: e => {

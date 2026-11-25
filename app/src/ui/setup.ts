@@ -12,6 +12,7 @@ import { importBox, pickBackup } from './importer.ts';
 import { deviceNote } from './device.ts';
 import { dropExButton, starterTools } from './starter.ts';
 import { startLine } from './onboard.ts';
+import { careBox } from './care.ts';
 import { appRules } from '../core/rules.ts';
 import type { ExDef, ExGuess, MuscleMap } from '../core/index.ts';
 import type { Db, El, Kid, Profile, RawCfg } from './types.ts';
@@ -227,6 +228,8 @@ export function vSetup() {
   /* блока «Лимиты и методика» здесь нет (решение владельца, 18 ноября 2026): методика зашита в расчёт и видна в программе и в поправках плана.
      Сохранённые в профиле лимиты, зоны, запас и волна действуют как раньше; отдых выбирается в «Тренировке» и «Программе» */
   const rest = [profilesCard()];
+  /* (в эталоне нет) что беречь — то же, что шаг онбординга (решение владельца, 25 ноября 2026; care.ts): в свёрнутой части, первым */
+  if (appRules()) rest.unshift(h('section', { class: 'card', id: 'care-card' }, h('div', { class: 'sec-h' }, h('h2', null, 'Что беречь')), careBox(ro)));
 
   /* exercises: the kinds of equipment are the list; a new one needs a name only */
   out.push(h('section', { class: 'card' },
@@ -266,6 +269,6 @@ export function vSetup() {
     importBox()));
   /* the rest is needed rarely: one folded line keeps it within reach without crowding the page */
   out.push(h('details', { class: 'morebox', id: 'setup-more', open: !!ui.setupMore, ontoggle: e => { ui.setupMore = e.target.open; } },
-    h('summary', null, 'Остальные настройки: профили, справочник, данные'), rest));
+    h('summary', null, 'Остальные настройки: ' + (appRules() ? 'что беречь, ' : '') + 'профили, справочник, данные'), rest));
   return out;
 }

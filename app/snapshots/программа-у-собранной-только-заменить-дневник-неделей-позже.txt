@@ -211,6 +211,12 @@
        button#pd-2(type="button" aria-pressed="false") 2
        button#pd-3(type="button" aria-pressed="true") 3
        button#pd-4(type="button" aria-pressed="false") 4
+     div#pp.pf
+      span Дни подряд
+      div.picks(role="group" aria-label="Какие дни программы идут подряд")
+       button#pp-mon-wed.btn.sm(type="button" aria-pressed="false") 1–2
+       button#pp-wed-fri.btn.sm(type="button" aria-pressed="false") 2–3
+       button#pp-fri-mon.btn.sm(type="button" aria-pressed="false") 3–1
      label.f
       span Время на тренировку
       select#pt
@@ -666,36 +672,36 @@
 @@ 111 -1 +1
 -    span.sub 80 подходов в неделю · сейчас 67 · тренировка ≈ 1 ч 30 мин
 +    span.sub 81 подход в неделю · сейчас 67 · тренировка ≈ 1 ч 30 мин
-@@ 236 -1 +1
+@@ 242 -1 +1
 -      span.sub 25 подходов · ≈ 1 ч 25 мин
 +      span.sub 26 подходов · ≈ 1 ч 25 мин
-@@ 248 -1 +1
+@@ 254 -1 +1
 -       div.sub 4 × 8–12
 +       div.sub 5 × 8–12
-@@ 286 -1 +1
+@@ 292 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f189a436e7
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4af7945a19
-@@ 293 -0 +4
+@@ 299 -0 +4
 +      div#prog-hand.why.hand
 +       b Поправлено вручную
 +       div.sub
 +        div Грудь: +1 подход: Бабочка (день 3)
-@@ 338 -1 +1
+@@ 344 -1 +1
 -       b#prog-free-n.free-n 20
 +       b#prog-free-n.free-n 19
-@@ 341 -1 +2
+@@ 347 -1 +2
 -        div.sub В программе 80 из 100
 +        div.sub В программе 81 из 100
 +      button#prog-reset.btn.sm Сбросить правки
-@@ 343 -1 +1
+@@ 349 -1 +1
 -       i(style="width:80.0%")
 +       i(style="width:81.0%")
-@@ 357 -1 +3
+@@ 363 -1 +3
 -         td 12
 +         td
 +          span.tag.accent(style="margin-right:6px") +1
 +          b 13
-@@ 402 -2 +2
+@@ 408 -2 +2
 -          span.tag.accent(style="margin-right:6px") +4
 -          b 10
 +          span.tag.accent(style="margin-right:6px") +4.5
@@ -705,10 +711,10 @@
 сообщение: ""
 курсор: "sw-mon-1-to"
 экран: правки к шагу 2
-@@ 158 -1 +1
+@@ 164 -1 +1
 -     div.prow
 +     div.prow.swapping
-@@ 162 -1 +5
+@@ 168 -1 +5
 -      button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
 +      button#sw-mon-1.btn.sm.ghost(type="button" aria-expanded="true" aria-label="Не заменять: Вертикальная тяга в тренажере") Отмена
 +      div.stack.swaprow(style="gap:6px")
@@ -720,37 +726,37 @@
 сообщение: "День 1: Вертикальная тяга в тренажере → Пуловер на верхнем блоке"
 курсор: ""
 экран: правки к шагу 3
-@@ 158 -1 +1
+@@ 164 -1 +1
 -     div.prow.swapping
 +     div.prow.changed
-@@ 160 -7 +3
+@@ 166 -7 +3
 +       div.pn Пуловер на верхнем блоке
 +       div.sub 4 × 10–15 · вместо «Вертикальная тяга в тренажере»
 +      button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Пуловер на верхнем блоке") Заменить
-@@ 290 -1 +1
+@@ 296 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4af7945a19
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#ef8cb162f4
-@@ 293 -1 +1
+@@ 299 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6df4c19c66
-@@ 301 -0 +1
+@@ 307 -0 +1
 +        div День 1: замена: Вертикальная тяга в тренажере → Пуловер на верхнем блоке
-@@ 397 -2 +2
+@@ 403 -2 +2
 -          span.tag.accent(style="margin-right:6px") +4
 -          b 12
 +          span.tag.accent(style="margin-right:6px") +2
 +          b 10
-@@ 461 -2 +2
+@@ 467 -2 +2
 -          span.tag.accent(style="margin-right:6px") −3
 -          b 12
 +          span.tag.accent(style="margin-right:6px") −5
 +          b 10
-@@ 491 -2 +2
+@@ 497 -2 +2
 -          span.tag.accent(style="margin-right:6px") −6.5
 -          b 10
 +          span.tag.accent(style="margin-right:6px") −8.5
 +          b 8
-@@ 494 -3 +3
+@@ 500 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
@@ -778,20 +784,20 @@
 +      button#pg-mass(type="button" aria-pressed="false") Масса
 @@ 120 -12 +1
 +      button#pg-hand(type="button" aria-pressed="true") Вручную
-@@ 138 -11 +3
+@@ 138 -17 +3
 +    label.f.grow
 +     span Название программы
 +     input#prog-name(type="text")
-@@ 153 -1 +1
+@@ 159 -1 +1
 -      span.sub 27 подходов · ≈ 1 ч 30 мин
 +      span.sub 22 подхода · ≈ 1 ч 15 мин
-@@ 158 -1 +4
+@@ 164 -1 +4
 -     div.prow.swapping
 +      div.pctl
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим лежа")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +     div.prow
-@@ 161 -6 +12
+@@ 167 -6 +12
 +       div.sub
 +        | "4 × 6–10 · "
 +        button#sw-mon-1.linkbtn(type="button" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") заменить
@@ -804,8 +810,8 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Вертикальная тяга в тренажере")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 169 -9 +0
-@@ 179 -2 +12
+@@ 175 -9 +0
+@@ 185 -2 +12
 -       div.sub 4 × 8–12
 -      button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
 +       div.sub
@@ -820,7 +826,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс бедра сидя в тренажере")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 184 -2 +12
+@@ 190 -2 +12
 -       div.sub 4 × 8–12
 -      button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Средние дельты в тренажере") Заменить
 +       div.sub
@@ -835,7 +841,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Средние дельты в тренажере")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 189 -2 +12
+@@ 195 -2 +12
 -       div.sub 3 × 8–13
 -      button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
 +       div.sub
@@ -850,7 +856,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Трицепс из за головы на блоке с косичкой")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 193 -2 +45
+@@ 199 -2 +45
 -       div.pn Обратная бабочка
 -       div.sub 4 × 8–12
 +       div.pn Молотки с гантелями
@@ -898,10 +904,10 @@
 +      button#pb-mon.btn.sm
 +       svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       | В день
-@@ 198 -1 +1
+@@ 204 -1 +1
 -      span.sub 28 подходов · ≈ 1 ч 35 мин
 +      span.sub 21 подход · ≈ 1 ч 15 мин
-@@ 201 -0 +13
+@@ 207 -0 +13
 +       div.pn Разгибания ног в тренажере
 +       div.sub
 +        | "3 × 8–12 · "
@@ -915,13 +921,13 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +     div.prow
 +      div.grow
-@@ 203 -0 +5
+@@ 209 -0 +5
 +      div.pctl
 +       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим ногами")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим ногами")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 206 -2 +12
+@@ 212 -2 +12
 -       div.sub 4 × 6–10
 -      button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей под углом 45") Заменить
 +       div.sub
@@ -936,7 +942,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим гантелей под углом 45")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 211 -2 +12
+@@ 217 -2 +12
 -       div.sub 4 × 6–10
 -      button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
 +       div.sub
@@ -951,8 +957,8 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Горизонтальная тяга Т-бар")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 215 -10 +0
-@@ 226 -2 +12
+@@ 221 -10 +0
+@@ 232 -2 +12
 -       div.sub 3 × 8–12
 -      button#sw-wed-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
 +       div.sub
@@ -967,7 +973,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс со штангой стоя")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 230 -2 +13
+@@ 236 -2 +13
 -       div.pn Обратная бабочка
 -       div.sub 2 × 8–12
 +       div.pn Кисть на блоке правая
@@ -983,7 +989,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Кисть на блоке правая")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 234 -3 +44
+@@ 240 -3 +44
 -       div.pn Махи гантелями в стороны
 -       div.sub 4 × 10–20
 -      button#sw-wed-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
@@ -1031,19 +1037,19 @@
 +      button#pb-wed.btn.sm
 +       svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       | В день
-@@ 240 -1 +1
+@@ 246 -1 +1
 -      span.sub 26 подходов · ≈ 1 ч 25 мин
 +      span.sub 24 подхода · ≈ 1 ч 20 мин
-@@ 245 -0 +3
+@@ 251 -0 +3
 +      div.pctl
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Подтягивания")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 247 -4 +0
+@@ 253 -4 +0
 -       div.pn Жим гантелей сидя
 -       div.sub 2 × 6–10
 -     div.prow
 -      div.grow
-@@ 252 -2 +12
+@@ 258 -2 +12
 -       div.sub 5 × 8–12
 -      button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бабочка") Заменить
 +       div.sub
@@ -1058,7 +1064,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бабочка")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 257 -2 +12
+@@ 263 -2 +12
 -       div.sub 3 × 8–12
 -      button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра на тренажере лежа на животе") Заменить
 +       div.sub
@@ -1073,7 +1079,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс бедра на тренажере лежа на животе")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 262 -2 +12
+@@ 268 -2 +12
 -       div.sub 2 × 8–12
 -      button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс с косичкой на блоке") Заменить
 +       div.sub
@@ -1088,7 +1094,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Трицепс с косичкой на блоке")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 267 -2 +12
+@@ 273 -2 +12
 -       div.sub 3 × 8–16
 -      button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс Bayesian curl") Заменить
 +       div.sub
@@ -1103,7 +1109,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс Bayesian curl")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 272 -2 +12
+@@ 278 -2 +12
 -       div.sub 3 × 8–12
 -      button#sw-fri-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Разгибания ног в тренажере") Заменить
 +       div.sub
@@ -1118,7 +1124,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Разгибания ног в тренажере")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 276 -2 +13
+@@ 282 -2 +13
 -       div.pn Обратная бабочка
 -       div.sub 2 × 8–12
 +       div.pn Кисть с гантелью правая рука
@@ -1134,7 +1140,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Кисть с гантелью правая рука")
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 280 -4 +44
+@@ 286 -4 +44
 -       div.pn Отведение ног в тренажере
 -       div.sub 2 × 10–15
 -      button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Отведение ног в тренажере") Заменить
@@ -1183,121 +1189,121 @@
 +       svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       | В день
 +   p.sub(style="margin-top:8px") Полоса слева — то, что меняется. Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
-@@ 290 -1 +1
+@@ 296 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4af7945a19
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#0ab86cf155
-@@ 293 -1 +1
+@@ 299 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#2abb9fc376
-@@ 295 -48 +0
-@@ 346 -1 +1
+@@ 301 -48 +0
+@@ 352 -1 +1
 -       b#prog-free-n.free-n 19
 +       b#prog-free-n.free-n 33
-@@ 348 -3 +2
+@@ 354 -3 +2
 -        div.free-t подходов свободно
 -        div.sub В программе 81 из 100
 -      button#prog-reset.btn.sm Сбросить правки
 +        div.free-t подхода свободны
 +        div.sub В программе 67 из 100 — твой лимит недели
-@@ 352 -1 +1
+@@ 358 -1 +1
 -       i(style="width:81.0%")
 +       i(style="width:67.0%")
-@@ 366 -3 +1
+@@ 372 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +1
 -          b 13
 +         td 12
-@@ 396 -3 +1
+@@ 402 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +4
 -          b 12
 +         td 8
-@@ 400 -3 +3
+@@ 406 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.warn
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +           | ниже рабочей зоны
-@@ 412 -3 +1
+@@ 418 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +4.5
 -          b 10.5
 +         td 6
-@@ 416 -3 +3
+@@ 422 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.warn
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +           | ниже рабочей зоны
-@@ 428 -3 +1
+@@ 434 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +6
 -          b 10
 +         td 4
-@@ 432 -3 +3
+@@ 438 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.warn
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +           | ниже рабочей зоны
-@@ 444 -3 +1
+@@ 450 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +8
 -          b 10
 +         td 2
-@@ 448 -3 +3
+@@ 454 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.serious
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
 +           | мало
-@@ 460 -3 +1
+@@ 466 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") −3
 -          b 12
 +         td 15
-@@ 490 -3 +1
+@@ 496 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") −6.5
 -          b 10
 +         td 16.5
-@@ 520 -3 +1
+@@ 526 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +1
 -          b 1
 +         td 0
-@@ 529 -1 +1
+@@ 535 -1 +1
 -           button#mn-erectors.icon-btn(title="Убавить подход" aria-label="Убавить подход: Разгибатели спины")
 +           button#mn-erectors.icon-btn(title="Убавить подход" aria-label="Убавить подход: Разгибатели спины" disabled="")
-@@ 550 -3 +1
+@@ 556 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +4
 -          b 11
 +         td 7
-@@ 554 -3 +3
+@@ 560 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.warn
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +           | ниже рабочей зоны
-@@ 566 -3 +1
+@@ 572 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +8
 -          b 10
 +         td 2
-@@ 570 -3 +3
+@@ 576 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.serious
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
 +           | мало
-@@ 595 -2 +2
+@@ 601 -2 +2
 -    button#prog-accept.btn.primary Принять программу
 -    span.sub Ближайшая тренировка каждого дня будет построена по ней, веса возьмутся из последних тренировок.
 +    button#prog-accept.btn.primary(disabled="") Принять программу

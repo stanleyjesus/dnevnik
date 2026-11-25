@@ -13,7 +13,7 @@ import { ADDS } from './adapt.ts';
 import { DAY_H, DAY_L, DAY_M, DL_LIGHT, SOLO, STRONG } from './strength.ts';
 import { STARTER, STARTER_GEAR } from './starter.ts';
 import { DAYS, awayDays, dayNo } from './days.ts';
-import { BASE_SETS, EVEN, HEAVY, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayOrder, fillTop, heavyOf, inTime, MANY_EX, MAX_SETS, OFF_APP, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, restOf, REST, rirText, roomFor, sameMuscles, stretchOf, triadIds } from './rules.ts';
+import { BASE_SETS, EVEN, HEAVY, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayGap, dayOrder, fillTop, PAIR_PEN, pairClash, pairSplit, pairsOf, heavyOf, inTime, MANY_EX, MAX_SETS, OFF_APP, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, restOf, REST, rirText, roomFor, sameMuscles, stopOf, stretchOf, triadIds } from './rules.ts';
 import { estMinutes, fmtDur } from './time.ts';
 import type { Tally } from './tally.ts';
 import type { Roles } from './rules.ts';
@@ -73,13 +73,13 @@ export function swapsFor(cfg: Cfg, id: string, skip?: string[] | null) {
   if (!e) return out;
   const mainOf = (m: MuscleMap | undefined) => Object.keys(m || {}).filter(k => m![k] >= 1).sort(), key = (m: MuscleMap | undefined) => JSON.stringify(Object.entries(m || {}).filter(x => x[1] > 0).sort());
   const dp = (x: string) => { const k = kindOf(cfg, x); return k === 'compound' || k === 'iso'; };
-  const mine = mainOf(e.m), own = Object.keys(cfg.ex).filter(dp);
+  const mine = mainOf(e.m), own = Object.keys(cfg.ex).filter(dp), stop = stopOf(cfg);   // (в эталоне нет) стоп-упражнения в заменах не предлагаются (rules.ts, stopOf)
   const side = (n: string) => /(^|\s)лев/i.test(n) ? 'l' : /(^|\s)прав/i.test(n) ? 'r' : '';                 // the left wrist is not changed for the right one
   if (!mine.length || !dp(id)) return out;
   const pool: Swap[] = own.map(x => ({ id: x, n: cfg.ex[x].n, m: cfg.ex[x].m || {}, uni: !!cfg.ex[x].uni }))
     .concat(LIB.filter(L => !cfg.ex[L.id] && !own.some(x => key(cfg.ex[x].m) === key(L.def.m))).map(L => ({ id: L.id, n: L.def.n, m: L.def.m, uni: !!L.def.uni, def: L.def })));
   for (const c of pool) {
-    if (c.id === id || (skip || []).includes(c.id) || c.uni !== !!e.uni || (side(c.n) && side(e.n) && side(c.n) !== side(e.n))) continue;
+    if (c.id === id || (skip || []).includes(c.id) || c.uni !== !!e.uni || (side(c.n) && side(e.n) && side(c.n) !== side(e.n)) || stop(c.id, c.def)) continue;
     const cm = mainOf(c.m), shared = cm.filter(x => mine.includes(x)).length;
     if (!shared) continue;
     /* how alike two muscle maps are: what they share over what they cover together */
@@ -107,6 +107,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
   const mOf = (id: string) => info(id).m || {};
   const uniF = (id: string) => info(id).uni ? 0.5 : 1;
   const isDp = (id: string) => { const k = kindOf(c2, id); return k === 'compound' || k === 'iso'; };
+  const stop = stopOf(c2);                                                     // (в эталоне нет) стоп-упражнения сборка не ставит (rules.ts)
   const now = () => progTally(c2, slots);
   const total = (T: Tally) => SLOTS.reduce((a, sl) => a + (T.load[sl.id] || 0), 0);
   const sibling = (L: ProgEntry[], e: ProgEntry) => info(e.ex).uni ? L.find(x => x !== e && info(x.ex).uni && x.n === e.n && JSON.stringify(mOf(x.ex)) === JSON.stringify(mOf(e.ex))) || null : null;
@@ -129,6 +130,13 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
   const trainedDays = (m: string, dOf: DayOf) => SLOTS.filter(sl => dOf(sl.id, m) >= FQ.sets - 0.01).length;
   const thinOf = (dOf: DayOf) => MUSCLES.filter(m => twice(m.id) && trainedDays(m.id, dOf) < FQ.days).map(m => m.id);
   const miss = (dOf: DayOf) => MUSCLES.reduce((a, m) => a + (twice(m.id) ? Math.max(0, FQ.days - trainedDays(m.id, dOf)) : 0), 0);
+  /* (в эталоне нет) дни подряд (решение владельца, 25 ноября 2026; rules.ts, pairsOf): мышца, основная в обоих днях пары, стоит поиску PAIR_PEN.
+     Шаг, после которого таких мышц меньше, поиск берёт, даже когда объёмы от него не меняются: упражнение переезжает в другой день */
+  /* Деление мышц по дням (rules.ts, pairSplit): новое упражнение встаёт и переезжает только в день, где все его основные мышцы могут быть.
+     Деления нет (три дня подряд из трёх) — дни считаются как без отметки */
+  const split = o.split || null, links = split ? pairsOf(c2, SLOTS) : [], clashOf = (ids: (d: string) => string[]) => links.length ? pairClash(links, ids, mOf, ign).length : 0;
+  const allowedIn = (id: string, d: string) => !split || Object.entries(mOf(id)).every(([m, c]) => c < 1 || ign[m] || !split[m] || split[m].includes(d));
+  const clashing = (e: ProgEntry, sl: Slot) => links.some(([a, b]) => (a === sl.id || b === sl.id) && Object.entries(mOf(e.ex)).some(([m, c]) => c >= 1 && !ign[m] && slots[a === sl.id ? b : a].some(x => (mOf(x.ex)[m] || 0) >= 1)));
 
   /* 0a. no muscle above the daily limit */
   for (let g = 0; g < 200; g++) {
@@ -216,10 +224,10 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
       return true;
     };
     for (let g = 0; g < 360; g++) {
-      const T = now(), tot = total(T), dNow = (d: string, m: string) => T.day[d][m] || 0, vol0 = cost(T.pv), base = vol0 + (fq ? FQ.pen * miss(dNow) : 0);
+      const T = now(), tot = total(T), dNow = (d: string, m: string) => T.day[d][m] || 0, vol0 = cost(T.pv), base = vol0 + (fq ? FQ.pen * miss(dNow) : 0) + PAIR_PEN * clashOf(d => slots[d].map(e => e.ex));
       const sec = o.time ? Object.fromEntries(SLOTS.map(sl => [sl.id, estMinutes(c2, slots[sl.id]) * 60])) : null;
       if (base < 0.01) { if (fq) { if (foldOnce()) continue; break; } fq = true; continue; }
-      const pool = Object.keys(c2.ex).filter(id => isDp(id) && !c2.ex[id].uni).concat(LIB.filter(L => !c2.ex[L.id] && !L.def.uni && !Object.keys(c2.ex).some(id => isDp(id) && sameM(mOf(id), L.def.m))).map(L => L.id));
+      const pool = Object.keys(c2.ex).filter(id => isDp(id) && !c2.ex[id].uni && !stop(id)).concat(LIB.filter(L => !c2.ex[L.id] && !L.def.uni && !stop(L.id, L.def) && !Object.keys(c2.ex).some(id => isDp(id) && sameM(mOf(id), L.def.m))).map(L => L.id));   // (в эталоне нет) без стоп-упражнений
       const nDays = (id: string) => SLOTS.filter(x => slots[x.id].some(e => e.ex === id)).length;
       /* a step up is worth trying only for a muscle that is short, a step down alone only for one that is above the top */
       const short: Record<string, number> = {}, above: Record<string, number> = {};
@@ -245,7 +253,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
         /* (в эталоне нет) с днями «День N» в день не ставится второе упражнение с теми же мышцами: подходы прибавляются в том, что уже стоит.
            Иначе два варианта одного движения по два подхода занимают два места из девяти, и поиск застревает ниже достижимого уровня (rules.ts) */
         const twin = (id: string) => same && L.some(e => sameM(mOf(e.ex), mOf(id)));
-        for (const id of pool) if ((hits(id, short) || fills(id, sl)) && !mainOff(id) && !L.some(e => e.ex === id) && !twin(id) && !cut.some(c => c.ex === id && c.sl === sl) && !fold.some(c => c.ex === id && c.sl === sl)) more.push({ sl, e: null, id, f: uniF(id), dn: 2, dw: 1, pen: (c2.ex[id] ? 0.4 : 0.5) + 0.3 * aside(id) - LONG_K * stretchOf(info(id)), add: true });   // (в эталоне нет) растянутый вариант раньше (вывод 3 аудита)
+        for (const id of pool) if ((hits(id, short) || fills(id, sl)) && !mainOff(id) && allowedIn(id, sl.id) && !L.some(e => e.ex === id) && !twin(id) && !cut.some(c => c.ex === id && c.sl === sl) && !fold.some(c => c.ex === id && c.sl === sl)) more.push({ sl, e: null, id, f: uniF(id), dn: 2, dw: 1, pen: (c2.ex[id] ? 0.4 : 0.5) + 0.3 * aside(id) - LONG_K * stretchOf(info(id)), add: true });   // (в эталоне нет) растянутый вариант раньше (вывод 3 аудита)
       }
       const rate = (list: Move[]) => {
         const dt = list.reduce((a, x) => a + x.dn * x.f, 0);
@@ -276,7 +284,8 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
           if (vol > vol0 + FQ.slack) return null;
           for (const m of Object.keys(pv)) if (!ign[m] && pv[m] > (T.pv[m] || 0) + 0.01 && pv[m] > top(m) + 0.01) return null;
         }
-        return base - vol - (fq ? FQ.pen * miss((d, m) => (T.day[d][m] || 0) + ((dayM[d] || {})[m] || 0)) : 0) - list.reduce((a, x) => a + x.pen, 0) - 0.002 * dt;
+        const after = (d: string) => slots[d].filter(e => !list.some(x => x.drop && x.sl.id === d && (x.e === e || sibling(slots[d], x.e!) === e))).map(e => e.ex).concat(list.filter(x => x.add && x.sl.id === d).map(x => x.id));
+        return base - vol - (fq ? FQ.pen * miss((d, m) => (T.day[d][m] || 0) + ((dayM[d] || {})[m] || 0)) : 0) - PAIR_PEN * clashOf(after) - list.reduce((a, x) => a + x.pen, 0) - 0.002 * dt;
       };
       let best = null as { sc: number; list: Move[] } | null;
       const take = (list: Move[]) => { const sc = rate(list); if (sc != null && sc > 0.15 && (!best || sc > best.sc)) best = { sc, list }; };
@@ -284,9 +293,9 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
       for (const a of less) if (hits(a.id, above)) take([a]);
       if (!best) for (const a of less) for (const b of more) if (a.e !== b.e) take([a, b]);
       /* the second pass may also carry an exercise over to another day as it is: the week's volumes stay, the days change */
-      if (fq) for (const sl of days) for (const e of slots[sl.id]) {
-        if (!e.n || !isDp(e.ex) || byHand(e.ex) || e.pin || info(e.ex).uni || !hits(e.ex, thin)) continue;
-        for (const to of days) if (to !== sl && !slots[to.id].some(x => x.ex === e.ex || (same && sameM(mOf(x.ex), mOf(e.ex)))) && !cut.some(c => c.ex === e.ex && c.sl === to))   // (в эталоне нет) и не в день, где уже стоит упражнение с теми же мышцами
+      if (fq || links.length) for (const sl of days) for (const e of slots[sl.id]) {
+        if (!e.n || !isDp(e.ex) || byHand(e.ex) || e.pin || info(e.ex).uni || !((fq && hits(e.ex, thin)) || clashing(e, sl))) continue;   // (в эталоне нет) и упражнение, из-за которого мышца основная в двух днях подряд
+        for (const to of days) if (to !== sl && allowedIn(e.ex, to.id) && !slots[to.id].some(x => x.ex === e.ex || (same && sameM(mOf(x.ex), mOf(e.ex)))) && !cut.some(c => c.ex === e.ex && c.sl === to))   // (в эталоне нет) и не в день, где уже стоит упражнение с теми же мышцами
           take([{ sl, e, id: e.ex, f: 1, dn: -e.n, dw: -1, pen: 0.3, drop: true, to }, { sl: to, e: null, id: e.ex, f: 1, dn: e.n, dw: 1, pen: 0, add: true, n: e.n, from: sl }]);
       }
       if (!best) { if (fq) { if (foldOnce()) continue; break; } fq = true; continue; }
@@ -336,7 +345,8 @@ export function nudgeMuscle(c2: Cfg, slots: ProgSlots, m: string, dir: number, o
   const sameM = (a: MuscleMap, b: MuscleMap) => JSON.stringify(Object.entries(a).filter(x => x[1] > 0).sort()) === JSON.stringify(Object.entries(b).filter(x => x[1] > 0).sort());
   const isDp = (id: string) => { const k = kindOf(c2, id); return k === 'compound' || k === 'iso'; };
   const days = SLOTS.filter(sl => slots[sl.id].length).length ? SLOTS.filter(sl => slots[sl.id].length) : SLOTS.slice();
-  const pool = Object.keys(c2.ex).filter(id => isDp(id) && !c2.ex[id].uni).concat(LIB.filter(L => !c2.ex[L.id] && !Object.keys(c2.ex).some(id => isDp(id) && sameM(mOf(id), L.def.m))).map(L => L.id));
+  const stop = stopOf(c2);                                                     // (в эталоне нет) стоп-упражнение кнопка «+» не ставит
+  const pool = Object.keys(c2.ex).filter(id => isDp(id) && !c2.ex[id].uni && !stop(id)).concat(LIB.filter(L => !c2.ex[L.id] && !stop(L.id, L.def) && !Object.keys(c2.ex).some(id => isDp(id) && sameM(mOf(id), L.def.m))).map(L => L.id));
   let best = null as { sc: number; sl: Slot; id: string; isAdd: boolean } | null, why = '', full = 0;                              // full: 1 — the week is full, 2 — one set is free but a new exercise takes two
   const rate = (sl: Slot, id: string, sets: number, isAdd: boolean) => {
     const c = mOf(id)[m] || 0, cost = sets * uniF(id), ms = Object.entries(mOf(id)).filter(x => x[1] > 0);
@@ -452,6 +462,19 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     return Object.keys(cfg.ex).find(id => a.cover(cfg.ex[id])) || null;
   };
 
+  /* (в эталоне нет) Стоп-упражнения (решение владельца, 25 ноября 2026; rules.ts, stopOf): то, что стоит в днях, сборка меняет на первую замену
+     на те же мышцы (swapsFor, где стоп-упражнений нет), а базовое или упражнение без замены убирает. Цель «Силы» и «Гибрида» атлет выбрал сам — она остаётся */
+  const stop = stopOf(c2);
+  for (const sl of SLOTS) {
+    const L = slots[sl.id];
+    for (let i = L.length - 1; i >= 0; i--) {
+      const e = L[i];
+      if (!stop(e.ex) || e.ex === opts.focus || aims.includes(e.ex)) continue;
+      const k = kindOf(c2, e.ex), sw = k === 'compound' || k === 'iso' ? swapsFor(c2, e.ex, L.map(x => x.ex)) : null, to = sw && (sw.same[0] || sw.near[0]);
+      if (to) { if (!c2.ex[to.id]) define(to.id, clone(to.def!)); L[i] = Object.assign({}, e, { ex: to.id, was: e.ex }); note(nm(e.ex) + ' → ' + nm(to.id) + ' (' + sl.s.toLowerCase() + ')', 'Стоп-упражнение: сборка его не ставит. Вместо него — упражнение на те же мышцы.'); }
+      else { L.splice(i, 1); note(nm(e.ex) + ' — не в программе (' + sl.s.toLowerCase() + ')', 'Стоп-упражнение: сборка его не ставит, а замены на те же мышцы в справочнике нет.'); }
+    }
+  }
   /* 0. (в эталоне этого шага нет: решение владельца, 19 ноября 2026) Порядок «сначала базовое, потом остальное» действует и в программе,
         собранной с нуля: упражнения по волне из справочника встают по одному в день, каждое первым (приоритетное — в понедельник).
         Приоритетное базовое, которого в программе ещё нет, встаёт первым в тренировочный день без другого базового, в самый лёгкий. */
@@ -479,7 +502,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
      силовой роли у них там нет (пункт 8), и первым в дне им стоять незачем — упражнения подбираются по мышцам из остального справочника.
      Базовые, которые в программе уже стоят, остаются; в «Силе» и «Гибриде» — как было */
   if (scratch && !(appRules() && !focus && !opts.strength)) {
-    const ls = Object.keys(cfg.ex).filter(id => isCycle(cfg, id));
+    const ls = Object.keys(cfg.ex).filter(id => isCycle(cfg, id) && (id === focus || aims.includes(id) || !stop(id)));   // (в эталоне нет) стоп-упражнение с нуля не встаёт; цель атлет выбрал сам
     if (focus) { ls.splice(ls.indexOf(focus), 1); ls.unshift(focus); }
     if (tri) ls.sort((a, b) => aims.indexOf(a) - aims.indexOf(b));   // (в эталоне нет) тройка встаёт по дням в своём порядке: приседания, жим лежа, становая
     if (oneBase) for (const id of pickOut(ls, ls.slice().reverse())) ls.splice(ls.indexOf(id), 1);   // с нуля лишнее — последнее по списку
@@ -577,7 +600,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
   if (!solo || appRules()) for (const id of [...new Set(all().filter(e => isLight(cfg, e.ex) && stays(e)).map(e => e.ex))]) {   // (в эталоне нет) с днями «День N» и у «Силы: <движение>» лёгкий день один
     const on = SLOTS.filter(sl => slots[sl.id].some(e => e.ex === id));
     if (on.length < 2) continue;
-    const home = SLOTS.find(sl => slots[sl.id].some(e => e.ex === cfg.ex[id].of)), gap = (sl: Slot) => { if (!home) return 0; const d = Math.abs(sl.dow - home.dow); return Math.min(d, 7 - d); };
+    const home = SLOTS.find(sl => slots[sl.id].some(e => e.ex === cfg.ex[id].of)), gap = (sl: Slot) => home ? dayGap(cfg0, SLOTS, sl.id, home.id) : 0;   // (в эталоне нет) с днями подряд — по их местам в неделе (rules.ts, dayGap)
     const keep = on.slice().sort((a, b) => gap(b) - gap(a))[0];
     for (const sl of on) if (sl !== keep) extra.push(...slots[sl.id].filter(e => e.ex === id));
   }
@@ -615,7 +638,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
              С днями «День N» движение идёт два дня — тяжёлый и лёгкий, у всех движений (решение владельца, 25 ноября 2026; strength.ts, SOLO);
              средний день, который ставила «Новая схема» 24 ноября, сборка убирает */
       const mid = focus + '_mid', par = cfg.ex[focus], iso = isoLift(cfg, focus), mine = (e: ProgEntry) => e.ex === lid || e.ex === mid;
-      const T = now(), gap = (sl: Slot) => { const d = Math.abs(sl.dow - home!.dow); return Math.min(d, 7 - d); }, has = (sl: Slot) => slots[sl.id].some(mine);
+      const T = now(), gap = (sl: Slot) => dayGap(cfg0, SLOTS, sl.id, home!.id), has = (sl: Slot) => slots[sl.id].some(mine);
       const free = SLOTS.filter(sl => sl !== home && (scratch || everyDay || slots[sl.id].length) && !has(sl)).sort((a, b) => (gap(b) - gap(a)) || (T.load[a.id] - T.load[b.id]));
       const add = free.slice(0, Math.max(0, soloDays - 1 - SLOTS.filter(sl => sl !== home && has(sl)).length));   // (в эталоне нет) у изоляции в силовой роли — два дня
       if (add.length) {
@@ -639,7 +662,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     }
     /* 3. a second, light day for the priority lift */
     if (!solo && !inProg(lid)) {
-      const T = now(), gap = (sl: Slot) => { const d = Math.abs(sl.dow - home!.dow); return Math.min(d, 7 - d); };
+      const T = now(), gap = (sl: Slot) => dayGap(cfg0, SLOTS, sl.id, home!.id);
       const day = SLOTS.filter(sl => sl !== home && (scratch || everyDay || slots[sl.id].length)).sort((a, b) => (gap(b) - gap(a)) || (T.load[a.id] - T.load[b.id]))[0];   // с нуля годится и день, который пока пуст
       if (day) {
         const par = cfg.ex[focus];
@@ -674,7 +697,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     for (const id of lifts.slice().sort((a, b) => SLOTS.indexOf(homeOf(a)) - SLOTS.indexOf(homeOf(b)))) {
       const lid = id + '_light';
       if (inProg(lid)) continue;
-      const home = homeOf(id), gap = (sl: Slot) => { const d = Math.abs(sl.dow - home.dow); return Math.min(d, 7 - d); }, T = now();
+      const home = homeOf(id), gap = (sl: Slot) => dayGap(cfg0, SLOTS, sl.id, home.id), T = now();
       const day = SLOTS.filter(sl => sl !== home && (scratch || everyDay || slots[sl.id].length)).sort((a, b) => (nLifts(a) - nLifts(b)) || (gap(b) - gap(a)) || (T.load[a.id] - T.load[b.id]))[0];
       if (!day) { lone.push(id); continue; }
       const par = cfg.ex[id];
@@ -698,7 +721,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
        при двух днях свободного дня не остаётся, и упражнение на массу встаёт в лёгкий день — после лёгких подходов */
     let massDays = SLOTS.filter(sl => (scratch || everyDay || slots[sl.id].length > 0) && !slots[sl.id].some(e => e.ex === focus || e.ex === lid)), joint = false;
     if (everyDay) {
-      const home = SLOTS.find(sl => slots[sl.id].some(e => e.ex === focus))!, gap = (sl: Slot) => { const d = Math.abs(sl.dow - home.dow); return Math.min(d, 7 - d); }, T = now();
+      const home = SLOTS.find(sl => slots[sl.id].some(e => e.ex === focus))!, gap = (sl: Slot) => dayGap(cfg0, SLOTS, sl.id, home.id), T = now();
       if (massDays.length) massDays = [massDays.slice().sort((a, b) => (gap(b) - gap(a)) || (T.load[a.id] - T.load[b.id]))[0]];
       else { massDays = SLOTS.filter(sl => slots[sl.id].some(e => e.ex === lid)).slice(0, 1); joint = true; }
     }
@@ -707,7 +730,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     for (const sl of massDays) {
       const have = slots[sl.id].find(e => dp(e.ex) && hitsMain(e.ex) && !offMain(e.ex));
       if (have) { have.pin = true; note(lead + onDay(sl.id) + ': ' + nm(have.ex), 'Упражнение на те же мышцы в режиме массы: ' + rangeOf(done, c2, have.ex).join('–') + ' повторов почти до отказа. Оно уже стоит в этом дне.'); continue; }
-      const cand = Object.keys(c2.ex).filter(id => dp(id) && !c2.ex[id].uni && hitsMain(id) && !offMain(id)).sort((a, b) => (inProg(b) - inProg(a)) || (like(b) - like(a)) || nm(a).localeCompare(nm(b), 'ru'))[0];
+      const cand = Object.keys(c2.ex).filter(id => dp(id) && !c2.ex[id].uni && hitsMain(id) && !offMain(id) && !stop(id)).sort((a, b) => (inProg(b) - inProg(a)) || (like(b) - like(a)) || nm(a).localeCompare(nm(b), 'ru'))[0];
       if (!cand) continue;
       insert(sl, { ex: cand, n: 3, isNew: true, pin: true });
       note(lead + onDay(sl.id) + ': ' + nm(cand), '3 × ' + rangeOf(done, c2, cand).join('–') + ' почти до отказа: упражнение на те же мышцы в режиме массы.' + tail);
@@ -732,6 +755,12 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     const places = (L: ProgEntry[]) => L.reduce((a, e) => a + ((c2.ex[e.ex] || {} as ExDef).uni ? 0.5 : 1), 0);
     const crowded = (L: ProgEntry[]) => places(L) + 1 > (time ? TIME_EX.day : MAX_EX) + 0.6;   // (в эталоне нет) с выбранным временем — десять упражнений (rules.ts)
     const full = (L: ProgEntry[]) => crowded(L) || (!!time && !inTime(estMinutes(c2, L) + (60 + 2 * (40 + (appRules() ? REST.other : c2.rest || 120))) / 60, time));
+    /* (в эталоне нет) дни подряд (решение владельца, 25 ноября 2026; rules.ts, pairSplit): группы мышц делятся между днями пары, и каждая получает
+       не меньше двух дней без двух подряд. Базовые и закреплённое стоят, где стоят: их дни своим группам остаются */
+    const pairLinks = pairsOf(cfg0, SLOTS);
+    const fixedMain = (d: string) => slots[d].filter(e => { const k = kindOf(c2, e.ex); return (k !== 'compound' && k !== 'iso') || !!e.pin; }).flatMap(e => Object.entries(mOf(e.ex)).filter(x => x[1] >= 1).map(x => x[0]));
+    const split = pairLinks.length ? pairSplit(pairLinks, SLOTS.map(x => x.id), fixedMain, m => prio[m] ? PRIO_K : 1, cfg.ignore) : null;
+    const allowedIn = (id: string, d: string) => !split || Object.entries(mOf(id)).every(([m, c]) => c < 1 || cfg.ignore[m] || !split[m] || split[m].includes(d));
     /* 8а. Выравнивание дней. (в эталоне нет) Дни 1…N: когда дней не три или в неделе появился новый день, тренировки выравниваются по длине —
            упражнение двойной прогрессии целиком переезжает из самого нагруженного дня в самый свободный, пока разница больше трёх подходов.
            Недельный объём мышц тот же; лимит на мышцу за тренировку не нарушается, и ни одна мышца не теряет тренировочный день.
@@ -756,7 +785,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
          поэтому после выравнивания поиск идёт ещё раз на том же уровне, и снова выравнивание — пока раскладка меняется (не больше трёх раз) */
       for (let pass = 0; pass < 3; pass++) {
       if (pass) {
-        const was = shape(), r2 = optimise(c2, S, { z, ignore: cfg.ignore, prio, budget, dayCap: caps.day, level: lv, allDays: scratch || everyDay, time }, define);
+        const was = shape(), r2 = optimise(c2, S, { z, ignore: cfg.ignore, prio, budget, dayCap: caps.day, level: lv, allDays: scratch || everyDay, time, split }, define);
         r.cut = r.cut.concat(r2.cut); r.fold = r.fold.concat(r2.fold); r.left = r2.left; r.over = r2.over; r.once = r2.once; r.hit = r2.hit;
         if (shape() === was) break;
       }
@@ -770,7 +799,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
         /* сколько упражнение занимает в длинном дне: подходы, а с днями «День N» — минуты по оценке времени */
         const own = (e: ProgEntry) => byTime ? len(hi) - estMinutes(c2, S[hi.id].filter(x => x !== e)) : e.n!;
         const fits = (e: ProgEntry) => {
-          if (own(e) >= diff || (time ? !inTime(estMinutes(c2, S[lo.id].concat([e])), time) || crowded(S[lo.id]) || !roomFor(S[lo.id], e.ex, mOf, prio, cfg.ignore, x => x.n!) : S[lo.id].length >= MAX_EX) || S[lo.id].some(x => x.ex === e.ex || sameMuscles(mOf(x.ex), mOf(e.ex)))) return false;   // и не туда, где уже стоит упражнение с теми же мышцами
+          if (own(e) >= diff || !allowedIn(e.ex, lo.id) || (time ? !inTime(estMinutes(c2, S[lo.id].concat([e])), time) || crowded(S[lo.id]) || !roomFor(S[lo.id], e.ex, mOf, prio, cfg.ignore, x => x.n!) : S[lo.id].length >= MAX_EX) || S[lo.id].some(x => x.ex === e.ex || sameMuscles(mOf(x.ex), mOf(e.ex)))) return false;   // и не туда, где уже стоит упражнение с теми же мышцами
           for (const [m, c] of Object.entries(mOf(e.ex))) {
             if (!(c > 0)) continue;
             if (got(lo, m) + c * e.n! > caps.day + 0.01) return false;
@@ -802,6 +831,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
         /* (в эталоне нет) с днями «День N» упражнения меняются днями: упражнение длинного дня уходит в короткий, а упражнение короткого с меньшим числом подходов —
            в длинный. Так выравниваются дни, когда в коротком дне уже десять упражнений и новому места нет. Проверки — те же, что у переезда целиком */
         const swaps = (e: ProgEntry, f: ProgEntry) => {
+          if (!allowedIn(e.ex, lo.id) || !allowedIn(f.ex, hi.id)) return null;   // (в эталоне нет) дни подряд
           const H = S[hi.id].map(x => x === e ? f : x), L = S[lo.id].map(x => x === f ? e : x), t = len(hi) - estMinutes(c2, H);
           if (!(t > 0.01) || t >= diff || !(Math.abs(estMinutes(c2, H) - estMinutes(c2, L)) < diff - 0.01) || (time && !inTime(estMinutes(c2, L), time))) return null;
           const clash = (D: ProgEntry[], a: ProgEntry) => D.some(x => x !== a && (x.ex === a.ex || sameMuscles(mOf(x.ex), mOf(a.ex))));
@@ -850,7 +880,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     let why = null as string | null, pick = null as { level: number; res: OptRes; slots: ProgSlots; ev: Ev } | null;
     const tried: Record<number, { res: OptRes; slots: ProgSlots; ev: Ev }> = {};   // (в эталоне нет) последняя попытка каждого уровня: по ней видно, что остановило следующий
     const attempt = (lv: number) => {
-      const trial = clone(start), r = optimise(c2, trial, { z, ignore: cfg.ignore, prio, budget, dayCap: caps.day, level: lv, allDays: scratch || everyDay, time }, define), ev = newEv();
+      const trial = clone(start), r = optimise(c2, trial, { z, ignore: cfg.ignore, prio, budget, dayCap: caps.day, level: lv, allDays: scratch || everyDay, time, split }, define), ev = newEv();
       if (byTime) evenDays(trial, lv, r, ev);                            // (в эталоне нет) с днями «День N» уровень судится по выровненным дням
       if (!pick) why = r.hit;
       tried[lv] = { res: r, slots: trial, ev };
@@ -1014,6 +1044,16 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     if (res.cut.length) note('Убрано из программы', res.cut.map(c => nm(c.ex) + ' (' + c.sl.s.toLowerCase() + ')').join(', ') + ': эти упражнения давали лишнее мышцам, которые и так выше своего уровня, или не помещались в лимит недели' + (time ? ' либо в ' + fmtDur(time) + ' на тренировку' : '') + '.');
     /* (в эталоне нет) вывод 8 аудита: что из программы атлета слилось с другим упражнением того же дня */
     const folded = (res.fold || []).filter(f => f.was && slots[f.sl.id].some(e => e.ex === f.into) && !slots[f.sl.id].some(e => e.ex === f.ex));
+    /* (в эталоне нет) дни подряд: что сборка сделала и какие мышцы всё же основные в обоих днях пары */
+    if (pairLinks.length) {
+      const both = [...new Set(pairClash(pairLinks, d => slots[d].map(e => e.ex), mOf, cfg.ignore).map(x => x.m))];
+      const days = 'Дни подряд: ' + pairLinks.map(([a, b]) => dayNo(a) + '–' + dayNo(b)).join(', '), why = ' Это тренерское правило, прямых исследований нет.';
+      if (!split) note(days + ' — мышцы в обоих днях', 'Тренировки идут три дня подряд: у мышцы два дня в неделе, а не соседних дней только два — первый и последний, и средний день остался бы пустым. Поэтому дни собраны как без отметки.' + why);
+      else {
+        const m = SLOTS.filter(sl => slots[sl.id].length).map(sl => estMinutes(c2, slots[sl.id])), uneven = m.length > 1 && Math.max(...m) - Math.min(...m) > EVEN.min;
+        note(days + (both.length ? ' · в обоих: ' + names(both) : ''), 'В двух днях подряд мышца основная только в одном, второй её день в неделе — не соседний: после тяжёлой работы у неё есть сутки отдыха.' + why + (both.length ? ' ' + names(both).replace(/^./, c => c.toUpperCase()) + ' — в обоих днях: так стоят базовые и закреплённое упражнение, сборка их не двигает.' : '') + (uneven ? ' Дни из-за этого разной длины: мышцы делятся между днями пары группами — жимы, тяги, ноги, средние дельты.' : ''));
+      }
+    }
     if (folded.length) note('Одно упражнение вместо двух', folded.map(f => nm(f.into) + ' (' + f.sl.s.toLowerCase() + ') +' + f.n + ' вместо ' + nm(f.ex)).join(', ') + '. В длинном дне подходы на мышцу собраны в одно упражнение: для роста считаются подходы, а каждое упражнение — это ещё разминка и настройка снаряда.');
   }
 

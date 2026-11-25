@@ -5,20 +5,25 @@
    и программе текстом в онбординге (progDay). Подходы мышце по-прежнему прибавляются и убавляются кнопками у мышцы.
    Замена — та же, что в progDay (draft.ts): подходы остаются, «вместо «…»» показывает, что было, и только у замены полоса слева.
    На «Программе» день выглядит так же, как в онбординге (просьба владельца тем же днём): без полосы у нового, перенесённого и
-   изменённого и без «было N» в заголовке дня */
+   изменённого и без «было N» в заголовке дня.
+   Что беречь (решение владельца, 25 ноября 2026): у упражнения, которое нагружает больное место атлета, — красная пилюля с названием места,
+   и в программе, и в списке замен, чтобы было видно, на что менять (rules.ts, careOf) */
 import { C, h } from './dom.ts';
 import { D } from './render.ts';
 import { loadText, progScheme } from './program.ts';
+import { careOf, zoneName } from '../core/rules.ts';
 import type { Cfg, ProgEntry, Slot, Swap } from '../core/types.ts';
 import type { ProgEdit } from './types.ts';
 
+/** Красные пилюли больных мест, которые нагружает упражнение */
+export const carePills = (cfg: Cfg, id: string, def?: { n?: string } | null) => careOf(cfg, id, def).map(z => h('span', { class: 'tag crit' }, zoneName(z)));
 export function builtDay(cfg: Cfg, sl: Slot, list: ProgEntry[], load: number, edit: ProgEdit) {
   const rows = list.map((e, i) => {
     const k = C.kindOf(cfg, e.ex), nm = C.exName(cfg, e.ex), sid = 'sw-' + sl.id + '-' + i, goal = k === 'base' ? C.goalName(cfg, e.ex) : null;
     const alts = k === 'compound' || k === 'iso' ? C.swapsFor(cfg, e.ex, list.map(x => x.ex)) : null, can = !!alts && alts.same.length + alts.near.length > 0;
     const open = can && edit.swapAt === sl.id + ':' + i;
     let first = true;                                                   // первое упражнение списка получает фокус, когда список открывается (swapOpen в draft.ts)
-    const card = (x: Swap, note: string) => h('button', { type: 'button', class: 'ex-card', id: first ? (first = false, sid + '-to') : null, onclick: () => edit.swap(sl.id, i, x) }, h('span', { class: 'nm' }, x.n), note ? h('span', { class: 'sub' }, note) : null);
+    const card = (x: Swap, note: string) => h('button', { type: 'button', class: 'ex-card', id: first ? (first = false, sid + '-to') : null, onclick: () => edit.swap(sl.id, i, x) }, h('span', { class: 'nm' }, x.n, carePills(cfg, x.id, x.def)), note ? h('span', { class: 'sub' }, note) : null);
     const added = (x: Swap) => x.def ? 'добавится в справочник' : '';
     const near = (x: Swap) => card(x, ['мышцы совпадают частично: ' + x.main!.map(m => C.MUSCLE[m].n.toLowerCase()).join(', '), added(x)].filter(Boolean).join(' · '));
     const pick = open ? h('div', { class: 'stack swaprow', style: 'gap:6px' },
@@ -28,7 +33,7 @@ export function builtDay(cfg: Cfg, sl: Slot, list: ProgEntry[], load: number, ed
         : alts!.near.map(near)) : null;
     return h('div', { class: 'prow' + (e.was ? ' changed' : '') + (open ? ' swapping' : '') },
       h('div', { class: 'grow' },
-        h('div', { class: 'pn' }, nm, goal ? h('span', { class: 'tag' + (['strength', 'auto'].includes(C.goalOf(cfg, e.ex)!) ? ' accent' : '') }, goal) : null),
+        h('div', { class: 'pn' }, nm, goal ? h('span', { class: 'tag' + (['strength', 'auto'].includes(C.goalOf(cfg, e.ex)!) ? ' accent' : '') }, goal) : null, carePills(cfg, e.ex)),
         h('div', { class: 'sub' }, progScheme(cfg, e), e.was ? ' · вместо «' + C.exName(cfg, e.was) + '»' : '')),
       can ? h('button', { type: 'button', class: 'btn sm' + (open ? ' ghost' : ''), id: sid, 'aria-expanded': open ? 'true' : 'false', 'aria-label': (open ? 'Не заменять: ' : 'Заменить упражнение: ') + nm,
         onclick: () => edit.swapOpen(open ? null : sl.id, i) }, open ? 'Отмена' : 'Заменить') : null,

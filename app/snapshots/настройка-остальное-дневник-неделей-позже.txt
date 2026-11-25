@@ -78,6 +78,7 @@
   kw-work-hip_thrust=
   kw-workR-hip_thrust=
   kw-max-hip_thrust=
+  stop-add=
   pr-n-me=Мой дневник
   pr-n-p2=Второй профиль
   pr-new=
@@ -669,7 +670,57 @@
         div.kw-n Пресс
         div.kw-log.sub Есть в журнале: 7.5 кг × 15, 3 окт — веса берутся из него.
    details#setup-more.morebox
-    summary Остальные настройки: профили, справочник, данные
+    summary Остальные настройки: что беречь, профили, справочник, данные
+    section#care-card.card
+     div.sec-h
+      h2 Что беречь
+     div#care
+      div.eyebrow(style="margin-bottom:4px") Что болит
+      p.note(style="margin-bottom:8px") Упражнения, которые нагружают отмеченное место, останутся в программе с красной пометкой: заменить их ты решишь сам.
+      div.picks(role="group" aria-label="Что болит")
+       button#care-shoulder.btn.sm(type="button" aria-pressed="false") Плечо
+       button#care-elbow.btn.sm(type="button" aria-pressed="false") Локоть
+       button#care-wrist.btn.sm(type="button" aria-pressed="false") Запястье
+       button#care-lowback.btn.sm(type="button" aria-pressed="false") Поясница
+       button#care-hip.btn.sm(type="button" aria-pressed="false") Тазобедренный сустав
+       button#care-knee.btn.sm(type="button" aria-pressed="false") Колено
+      div.eyebrow(style="margin:14px 0 4px") Стоп-упражнения
+      p.note(style="margin-bottom:8px") Их дневник не поставит в программу и не предложит в заменах.
+      select#stop-add(aria-label="Добавить стоп-упражнение")
+       option(value="" selected="") Добавить стоп-упражнение…
+       option(value="pec_fly") Бабочка
+       option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе
+       option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
+       option(value="barbell_curl") Бицепс со штангой стоя
+       option(value="bayesian_curl") Бицепс Bayesian curl
+       option(value="lat_pulldown") Вертикальная тяга в тренажере
+       option(value="lunge") Выпады с гантелями
+       option(value="back_ext") Гиперэкстензия
+       option(value="row_machine") Горизонтальная тяга в тренажере
+       option(value="tbar_row") Горизонтальная тяга Т-бар
+       option(value="chest_press") Жим в тренажере на грудь
+       option(value="db_bench") Жим гантелей лежа
+       option(value="incline_db") Жим гантелей под углом 45
+       option(value="db_ohp") Жим гантелей сидя
+       option(value="bench") Жим лежа
+       option(value="leg_press") Жим ногами
+       option(value="wrist_cable_l") Кисть на блоке левая
+       option(value="wrist_cable_r") Кисть на блоке правая
+       option(value="wrist_db_l") Кисть с гантелью левая рука
+       option(value="wrist_db_r") Кисть с гантелью правая рука
+       option(value="lat_raise") Махи гантелями в стороны
+       option(value="lat_raise_db") Махи с гантелями на плечи
+       option(value="hammer") Молотки с гантелями
+       option(value="abduction") Отведение ног в тренажере
+       option(value="pullup") Подтягивания
+       option(value="abs") Пресс
+       option(value="squat") Приседания со штангой
+       option(value="leg_ext") Разгибания ног в тренажере
+       option(value="rdl") Румынская тяга
+       option(value="lat_raise_machine") Средние дельты в тренажере
+       option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
+       option(value="tri_pushdown") Трицепс с косичкой на блоке
+       option(value="hip_thrust") Ягодичный мост со штангой
     section.card
      div.sec-h
       div
@@ -891,7 +942,7 @@
 -     option(value="p2") Второй профиль
 +     option(value="p2") Гость
 поля: правки к шагу 2
-@@ 51 -1 +1
+@@ 52 -1 +1
 - pr-n-p2=Второй профиль
 + pr-n-p2=Гость
 сообщение: "Имя сохранено"
@@ -991,7 +1042,7 @@
 + kw-work-tri_pushdown=
 + kw-workR-tri_pushdown=
 + kw-max-tri_pushdown=
-@@ 52 -0 +1
+@@ 53 -0 +1
 + pr-n-pmi5tzuyw=Гость
 сообщение: "Дневник: Гость"
 записи:
@@ -1164,62 +1215,62 @@
 +       input#kw-workR-hip_thrust.num.sm(type="text" inputmode="numeric" placeholder="повт." aria-label="Повторов с рабочим весом: Ягодичный мост со штангой")
 +       input#kw-max-hip_thrust.num.sm(type="text" inputmode="decimal" placeholder="макс. кг" aria-label="Разовый максимум, кг: Ягодичный мост со штангой")
 +       div#kw-out-hip_thrust.kw-out.sub вес подберёшь на первой тренировке
-@@ 550 -1 +1
+@@ 600 -1 +1
 -      p.note У каждого профиля свои тренировки, программа, упражнения и настройка. Переключатель — в шапке страницы; всё ниже относится к открытому профилю: Мой дневник.
 +      p.note У каждого профиля свои тренировки, программа, упражнения и настройка. Переключатель — в шапке страницы; всё ниже относится к открытому профилю: Гость.
-@@ 554 -1 +1
+@@ 604 -1 +1
 -      span.tag.accent открыт
 +      button.btn.sm Открыть
-@@ 558 -0 +3
+@@ 608 -0 +3
 +     div.plan-row(style="align-items:center")
 +      input#pr-n-pmi5tzuyw(type="text" aria-label="Имя профиля" style="flex:1 1 200px")
 +      span.tag.accent открыт
-@@ 575 -1 +3
+@@ 625 -1 +3
 -      span.n Бабочка
 +      span.n
 +       | Бабочка
 +       span.muted " · не в программе"
-@@ 578 -0 +1
+@@ 628 -0 +1
 +      button#ex-del-pec_fly.btn.ghost.sm(aria-label="Убрать из справочника: Бабочка") Убрать
-@@ 579 -1 +3
+@@ 629 -1 +3
 -      span.n Бицепс бедра на тренажере лежа на животе
 +      span.n
 +       | Бицепс бедра на тренажере лежа на животе
 +       span.muted " · не в программе"
-@@ 582 -0 +1
+@@ 632 -0 +1
 +      button#ex-del-leg_curl_lying.btn.ghost.sm(aria-label="Убрать из справочника: Бицепс бедра на тренажере лежа на животе") Убрать
-@@ 583 -1 +3
+@@ 633 -1 +3
 -      span.n Бицепс бедра сидя в тренажере
 +      span.n
 +       | Бицепс бедра сидя в тренажере
 +       span.muted " · не в программе"
-@@ 586 -0 +1
+@@ 636 -0 +1
 +      button#ex-del-leg_curl_seated.btn.ghost.sm(aria-label="Убрать из справочника: Бицепс бедра сидя в тренажере") Убрать
-@@ 587 -1 +3
+@@ 637 -1 +3
 -      span.n Бицепс со штангой стоя
 +      span.n
 +       | Бицепс со штангой стоя
 +       span.muted " · не в программе"
-@@ 590 -0 +1
+@@ 640 -0 +1
 +      button#ex-del-barbell_curl.btn.ghost.sm(aria-label="Убрать из справочника: Бицепс со штангой стоя") Убрать
-@@ 591 -1 +3
+@@ 641 -1 +3
 -      span.n Бицепс Bayesian curl
 +      span.n
 +       | Бицепс Bayesian curl
 +       span.muted " · не в программе"
-@@ 594 -0 +1
+@@ 644 -0 +1
 +      button#ex-del-bayesian_curl.btn.ghost.sm(aria-label="Убрать из справочника: Бицепс Bayesian curl") Убрать
-@@ 595 -1 +3
+@@ 645 -1 +3
 -      span.n Вертикальная тяга в тренажере
 +      span.n
 +       | Вертикальная тяга в тренажере
 +       span.muted " · не в программе"
-@@ 598 -0 +1
+@@ 648 -0 +1
 +      button#ex-del-lat_pulldown.btn.ghost.sm(aria-label="Убрать из справочника: Вертикальная тяга в тренажере") Убрать
-@@ 599 -56 +0
-@@ 674 -0 +1
+@@ 649 -56 +0
+@@ 724 -0 +1
 +      button#ex-del-row_machine.btn.ghost.sm(aria-label="Убрать из справочника: Горизонтальная тяга в тренажере") Убрать
-@@ 676 -0 +7
+@@ 726 -0 +7
 +       | Горизонтальная тяга Т-бар
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Верх спины, Бицепс ½, Задние дельты ½, Широчайшие ½, Предплечья ½
@@ -1227,7 +1278,7 @@
 +      button#ex-del-tbar_row.btn.ghost.sm(aria-label="Убрать из справочника: Горизонтальная тяга Т-бар") Убрать
 +     div.plan-row
 +      span.n
-@@ 690 -0 +7
+@@ 740 -0 +7
 +       | Жим гантелей под углом 45
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Грудь, Передние дельты ½, Трицепс ½
@@ -1235,7 +1286,7 @@
 +      button#ex-del-incline_db.btn.ghost.sm(aria-label="Убрать из справочника: Жим гантелей под углом 45") Убрать
 +     div.plan-row
 +      span.n
-@@ 697 -0 +42
+@@ 747 -0 +42
 +       | Жим лежа
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") без снаряда · базовое, шаг 2.5 кг · Грудь, Передние дельты ½, Трицепс ½
@@ -1278,9 +1329,9 @@
 +      button#ex-del-wrist_db_r.btn.ghost.sm(aria-label="Убрать из справочника: Кисть с гантелью правая рука") Убрать
 +     div.plan-row
 +      span.n
-@@ 708 -0 +1
+@@ 758 -0 +1
 +      button#ex-del-lat_raise_db.btn.ghost.sm(aria-label="Убрать из справочника: Махи с гантелями на плечи") Убрать
-@@ 710 -0 +7
+@@ 760 -0 +7
 +       | Молотки с гантелями
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Бицепс, Предплечья ½
@@ -1288,7 +1339,7 @@
 +      button#ex-del-hammer.btn.ghost.sm(aria-label="Убрать из справочника: Молотки с гантелями") Убрать
 +     div.plan-row
 +      span.n
-@@ 717 -0 +7
+@@ 767 -0 +7
 +       | Подтягивания
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") пояс с отягощением · базовое, шаг 1 кг · Широчайшие, Бицепс ½, Верх спины ½, Предплечья ½
@@ -1296,9 +1347,9 @@
 +      button#ex-del-pullup.btn.ghost.sm(aria-label="Убрать из справочника: Подтягивания") Убрать
 +     div.plan-row
 +      span.n
-@@ 721 -0 +1
+@@ 771 -0 +1
 +      button#ex-del-abs.btn.ghost.sm(aria-label="Убрать из справочника: Пресс") Убрать
-@@ 730 -0 +7
+@@ 780 -0 +7
 +       | Разгибания ног в тренажере
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Квадрицепс
@@ -1306,7 +1357,7 @@
 +      button#ex-del-leg_ext.btn.ghost.sm(aria-label="Убрать из справочника: Разгибания ног в тренажере") Убрать
 +     div.plan-row
 +      span.n
-@@ 737 -0 +21
+@@ 787 -0 +21
 +       | Средние дельты в тренажере
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Средние дельты
@@ -1328,7 +1379,7 @@
 +      button#ex-del-tri_pushdown.btn.ghost.sm(aria-label="Убрать из справочника: Трицепс с косичкой на блоке") Убрать
 +     div.plan-row
 +      span.n
-@@ 746 -1 +1
+@@ 796 -1 +1
 -      p.note Записей в дневнике: 27. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
 +      p.note Записей в дневнике: 0. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
 
@@ -1348,7 +1399,7 @@
    section#onb.card(style="max-width:760px;margin:0 auto;width:100%")
     div.sec-h
      div
-      div#onb-n.eyebrow Шаг 1 из 5
+      div#onb-n.eyebrow Шаг 1 из 6
       h2 С чего начнём?
      button#onb-skip.btn.ghost.sm(type="button") Пропустить
     p.note(style="margin-bottom:12px") Дневник ведёт твои тренировки, строит план следующей и подсказывает веса. Записи хранятся только на этом устройстве.
@@ -1407,14 +1458,14 @@
 черновик:
   + td-profile me
 экран: правки к шагу 2
-@@ 558 -0 +3
+@@ 608 -0 +3
 +     div.plan-row(style="align-items:center")
 +      input#pr-n-pmi5tzuyw(type="text" aria-label="Имя профиля" style="flex:1 1 200px")
 +      button.btn.sm Открыть
 
 === 9. справочник: изменить
 поля: правки к шагу 8
-@@ 55 -0 +22
+@@ 56 -0 +22
 + xf-leg_curl_seated-n=Бицепс бедра сидя в тренажере
 + xf-leg_curl_seated-mode=dp
 + xf-leg_curl_seated-pat=iso
@@ -1439,7 +1490,7 @@
 + xf-leg_curl_seated-m-calves=0
 сообщение: ""
 экран: правки к шагу 8
-@@ 585 -4 +136
+@@ 635 -4 +136
 -     div.plan-row
 -      span.n Бицепс бедра сидя в тренажере
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Бицепс бедра
@@ -1583,7 +1634,7 @@
 
 === 10. справочник: без названия
 поля: правки к шагу 9
-@@ 55 -1 +1
+@@ 56 -1 +1
 - xf-leg_curl_seated-n=Бицепс бедра сидя в тренажере
 + xf-leg_curl_seated-n=
 сообщение: "Назови упражнение"
@@ -1625,8 +1676,12 @@
 +       div.kw-n
 +        | Новое имя
 +        span.tag(style="margin-left:6px") базовое
-@@ 585 -136 +0
-@@ 768 -0 +4
+@@ 565 -1 +0
+-      option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
+@@ 586 -0 +1
++      option(value="leg_curl_seated") Новое имя
+@@ 635 -136 +0
+@@ 818 -0 +4
 +      button.btn.ghost.sm Изменить
 +     div.plan-row
 +      span.n Новое имя
@@ -1634,7 +1689,7 @@
 
 === 12. справочник: открыть другое
 поля: правки к шагу 11
-@@ 55 -0 +22
+@@ 56 -0 +22
 + xf-lat_pulldown-n=Вертикальная тяга в тренажере
 + xf-lat_pulldown-mode=dp
 + xf-lat_pulldown-pat=v_pull
@@ -1659,7 +1714,7 @@
 + xf-lat_pulldown-m-calves=0
 сообщение: ""
 экран: правки к шагу 11
-@@ 595 -4 +136
+@@ 645 -4 +136
 -     div.plan-row
 -      span.n Вертикальная тяга в тренажере
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Широчайшие, Бицепс ½, Верх спины ½, Предплечья ½
