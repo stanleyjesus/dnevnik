@@ -13,11 +13,11 @@ import { goalPicker, mixText, modeBudget, modeKey, soloNow, soloText } from './g
 import { needGear } from './starter.ts';
 import { TIMES, timeOf } from './fit.ts';
 import { progDraft, progLifts } from './draft.ts';
-import { builtDay } from './builtday.ts';
+import { builtDay, carePills } from './builtday.ts';
 import { pairsRow } from './care.ts';
 import { weekDays } from './platform.ts';
 import { DAY_COUNTS, awayDays, daysOf, useDays } from '../core/days.ts';
-import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift } from '../core/rules.ts';
+import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift, stopOf } from '../core/rules.ts';
 import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../core/index.ts';
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
 
@@ -56,11 +56,12 @@ export function progDay(cfg: Cfg, sl: Slot, list: ProgEntry[], load: number, was
         alts.same.length ? h('optgroup', { label: 'Те же мышцы' }, alts.same.map(x => opt(x))) : null,
         alts.near.length ? h('optgroup', { label: 'Близкие: мышцы совпадают частично' }, alts.near.map(x => opt(x, ' — ' + x.main!.map(m => C.MUSCLE[m].n.toLowerCase()).join(', ')))) : null),
       h('button', { type: 'button', class: 'btn ghost sm', onclick: () => edit!.swapOpen(null) }, 'Отмена')) : null;
-    return h('div', { class: 'prow' + (e.isNew || e.chg || e.was || (marked && marked(e)) ? ' changed' : '') + (open ? ' swapping' : '') }, h('div', { class: 'grow' }, h('div', { class: 'pn' }, nm, tags), sub), ctl, picker);
+    return h('div', { class: 'prow' + (e.isNew || e.chg || e.was || (marked && marked(e)) ? ' changed' : '') + (open ? ' swapping' : '') }, h('div', { class: 'grow' }, h('div', { class: 'pn' }, nm, tags, carePills(cfg, e.ex)), sub), ctl, picker);   // (в эталоне нет) пилюли больных мест, решение владельца 25 ноября 2026
   });
   let adder = null;
   if (edit) {
-    const ids = Object.keys(cfg.ex).filter(id => !C.isLight(cfg, id) && !list.some(e => e.ex === id)).sort((a, b) => C.exName(cfg, a).localeCompare(C.exName(cfg, b), 'ru'));
+    const stop = stopOf(D.cfg);                                       // (в эталоне нет) стоп-упражнения список дня не предлагает, решение владельца 25 ноября 2026
+    const ids = Object.keys(cfg.ex).filter(id => !C.isLight(cfg, id) && !list.some(e => e.ex === id) && !stop(id)).sort((a, b) => C.exName(cfg, a).localeCompare(C.exName(cfg, b), 'ru'));
     adder = ids.length ? h('div', { class: 'row', style: 'margin-top:8px;flex-wrap:nowrap' },
       h('select', { id: 'pa-' + sl.id, class: 'grow', 'aria-label': 'Упражнение для дня: ' + sl.n, style: 'min-width:0' }, ids.map(id => h('option', { value: id, text: C.exName(cfg, id) }))),
       h('button', { class: 'btn sm', id: 'pb-' + sl.id, onclick: () => edit.add(sl.id, $('pa-' + sl.id)!.value) }, icon('plus'), 'В день')) : null;

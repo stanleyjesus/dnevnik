@@ -70,7 +70,7 @@ export function startLine(id: string) {
   return 'старт: ' + w + ' на ' + C.rangeOf(D.W, c, id).join('–') + ' повторов' + (by ? ' — ' + by : s.src === 'work' ? '' : ' (от максимума ' + C.fmt(C.knownMax(c, id), 1) + ')');
 }
 
-const seq = (o: Onb): Step[] => o.path === 'own' ? ['start', 'prog', 'weights', 'done'] : o.path === 'paste' ? ['start', 'paste', 'prog', 'weights', 'done'] : ['start', 'goal', 'care', 'prog', 'weights', 'done'];
+const seq = (o: Onb): Step[] => o.path === 'own' ? ['start', 'care', 'prog', 'weights', 'done'] : o.path === 'paste' ? ['start', 'paste', 'care', 'prog', 'weights', 'done'] : ['start', 'goal', 'care', 'prog', 'weights', 'done'];
 const to = (step: Step) => { O!.step = step; render(); };
 function skip() { skipped.add(S.profile); O!.done = true; render(); }
 /* мастер закончен: дальше — обычные вкладки */
@@ -134,7 +134,7 @@ function vStart(): View {
   return [frame('С чего начнём?', 'Дневник ведёт твои тренировки, строит план следующей и подсказывает веса. Записи хранятся только на этом устройстве.', [
     h('div', { class: 'stack', style: 'gap:8px' },
       opt('onb-build', 'Собрать программу', 'Дневник подберёт упражнения по дням под твою цель и время.', () => { O!.path = 'build'; if (O!.focus === 'manual') O!.focus = 'even'; S.ui.prog = null; to('goal'); }),
-      opt('onb-own', 'У меня своя программа', 'Разложишь свои упражнения по дням сам.', () => { O!.path = 'own'; O!.focus = 'manual'; S.ui.prog = null; to('prog'); }),
+      opt('onb-own', 'У меня своя программа', 'Разложишь свои упражнения по дням сам.', () => { O!.path = 'own'; O!.focus = 'manual'; S.ui.prog = null; to('care'); }),
       opt('onb-paste', 'Вставить программу текстом', 'Из заметок: дни и упражнения с подходами — дневник разложит их сам.', () => { O!.path = 'paste'; O!.focus = 'manual'; to('paste'); }),
       opt('onb-import', 'Перенести записи из файла', 'Резервная копия этого дневника с другого устройства.', pickBackup)),
     importBox()], null, h('span'))];
@@ -174,7 +174,7 @@ function vPaste(): View {
     /* вес из текста — рабочий вес с повторами, если своего у упражнения ещё нет; его видно и можно поправить в шаге «Веса» */
     const named = days!.flatMap((d, k) => d.items.map((it, i) => ({ it, id: P.pick[k + '-' + i] }))).filter(x => x.id && x.id !== NEW && x.it.w && x.it.lo && !(+S.cfg.ex[x.id].work! > 0) && !(+S.cfg.ex[x.id].max! > 0));
     if (named.length && !(await saveCfg(raw => { for (const x of named) if (raw.ex[x.id] && !raw.ex[x.id].work) { raw.ex[x.id].work = x.it.w; raw.ex[x.id].workR = x.it.lo; } }))) return;
-    S.ui.prog = null; S.ui.plan = null; P.fill = true; to('prog');
+    S.ui.prog = null; S.ui.plan = null; P.fill = true; to('care');
   };
   return [frame('Программа текстом', 'Вставь программу из заметок: дни — строками «День 1», «День 2», под ними упражнения, по одному в строке, можно с подходами и весом.', [
     h('textarea', { id: 'onb-text', rows: 9, placeholder: EXAMPLE, 'aria-label': 'Программа текстом', oninput: e => { P.text = e.target.value; } }, P.text),
@@ -203,10 +203,12 @@ function vGoal(): View {
     () => to('start'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('care') }, 'Дальше'))];
 }
 
-/* что беречь: больные места и стоп-упражнения; ничего не отмечать — тоже ответ */
+/* что беречь: больные места и стоп-упражнения; ничего не отмечать — тоже ответ. На всех трёх путях — перед днями программы:
+   у собранной после «Цели и времени», у своей — сразу после первого шага, у программы текстом — после разбора текста */
 function vCare(): View {
+  const path = O!.path;
   return [frame('Что беречь', 'Отметь, что болит, и упражнения, которые тебе нельзя. Нечего отмечать — просто нажми «Дальше».', [careBox()],
-    () => to('goal'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('prog') }, 'Дальше'))];
+    () => to(path === 'own' ? 'start' : path === 'paste' ? 'paste' : 'goal'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('prog') }, 'Дальше'))];
 }
 
 function vProg(): View {
@@ -229,7 +231,7 @@ function vProg(): View {
     h('p', { class: 'sub', id: 'onb-sum', style: 'margin-bottom:8px' }, loadText(total(pr.after.load)) + ' в неделю' + (mins.length ? ' · самая длинная тренировка ≈ ' + C.fmtDur(Math.max(...mins)) : '')),
     h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit))),
     h('p', { class: 'sub', style: 'margin-top:8px' }, 'Нагрузка по мышцам и подходы в неделю — на вкладке «Программа», когда закончишь.')],
-    () => to(text ? 'paste' : own ? 'start' : 'care'), next)];
+    () => to('care'), next)];
 }
 
 /* программа, как она принята: упражнения, которым нужен вес, по порядку дней — без лёгких и средних дней (их вес — доля максимума тяжёлого) */

@@ -11,15 +11,16 @@ import { D, render } from './render.ts';
 import { dayNo } from '../core/days.ts';
 import { ZONES, dayLinks, pairsOf } from '../core/rules.ts';
 
-/* настройка изменилась: черновик сборки и план считаются заново */
-const fresh = () => { S.ui.plan = null; if (S.ui.prog) S.ui.prog.draft = null; render(true); };
+/* стоп-упражнения и дни подряд меняют сборку: черновик и план считаются заново. Программу «Вручную» (и свою программу в онбординге)
+   атлет раскладывает сам — её черновик с правками остаётся. Больное место сборку не меняет: пилюли считаются при показе (builtday.ts, carePills) */
+const fresh = () => { S.ui.plan = null; if (S.ui.prog && S.ui.prog.focus !== 'manual') S.ui.prog.draft = null; render(true); };
 
 /** Больные места и стоп-упражнения */
 export function careBox(ro?: boolean) {
   const cfg = D.cfg, care = cfg.care || [];
   const zone = async (id: string) => {
     if (!(await saveCfg(raw => { const L = Array.isArray(raw.care) ? raw.care.filter((x: string) => x !== id) : []; if (!care.includes(id)) L.push(id); if (L.length) raw.care = L; else delete raw.care; }))) return;
-    fresh();
+    render(true);
   };
   const stop = async (id: string, on: boolean) => {
     if (!(await saveCfg(raw => { const e = raw.ex[id]; if (!e) return; if (on) e.stop = true; else delete e.stop; }))) return;
