@@ -3,7 +3,8 @@
    Сам экран — кнопки, списки, запоминание выбора — проверяют сценарии npm run screens. */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { goalOf, liftOf, lostMode, mixText, modeKey, setMode, soloNow, soloText } from '../src/ui/goal.ts';
+import { goalOf, liftOf, lostMode, mixText, modeKey, othersOf, setMode, soloNow, soloText } from '../src/ui/goal.ts';
+import { useDays } from '../src/core/days.ts';
 import { STRONG } from '../src/core/strength.ts';
 import type { ProgUi } from '../src/ui/types.ts';
 
@@ -96,3 +97,13 @@ test('режим сборки для лимита по времени', () => {
   assert.equal(modeKey({ focus: 's:bench', others: 'hold' }), 's:bench|hold');
 });
 
+/* «Остальные базовые» в «Гибриде»: с днями «День N» — «Как подсобка» или «Растут как раньше», «Поддержания» в выборе нет
+   (решение владельца, 25 ноября 2026); программа, принятая с ним, показывается с «Как подсобка». С таблицей дней эталона — как в эталоне */
+test('остальные базовые в «Гибриде»: с днями «День N» два варианта, прежнее поддержание — как подсобка', () => {
+  const all = [null, {}, { others: '' }, { others: 'hold' }, { others: 'grow' }, { others: 'plain' }].map(P => othersOf(P));
+  assert.deepEqual(all, ['hold', 'hold', 'hold', 'hold', 'grow', 'hold'], 'с таблицей дней эталона — поддержание, если не выбрано «растут»');
+  useDays(3, false);
+  try {
+    assert.deepEqual([null, {}, { others: '' }, { others: 'hold' }, { others: 'grow' }, { others: 'plain' }].map(P => othersOf(P)), ['plain', 'plain', 'plain', 'plain', 'grow', 'plain']);
+  } finally { useDays(null, true); }
+});
