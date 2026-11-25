@@ -2,6 +2,8 @@
    Перенесено из reference/src/ui1.js без изменения кода: добавлены только типы.
    Всё, чем экраны отличаются от эталона, перечислено в scripts/tokens.mjs. */
 import { C } from './dom.ts';
+import { appRules } from '../core/rules.ts';
+import { paceOf, setPace } from '../core/pace.ts';
 import type { AppState, ProgSet } from './types.ts';
 
 /* ---------- state ---------- */
@@ -25,11 +27,13 @@ export function derive() {
   const W = S.workouts;
   const st = { workouts: W, cfg, body: S.body, today };
   const wi = C.weeksInfo(W, cfg, today), vol = C.volume(W, cfg), av = C.avgVolume(vol, wi.ref);
+  const pace = appRules() ? paceOf(W, cfg) : { k: 1, n: 0 };           // (в эталоне нет) темп атлета по времени, названному в конце тренировок (core/pace.ts)
+  setPace(pace.k);
   const stats = C.allStats(W, cfg);
   const slot = C.nextSlot(W, today);
   return {
     today, cfg, W, st, wi, vol, avg: av.avg, avgS: av.avgS, pat: av.pat, stats, statBy: Object.fromEntries(stats.map(s => [s.id, s])),
     ins: C.insights(st), idx: C.strengthIndex(W, cfg), prog: C.program(W, cfg) as ProgSet, slot, date: C.nextDate(slot, today, W),
-    openW: W.find(w => w.open) || null
+    openW: W.find(w => w.open) || null, pace
   };
 }

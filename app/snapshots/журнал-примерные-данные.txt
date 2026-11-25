@@ -1599,6 +1599,7 @@
 + a(href="#journal") Журнал
 поля: целиком
   wk-date=2025-11-05
+  wk-min=
   rng-0-0=8
   rng-0-1=12
   w-0-0=50
@@ -1693,7 +1694,7 @@
   wk-note=
 сообщение: ""
 экран: правки к шагу 7
-@@ 2 -25 +87
+@@ 2 -25 +90
 +  div.card
 +   div.sec-h
 +    div
@@ -1714,6 +1715,9 @@
 +      button(type="button" aria-pressed="false") День 1
 +      button(type="button" aria-pressed="true") День 2
 +      button(type="button" aria-pressed="false") День 3
++    label.f
++     span Длилась, мин
++     input#wk-min.num(type="text" inputmode="numeric" aria-label="Сколько минут длилась тренировка" placeholder="63")
 +  div.ex
 +   div.ex-h
 +    h3 Разгибания ног в тренажере
@@ -2436,35 +2440,35 @@
 
 === 11. правка: повторы, вес, запас
 поля: правки к шагу 8
-@@ 5 -1 +1
+@@ 6 -1 +1
 - r-0-0=10
 + r-0-0=11
-@@ 7 -1 +1
+@@ 8 -1 +1
 - w-0-1=47.5
 + w-0-1=42,5
-@@ 9 -1 +1
+@@ 10 -1 +1
 - q-0-1=
 + q-0-1=3
 экран: правки к шагу 8
 @@ 11 -1 +1
 -     span#save-state сохранено
 +     span#save-state изменения не сохранены
-@@ 56 -1 +1
+@@ 59 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 9, сейчас 10")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 9, сейчас 11")
-@@ 61 -1 +1
+@@ 64 -1 +1
 -      i.c(style="display: block; left: calc(50% + 0px);")
 +      i.c(style="display: block; left: calc(75% - 3px);")
-@@ 69 -1 +1
+@@ 72 -1 +1
 -        | в диапазоне: дальше цель 11+
 +        | в диапазоне: дальше цель 12+
 
 === 12. правка: заметки
 поля: правки к шагу 11
-@@ 25 -1 +1
+@@ 26 -1 +1
 - ex-note-1=
 + ex-note-1=локти ближе
-@@ 93 -1 +1
+@@ 94 -1 +1
 - wk-note=
 + wk-note=спал мало
 
@@ -2481,12 +2485,12 @@
 адрес: "#workout"
 шапка: как в шаге 8
 поля: правки к шагу 12
-@@ 7 -1 +1
+@@ 8 -1 +1
 - w-0-1=42,5
 + w-0-1=42.5
 сообщение: ""
 экран: правки к шагу 11
-@@ 728 -1 +1
+@@ 731 -1 +1
 -   textarea#wk-note(placeholder="Самочувствие, сон, что мешало")
 +   textarea#wk-note(placeholder="Самочувствие, сон, что мешало") спал мало
 
@@ -2518,6 +2522,7 @@
 шапка: как в шаге 8
 поля: целиком
   wk-date=2025-11-12
+  wk-min=
   cw-pullup=92.5
   cs-pullup=4
   cn-pullup=4
@@ -2638,12 +2643,15 @@
 +      button(type="button" aria-pressed="false") День 2
 +      button(type="button" aria-pressed="true") День 3
 @@ 24 -1 +1
+-     input#wk-min.num(type="text" inputmode="numeric" aria-label="Сколько минут длилась тренировка" placeholder="63")
++     input#wk-min.num(type="text" inputmode="numeric" aria-label="Сколько минут длилась тренировка" placeholder="82")
+@@ 27 -1 +1
 -    h3 Разгибания ног в тренажере
 +    h3 Подтягивания
-@@ 35 -1 +1
+@@ 38 -1 +1
 -    span.tag Квадрицепс
 +    span.tag Широчайшие
-@@ 37 -0 +43
+@@ 40 -0 +43
 +    span
 +     | "82% от расчётного максимума "
 +     b 112.8 кг
@@ -2687,50 +2695,50 @@
 +   div.ex-meta
 +    span.tag Грудь
 +    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
-@@ 38 -1 +1
+@@ 41 -1 +1
 -    input#rng-0-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    input#rng-1-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
-@@ 40 -2 +2
+@@ 43 -2 +2
 -    input#rng-0-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 -    span прошлый раз 29 окт
 +    input#rng-1-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 +    span прошлый раз 7 ноя
-@@ 52 -1 +1
+@@ 55 -1 +1
 -     input#w-0-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +     input#w-1-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 54 -3 +3
+@@ 57 -3 +3
 -     input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="10+")
 -     input#q-0-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 9, сейчас 11")
 +     input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
 +     input#q-1-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 14, сейчас 14")
-@@ 60 -2 +2
+@@ 63 -2 +2
 -      i.p(title="прошлый раз: 9" style="left: calc(25% + 3px);")
 -      i.c(style="display: block; left: calc(75% - 3px);")
 +      i.p(title="прошлый раз: 14" style="left: calc(108% - 6.96px);")
 +      i.c(style="display: block; left: calc(108% - 6.96px);")
-@@ 64 -1 +1
+@@ 67 -1 +1
 -      b 50 × 9
 +      b 45 × 14
-@@ 67 -3 +3
+@@ 70 -3 +3
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | в диапазоне: дальше цель 12+
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | верх диапазона: дальше +2.5 кг
-@@ 74 -1 +1
+@@ 77 -1 +1
 -     input#w-0-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     input#w-1-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 76 -3 +3
+@@ 79 -3 +3
 -     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="12+")
 -     input#q-0-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 11, сейчас 12")
 +     input#r-1-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="11+")
 +     input#q-1-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10, сейчас 10")
-@@ 82 -1 +23
+@@ 85 -1 +23
 -      i.p(title="прошлый раз: 11" style="left: calc(75% - 3px);")
 +      i.p(title="прошлый раз: 10" style="left: calc(50% + 0px);")
 +      i.c(style="display: block; left: calc(50% + 0px);")
@@ -2755,33 +2763,33 @@
 +      span.lo 8
 +      span.hi 12
 +      i.p(title="прошлый раз: 12" style="left: calc(100% - 6px);")
-@@ 86 -1 +1
+@@ 89 -1 +1
 -      b 47.5 × 11
 +      b 40 × 12
-@@ 92 -1 +1
+@@ 95 -1 +1
 -     button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
 +     button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
-@@ 95 -2 +2
+@@ 98 -2 +2
 -     span.i 3
 -     input#w-0-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     span.i 4
 +     input#w-1-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
-@@ 98 -3 +3
+@@ 101 -3 +3
 -     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="12+")
 -     input#q-0-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 11, сейчас 7")
 +     input#r-1-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="11+")
 +     input#q-1-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10, сейчас 10")
-@@ 104 -2 +2
+@@ 107 -2 +2
 -      i.p(title="прошлый раз: 11" style="left: calc(75% - 3px);")
 -      i.c(style="display: block; left: calc(-8% + 6.96px);")
 +      i.p(title="прошлый раз: 10" style="left: calc(50% + 0px);")
 +      i.c(style="display: block; left: calc(50% + 0px);")
-@@ 108 -1 +1
+@@ 111 -1 +1
 -      b 45 × 11
 +      b 40 × 10
-@@ 111 -4 +4
+@@ 114 -4 +4
 -       span.pill.serious
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
 -        | ниже диапазона: дальше вес ниже
@@ -2790,355 +2798,355 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 +        | в диапазоне: дальше цель 11+
 +     button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
-@@ 119 -44 +0
-@@ 166 -1 +1
+@@ 122 -44 +0
+@@ 169 -1 +1
 -    h3 Жим гантелей под углом 45
 +    h3 Бицепс бедра на тренажере лежа на животе
-@@ 177 -1 +1
+@@ 180 -1 +1
 -    span.tag Грудь
 +    span.tag Бицепс бедра
-@@ 183 -1 +1
+@@ 186 -1 +1
 -    span прошлый раз 29 окт
 +    span прошлый раз 7 ноя
-@@ 196 -1 +1
+@@ 199 -1 +1
 -     input#r-2-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="10+")
 +     input#r-2-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="9+")
-@@ 198 -1 +1
+@@ 201 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 9, сейчас 9")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 8, сейчас 8")
-@@ 202 -2 +2
+@@ 205 -2 +2
 -      i.p(title="прошлый раз: 9" style="left: calc(25% + 3px);")
 -      i.c(style="display: block; left: calc(25% + 3px);")
 +      i.p(title="прошлый раз: 8" style="left: calc(0% + 6px);")
 +      i.c(style="display: block; left: calc(0% + 6px);")
-@@ 206 -1 +1
+@@ 209 -1 +1
 -      b 24 × 9
 +      b 32.5 × 8
-@@ 211 -1 +1
+@@ 214 -1 +1
 -        | в диапазоне: дальше цель 10+
 +        | в диапазоне: дальше цель 9+
-@@ 218 -1 +1
+@@ 221 -1 +1
 -     input#r-2-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="6+")
 +     input#r-2-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="11+")
-@@ 220 -1 +1
+@@ 223 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 11, сейчас 12")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10, сейчас 10")
-@@ 224 -2 +2
+@@ 227 -2 +2
 -      i.p(title="прошлый раз: 11" style="left: calc(75% - 3px);")
 -      i.c(style="display: block; left: calc(100% - 6px);")
 +      i.p(title="прошлый раз: 10" style="left: calc(50% + 0px);")
 +      i.c(style="display: block; left: calc(50% + 0px);")
-@@ 228 -1 +1
+@@ 231 -1 +1
 -      b 22 × 11
 +      b 30 × 10
-@@ 231 -3 +3
+@@ 234 -3 +3
 -       span.pill.good
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -        | верх диапазона: дальше +2 кг
 +       span.pill.info
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 +        | в диапазоне: дальше цель 11+
-@@ 240 -1 +1
+@@ 243 -1 +1
 -     input#r-2-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="6+")
 +     input#r-2-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="11+")
-@@ 242 -1 +1
+@@ 245 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10, сейчас 10")
-@@ 247 -1 +1
+@@ 250 -1 +1
 -      i.c(style="display: none;")
 +      i.c(style="display: block; left: calc(50% + 0px);")
-@@ 250 -1 +1
+@@ 253 -1 +1
 -      b 22 × 10
 +      b 30 × 10
-@@ 255 -1 +1
+@@ 258 -1 +1
 -        | новый вес, цель 8+
 +        | в диапазоне: дальше цель 11+
-@@ 258 -22 +0
-@@ 286 -1 +1
+@@ 261 -22 +0
+@@ 289 -1 +1
 -    h3 Горизонтальная тяга Т-бар
 +    h3 Трицепс с косичкой на блоке
-@@ 297 -2 +2
+@@ 300 -2 +2
 -    span.tag Верх спины
 -    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин 30 с
 +    span.tag Трицепс
 +    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
-@@ 303 -2 +1
+@@ 306 -2 +1
 -    span запас 2: со свободным весом отказ опасен
 -    span прошлый раз 29 окт
 +    span прошлый раз 7 ноя
-@@ 311 -1 +1
+@@ 314 -1 +1
 -     span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 2") Запас
 +     span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
-@@ 317 -1 +1
+@@ 320 -1 +1
 -     input#r-3-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="6+")
 +     input#r-3-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="11+")
-@@ 319 -1 +1
+@@ 322 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10, сейчас 11")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10, сейчас 10")
-@@ 324 -1 +1
+@@ 327 -1 +1
 -      i.c(style="display: block; left: calc(75% - 3px);")
 +      i.c(style="display: block; left: calc(50% + 0px);")
-@@ 327 -1 +1
+@@ 330 -1 +1
 -      b 30 × 10
 +      b 22.5 × 10
-@@ 332 -1 +1
+@@ 335 -1 +1
 -        | в диапазоне: дальше цель 12+
 +        | в диапазоне: дальше цель 11+
-@@ 339 -1 +1
+@@ 342 -1 +1
 -     input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="6+")
 +     input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="10+")
-@@ 341 -1 +1
+@@ 344 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10, сейчас 8")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 9, сейчас 9")
-@@ 345 -2 +2
+@@ 348 -2 +2
 -      i.p(title="прошлый раз: 10" style="left: calc(50% + 0px);")
 -      i.c(style="display: block; left: calc(0% + 6px);")
 +      i.p(title="прошлый раз: 9" style="left: calc(25% + 3px);")
 +      i.c(style="display: block; left: calc(25% + 3px);")
-@@ 349 -1 +1
+@@ 352 -1 +1
 -      b 30 × 10
 +      b 22.5 × 9
-@@ 354 -1 +1
+@@ 357 -1 +1
 -        | в диапазоне: дальше цель 9+
 +        | в диапазоне: дальше цель 10+
-@@ 361 -1 +1
+@@ 364 -1 +1
 -     input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="6+")
 +     input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="9+")
-@@ 363 -1 +1
+@@ 366 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 11, сейчас 12")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 8, сейчас 8")
-@@ 367 -2 +2
+@@ 370 -2 +2
 -      i.p(title="прошлый раз: 11" style="left: calc(75% - 3px);")
 -      i.c(style="display: block; left: calc(100% - 6px);")
 +      i.p(title="прошлый раз: 8" style="left: calc(0% + 6px);")
 +      i.c(style="display: block; left: calc(0% + 6px);")
-@@ 371 -1 +1
+@@ 374 -1 +1
 -      b 27.5 × 11
 +      b 22.5 × 8
-@@ 374 -3 +3
+@@ 377 -3 +3
 -       span.pill.good
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -        | верх диапазона: дальше +2.5 кг
 +       span.pill.info
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 +        | в диапазоне: дальше цель 9+
-@@ 383 -1 +1
+@@ 386 -1 +1
 -     input#r-3-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="6+")
 +     input#r-3-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="8+")
-@@ 385 -1 +1
+@@ 388 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10, сейчас 10")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 5, сейчас 5")
-@@ 389 -2 +2
+@@ 392 -2 +2
 -      i.p(title="прошлый раз: 10" style="left: calc(50% + 0px);")
 -      i.c(style="display: block; left: calc(50% + 0px);")
 +      i.p(title="прошлый раз: 5" style="left: calc(-8% + 6.96px);")
 +      i.c(style="display: block; left: calc(-8% + 6.96px);")
-@@ 393 -1 +1
+@@ 396 -1 +1
 -      b 27.5 × 10
 +      b 22.5 × 5
-@@ 396 -3 +3
+@@ 399 -3 +3
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | в диапазоне: дальше цель 11+
 +       span.pill.serious
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
 +        | ниже диапазона: дальше вес ниже
-@@ 407 -1 +1
+@@ 410 -1 +1
 -    h3 Бицепс со штангой стоя
 +    h3 Бицепс Bayesian curl
-@@ 424 -1 +2
+@@ 427 -1 +2
 -    span прошлый раз 29 окт
 +    button.btn.ghost.sm(title="Шаг 2.5 кг от 10 кг, делённый на 2.5") по формуле шага: 8–18
 +    span прошлый раз 7 ноя
-@@ 437 -1 +1
+@@ 440 -1 +1
 -     input#r-4-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="9+")
 +     input#r-4-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
-@@ 439 -1 +1
+@@ 442 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 8")
 +     div.rr(role="img" aria-label="Диапазон 8–16, прошлый раз 16, сейчас 16")
-@@ 442 -3 +3
+@@ 445 -3 +3
 -      span.hi 12
 -      i.p(title="прошлый раз: 8" style="left: calc(0% + 6px);")
 -      i.c(style="display: none;")
 +      span.hi 16
 +      i.p(title="прошлый раз: 16" style="left: calc(100% - 6px);")
 +      i.c(style="display: block; left: calc(100% - 6px);")
-@@ 447 -1 +1
+@@ 450 -1 +1
 -      b 30 × 8
 +      b 10 × 16
-@@ 450 -3 +3
+@@ 453 -3 +3
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | цель 9+
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | верх диапазона: дальше +2.5 кг
-@@ 459 -1 +1
+@@ 462 -1 +1
 -     input#r-4-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="12+")
 +     input#r-4-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="16+")
-@@ 461 -1 +1
+@@ 464 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 11")
 +     div.rr(role="img" aria-label="Диапазон 8–16, прошлый раз 15, сейчас 15")
-@@ 464 -3 +3
+@@ 467 -3 +3
 -      span.hi 12
 -      i.p(title="прошлый раз: 11" style="left: calc(75% - 3px);")
 -      i.c(style="display: none;")
 +      span.hi 16
 +      i.p(title="прошлый раз: 15" style="left: calc(87.5% - 4.5px);")
 +      i.c(style="display: block; left: calc(87.5% - 4.5px);")
-@@ 469 -1 +1
+@@ 472 -1 +1
 -      b 27.5 × 11
 +      b 10 × 15
-@@ 474 -1 +1
+@@ 477 -1 +1
 -        | цель 12+
 +        | в диапазоне: дальше цель 16+
-@@ 481 -1 +1
+@@ 484 -1 +1
 -     input#r-4-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="11+")
 +     input#r-4-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="15+")
-@@ 483 -1 +1
+@@ 486 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10")
 +     div.rr(role="img" aria-label="Диапазон 8–16, прошлый раз 14, сейчас 14")
-@@ 486 -3 +3
+@@ 489 -3 +3
 -      span.hi 12
 -      i.p(title="прошлый раз: 10" style="left: calc(50% + 0px);")
 -      i.c(style="display: none;")
 +      span.hi 16
 +      i.p(title="прошлый раз: 14" style="left: calc(75% - 3px);")
 +      i.c(style="display: block; left: calc(75% - 3px);")
-@@ 491 -1 +1
+@@ 494 -1 +1
 -      b 27.5 × 10
 +      b 10 × 14
-@@ 496 -1 +1
+@@ 499 -1 +1
 -        | цель 11+
 +        | в диапазоне: дальше цель 15+
-@@ 505 -1 +1
+@@ 508 -1 +1
 -    h3 Кисть на блоке правая
 +    h3 Разгибания ног в тренажере
-@@ 516 -2 +2
+@@ 519 -2 +2
 -    span.tag Предплечья
 -    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 1 мин между сторонами
 +    span.tag Квадрицепс
 +    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
-@@ 522 -2 +1
+@@ 525 -2 +1
 -    button.btn.ghost.sm(title="Шаг 2.5 кг от 15 кг, делённый на 2.5") по формуле шага: 8–15
 -    span прошлый раз 29 окт (не делал)
 +    span прошлый раз 7 ноя
-@@ 536 -1 +1
+@@ 539 -1 +1
 -     input#r-5-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +     input#r-5-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
-@@ 538 -1 +1
+@@ 541 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–16, сейчас 9")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 12, сейчас 12")
-@@ 541 -2 +3
+@@ 544 -2 +3
 -      span.hi 16
 -      i.c(style="display: block; left: calc(12.5% + 4.5px);")
 +      span.hi 12
 +      i.p(title="прошлый раз: 12" style="left: calc(100% - 6px);")
 +      i.c(style="display: block; left: calc(100% - 6px);")
-@@ 545 -1 +1
+@@ 548 -1 +1
 -      b 15 × ?
 +      b 50 × 12
-@@ 548 -3 +3
+@@ 551 -3 +3
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | в диапазоне: дальше цель 10+
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | верх диапазона: дальше +2.5 кг
-@@ 557 -1 +1
+@@ 560 -1 +1
 -     input#r-5-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +     input#r-5-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
-@@ 559 -1 +1
+@@ 562 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–16, сейчас 15")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 12, сейчас 12")
-@@ 562 -2 +3
+@@ 565 -2 +3
 -      span.hi 16
 -      i.c(style="display: block; left: calc(87.5% - 4.5px);")
 +      span.hi 12
 +      i.p(title="прошлый раз: 12" style="left: calc(100% - 6px);")
 +      i.c(style="display: block; left: calc(100% - 6px);")
-@@ 566 -1 +1
+@@ 569 -1 +1
 -      b 12.5 × ?
 +      b 47.5 × 12
-@@ 569 -3 +3
+@@ 572 -3 +3
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | в диапазоне: дальше цель 16+
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | верх диапазона: дальше +2.5 кг
-@@ 578 -1 +1
+@@ 581 -1 +1
 -     input#r-5-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 +     input#r-5-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8+")
-@@ 580 -1 +1
+@@ 583 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–16, сейчас 15")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 12, сейчас 12")
-@@ 583 -2 +3
+@@ 586 -2 +3
 -      span.hi 16
 -      i.c(style="display: block; left: calc(87.5% - 4.5px);")
 +      span.hi 12
 +      i.p(title="прошлый раз: 12" style="left: calc(100% - 6px);")
 +      i.c(style="display: block; left: calc(100% - 6px);")
-@@ 587 -1 +1
+@@ 590 -1 +1
 -      b 12.5 × ?
 +      b 45 × 12
-@@ 590 -3 +3
+@@ 593 -3 +3
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | в диапазоне: дальше цель 16+
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | верх диапазона: дальше +2.5 кг
-@@ 601 -1 +1
+@@ 604 -1 +1
 -    h3 Кисть на блоке левая
 +    h3 Кисть с гантелью правая рука
-@@ 618 -1 +2
+@@ 621 -1 +2
 -    span прошлый раз 29 окт (не делал)
 +    button.btn.ghost.sm(title="Шаг 2 кг от 12 кг, делённый на 2.5") по формуле шага: 8–15
 +    span прошлый раз 7 ноя
-@@ 631 -1 +1
+@@ 634 -1 +1
 -     input#r-6-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +     input#r-6-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="11+")
-@@ 633 -1 +1
+@@ 636 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–16, сейчас 14")
 +     div.rr(role="img" aria-label="Диапазон 8–16, прошлый раз 10, сейчас 10")
-@@ 637 -1 +2
+@@ 640 -1 +2
 -      i.c(style="display: block; left: calc(75% - 3px);")
 +      i.p(title="прошлый раз: 10" style="left: calc(25% + 3px);")
 +      i.c(style="display: block; left: calc(25% + 3px);")
-@@ 640 -1 +1
+@@ 643 -1 +1
 -      b 12.5 × ?
 +      b 12 × 10
-@@ 645 -1 +1
+@@ 648 -1 +1
 -        | в диапазоне: дальше цель 15+
 +        | в диапазоне: дальше цель 11+
-@@ 652 -1 +1
+@@ 655 -1 +1
 -     input#r-6-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +     input#r-6-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
-@@ 654 -1 +1
+@@ 657 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–16, сейчас 13")
 +     div.rr(role="img" aria-label="Диапазон 8–16, прошлый раз 16, сейчас 16")
-@@ 658 -1 +2
+@@ 661 -1 +2
 -      i.c(style="display: block; left: calc(62.5% - 1.5px);")
 +      i.p(title="прошлый раз: 16" style="left: calc(100% - 6px);")
 +      i.c(style="display: block; left: calc(100% - 6px);")
-@@ 661 -1 +1
+@@ 664 -1 +1
 -      b 12.5 × ?
 +      b 10 × 16
-@@ 664 -3 +3
+@@ 667 -3 +3
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | в диапазоне: дальше цель 14+
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | верх диапазона: дальше +2 кг
-@@ 673 -1 +1
+@@ 676 -1 +1
 -     input#r-6-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 +     input#r-6-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="15+")
-@@ 675 -1 +1
+@@ 678 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–16, сейчас 11")
 +     div.rr(role="img" aria-label="Диапазон 8–16, прошлый раз 14, сейчас 14")
-@@ 679 -0 +99
+@@ 682 -0 +99
 +      i.p(title="прошлый раз: 14" style="left: calc(75% - 3px);")
 +      i.c(style="display: block; left: calc(75% - 3px);")
 +     span.prev
@@ -3238,10 +3246,10 @@
 +      span.lo 8
 +      span.hi 16
 +      i.p(title="прошлый раз: 11" style="left: calc(37.5% + 1.5px);")
-@@ 682 -1 +1
+@@ 685 -1 +1
 -      b 12.5 × ?
 +      b 10 × 11
-@@ 693 -1 +1
+@@ 696 -1 +1
 -   input#ex-note-6(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +   input#ex-note-7(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 
@@ -3257,6 +3265,7 @@
 === 19. вторая правка: убрать упражнение и подход
 поля: целиком
   wk-date=2025-11-12
+  wk-min=
   cw-pullup=92.5
   cs-pullup=4
   cn-pullup=4
@@ -3347,205 +3356,208 @@
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 20 мин
 +     span#eta по плану ≈ 1 ч 10 мин
-@@ 67 -1 +1
+@@ 24 -1 +1
+-     input#wk-min.num(type="text" inputmode="numeric" aria-label="Сколько минут длилась тренировка" placeholder="82")
++     input#wk-min.num(type="text" inputmode="numeric" aria-label="Сколько минут длилась тренировка" placeholder="68")
+@@ 70 -1 +1
 -    h3 Бабочка
 +    h3 Бицепс бедра на тренажере лежа на животе
-@@ 78 -1 +1
+@@ 81 -1 +1
 -    span.tag Грудь
 +    span.tag Бицепс бедра
-@@ 97 -1 +1
+@@ 100 -1 +1
 -     input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
 +     input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="9+")
-@@ 99 -1 +1
+@@ 102 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 14, сейчас 14")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 8, сейчас 10")
-@@ 103 -2 +2
+@@ 106 -2 +2
 -      i.p(title="прошлый раз: 14" style="left: calc(108% - 6.96px);")
 -      i.c(style="display: block; left: calc(108% - 6.96px);")
 +      i.p(title="прошлый раз: 8" style="left: calc(0% + 6px);")
 +      i.c(style="display: block; left: calc(50% + 0px);")
-@@ 107 -1 +1
+@@ 110 -1 +1
 -      b 45 × 14
 +      b 32.5 × 8
-@@ 110 -3 +3
+@@ 113 -3 +3
 -       span.pill.good
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -        | верх диапазона: дальше +2.5 кг
 +       span.pill.info
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 +        | в диапазоне: дальше цель 11+
-@@ 129 -1 +1
+@@ 132 -1 +1
 -      b 42.5 × 10
 +      b 30 × 10
-@@ 137 -44 +0
-@@ 187 -1 +1
+@@ 140 -44 +0
+@@ 190 -1 +1
 -    h3 Бицепс бедра на тренажере лежа на животе
 +    h3 Трицепс с косичкой на блоке
-@@ 198 -1 +1
+@@ 201 -1 +1
 -    span.tag Бицепс бедра
 +    span.tag Трицепс
-@@ 217 -1 +1
+@@ 220 -1 +1
 -     input#r-2-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="9+")
 +     input#r-2-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="11+")
-@@ 219 -22 +0
-@@ 249 -76 +0
-@@ 335 -1 +1
+@@ 222 -22 +0
+@@ 252 -76 +0
+@@ 338 -1 +1
 -     input#w-3-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     input#w-2-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 337 -2 +2
+@@ 340 -2 +2
 -     input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="10+")
 -     input#q-3-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +     input#r-2-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="10+")
 +     input#q-2-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 357 -1 +1
+@@ 360 -1 +1
 -     input#w-3-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     input#w-2-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 359 -2 +2
+@@ 362 -2 +2
 -     input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="9+")
 -     input#q-3-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +     input#r-2-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="9+")
 +     input#q-2-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 379 -1 +1
+@@ 382 -1 +1
 -     input#w-3-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
 +     input#w-2-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
-@@ 381 -2 +2
+@@ 384 -2 +2
 -     input#r-3-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="8+")
 -     input#q-3-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
 +     input#r-2-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="8+")
 +     input#q-2-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
-@@ 402 -1 +1
+@@ 405 -1 +1
 -   input#ex-note-3(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +   input#ex-note-2(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 419 -1 +1
+@@ 422 -1 +1
 -    input#rng-4-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    input#rng-3-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
-@@ 421 -1 +1
+@@ 424 -1 +1
 -    input#rng-4-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 +    input#rng-3-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
-@@ 434 -1 +1
+@@ 437 -1 +1
 -     input#w-4-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +     input#w-3-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 436 -2 +2
+@@ 439 -2 +2
 -     input#r-4-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
 -     input#q-4-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +     input#r-3-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
 +     input#q-3-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 456 -1 +1
+@@ 459 -1 +1
 -     input#w-4-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     input#w-3-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 458 -2 +2
+@@ 461 -2 +2
 -     input#r-4-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="16+")
 -     input#q-4-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +     input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="16+")
 +     input#q-3-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 478 -1 +1
+@@ 481 -1 +1
 -     input#w-4-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     input#w-3-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 480 -2 +2
+@@ 483 -2 +2
 -     input#r-4-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="15+")
 -     input#q-4-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +     input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="15+")
 +     input#q-3-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 501 -1 +1
+@@ 504 -1 +1
 -   input#ex-note-4(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +   input#ex-note-3(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 518 -1 +1
+@@ 521 -1 +1
 -    input#rng-5-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    input#rng-4-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
-@@ 520 -1 +1
+@@ 523 -1 +1
 -    input#rng-5-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 +    input#rng-4-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
-@@ 532 -1 +1
+@@ 535 -1 +1
 -     input#w-5-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +     input#w-4-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 534 -2 +2
+@@ 537 -2 +2
 -     input#r-5-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
 -     input#q-5-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +     input#r-4-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
 +     input#q-4-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 554 -1 +1
+@@ 557 -1 +1
 -     input#w-5-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     input#w-4-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 556 -2 +2
+@@ 559 -2 +2
 -     input#r-5-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
 -     input#q-5-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +     input#r-4-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
 +     input#q-4-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 576 -1 +1
+@@ 579 -1 +1
 -     input#w-5-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     input#w-4-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 578 -2 +2
+@@ 581 -2 +2
 -     input#r-5-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8+")
 -     input#q-5-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +     input#r-4-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8+")
 +     input#q-4-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 599 -1 +1
+@@ 602 -1 +1
 -   input#ex-note-5(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +   input#ex-note-4(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 616 -1 +1
+@@ 619 -1 +1
 -    input#rng-6-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    input#rng-5-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
-@@ 618 -1 +1
+@@ 621 -1 +1
 -    input#rng-6-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 +    input#rng-5-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
-@@ 631 -1 +1
+@@ 634 -1 +1
 -     input#w-6-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +     input#w-5-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 633 -2 +2
+@@ 636 -2 +2
 -     input#r-6-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="11+")
 -     input#q-6-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +     input#r-5-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="11+")
 +     input#q-5-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 653 -1 +1
+@@ 656 -1 +1
 -     input#w-6-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     input#w-5-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 655 -2 +2
+@@ 658 -2 +2
 -     input#r-6-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
 -     input#q-6-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +     input#r-5-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
 +     input#q-5-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 675 -1 +1
+@@ 678 -1 +1
 -     input#w-6-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     input#w-5-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 677 -2 +2
+@@ 680 -2 +2
 -     input#r-6-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="15+")
 -     input#q-6-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +     input#r-5-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="15+")
 +     input#q-5-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 698 -1 +1
+@@ 701 -1 +1
 -   input#ex-note-6(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +   input#ex-note-5(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 715 -1 +1
+@@ 718 -1 +1
 -    input#rng-7-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    input#rng-6-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
-@@ 717 -1 +1
+@@ 720 -1 +1
 -    input#rng-7-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 +    input#rng-6-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
-@@ 729 -1 +1
+@@ 732 -1 +1
 -     input#w-7-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +     input#w-6-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 731 -2 +2
+@@ 734 -2 +2
 -     input#r-7-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="16+")
 -     input#q-7-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +     input#r-6-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="16+")
 +     input#q-6-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 751 -1 +1
+@@ 754 -1 +1
 -     input#w-7-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     input#w-6-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 753 -2 +2
+@@ 756 -2 +2
 -     input#r-7-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="13+")
 -     input#q-7-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +     input#r-6-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="13+")
 +     input#q-6-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 773 -1 +1
+@@ 776 -1 +1
 -     input#w-7-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     input#w-6-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 775 -2 +2
+@@ 778 -2 +2
 -     input#r-7-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="12+")
 -     input#q-7-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +     input#r-6-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="12+")
 +     input#q-6-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 796 -1 +1
+@@ 799 -1 +1
 -   input#ex-note-7(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +   input#ex-note-6(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 
@@ -3651,7 +3663,7 @@
 @@ 15 -1 +1
 -     input#wk-date(type="date")
 +     input#np-date(type="date")
-@@ 22 -113 +135
+@@ 22 -116 +135
 +   div.adj-box(style="margin-bottom:12px")
 +    div.eyebrow(style="margin-bottom:2px") Что дневник меняет в плане и почему
 +    p.sub Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.
@@ -3787,7 +3799,7 @@
 +     div.chips
 +      span.chip.adj 3 × 8–12
 +   div.legend-line
-@@ 136 -597 +18
+@@ 139 -597 +18
 +     span.chip.up 40 ↑
 +     | " прошлый раз взят верх диапазона, вес повышен"
 +    span

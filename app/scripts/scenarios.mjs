@@ -107,6 +107,10 @@ const progNote = '[...document.querySelectorAll("#view section.card")].pop().que
 const accepted = expect('document.getElementById("toast").textContent.startsWith("Программа принята")', 'сообщение «Программа принята»');
 const cfgMain = '(JSON.parse(' + stored + ').find(x => x[0] === "config/main") || [0, {}])[1]';
 const journal = n => expect('document.querySelectorAll(".wo").length === ' + n, 'записей в журнале: ' + n);
+/* карточка упражнения в идущей тренировке по началу названия; тренировки из хранилища; строка плана «Разгибания ног» (поправка «Не делал два раза») */
+const exCard = name => '[...document.querySelectorAll("#view .ex")].find(c => c.querySelector("h3").textContent.startsWith(' + J(name) + '))';
+const savedW = 'JSON.parse(' + stored + ').filter(x => x[0].startsWith("workouts/")).map(x => x[1])';
+const skipRow = '([...document.querySelectorAll("#view .plan-row")].find(r => r.textContent.startsWith("Разгибания ног")) || { textContent: "" })';
 /* онбординг (решение владельца, 25 ноября 2026): какой шаг на экране, видны ли вкладки, строка «что возьмёт дневник» у упражнения */
 const onbAt = (n, of) => '!!document.getElementById("onb") && document.getElementById("onb-n").textContent === "Шаг ' + n + ' из ' + of + '"';
 const tabsOff = 'getComputedStyle(document.querySelector(".tabs")).display === "none"';
@@ -932,6 +936,37 @@ export const SCENARIOS = [
     ['первый профиль: снова три дня', pick('#prof', 'me') + settle + go('program') + settle + click('#pd-3') + settle + expect('!("days" in ' + cfgMain + ') && [...document.querySelectorAll("#view section.card")].pop().querySelectorAll(".pday").length === 3', 'три дня: поля в настройке нет')
       + expect('!document.getElementById("prog-undo") && document.querySelector("#view section.card p.sub").textContent.includes("Ещё не было по ней: день 1, день 2 и день 3.")', 'по программе уже была тренировка — в четвёртом дне, которого теперь нет в неделе: «Вернуть прежнюю» не предлагается')
       + expect('JSON.stringify(JSON.parse(' + stored + ').filter(x => x[0].startsWith("workouts/") && JSON.parse(sessionStorage.getItem("w0")).some(y => y[0] === x[0]))) === sessionStorage.getItem("w0")', 'прежние записи так и не изменились')]
+  ] },
+
+  /* упражнение, которое не успеваешь, и время по факту (просьба владельца, 25 ноября 2026; docs/03, раздел 18): разгибания ног два раза подряд не сделаны
+     во втором дне — дневник убирает их из плана и переносит в другой день; время, названное в конце тренировки, поправляет его оценку */
+  { name: 'время по факту и «Не делал два раза»', data: 'seed', app: true, steps: [
+    ...[[0, 80], [7, 85]].flatMap(([d, min], i) => [
+      ['день 2, неделя ' + (i + 1) + ': план', go('workout') + settle + press('День 2') + settle + typeDay('#np-date', d) + settle
+        + expect('!document.getElementById("view").textContent.includes("Не делал два раза")', 'поправки ещё нет: пропусков меньше двух')],
+      ['день 2, неделя ' + (i + 1) + ': старт', press('Начать тренировку')],
+      ['день 2, неделя ' + (i + 1) + ': разгибания ног — «не делал», остальное сделано', exCard('Разгибания ног') + '.querySelector("button[aria-label=\'Отметить «не делал»\']").click();' + settle + typeAll('input[id^="r-"]', 10)],
+      ['день 2, неделя ' + (i + 1) + ': завершить — сколько шла', press('Завершить тренировку') + settle
+        + expect('!!document.getElementById("wk-min") && /^\\d+$/.test(document.getElementById("wk-min").placeholder)', 'дневник спрашивает время, в подсказке — его оценка')],
+      ['день 2, неделя ' + (i + 1) + ': время и завершить', type('#wk-min', min) + press('Завершить') + settle
+        + expect(savedW + '.find(w => w.date === __t.day(' + d + ')).min === ' + min, 'в записи тренировки — названные минуты')]
+    ]),
+    ['день 2, неделя 3: в плане поправка', go('workout') + settle + press('День 2') + settle + typeDay('#np-date', 14) + settle
+      + expect('document.getElementById("view").textContent.includes("Не делал два раза") && ' + skipRow + '.textContent.includes("в День 1")', 'разгибания ног остались строкой плана: уходят в день 1')
+      + expect('document.getElementById("view").textContent.includes("Оценка — по твоему темпу")', 'время плана — по темпу атлета')],
+    ['снять поправку галочкой', click('#pp-leg_ext') + settle + expect('!' + skipRow + '.textContent.includes("в День 1")', 'разгибания ног снова в плане')],
+    ['вернуть поправку', click('#pp-leg_ext') + settle + expect(skipRow + '.textContent.includes("в День 1")', 'поправка снова в плане')],
+    ['старт: убранное — отдельным блоком', press('Начать тренировку') + settle + expect('!!document.getElementById("back-leg_ext") && !' + exCard('Разгибания ног'), 'карточки нет, в блоке «Дневник убрал из плана» — «Вернуть»')],
+    ['вернуть упражнение', click('#back-leg_ext') + settle + expect('!document.getElementById("back-leg_ext") && !!' + exCard('Разгибания ног'), 'карточка на месте')],
+    ['и убрать крестиком', exCard('Разгибания ног') + '.querySelector("button[aria-label=\'Убрать упражнение\']").click();' + settle + expect('!!document.getElementById("back-leg_ext")', 'снова в блоке')],
+    ['подходы', typeAll('input[id^="r-"]', 10)],
+    ['завершить без него', FINISH + settle + expect('document.getElementById("toast").textContent === "Тренировка сохранена. Программа поправлена: Разгибания ног в тренажере — в День 1"', 'сообщение называет перенос')],
+    ['программа: разгибания ног в дне 1', go('program') + settle + 'const P = ' + cfgMain + '.program;'
+      + expect('P.name === "Своя программа" && P.slots.mon.some(e => e.ex === "leg_ext") && !P.slots.wed.some(e => e.ex === "leg_ext")', 'перенос записан в программу')],
+    ['день 1: в плане разгибания ног', go('workout') + settle + press('День 1') + settle + typeDay('#np-date', 19) + settle
+      + expect('[...document.querySelectorAll("#view .plan-row")].some(r => r.textContent.startsWith("Разгибания ног в тренажере"))', 'день 1 получил упражнение')],
+    ['журнал: время в законченной записи', go('journal') + settle + press('Изменить') + settle + expect('document.getElementById("wk-min").value === ""', 'у последней тренировки время не названо')],
+    ['время записи', type('#wk-min', 70) + press('Сохранить изменения') + settle + expect(savedW + '.find(w => w.date === __t.day(14)).min === 70', 'время записано')]
   ] },
 
   /* программа второго профиля: приоритет «ягодицы» при лимите 60, известные веса, первая тренировка */

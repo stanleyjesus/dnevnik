@@ -11,6 +11,7 @@ import { allStats, exStats, program, sessions, stalledSets } from './stats.ts';
 import { formulaRange, hints, lastSessionItem, plan, planCycle, roundTo, startWeight, suggestSet } from './plan.ts';
 import { planned } from './tally.ts';
 import { appRules, byPct, rdlDef, RIR_CHECK, rirOf } from './rules.ts';
+import { SKIP, skipFixes } from './skips.ts';
 import type { Tally } from './tally.ts';
 import type { Add, AddCtx, Addition, Cfg, Cyc, ExDef, MuscleMap, Prop, PropSet, Range, Session, Slot, Workout } from './types.ts';
 
@@ -68,11 +69,14 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
   const fitsDay = (e: ExDef, n: number) => Object.entries(e.m || {}).every(([m, c]) => !c || (dayV[m] || 0) + n * c * (e.uni ? 0.5 : 1) <= caps.day + 0.01);
   for (const m of MUSCLES) { const v = pl.pv[m.id] || 0; if (v > 0 && v < z.opt - 0.5 && pl.prim[m.id] && !cfg.ignore[m.id]) short[m.id] = v; if (v > z.high) over[m.id] = v; }
   const q = (n: number) => n + ' ' + plural(n, ['день', 'дня', 'дней']);
+  const fixes = base.prog ? [] : skipFixes(workouts, cfg, slot, date, base.items);   // (в эталоне нет) два раза подряд не сделано (skips.ts)
 
   base.items.forEach((it, idx) => {
     const ex = cfg.ex[it.ex] || { m: {} } as ExDef, s = exStats(past, cfg, it.ex, prog);
     const gap = s ? dnum(date) - dnum(s.last.date) : 0;
     const push = (tag: string, notes: string[], sets: PropSet[], cyc?: Cyc | null, range?: Range | null) => props.push({ key: it.ex, ex: it.ex, idx, tag, notes, sets, cyc: cyc || null, range: range || null });
+    const fix = fixes.find(f => f.ex === it.ex);
+    if (fix) { props.push({ key: it.ex, ex: it.ex, idx, tag: SKIP.tag, notes: fix.notes, sets: [], cyc: null, range: null, drop: true, fix }); return; }   // (в эталоне нет) упражнение уходит из дня
 
     if (isLight(cfg, it.ex)) return;                                  // the light day follows the lift's maximum, nothing to adjust
     if (it.cyc) {
@@ -240,9 +244,10 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
 /* the plan with the chosen proposals applied; `off` holds the keys the athlete unticked */
 export function applyAdapt(a: Adapted, off?: Record<string, boolean> | null) {
   off = off || {};
-  const items = clone(a.base.items), create: Record<string, ExDef> = {}, used: string[] = [];
+  const items = clone(a.base.items), create: Record<string, ExDef> = {}, used: string[] = [], gone: number[] = [];
   for (const p of a.props) {
     if (off[p.key] || !items[p.idx]) continue;
+    if (p.drop) { gone.push(p.idx); used.push(p.key); continue; }   // (в эталоне нет) два раза подряд не сделано: упражнения в плане нет (skips.ts)
     items[p.idx].sets = p.sets.map(x => ({ w: x.w, r: null }));
     if (p.cyc) { items[p.idx].cyc = { pct: p.cyc.pct, reps: p.cyc.reps }; items[p.idx].tm = null; }
     if (p.range) items[p.idx].range = p.range.slice();
@@ -255,7 +260,7 @@ export function applyAdapt(a: Adapted, off?: Record<string, boolean> | null) {
     items.push({ ex: d.exId, cyc: null, range: d.range.slice(), sets: Array.from({ length: d.sets }, () => ({ w: d.w == null ? null : d.w, r: null })), note: '', skip: false, rir: null });
     used.push(d.key);
   }
-  return { items, create, used };
+  return { items: gone.length ? items.filter((_, i) => !gone.includes(i)) : items, create, used };
 }
 
 export type Adapted = ReturnType<typeof adapt>;

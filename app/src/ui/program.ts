@@ -19,6 +19,7 @@ import { DAY_COUNTS, awayDays, daysOf, useDays } from '../core/days.ts';
 import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift } from '../core/rules.ts';
 import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../core/index.ts';
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
+import { paceText } from './pace.ts';
 
 /* ---------- UI: the programme — what runs now, and a new one: by hand or built around a priority ---------- */
 export const progSig = (slots: ProgSlots) => C.SLOTS.map(sl => (slots[sl.id] || []).map(e => e.ex + ':' + (e.n || '')).join(',')).join('|');
@@ -238,7 +239,7 @@ export function vProgram() {
       manual ? h('label', { class: 'f grow' }, h('span', null, 'Название программы'), h('input', { type: 'text', id: 'prog-name', value: st.name != null ? st.name : pr.name, oninput: e => { st.name = e.target.value; } })) : null),
     fit && !fit.fits ? h('p', { class: 'sub', id: 'pt-note', role: 'status', style: 'margin:-4px 0 12px' }, 'За ' + C.fmtDur(time) + ' не уложиться: даже ' + fit.budget + ' подходов в неделю — это тренировка ≈ ' + C.fmtDur(fit.min) + (appRules() ? '. Выбери больше времени или больше дней в неделю.' : '. Увеличь время или сократи отдых.')) : null,
     h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => appRules() && !manual ? builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], edit) : progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], empty ? null : pr.before.load[sl.id], edit, marked))),   // (в эталоне нет) с днями «День N» у программы, которую собрал дневник, только «Заменить» (builtday.ts, решение владельца 25 ноября 2026)
-    h('p', { class: 'sub', style: 'margin-top:8px' }, (appRules() && !manual ? 'Полоса слева — замена. ' : 'Полоса слева — то, что меняется. ') + 'Время — разминка, подходы и отдых ' + (appRules() ? 'по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.' : 'по ' + C.fmtRest(cfg.rest) + '.')),
+    h('p', { class: 'sub', style: 'margin-top:8px' }, (appRules() && !manual ? 'Полоса слева — замена. ' : 'Полоса слева — то, что меняется. ') + 'Время — разминка, подходы и отдых ' + (appRules() ? 'по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.' + paceText() : 'по ' + C.fmtRest(cfg.rest) + '.')),
     rulesBox(C.ruleBreaks(pr.cfg, pr.after)),
 
     h('hr', { class: 'rule' }),

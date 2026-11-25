@@ -9,6 +9,9 @@ import { D, go, render } from './render.ts';
 import { dayTitle, durText, paintEta, planLegend, planRows, planSets, propList, restSelect, setWord, startWorkout } from './overview.ts';
 import { exForm } from './setup.ts';
 import { appRules, HEAVY, heavyOf, LIGHT_RIR, lightWhy, restTag, rirOf } from '../core/rules.ts';
+import { okMin } from '../core/pace.ts';
+import { goneOf, movesOf, skipProgram } from './skipfix.ts';
+import { minField, paceText } from './pace.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
 import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
 
@@ -44,7 +47,7 @@ export function vWorkout() {
       propList(A, pl.off, (k, isOff) => { if (isOff) pl.off![k] = true; else delete pl.off![k]; render(true); })) : null,
     h('p', { class: 'sub', style: 'margin-bottom:6px' }, A.base.prog ? 'Основа — программа «' + D.cfg.program!.name + '»: в этот день она идёт первый раз, ' + (D.W.some(w => !w.open) ? 'веса взяты из последних тренировок каждого упражнения' : 'вес в каждом упражнении подбирается на месте') + '. В плане ' + setWord(selSets) + (adj && selSets !== baseSets ? ' (по программе ' + baseSets + ')' : '') + '. Всё можно поправить по ходу.' : A.base.template ? 'Основа — тренировка ' + C.fmtDate(A.base.template.slice(0, 10), true) + '. В плане ' + setWord(selSets) + (adj && selSets !== baseSets ? ' (по правилам было бы ' + baseSets + ')' : '') + '. Всё можно поправить по ходу.' : '',
       !n && A.base.items.length ? ' Поправок нет: дневник не видит причин отходить от правил.' : ''),
-    sel.items.length ? h('p', { class: 'sub', style: 'margin-bottom:6px' }, h('b', null, 'Время: ' + durText(sel.items)), ' — разминка, ' + setWord(selSets) + (appRules() ? ' и отдых: у каждого упражнения свой, от 2 до 5 мин.' : ' и отдых по ' + C.fmtRest(D.cfg.rest) + ' (в базовых по волне на минуту дольше).')) : null,
+    sel.items.length ? h('p', { class: 'sub', style: 'margin-bottom:6px' }, h('b', null, 'Время: ' + durText(sel.items)), ' — разминка, ' + setWord(selSets) + (appRules() ? ' и отдых: у каждого упражнения свой, от 2 до 5 мин.' + paceText() : ' и отдых по ' + C.fmtRest(D.cfg.rest) + ' (в базовых по волне на минуту дольше).')) : null,   // (в эталоне нет) с днями «День N» — с темпом атлета (pace.ts)
     planRows(sel.items, pl.slot, pl.date, A, sel.used), sel.items.length ? planLegend(adj && sel.used.length > 0) : null,
     h('div', { class: 'row', style: 'margin-top:14px' }, h('button', { class: 'btn primary', onclick: () => start(sel.items) }, 'Начать тренировку'), sel.items.length ? h('button', { class: 'btn', onclick: () => startWorkout({ slot: pl.slot, date: pl.date, items: [] }) }, 'Начать с пустого листа') : null))];
 }
@@ -81,10 +84,16 @@ export function workoutEditor() {
     h('div', { class: 'row' },
       h('label', { class: 'f' }, h('span', null, 'Дата'), h('input', { type: 'date', id: 'wk-date', value: d.date, onchange: e => { if (e.target.value) { d.date = e.target.value; d.id = uniqueId(d.date, S.draftSaved); touch(); render(true); } } })),
       h('label', { class: 'f' }, h('span', null, 'День программы'), h('div', { class: 'seg', role: 'group', 'aria-label': 'День программы' }, C.SLOTS.concat([d.slot, (S.workouts.find(w => w.id === S.draftSaved) || { slot: null }).slot].filter((id, i, a) => !!id && !!C.SLOT[id] && !C.SLOTS.some(s => s.id === id) && a.indexOf(id) === i).map(id => C.SLOT[id!])).map(s => h('button', { type: 'button', 'aria-pressed': String(d.slot === s.id), onclick: () => { d.slot = s.id; touch(); render(true); } }, s.s)))),
-      S.canWrite ? restSelect('wk-rest') : null)));
+      S.canWrite ? restSelect('wk-rest') : null,
+      appRules() && !d.open ? minField(d, 'Длилась, мин') : null)));   // (в эталоне нет) время по факту можно поправить в записи
 
   const A = d.open ? C.adapt(D.W, D.cfg, d.slot!, d.date) : null;
   d.items.forEach((it, idx) => out.push(exerciseCard(d, it, idx, A)));
+  /* (в эталоне нет) упражнения, которые поправка «Не делал два раза» убрала из плана (core/skips.ts): их можно вернуть */
+  const gone = goneOf(d, A);
+  if (gone.length && !ro) out.push(h('div', { class: 'adj-box' }, h('div', { class: 'eyebrow', style: 'margin-bottom:2px' }, 'Дневник убрал из плана'),
+    h('div', { class: 'plan-list' }, gone.map(p => h('div', { class: 'plan-row', style: 'align-items:center' }, h('div', { class: 'grow' }, h('b', { text: C.exName(D.cfg, p.ex) }), h('div', { class: 'sub', text: p.notes[0].charAt(0).toUpperCase() + p.notes[0].slice(1) + '.' })),
+      h('button', { class: 'btn sm', id: 'back-' + p.ex, onclick: () => { d.items.splice(Math.min(p.idx, d.items.length), 0, C.clone(A!.base.items[p.idx])); touch(); render(true); } }, 'Вернуть'))))));
   if (A && !ro) {
     const adds = A.adds.filter(a => !d.items.some(it => it.ex === a.exId || a.a.cover(D.cfg.ex[it.ex])));
     if (adds.length) out.push(h('div', { class: 'adj-box' }, h('div', { class: 'eyebrow', style: 'margin-bottom:2px' }, 'Дневник предлагает добавить сегодня'),
@@ -108,7 +117,8 @@ export function workoutEditor() {
   let empty = 0, skipEx = 0;
   for (const it of d.items) { const f = it.sets.filter(s => s.r != null).length; if (!f || it.skip) skipEx += it.skip || it.sets.length ? 1 : 0; else empty += it.sets.length - f; }
   const bar = h('div', { class: 'wk-bar' });
-  if (S.ui.confirm === 'finish') bar.appendChild(h('div', { class: 'confirm' }, h('p', null, (empty ? 'Без повторов осталось ' + empty + ' ' + C.plural(empty, ['подход', 'подхода', 'подходов']) + ' — в журнал они не попадут. ' : '') + (skipEx ? 'Упражнений без единого подхода: ' + skipEx + ' — будут отмечены «не делал».' : '')),
+  const loose = (empty ? 'Без повторов осталось ' + empty + ' ' + C.plural(empty, ['подход', 'подхода', 'подходов']) + ' — в журнал они не попадут. ' : '') + (skipEx ? 'Упражнений без единого подхода: ' + skipEx + ' — будут отмечены «не делал».' : '');
+  if (S.ui.confirm === 'finish') bar.appendChild(h('div', { class: 'confirm' }, !appRules() || loose ? h('p', null, loose) : null, appRules() ? minField(d, 'Сколько длилась тренировка, мин') : null,   // (в эталоне нет) с днями «День N» дневник спрашивает время по факту (pace.ts)
     h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn primary', onclick: () => finishWorkout(true) }, 'Завершить'), h('button', { class: 'btn', onclick: () => { S.ui.confirm = null; render(true); } }, 'Вернуться'))));
   else if (S.ui.confirm === 'cancel') bar.appendChild(h('div', { class: 'confirm' }, h('p', null, 'Удалить эту тренировку целиком? Введённые подходы пропадут.'),
     h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn danger', onclick: cancelWorkout }, 'Удалить тренировку'), h('button', { class: 'btn', onclick: () => { S.ui.confirm = null; render(true); } }, 'Вернуться'))));
@@ -162,7 +172,7 @@ export function exerciseCard(d: Workout, it: Item, idx: number, A: Adapted | nul
       h('button', { class: 'icon-btn', title: it.skip ? 'Вернуть в тренировку' : 'Не делал', 'aria-label': it.skip ? 'Вернуть в тренировку' : 'Отметить «не делал»', 'aria-pressed': String(!!it.skip), onclick: () => { it.skip = !it.skip; if (it.skip) it.sets.forEach(s => { s.r = null; s.skip = true; }); else it.sets.forEach(s => { delete s.skip; }); touch(); render(true); } }, icon('skip')),
       h('button', { class: 'icon-btn', title: 'Убрать из тренировки', 'aria-label': 'Убрать упражнение', onclick: () => { d.items.splice(idx, 1); touch(); render(true); } }, icon('x')))));
   if (it.skip) { card.appendChild(h('p', { class: 'sub' }, 'Отмечено «не делал». План: ' + it.sets.map(s => C.fmt(s.w)).join(' · ') + ' кг.')); return card; }
-  const prop = A ? A.props.find(p => p.ex === it.ex) : null;
+  const prop = A ? A.props.find(p => p.ex === it.ex && !p.drop) : null;   // (в эталоне нет) возвращённое упражнение, которое убрала поправка «Не делал два раза», идёт по правилу
   if (prop) card.appendChild(adjBox(it, prop, A!));
   if (it.cyc) cycleBlock(card, d, it, prim); else dpBlock(card, d, it, prim, idx, prop, A);
   card.appendChild(h('input', { type: 'text', id: 'ex-note-' + idx, style: 'width:100%;margin-top:8px', placeholder: 'Заметка к упражнению', 'aria-label': 'Заметка к упражнению', value: it.note || '', oninput: e => { it.note = e.target.value; touch(); } }));
@@ -261,7 +271,9 @@ export async function finishWorkout(confirmed: boolean) {
   const d = S.draft as Workout;
   let loose = 0;
   for (const it of d.items) { const f = it.sets.filter(s => s.r != null).length; if (!f || it.skip) loose += it.sets.length ? 1 : 0; else loose += it.sets.length - f; }
-  if (loose && !confirmed) { S.ui.confirm = 'finish'; render(true); return; }
+  if ((loose || appRules()) && !confirmed) { S.ui.confirm = 'finish'; render(true); return; }   // (в эталоне нет) с днями «День N» — всегда: сколько шла тренировка
+  const fx = appRules() ? movesOf(d) : [];                           // (в эталоне нет) поправки «Не делал два раза», которые остались в тренировке
+  if (appRules()) { const m = okMin(d.min); if (m) d.min = m; else delete d.min; }
   for (const it of d.items) {
     const f = it.sets.filter(s => s.r != null).length;
     if (!f || it.skip) { it.skip = true; it.sets.forEach(s => { s.r = null; s.skip = true; }); }
@@ -273,7 +285,8 @@ export async function finishWorkout(confirmed: boolean) {
   const ok = await flushSave();
   if (!ok) { d.open = true; render(true); return; }
   S.draft = null; S.dirty = false; S.ui.confirm = null; backupDraft();
-  toast('Тренировка сохранена');
+  const moved = fx.length ? await skipProgram(d, fx) : false;
+  toast('Тренировка сохранена' + (moved ? '. Программа поправлена: ' + fx.map(f => C.exName(D.cfg, f.ex) + (f.kind === 'move' ? ' — в ' + C.SLOT[f.to!].n : ' — подходы другим упражнениям')).join(', ') : ''));
   go('overview');
 }
 export async function saveEdit() {

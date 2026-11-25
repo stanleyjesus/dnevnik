@@ -1,5 +1,5 @@
 /* Запись подходов текстом; тренировка <-> документ хранилища.
-   Перенесено из reference/src/core.js: тела функций без изменений. */
+   Перенесено из reference/src/core.js: тела функций без изменений, кроме времени тренировки по словам атлета (min, pace.ts; просьба владельца, 25 ноября 2026). */
 import { fmt } from './format.ts';
 import type { ItemDoc, SetRec, Workout, WorkoutDoc } from './types.ts';
 
@@ -19,7 +19,7 @@ export function parseSets(str: string | null | undefined): SetRec[] {
 export const fmtSets = (sets: SetRec[]) => sets.map(s => fmt(s.w == null ? 0 : s.w, 3) + 'x' + (s.skip ? '-' : s.r == null ? '?' : s.r) + (s.warm ? 'w' : '') + (s.q != null && s.r != null && !s.skip ? '@' + s.q : '')).join(' ');
 export function fromDoc(id: string, d?: Partial<WorkoutDoc> | null): Workout {
   d = d || {};
-  return {
+  const w: Workout = {
     id, date: d.date || id.slice(0, 10), slot: d.slot || null, note: d.note || '', open: !!d.open,
     items: (Array.isArray(d.items) ? d.items : []).map(it => {
       const o = {
@@ -35,6 +35,8 @@ export function fromDoc(id: string, d?: Partial<WorkoutDoc> | null): Workout {
       return o;
     }).filter(it => it.ex)
   };
+  if (+d.min! > 0) w.min = Math.round(+d.min!);                   // (в эталоне нет) сколько минут шла тренировка по словам атлета (pace.ts)
+  return w;
 }
 export function toDoc(w: Workout): WorkoutDoc {
   const d: WorkoutDoc = { date: w.date, slot: w.slot || 'mon', items: w.items.map(it => {
@@ -47,6 +49,7 @@ export function toDoc(w: Workout): WorkoutDoc {
   }) };
   if (w.note) d.note = w.note;
   if (w.open) d.open = true;
+  if (w.min) d.min = w.min;                                         // (в эталоне нет) время по факту
   return d;
 }
 export const clone = <T,>(o: T): T => JSON.parse(JSON.stringify(o));
