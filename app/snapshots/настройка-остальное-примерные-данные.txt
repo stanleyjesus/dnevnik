@@ -1065,13 +1065,26 @@
 сообщение: ""
 экран: целиком
   div.wrap.stack
-   div.card.empty
-    h2 В дневнике пока пусто
-    p(style="margin:8px 0 14px") Собери программу во вкладке «Программа» или сразу запиши первую тренировку — после неё появятся план, графики и расчёт нагрузки.
-    div.row(style="justify-content:center")
-     a.btn.primary(href="#program") Собрать программу
-     a.btn(href="#workout") Записать тренировку
-     button#import-first.btn Загрузить резервную копию
+   section#onb.card(style="max-width:760px;margin:0 auto;width:100%")
+    div.sec-h
+     div
+      div#onb-n.eyebrow Шаг 1 из 5
+      h2 С чего начнём?
+     button#onb-skip.btn.ghost.sm(type="button") Пропустить
+    p.note(style="margin-bottom:12px") Дневник ведёт твои тренировки, строит план следующей и подсказывает веса. Записи хранятся только на этом устройстве.
+    div.stack(style="gap:8px")
+     button#onb-build.ex-card(type="button")
+      span.nm Собрать программу
+      span.sub Дневник подберёт упражнения по дням под твою цель и время.
+     button#onb-own.ex-card(type="button")
+      span.nm У меня своя программа
+      span.sub Разложишь свои упражнения по дням сам.
+     button#onb-import.ex-card(type="button")
+      span.nm Перенести записи из файла
+      span.sub Резервная копия этого дневника с другого устройства.
+    div.row(style="margin-top:16px;justify-content:space-between")
+     span
+     span
 
 === 7. настройка нового профиля
 адрес: "#setup"
