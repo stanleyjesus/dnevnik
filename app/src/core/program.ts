@@ -10,10 +10,10 @@ import { AUTO, goalOf, LIGHT_A } from './goals.ts';
 import { lastSessionItem, rangeOf, startOf } from './plan.ts';
 import { planned, tally } from './tally.ts';
 import { ADDS } from './adapt.ts';
-import { DAY_H, DAY_L, DAY_M, ISO, ISO_LIGHT, STRONG } from './strength.ts';
+import { DAY_H, DAY_L, DAY_M, DL_LIGHT, SOLO, STRONG } from './strength.ts';
 import { STARTER, STARTER_GEAR } from './starter.ts';
 import { DAYS, awayDays, dayNo } from './days.ts';
-import { BASE_SETS, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appRules, applyRoles, asStored, canTarget, dayOrder, fillTop, heavyOf, inTime, isoLift, moreTime, programRoles, roomFor, sameMuscles, triadIds } from './rules.ts';
+import { BASE_SETS, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayOrder, fillTop, heavyOf, inTime, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, rirText, roomFor, sameMuscles, stretchOf, triadIds } from './rules.ts';
 import { estMinutes, fmtDur } from './time.ts';
 import type { Tally } from './tally.ts';
 import type { Roles } from './rules.ts';
@@ -48,13 +48,13 @@ export const PRIOS = [
 export const addDef = (k: string) => ADDS.find(a => a.key === k)!.def;
 export const LIB: LibEntry[] = [
   { id: 'x_press', def: { n: 'Жим в тренажере на грудь', pat: 'h_push', m: { chest: 1, delt_front: 0.5, triceps: 0.5 } } },
-  { id: 'x_pulldown', def: { n: 'Вертикальная тяга в тренажере', pat: 'v_pull', m: { lats: 1, upper_back: 0.5, biceps: 0.5 } } },
+  { id: 'x_pulldown', get def() { return appEx({ n: 'Вертикальная тяга в тренажере', pat: 'v_pull', m: { lats: 1, upper_back: 0.5, biceps: 0.5 } }); } },   // (в эталоне — постоянная карта) в приложении хват — половина подхода: rules.ts, appMap
   { id: 'x_pullover', def: { n: 'Пуловер на верхнем блоке', pat: 'iso', m: { lats: 1 }, lo: 10, hi: 15 } },
-  { id: 'x_row', def: { n: 'Горизонтальная тяга в тренажере', pat: 'h_pull', m: { upper_back: 1, lats: 0.5, delt_rear: 0.5, biceps: 0.5 } } },
+  { id: 'x_row', get def() { return appEx({ n: 'Горизонтальная тяга в тренажере', pat: 'h_pull', m: { upper_back: 1, lats: 0.5, delt_rear: 0.5, biceps: 0.5 } }); } },
   { id: 'x_ohp', def: addDef('ohp') },
   { id: 'x_raise', def: { n: 'Махи в стороны', pat: 'iso', m: { delt_mid: 1 }, lo: 10, hi: 20 } },
   { id: 'x_rear', def: addDef('rear') },
-  { id: 'x_curl', def: { n: 'Сгибания на бицепс', pat: 'iso', m: { biceps: 1 } } },
+  { id: 'x_curl', get def() { return appEx({ n: 'Сгибания на бицепс', pat: 'iso', m: { biceps: 1 } }); } },
   { id: 'x_pushdown', def: { n: 'Разгибания на трицепс на блоке', pat: 'iso', m: { triceps: 1 } } },
   { id: 'x_wrist', def: { n: 'Сгибания кисти', pat: 'iso', m: { forearms: 1 } } },
   { id: 'x_abs', def: addDef('abs') },
@@ -88,8 +88,9 @@ export function swapsFor(cfg: Cfg, id: string, skip?: string[] | null) {
     else out.near.push(Object.assign(c, { shared, main: cm, like }));
   }
   const byName = (a: Swap, b: Swap) => a.n.localeCompare(b.n, 'ru');
-  out.same.sort((a, b) => (b.exact - a.exact) || (b.like! - a.like!) || byName(a, b));
-  out.near.sort((a, b) => (b.like! - a.like!) || byName(a, b));
+  const long = (x: Swap) => stretchOf(cfg.ex[x.id] || x.def);       // (в эталоне нет) с днями «День N» растянутый вариант выше (вывод 3 аудита)
+  out.same.sort((a, b) => (b.exact - a.exact) || (b.like! - a.like!) || (long(b) - long(a)) || byName(a, b));
+  out.near.sort((a, b) => (b.like! - a.like!) || (long(b) - long(a)) || byName(a, b));
   return out;
 }
 /* Fit a week to the limits and to one common level.
@@ -211,7 +212,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
         /* (в эталоне нет) с днями «День N» в день не ставится второе упражнение с теми же мышцами: подходы прибавляются в том, что уже стоит.
            Иначе два варианта одного движения по два подхода занимают два места из девяти, и поиск застревает ниже достижимого уровня (rules.ts) */
         const twin = (id: string) => same && L.some(e => sameM(mOf(e.ex), mOf(id)));
-        for (const id of pool) if ((hits(id, short) || fills(id, sl)) && !mainOff(id) && !L.some(e => e.ex === id) && !twin(id) && !cut.some(c => c.ex === id && c.sl === sl)) more.push({ sl, e: null, id, f: uniF(id), dn: 2, dw: 1, pen: (c2.ex[id] ? 0.4 : 0.5) + 0.3 * aside(id), add: true });
+        for (const id of pool) if ((hits(id, short) || fills(id, sl)) && !mainOff(id) && !L.some(e => e.ex === id) && !twin(id) && !cut.some(c => c.ex === id && c.sl === sl)) more.push({ sl, e: null, id, f: uniF(id), dn: 2, dw: 1, pen: (c2.ex[id] ? 0.4 : 0.5) + 0.3 * aside(id) - LONG_K * stretchOf(info(id)), add: true });   // (в эталоне нет) растянутый вариант раньше (вывод 3 аудита)
       }
       const rate = (list: Move[]) => {
         const dt = list.reduce((a, x) => a + x.dn * x.f, 0);
@@ -312,7 +313,7 @@ export function nudgeMuscle(c2: Cfg, slots: ProgSlots, m: string, dir: number, o
     if (ms.some(([x, v]) => !ign[x] && x !== m && (T.pv[x] || 0) + v * cost > o.z.high + 0.01)) { why = why || 'соседние мышцы уже у верха рабочей зоны'; return; }
     /* the purest exercise first, so the neighbours gain as little as possible; a new exercise only when the ones in the programme do not fit */
     const others = ms.filter(([x]) => x !== m), side = others.reduce((a, x) => a + x[1], 0), over = others.filter(([x]) => !ign[x] && (T.pv[x] || 0) >= o.z.opt).reduce((a, x) => a + x[1], 0);
-    const sc = c * 2 - 0.3 * side - 0.3 * over - 0.012 * T.load[sl.id] - (isAdd ? 0.8 + 0.04 * slots[sl.id].length : 0);
+    const sc = c * 2 - 0.3 * side - 0.3 * over - 0.012 * T.load[sl.id] - (isAdd ? 0.8 + 0.04 * slots[sl.id].length - LONG_K * stretchOf(info(id)) : 0);   // (в эталоне нет) растянутый вариант раньше
     if (!best || sc > best.sc) best = { sc, sl, id, isAdd };
   };
   for (const sl of days) {
@@ -344,13 +345,15 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
      в справочнике — она берётся из встроенного и уходит в create. «Сейчас» (cur, before) — по ролям принятой программы, cfg0 */
   const byRole = appRules() && !opts.manual, tri = byRole && !!opts.strength && !!opts.triad && !opts.focus;
   const aims = byRole ? (tri ? triadIds(cfg) : canTarget(cfg, opts.focus) ? [opts.focus!] : []) : [], added: Record<string, ExDef> = {};
-  const roles: Roles | null = aims.length ? { on: aims, plain: tri || !!opts.strength } : null;
+  /* (в эталоне нет) «Гибрид» с остальными базовыми «как подсобка» (opts.others 'plain'; решение владельца, 25 ноября 2026, вывод 5 аудита): они идут обычными
+     многосуставными по двойной прогрессии, как под «Силой», — экран выбирает это по умолчанию */
+  const roles: Roles | null = aims.length ? { on: aims, plain: tri || !!opts.strength || opts.others === 'plain' } : null;
   if (byRole) {
     cfg = asStored(cfg);
     for (const id of aims) if (!cfg.ex[id]) {
       const def = added[id] = clone(STARTER[id]), g = def.gear;
       if (g && !cfg.gear[g] && STARTER_GEAR[g]) cfg.gear[g] = { n: STARTER_GEAR[g].n, step: STARTER_GEAR[g].step, own: true };   // свой снаряд встроенного списка: подтягивания, шаг 1 кг
-      cfg.ex[id] = placed(cfg, Object.assign({ n: id }, def));
+      cfg.ex[id] = appEx(placed(cfg, Object.assign({ n: id }, def)));   // (в эталоне нет) карта — как у справочника в приложении: хват, присед (rules.ts, appMap)
     }
     applyRoles(cfg, roles);
   }
@@ -367,10 +370,10 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
   const cur = currentSlots(done, cfg0), before = progTally(cfg0, cur);
   /* (в эталоне нет) «Сила: <упражнение>» с днями «День N»: мышцы цели — в приоритете, в полтора раза выше остальных; у изоляции два дня движения, а не три
      (решение владельца, 24 ноября 2026, пункт 8; strength.ts, ISO) */
-  const aimM = solo && byRole ? Object.keys(cfg.ex[focus!].m || {}).filter(m => cfg.ex[focus!].m[m] >= 1 && !cfg.ignore[m]) : [], soloDays = solo && isoLift(cfg, focus!) ? ISO.days : STRONG.days;
+  const aimM = solo && byRole ? Object.keys(cfg.ex[focus!].m || {}).filter(m => cfg.ex[focus!].m[m] >= 1 && !cfg.ignore[m]) : [], soloDays = solo && appRules() ? SOLO.days : STRONG.days;   // (в эталоне нет) с днями «День N» — два дня: тяжёлый и лёгкий (решение владельца, 25 ноября 2026; strength.ts, SOLO)
   /* числа тяжёлого и лёгкого дня цели; (в эталоне нет) с днями «День N» — «Новая схема» (решение владельца, 24 ноября 2026; strength.ts): тяжёлый 3 × 4 на 83%,
      лёгкий 3 × 8 на 75%, у изоляции 3 × 6 на 79% и 3 × 10 на 71% */
-  const AH = focus && appRules() ? heavyOf(cfg, focus) : AUTO, AL = !appRules() ? LIGHT_A : focus && isoLift(cfg, focus) ? ISO_LIGHT : DAY_L;
+  const AH = focus && appRules() ? heavyOf(cfg, focus) : AUTO, AL = !appRules() ? LIGHT_A : focus ? lightFor(cfg, focus) : DAY_L;   // (в эталоне нет) у становой лёгкий день 3 × 6 на 79% (rules.ts, lightFor)
   /* (в эталоне нет) дни «День N»: «Сейчас» — вся нынешняя неделя, вместе с днями, которых в выбранной неделе нет, пока в них что-то стоит.
      Иначе при переходе с трёх дней на два «было» оказалось бы заниженным, а спад читался бы как рост */
   const away = awayDays(done, cfg0);
@@ -533,12 +536,12 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
   }
 
   /* 1. a light day belongs to the priority lift only */
-  const midOk = (e: ProgEntry) => !cfg.ex[e.ex].mid || (solo && appRules() && !isoLift(cfg, focus!));   // (в эталоне нет) средний день — только у «Силы: <движение>» (strength.ts, DAY_M)
+  const midOk = (e: ProgEntry) => !cfg.ex[e.ex].mid;   // (в эталоне нет) среднего дня сборка больше не ставит: «Сила: <движение>» — два дня (решение владельца, 25 ноября 2026; strength.ts, SOLO)
   const stays = (e: ProgEntry) => !isLight(cfg, e.ex) || (((focus && cfg.ex[e.ex].of === focus) || (strong && isCycle(cfg, cfg.ex[e.ex].of!) && inProg(cfg.ex[e.ex].of!))) && midOk(e));   // в силовом режиме лёгкий день есть у каждого базового
   /* (в эталоне нет) После «Силы в одном базовом» лёгких дней у базового два. В любом другом режиме лёгкий день у базового один:
      остаётся самый дальний по календарю от тяжёлого дня, второй уходит */
   const extra: ProgEntry[] = [], told: string[] = [];
-  if (!solo) for (const id of [...new Set(all().filter(e => isLight(cfg, e.ex) && stays(e)).map(e => e.ex))]) {
+  if (!solo || appRules()) for (const id of [...new Set(all().filter(e => isLight(cfg, e.ex) && stays(e)).map(e => e.ex))]) {   // (в эталоне нет) с днями «День N» и у «Силы: <движение>» лёгкий день один
     const on = SLOTS.filter(sl => slots[sl.id].some(e => e.ex === id));
     if (on.length < 2) continue;
     const home = SLOTS.find(sl => slots[sl.id].some(e => e.ex === cfg.ex[id].of)), gap = (sl: Slot) => { if (!home) return 0; const d = Math.abs(sl.dow - home.dow); return Math.min(d, 7 - d); };
@@ -546,9 +549,9 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     for (const sl of on) if (sl !== keep) extra.push(...slots[sl.id].filter(e => e.ex === id));
   }
   for (const sl of SLOTS) slots[sl.id] = slots[sl.id].filter(e => {
-    if (extra.includes(e)) { note('Убрано: ' + nm(e.ex) + ' ' + onDay(sl.id), (appRules() ? 'Три дня движения — только когда под «Силой» выбрано одно упражнение.' : 'Три дня движения — только в «Силе в одном базовом».') + ' Здесь лёгкий день один: остался самый дальний от тяжёлого.'); return false; }
+    if (extra.includes(e)) { note('Убрано: ' + nm(e.ex) + ' ' + onDay(sl.id), (appRules() ? 'Движение идёт два дня в неделю: тяжёлый и лёгкий.' : 'Три дня движения — только в «Силе в одном базовом».') + ' Здесь лёгкий день один: остался самый дальний от тяжёлого.'); return false; }
     if (stays(e)) return true;
-    if (!told.includes(e.ex)) { told.push(e.ex); note('Убрано: ' + nm(e.ex), cfg.ex[e.ex].mid ? 'Средний день есть только у упражнения, выбранного целью «Силы».' : appRules() ? 'Лёгкий день есть только у того, что выбрано целью «Силы» или «Гибрида».' : 'Лёгкий день нужен только упражнению в приоритете.'); }   // (в эталоне нет) пункт 8: роль базового — у цели
+    if (!told.includes(e.ex)) { told.push(e.ex); note('Убрано: ' + nm(e.ex), cfg.ex[e.ex].mid ? 'Среднего дня больше нет: движение цели идёт два дня в неделю — тяжёлый и лёгкий.' : appRules() ? 'Лёгкий день есть только у того, что выбрано целью «Силы» или «Гибрида».' : 'Лёгкий день нужен только упражнению в приоритете.'); }   // (в эталоне нет) пункт 8: роль базового — у цели
     return false;
   });
 
@@ -576,8 +579,8 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
       /* 3б. (в эталоне нет) Сила в одном базовом: лёгкий день встаёт в каждый другой тренировочный день, пока движение не идёт STRONG.days раз в неделю.
              Сначала самый дальний по календарю день, при равенстве — менее нагруженный. Лёгкий день стоит первым, как в пауэрбилдинге;
              тот, что у базового уже есть, остаётся на месте. Новыми они помечаются в самом конце — как базовые шага 0.
-             С днями «День N» — «Новая схема» (решение владельца, 24 ноября 2026; strength.ts): из дней после тяжёлого первый по кругу — лёгкий
-             (8 повторов), следующий — средний (6 повторов), как в неделе 8–6–4 у Helms и соавт. (2018); у изоляции среднего дня нет */
+             С днями «День N» движение идёт два дня — тяжёлый и лёгкий, у всех движений (решение владельца, 25 ноября 2026; strength.ts, SOLO);
+             средний день, который ставила «Новая схема» 24 ноября, сборка убирает */
       const mid = focus + '_mid', par = cfg.ex[focus], iso = isoLift(cfg, focus), mine = (e: ProgEntry) => e.ex === lid || e.ex === mid;
       const T = now(), gap = (sl: Slot) => { const d = Math.abs(sl.dow - home!.dow); return Math.min(d, 7 - d); }, has = (sl: Slot) => slots[sl.id].some(mine);
       const free = SLOTS.filter(sl => sl !== home && (scratch || everyDay || slots[sl.id].length) && !has(sl)).sort((a, b) => (gap(b) - gap(a)) || (T.load[a.id] - T.load[b.id]));
@@ -588,16 +591,15 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
       }
       const on = SLOTS.filter(sl => sl !== home && has(sl));
       if (appRules()) {
-        const after = (sl: Slot) => (SLOTS.indexOf(sl) - SLOTS.indexOf(home!) + SLOTS.length) % SLOTS.length, used = (id: string) => on.some(sl => slots[sl.id].some(e => e.ex === id));
-        on.sort((a, b) => after(a) - after(b));
-        on.forEach((sl, k) => { const want = k && !iso ? mid : lid; for (const e of slots[sl.id]) if (mine(e)) e.ex = want; });
-        if (used(lid) && !cfg.ex[lid]) define(lid, { n: par.n + ' — лёгкий день', mode: 'light', of: focus, pat: par.pat || 'iso', m: clone(par.m || {}) });
-        if (used(mid) && !cfg.ex[mid]) define(mid, { n: par.n + ' — средний день', mode: 'light', of: focus, mid: true, pat: par.pat || 'iso', m: clone(par.m || {}) });
+        /* (в эталоне нет) с днями «День N» у всех движений лёгкий день один (решение владельца, 25 ноября 2026; strength.ts, SOLO): средний день,
+           оставшийся от прежней программы, ушёл выше, а лишний лёгкий день — вместе с ним */
+        for (const sl of on) for (const e of slots[sl.id]) if (mine(e)) e.ex = lid;
+        if (on.length && !cfg.ex[lid]) define(lid, { n: par.n + ' — лёгкий день', mode: 'light', of: focus, pat: par.pat || 'iso', m: clone(par.m || {}) });
       }
       const days = on.map(sl => ({ sl, L: slots[sl.id].some(e => e.ex === mid) ? DAY_M : AL })), own = AH.sets + days.reduce((t, d) => t + d.L.sets, 0);
-      if (on.length && appRules()) note('Сила: ' + nm(focus) + ' — ' + (on.length > 1 ? 'три раза' : 'два раза') + ' в неделю', 'Тяжёлый день — ' + onDay(home!.id) + ': ' + AH.sets + ' × ' + AH.reps + ' одним весом, вес решает запас в последнем подходе. '
-        + days.map((d, k) => (d.L === DAY_M ? 'средний — ' : (k ? 'лёгкий — ' : 'Лёгкий день — ')) + onDay(d.sl.id) + ': ' + d.L.sets + ' × ' + d.L.reps + ' на ' + d.L.pct + '%').join('; ') + '. Во всех днях запас около ' + estRir(AL.pct, AL.reps) + ' повторов, вес идёт за тяжёлым днём сам. Всего ' + own + ' подходов движения в неделю. '
-        + 'Дни отличаются повторами: по исследованиям так силы прибавляется больше, чем от одинаковых тренировок. Точные повторы — правило дневника.' + (iso ? ' У изоляции и частота на силу почти не влияет, поэтому дня два, а не три.' : '') + ' Дня «на массу», как в «Гибриде», здесь нет.');   // (в эталоне нет) «Новая схема», 24 ноября 2026
+      if (on.length && appRules()) note('Сила: ' + nm(focus) + ' — два раза в неделю', 'Тяжёлый день — ' + onDay(home!.id) + ': ' + AH.sets + ' × ' + AH.reps + ' одним весом, вес решает запас в последнем подходе. '
+        + 'Лёгкий день — ' + list(on.map(sl => onDay(sl.id))) + ': ' + AL.sets + ' × ' + AL.reps + ' на ' + AL.pct + '%. В обоих днях запас около ' + estRir(AL.pct, AL.reps) + ' повторов, вес лёгкого дня идёт за тяжёлым. Всего ' + own + ' подходов движения в неделю: '
+        + 'по исследованиям прибавка силы от подходов самого движения быстро затухает, и больше 5–6 в неделю надёжной разницы не дают. Дни отличаются повторами: так силы прибавляется больше, чем от одинаковых тренировок. Точные повторы — правило дневника. Дня «на массу», как в «Гибриде», здесь нет.');   // (в эталоне нет) решение владельца, 25 ноября 2026
       else if (on.length) note('Сила: ' + nm(focus) + ' — ' + (on.length > 1 ? 'три раза' : 'два раза') + ' в неделю', 'Тяжёлый день — ' + onDay(home!.id) + ': ' + AH.sets + ' × ' + AH.reps + ' одним весом, вес решает запас в последнем подходе. ' + (on.length > 1 ? 'Лёгкие дни — ' : 'Лёгкий день — ') + list(on.map(sl => onDay(sl.id))) + ': ' + AL.sets + ' × ' + AL.reps + ' на ' + AL.pct + '%, в запасе около ' + estRir(AL.pct, AL.reps) + ' повторов; вес идёт за тяжёлым днём сам. Всего ' + own + ' подходов движения в неделю. По исследованиям для силы считаются подходы самого движения, и отдача от них быстро убывает'
         + (on.length > 1 ? ': что ' + own + ' лучше ' + (AH.sets + AL.sets) + ', надёжно не показано. Три дня — тренерское правило: частая практика движения без лишней усталости.' : '.') + ' Дня «на массу», как в пауэрбилдинге, здесь нет.');
       else note('Без лёгкого дня: ' + nm(focus), 'Лёгкий день ставится в другой тренировочный день, а он в программе один. Добавь упражнения во второй день и собери программу ещё раз — иначе базовое идёт на силу только раз в неделю.');
@@ -617,7 +619,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
   if (held.length && appRules()) note(list(held.map(nm)) + ' — поддержание', HOLD.sets + ' × ' + HOLD.reps + ' на ' + HOLD.pct + '% от расчётного максимума, раз в неделю; максимум не растёт, вес остаётся прежним. По исследованиям этого хватает, чтобы сила не уходила, а восстановление достаётся приоритету.');
   else if (held.length) note(list(held.map(nm)) + ' — поддержание', 'Та же волна, ' + Math.max(2, cfg.cycle.sets - 1) + ' подхода вместо ' + cfg.cycle.sets + ', расчётный максимум не растёт. Вес остаётся прежним — этого хватает, чтобы сила не уходила, а восстановление достаётся приоритету.');
   if (grown.length) note(list(grown.map(nm)) + ' — сила по запасу раз в неделю', DAY_H.sets + ' × ' + DAY_H.reps + ' одним весом, первый вес — ' + DAY_H.pct + '% от расчётного максимума; дальше решает запас в последнем подходе: ' + AUTO.aim + ' и больше — плюс шаг, 1 — вес тот же, 0 — минус ' + AUTO.down + '%.');
-  if (back.length && appRules()) note(list(back.map(nm)) + ' — по двойной прогрессии', 'Без процентов от максимума: ' + BASE_SETS + ' подхода по ' + TYPE.compound.lo + '–' + (TYPE.compound.lo + TYPE.compound.w) + ' повторов с запасом ' + cfg.rir + ', каждый подход ведётся отдельно — взял верх диапазона, в следующий раз в этом подходе вес на шаг выше. Первый вес — от расчётного максимума по последним подходам.');
+  if (back.length && appRules()) note(list(back.map(nm)) + ' — по двойной прогрессии', 'Без процентов от максимума: ' + BASE_SETS + ' подхода по ' + TYPE.compound.lo + '–' + (TYPE.compound.lo + TYPE.compound.w) + ' повторов ' + rirText(cfg, back) + ', каждый подход ведётся отдельно — взял верх диапазона, в следующий раз в этом подходе вес на шаг выше. Первый вес — от расчётного максимума по последним подходам.');
   else if (back.length) note(list(back.map(nm)) + ' — снова обычная волна', cfg.cycle.sets + ' подхода, расчётный максимум +' + fmt(cfg.cycle.inc, 1) + '% в неделю.');
   if (strong) {
     /* 3а. (в эталоне нет) Силовой режим: каждое базовое — первым в своём дне на силу по запасу и ещё раз лёгким днём в другой день недели.
@@ -632,8 +634,8 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
       note(list(heavy.map(e => nm(e.ex))) + ' — первым упражнением ' + onDay(sl.id), 'Тяжёлый день делается на свежие силы, до всего остального.');
     }
     const H = appRules() ? DAY_H : AUTO, L = appRules() ? DAY_L : LIGHT_A;   // (в эталоне нет) с днями «День N» — «Новая схема» (strength.ts)
-    note((tri ? 'Тройка: ' + list(lifts.map(nm)) + ' — каждое' : 'Сила: ' + list(lifts.map(nm)) + ' —') + ' два раза в неделю', 'Тяжёлый день — ' + H.sets + ' × ' + H.reps + ' одним весом, первый вес — ' + H.pct + '% от расчётного максимума. Дальше решает запас в последнем подходе: ' + AUTO.aim + ' повтора и больше — на следующей неделе плюс шаг, 1 — вес тот же, 0 или подходы не закрыты — минус ' + AUTO.down + '%. Лёгкий день — ' + L.sets + ' × ' + L.reps + ' на ' + L.pct + '%, в запасе около ' + estRir(L.pct, L.reps) + ' повторов. '
-      + (appRules() ? 'Всего ' + (H.sets + L.sets) + ' подходов движения в неделю: по исследованиям для силы считаются подходы самого движения, и 5–9 в неделю дают чуть больше, чем меньше пяти. Дни отличаются повторами: так силы прибавляется больше, чем от одинаковых тренировок. Точные 4 и 8 повторов — правило дневника.'
+    note((tri ? 'Тройка: ' + list(lifts.map(nm)) + ' — каждое' : 'Сила: ' + list(lifts.map(nm)) + ' —') + ' два раза в неделю', 'Тяжёлый день — ' + H.sets + ' × ' + H.reps + ' одним весом, первый вес — ' + H.pct + '% от расчётного максимума. Дальше решает запас в последнем подходе: ' + AUTO.aim + ' повтора и больше — на следующей неделе плюс шаг, 1 — вес тот же, 0 или подходы не закрыты — минус ' + AUTO.down + '%. Лёгкий день — ' + L.sets + ' × ' + L.reps + ' на ' + L.pct + '%' + (appRules() && lifts.some(id => isDeadlift(nm(id))) ? ', у становой — ' + DL_LIGHT.sets + ' × ' + DL_LIGHT.reps + ' на ' + DL_LIGHT.pct + '%' : '') + ', в запасе около ' + estRir(L.pct, L.reps) + ' повторов. '   // (в эталоне нет) лёгкий день становой — решение владельца, 25 ноября 2026
+      + (appRules() ? 'Всего ' + (H.sets + L.sets) + ' подходов движения в неделю: по исследованиям для силы считаются подходы самого движения, и 5–9 в неделю дают чуть больше, чем меньше пяти. Дни отличаются повторами: так силы прибавляется больше, чем от одинаковых тренировок. Точные повторы — правило дневника.'
         : 'По исследованиям для силы считаются подходы самого движения, и 5–9 в неделю дают чуть больше, чем меньше пяти. Второй день как способ набрать их без лишней усталости — тренерское правило, а не вывод исследования.'));
     const lights: string[] = [], lone: string[] = [];
     for (const id of lifts.slice().sort((a, b) => SLOTS.indexOf(homeOf(a)) - SLOTS.indexOf(homeOf(b)))) {
@@ -890,7 +892,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
      (решение владельца, 24 ноября 2026, пункт 8) */
   if (roles && roles.plain) {
     const off = [...new Set(all().map(e => e.ex))].filter(id => cfg.ex[id] && cfg.ex[id].stored === 'cycle' && cfg.ex[id].mode !== 'cycle' && cfg0.ex[id] && cfg0.ex[id].mode === 'cycle');
-    if (off.length) note(list(off.map(nm)) + ' — по двойной прогрессии', 'Под «Силой» по проценту идёт только цель. ' + (off.length > 1 ? 'Остальные базовые — обычные многосуставные' : 'Это базовое — обычное многосуставное') + ': ' + TYPE.compound.lo + '–' + (TYPE.compound.lo + TYPE.compound.w) + ' повторов с запасом ' + cfg.rir + ', после цели, подходов — сколько нужно мышцам.');
+    if (off.length) note(list(off.map(nm)) + ' — по двойной прогрессии', 'Под «Силой» по проценту идёт только цель. ' + (off.length > 1 ? 'Остальные базовые — обычные многосуставные' : 'Это базовое — обычное многосуставное') + ': ' + TYPE.compound.lo + '–' + (TYPE.compound.lo + TYPE.compound.w) + ' повторов ' + rirText(cfg, off) + ', после цели, подходов — сколько нужно мышцам.');
   }
   if (appRules()) {
     const own = MUSCLES.filter(m => !cfg.ignore[m.id]).map(m => m.id), pm = group && !own.every(m => group.m.includes(m)) ? group.m.filter(m => !cfg.ignore[m]) : aimM.length && !own.every(m => aimM.includes(m)) ? aimM : [];
@@ -922,7 +924,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
   /* (в эталоне нет) с днями «День N» программа та же, только если и роли те же: цель и то, идут ли остальные базовые обычными упражнениями */
   const rk = (R: Roles | null) => R ? R.on.slice().sort().join() + (R.plain ? '+' : '') : '';
   const same = !away.length && sig(slots) === sig(cur) && Object.keys(goals).every(id => (goalOf(cfg0, id) || null) === goals[id]) && (!byRole || rk(programRoles(cfg0.program)) === rk(roles));
-  return { focus, others: focus ? (hold ? 'hold' : 'grow') : null, prio: group ? group.id : '', budget, strength: strong || solo, name: tri ? 'Сила: пауэрлифтерская тройка' : solo ? 'Сила: ' + nm(focus!).toLowerCase() : focus ? 'Пауэрбилдинг: ' + nm(focus).toLowerCase() : strong ? 'Сила: базовые два раза в неделю' : group ? 'Приоритет: ' + group.n.toLowerCase() : 'Равномерно на всё тело', slots, cur, goals, create, notes, cfg: c2, before, after: now(), same, away: awaySets, dropped, dropFrom, triad: tri ? aims.slice() : null };
+  return { focus, others: focus ? (roles && roles.plain && !solo ? 'plain' : hold ? 'hold' : 'grow') : null, prio: group ? group.id : '', budget, strength: strong || solo, name: tri ? 'Сила: пауэрлифтерская тройка' : solo ? 'Сила: ' + nm(focus!).toLowerCase() : focus ? 'Пауэрбилдинг: ' + nm(focus).toLowerCase() : strong ? 'Сила: базовые два раза в неделю' : group ? 'Приоритет: ' + group.n.toLowerCase() : 'Равномерно на всё тело', slots, cur, goals, create, notes, cfg: c2, before, after: now(), same, away: awaySets, dropped, dropFrom, triad: tri ? aims.slice() : null };
 }
 
 export type OptRes = ReturnType<typeof optimise>;

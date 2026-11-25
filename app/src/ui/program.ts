@@ -146,7 +146,7 @@ export function vProgram() {
     state = [h('p', { class: 'sub' }, 'Принята ' + C.fmtDate(P.made || P.since, true) + '. ',
       !pending.length ? (holes.length ? 'Её дни уже идут по ней.' : 'Все дни уже идут по ней: дальше каждый день строится от своей прошлой тренировки.') : started ? 'Ещё не было по ней: ' + C.list(pending.map(sl => sl.n.toLowerCase())) + '.' : 'По ней ещё не было ни одной тренировки.',
       holes.length ? ' ' + C.list(holes.map((sl, i) => i ? sl.n.toLowerCase() : sl.n)) + ' в ней ' + (holes.length > 1 ? 'пусты: заполнятся' : 'пуст: заполнится') + ', когда примешь программу ниже.' : '',
-      P.focus && cfg.ex[P.focus] && !(appRules() && P.strength) ? ' Приоритет — «' + C.exName(cfg, P.focus) + '», остальные базовые ' + (P.others === 'grow' ? 'растут как раньше.' : 'на поддержании.') : '',
+      P.focus && cfg.ex[P.focus] && !(appRules() && P.strength) ? ' Приоритет — «' + C.exName(cfg, P.focus) + '», остальные базовые ' + (P.others === 'grow' ? 'растут как раньше.' : P.others === 'plain' && appRules() ? 'идут как подсобка.' : 'на поддержании.') : '',
       P.prio && C.PRIOS.some(g => g.id === P.prio) ? ' Приоритет — ' + C.PRIOS.find(g => g.id === P.prio)!.n.toLowerCase() + '.' : '',
       /* (в эталоне нет) с днями «День N» под «Силой» по проценту идёт только цель: тройка или одно упражнение (пункт 8) */
       P.strength && appRules() && P.triad && P.triad.length ? ' Сила в тройке: ' + C.list(P.triad.filter(id => cfg.ex[id]).map(id => C.exName(cfg, id).toLowerCase())) + ' — каждое два раза в неделю, остальные базовые — обычные упражнения, подсобка — ниже рабочей зоны.'
@@ -172,7 +172,7 @@ export function vProgram() {
   const ui = S.ui;
   const budgets = [40, 50, 60, 70, 80, 90, 100, 110, 120].filter(v => v < cfg.caps.week).concat(cfg.caps.week);
   if (!ui.prog) ui.prog = { focus: P && P.strength && P.triad && P.triad.length && appRules() ? 'p' : P && P.strength && P.focus && lifts.includes(P.focus) ? 's:' + P.focus : P && P.strength && lifts.length ? 's' : P && P.focus && lifts.includes(P.focus) ? 'l:' + P.focus : P && P.prio && C.PRIOS.some(g => g.id === P.prio) ? 'm:' + P.prio : empty ? 'manual' : 'even',
-    others: P && P.others === 'grow' ? 'grow' : 'hold', budget: P && +P.budget! > 0 && +P.budget! <= cfg.caps.week ? +P.budget! : cfg.caps.week, draft: null, key: '' };
+    others: P && P.others === 'grow' ? 'grow' : !appRules() || (P && P.others === 'hold') ? 'hold' : 'plain', budget: P && +P.budget! > 0 && +P.budget! <= cfg.caps.week ? +P.budget! : cfg.caps.week, draft: null, key: '' };
   if (lostMode(ui.prog.focus, lifts)) setMode(ui.prog, modeAfter(ui.prog.focus, lifts), cfg.caps.week);   // выбранного базового больше нет в справочнике: в эталоне экран оставался в режиме, которого уже не собрать
   const st = ui.prog, manual = st.focus === 'manual', lift = st.focus.startsWith('l:') ? st.focus.slice(2) : null, prio = st.focus.startsWith('m:') ? st.focus.slice(2) : '';
   const strong = st.focus === 's';                                    // силовой режим: в эталоне его нет (решение владельца, 19 ноября 2026)
@@ -232,7 +232,7 @@ export function vProgram() {
     recount();
   };
   /* силовой режим предлагается со своим лимитом недели: он меньше обычного, потому что подсобке в нём отведено меньше (setMode) */
-  const pick = (f: string, o?: 'hold' | 'grow') => { setMode(st, f, cfg.caps.week); if (o) st.others = o; st.draft = null; render(true); };
+  const pick = (f: string, o?: 'hold' | 'grow' | 'plain') => { setMode(st, f, cfg.caps.week); if (o) st.others = o; st.draft = null; render(true); };
   const avgMin = C.SLOTS.filter(sl => pr.slots[sl.id].length).map(sl => C.estMinutes(pr.cfg, pr.slots[sl.id], D.cfg.rest));
   const total = (t: ProgTally) => C.SLOTS.reduce((a, sl) => a + t.load[sl.id], 0);
   const used = total(pr.after), free = +(cap - used).toFixed(1), hand = pr.hand && pr.hand.length ? pr.hand : null;
@@ -260,6 +260,7 @@ export function vProgram() {
     h('div', { class: 'row', style: 'margin-bottom:12px;align-items:flex-end' },
       goalPicker(st, cfg, lifts, pick),                               // вместо списка «Как собрать»: кнопки цели и один уточняющий список (решение владельца, 19 ноября 2026)
       lift || (solo && !appRules()) ? h('div', { class: 'pf' }, h('span', null, 'Остальные базовые'), h('div', { class: 'seg multi', role: 'group', 'aria-label': 'Остальные базовые упражнения' },
+        appRules() ? h('button', { type: 'button', id: 'po-plain', 'aria-pressed': String(st.others === 'plain'), onclick: () => pick(st.focus, 'plain') }, 'Как подсобка') : null,   // (в эталоне нет) решение владельца, 25 ноября 2026
         h('button', { type: 'button', id: 'po-hold', 'aria-pressed': String(st.others === 'hold'), onclick: () => pick(st.focus, 'hold') }, 'Поддержание'),
         h('button', { type: 'button', id: 'po-grow', 'aria-pressed': String(st.others === 'grow'), onclick: () => pick(st.focus, 'grow') }, 'Растут как раньше'))) : null,
       /* сколько дней в неделе (в эталоне нет: решение владельца, 19 ноября 2026): выбор хранится в профиле, программа пересобирается под это число.

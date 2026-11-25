@@ -7,7 +7,7 @@ import { isLight } from './config.ts';
 import { bestSet, e1, effReps, topSet, work } from './sets.ts';
 import { progPending } from './goals.ts';
 import { DAYS, dayStale } from './days.ts';
-import { appRules, logMax, maxSet, setMax } from './rules.ts';
+import { appRules, logMax, maxSet, rirOf, setMax } from './rules.ts';
 import type { Cfg, Session, Stalled, WeekInfo, Workout } from './types.ts';
 
 /* sets that have not moved for four sessions of the same day while the sets before them did not grow either.
@@ -37,11 +37,11 @@ export function sessions(workouts: Workout[], cfg: Cfg, exId: string): Session[]
     if (it.ex !== exId) continue;
     const sets = work(it);
     if (!sets.length) continue;
-    const app = appRules(), top = topSet(sets), best = app ? maxSet(it, sets, cfg.rir) : bestSet(sets);
+    const app = appRules(), top = topSet(sets), rr = rirOf(cfg, exId), best = app ? maxSet(it, sets, rr) : bestSet(sets);   // (в эталоне нет) запас по упражнению (вывод 10 аудита)
     const tm = it.cyc && it.cyc.pct ? (it.tm || top.w! / (it.cyc.pct / 100)) : null;
     /* (в эталоне нет) с днями «День N» максимум тренировки у всех упражнений — по подходам: лучший подход по Эпли от повторов плюс запас
        (решение владельца, 24 ноября 2026). Расчётный максимум, от которого план считает вес по проценту (tm), остаётся прежним */
-    const mx = app ? setMax(best, it, cfg.rir) : e1(best.w!, effReps(best));
+    const mx = app ? setMax(best, it, rr) : e1(best.w!, effReps(best));
     out.push({ date: w.date, wid: w.id, slot: w.slot, item: it, sets, top, best, e1: mx, tm, metric: app ? mx : tm != null ? tm : mx });
   }
   return out;
@@ -99,7 +99,7 @@ export function strengthIndex(workouts: Workout[], cfg: Cfg) {
       const sets = work(it);
       if (!sets.length) continue;
       const b = bestSet(sets), t = topSet(sets);
-      const metric = appRules() ? logMax(it, cfg.rir)! : it.cyc && it.cyc.pct ? t.w! / (it.cyc.pct / 100) : e1(b.w!, effReps(b));   // (в эталоне нет) с днями «День N» — по подходам, как в sessions
+      const metric = appRules() ? logMax(it, rirOf(cfg, it.ex))! : it.cyc && it.cyc.pct ? t.w! / (it.cyc.pct / 100) : e1(b.w!, effReps(b));   // (в эталоне нет) с днями «День N» — по подходам, как в sessions
       if (!(metric > 0)) continue;
       const o = per[k] || (per[k] = {});
       if (!(o[it.ex] >= metric)) o[it.ex] = metric;

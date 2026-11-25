@@ -5,7 +5,7 @@ import { DAYS, dayStale } from './days.ts';
 import { addDays, dow } from './dates.ts';
 import { isCycle, isLight } from './config.ts';
 import { e1, work } from './sets.ts';
-import { appRange, appRules, BASE_SETS, byPct, fromMax, heavyOf, logMax, withBody } from './rules.ts';
+import { appRange, appRules, BASE_SETS, byPct, fromMax, HEAVY, heavyOf, heavyStep, lightShift, logMax, rirOf, withBody } from './rules.ts';
 import { AUTO, goalOf, goalRange, GOALS, lightOf, progPending, waveOf } from './goals.ts';
 import { sessions } from './stats.ts';
 import type { Cfg, ExDef, Item, ProgEntry, Range, SessRef, SetRec, Workout } from './types.ts';
@@ -45,7 +45,7 @@ export function planCycle(workouts: Workout[], cfg: Cfg, exId: string, before?: 
   const wv = waveOf(cfg, exId), order = wv.order, first = order[0], ex = cfg.ex[exId] || {} as ExDef, q = +ex.round! || 2.5;
   const all = sessions(workouts.filter(w => !w.open && (!before || w.date < before)), cfg, exId), ss = all.filter(s => s.item.cyc);
   /* (в эталоне нет) с днями «День N» последняя запись упражнения — по двойной прогрессии: расчётный максимум из её подходов (Эпли с поправкой на запас) */
-  const fromLog = appRules() && all.length && !all[all.length - 1].item.cyc ? logMax(all[all.length - 1].item, cfg.rir) : null;
+  const fromLog = appRules() && all.length && !all[all.length - 1].item.cyc ? logMax(all[all.length - 1].item, rirOf(cfg, exId)) : null;
   if (!ss.length || fromLog) {                                      // no sessions yet: from the maximum the athlete named, if any
     const tm = fromLog || knownMax(cfg, exId), p0 = wv.pct[first];
     return { reps: first, pct: p0, sets: wv.sets(first), w: tm ? +roundTo(tm * p0 / 100, q).toFixed(3) : null, tm, prev: null, repeat: false, strong: wv.strong, hold: wv.hold, keep: wv.keep, known: !!tm, auto: wv.auto, verdict: wv.auto ? 'start' : undefined };
@@ -55,12 +55,14 @@ export function planCycle(workouts: Workout[], cfg: Cfg, exId: string, before?: 
   const done = planned.length > 0 && planned.every(s => s.r != null && s.r >= lr) && !last.item.skip;
   const hard = last.sets.some(s => s.q === 0);
   const repeat = !done;
-  const inWave = wv.pct[lr] === last.item.cyc!.pct;                 // the last session was planned by this wave
+  const A = appRules() ? heavyOf(cfg, exId) : AUTO;               // (в эталоне нет) с днями «День N» — тяжёлый день 3 × 4, у изоляции 3 × 6 (rules.ts, heavyOf)
+  const inWave = wv.pct[lr] === last.item.cyc!.pct || (appRules() && wv.auto && last.item.cyc!.pct === A.pct && lr > A.reps && lr <= A.reps + HEAVY.reps);   // the last session was planned by this wave; (в эталоне нет) тяжёлый день с прибавкой повторами
   if (wv.auto && inWave) {
     /* one weight, four by four: the last set says what the next week is */
     const lw = last.top.w, end = planned[planned.length - 1], rz = end && end.q != null ? end.q : null;
     const verdict = !done || hard ? 'down' : rz === 1 ? 'hold' : 'up';
-    const w = +(verdict === 'up' ? lw! + q : verdict === 'hold' ? lw! : Math.min(lw! - q, roundTo(lw! * (1 - AUTO.down / 100), q))).toFixed(3), A = appRules() ? heavyOf(cfg, exId) : AUTO;   // (в эталоне нет) с днями «День N» — тяжёлый день 3 × 4, у изоляции 3 × 6 (rules.ts, heavyOf)
+    if (appRules()) { const H = heavyStep(lw!, q, lr, A.reps, verdict, rz); return { reps: H.reps, pct: A.pct, sets: A.sets, w: H.w, tm: H.w / (A.pct / 100), prev: last, repeat: false, hard: false, strong: false, hold: false, keep: true, auto: true, verdict: H.verdict, rz, closed: done, steps: H.steps }; }   // (в эталоне нет) выводы аудита 6 (rules.ts, heavyStep)
+    const w = +(verdict === 'up' ? lw! + q : verdict === 'hold' ? lw! : Math.min(lw! - q, roundTo(lw! * (1 - AUTO.down / 100), q))).toFixed(3);
     return { reps: A.reps, pct: A.pct, sets: A.sets, w, tm: w / (A.pct / 100), prev: last, repeat: false, hard: false, strong: false, hold: false, keep: true, auto: true, verdict, rz, closed: done };
   }
   let reps: number, tm: number | null;
@@ -78,13 +80,25 @@ export function planCycle(workouts: Workout[], cfg: Cfg, exId: string, before?: 
 export function planLight(workouts: Workout[], cfg: Cfg, exId: string, before?: string | null) {
   const ex = cfg.ex[exId] || {} as ExDef, par = ex.of, q = +ex.round! || +((cfg.ex[par!] || {} as ExDef).round)! || 2.5, LIGHT = lightOf(cfg, exId);
   const c = par ? planCycle(workouts, cfg, par, before) : null, tm = c && c.prev ? c.prev.tm : c && c.known ? c.tm : null;
-  let w = tm ? +roundTo(tm * LIGHT.pct / 100, q).toFixed(3) : null;
-  if (w != null && (!appRules() || withBody(cfg, par!))) {           // never below the lightest weight ever logged in the lift (body weight in pull-ups); (в эталоне нет) с днями «День N» — только там, где в вес входит тело
-    let min: number | null = null;
+  let min: number | null = null;
+  if (!appRules() || withBody(cfg, par!)) {                          // never below the lightest weight ever logged in the lift (body weight in pull-ups); (в эталоне нет) с днями «День N» — только там, где в вес входит тело
     for (const x of workouts) for (const it of x.items) if (it.ex === par) for (const k of work(it)) if (k.w! > 0 && (min == null || k.w! < min)) min = k.w;
-    if (min != null && w < min) w = min;
   }
-  return { pct: LIGHT.pct, reps: LIGHT.reps, sets: LIGHT.sets, w, tm, of: par };
+  const share = (t: number, pct: number) => { const v = +roundTo(t * pct / 100, q).toFixed(3); return min != null && v < min ? min : v; };
+  let w = tm ? share(tm, LIGHT.pct) : null, steps = 0, move = 0;
+  if (w != null && appRules()) {                                     // (в эталоне нет) лёгкий и средний день слушают запас (вывод 7 аудита, rules.ts, lightShift)
+    const hist = sessions(workouts.filter(x => !x.open && (!before || x.date < before)), cfg, exId).filter(s => s.item.cyc).map(s => {
+      const planned = s.item.sets.filter(x => !x.warm), end = planned[planned.length - 1];
+      return { off: s.item.tm ? Math.round((s.top.w! - share(s.item.tm, s.item.cyc!.pct)) / q) : 0, rz: end && end.q != null ? end.q : null,
+        closed: planned.length > 0 && planned.every(x => x.r != null && x.r >= s.item.cyc!.reps) && !s.item.skip };
+    });
+    const S = lightShift(hist), cap = c && c.w ? +(c.w - q).toFixed(3) : null;
+    const k0 = S.steps - S.move; steps = S.steps;
+    while (steps > 0 && cap != null && w + steps * q > cap + 1e-9) steps--;   // легче тяжёлого дня
+    move = S.move > 0 ? Math.max(0, steps - k0) : S.move;              // что решил запас; уступка тяжёлому дню — не решение запаса
+    w = Math.max(q, +(w + steps * q).toFixed(3));
+  }
+  return { pct: LIGHT.pct, reps: LIGHT.reps, sets: LIGHT.sets, w, tm, of: par, steps, move };
 }
 /* ---------- weights the athlete names before there is a journal: a one-rep maximum or a working weight ---------- */
 /* the maximum an exercise without sessions is planned from: the named one, else the working weight raised by Epley over its reps plus the method's reserve */
@@ -93,7 +107,7 @@ export function knownMax(cfg: Cfg, exId: string) {
   if (+e.max! > 0) return +e.max!;
   if (!(+e.work! > 0)) return null;
   const r = +e.workR! > 0 ? +e.workR! : byPct(cfg, exId) ? waveOf(cfg, exId).order[0] : Math.round(((+e.lo! || 8) + (+e.hi! || 12)) / 2);
-  return e1(+e.work!, r + cfg.rir);
+  return e1(+e.work!, r + rirOf(cfg, exId));                       // (в эталоне нет) с днями «День N» запас по упражнению (вывод 10 аудита)
 }
 /* the weight a double-progression exercise starts with: the working weight as it is when its reps fit the range,
    else the weight for the middle of the range with the method's reserve, rounded down to the step */
@@ -102,7 +116,7 @@ export function startWeight(workouts: Workout[], cfg: Cfg, exId: string, range: 
   if (+e.work! > 0 && !(+e.workR! > 0 && (+e.workR! < lo || +e.workR! > hi))) return +e.work!;
   const mx = knownMax(cfg, exId);
   if (!mx) return null;
-  const step = stepOf(workouts, cfg, exId), v = Math.floor(mx / (1 + (Math.round((lo + hi) / 2) + cfg.rir) / 30) / step + 1e-6) * step;
+  const step = stepOf(workouts, cfg, exId), v = Math.floor(mx / (1 + (Math.round((lo + hi) / 2) + rirOf(cfg, exId)) / 30) / step + 1e-6) * step;
   return v > 0 ? +v.toFixed(3) : null;
 }
 /* what the first plan of an exercise without sessions starts from: { w, tm, pct, reps, src } or null (there is a journal, or nothing is named) */
@@ -124,7 +138,7 @@ export function hints(workouts: Workout[], cfg: Cfg, exId: string, slot?: string
   const range = appRules() ? appRange(ex, p && p.it.range, p ? p.it.sets.reduce((m, x) => Math.max(m, x.w || 0), 0) : 0, step) : (p && p.it.range) || (g && GOALS[g].lo ? goalRange(g, 0, step) : [ex.lo || 8, ex.hi || 12]);
   const prevSets = p ? p.it.sets.filter(s => !s.warm) : [];
   /* (в эталоне нет) прошлый раз упражнение шло по проценту, а теперь — по двойной прогрессии: каждый подход начинается с веса от расчётного максимума прошлого раза */
-  const tm = appRules() && p && p.it.cyc && !byPct(cfg, exId) ? logMax(p.it, cfg.rir) : null, w0 = tm ? fromMax(tm, range, cfg.rir, step) : null;
+  const tm = appRules() && p && p.it.cyc && !byPct(cfg, exId) ? logMax(p.it, rirOf(cfg, exId)) : null, w0 = tm ? fromMax(tm, range, rirOf(cfg, exId), step) : null;
   return { step, range, prevDate: p ? p.w.date : null, prevSlot: p ? p.w.slot : null, prevSkipped: p ? p.it.skip : false, prevSets, sets: prevSets.map(s => tm ? { w: w0, rule: 'new', target: range.slice() } : suggestSet(s, range, step)), start: p ? null : startWeight(workouts, cfg, exId, range) };
 }
 export function nextSlot(workouts: Workout[], today?: string | null) {

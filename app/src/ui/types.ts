@@ -54,7 +54,7 @@ export type Built = ReturnType<typeof Core.buildProgram> & { hand?: HandNote[] }
 export interface PlanUi { slot: string; date: string; off?: Record<string, boolean>; variant?: 'adj' | 'base' }
 /** Вкладка «Программа»: как собрать, лимит недели, черновик и ключ условий, при которых он собран */
 export interface ProgUi {
-  focus: string; others: 'hold' | 'grow'; budget: number; draft: Built | null; key: string; edited?: boolean; name?: string | null; swapAt?: string | null; whyOpen?: boolean;
+  focus: string; others: 'hold' | 'grow' | 'plain'; budget: number; draft: Built | null; key: string; edited?: boolean; name?: string | null; swapAt?: string | null; whyOpen?: boolean;
   /* выбор сценария кнопками цели (goal.ts): что было выбрано под целями «Масса», «Гибрид» и «Сила» в прошлый раз и какой лимит недели стоял до силового режима */
   mass?: string; mix?: string; force?: string; keep?: number;
   /* время на тренировку (fit.ts): сколько длится самая длинная тренировка при каждом лимите недели — пока не изменилось то, от чего зависит сборка */

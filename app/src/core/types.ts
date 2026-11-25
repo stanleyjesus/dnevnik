@@ -133,7 +133,7 @@ export interface Addition { key: string; a: Add; exId: string; def: ExDef | null
 /** Подход в поправке: вес и цель по повторам */
 export interface PropSet { w: number | null; tg: Range }
 /** Поправка к упражнению плана: тег, причины, новые подходы */
-export interface Prop { key: string; ex: string; idx: number; tag: string; notes: string[]; sets: PropSet[]; cyc: Cyc | null; range: Range | null }
+export interface Prop { key: string; ex: string; idx: number; tag: string; notes: string[]; sets: PropSet[]; cyc: Cyc | null; range: Range | null; note?: string }   // note — (в эталоне нет) заметка к упражнению, которую ставит поправка
 
 /* ---------- сборка программы ---------- */
 

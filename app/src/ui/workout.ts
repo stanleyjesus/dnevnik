@@ -8,7 +8,7 @@ import { backupDraft, flushSave, saveCfg, saveT, setSaveState, touch, uniqueId }
 import { D, go, render } from './render.ts';
 import { dayTitle, durText, paintEta, planLegend, planRows, planSets, propList, restSelect, setWord, startWorkout } from './overview.ts';
 import { exForm } from './setup.ts';
-import { appRules, heavyOf } from '../core/rules.ts';
+import { appRules, HEAVY, heavyOf, LIGHT_RIR, rirOf } from '../core/rules.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
 import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
 
@@ -118,7 +118,7 @@ export function workoutEditor() {
   setTimeout(() => { setSaveState(); paintEta(); }, 0);
   return out;
 }
-export const propApplied = (it: Item, prop: Prop) => it.sets.length === prop.sets.length && prop.sets.every((x, i) => it.sets[i].w === x.w) && (!prop.cyc || (!!it.cyc && it.cyc.reps === prop.cyc.reps)) && (!prop.range || (!!it.range && it.range[0] === prop.range[0] && it.range[1] === prop.range[1]));
+export const propApplied = (it: Item, prop: Prop) => it.sets.length === prop.sets.length && prop.sets.every((x, i) => it.sets[i].w === x.w) && (!prop.cyc || (!!it.cyc && it.cyc.reps === prop.cyc.reps)) && (!prop.range || (!!it.range && it.range[0] === prop.range[0] && it.range[1] === prop.range[1])) && (!prop.note || it.note === prop.note);   // (в эталоне нет) проверка запаса — заметкой
 /* the mark of one exercise, changeable right in the workout card: the mode of a percentage lift, 8–12 or 6–10 for a multi-joint accessory.
    Isolation has no mark: its range follows the weight step */
 export function goalSelect(it: Item) {
@@ -138,7 +138,7 @@ export function goalSelect(it: Item) {
 }
 export function adjBox(it: Item, prop: Prop, A: Adapted) {
   const baseIt = A.base.items[prop.idx], applied = propApplied(it, prop);
-  const setTo = (src: SetsSource) => { it.sets = src.sets.map((x, i) => { const o = it.sets[i] && it.sets[i].w === x.w ? it.sets[i] : null, n: SetRec = { w: x.w, r: o ? o.r : null }; if (o && o.q != null) n.q = o.q; return n; }); if (src.cyc) { it.cyc = { pct: src.cyc.pct, reps: src.cyc.reps }; it.tm = src.tm || null; } if (src.range) it.range = src.range.slice(); touch(); render(true); };
+  const setTo = (src: SetsSource) => { it.sets = src.sets.map((x, i) => { const o = it.sets[i] && it.sets[i].w === x.w ? it.sets[i] : null, n: SetRec = { w: x.w, r: o ? o.r : null }; if (o && o.q != null) n.q = o.q; return n; }); if (src.cyc) { it.cyc = { pct: src.cyc.pct, reps: src.cyc.reps }; it.tm = src.tm || null; } if (src.range) it.range = src.range.slice(); if (prop.note) it.note = src === prop ? prop.note : it.note === prop.note ? '' : it.note; touch(); render(true); };   // (в эталоне нет) проверка запаса
   return h('div', { class: 'adj-box' }, h('div', { class: 'row between' }, h('b', null, 'Поправка дневника · ' + prop.tag),
     applied ? h('button', { class: 'btn sm', onclick: () => setTo(baseIt) }, 'Вернуть по правилу') : h('button', { class: 'btn sm primary', onclick: () => setTo(prop) }, 'Применить')),
     prop.notes.map(t => h('div', { text: t.charAt(0).toUpperCase() + t.slice(1) + '.' })), h('div', { class: 'muted', text: applied ? 'Уже внесено в подходы ниже.' : 'Не внесено: подходы ниже идут по правилу или с твоими правками.' }));
@@ -178,9 +178,10 @@ export function dpBlock(card: HTMLElement, d: Workout, it: Item, prim: string[],
     h('span', null, 'Диапазон'), rIn(0, 'Нижняя граница повторов'), '–', rIn(1, 'Верхняя граница повторов'),
     (fr[1] !== it.range[1]) && topW > 0 ? h('button', { class: 'btn ghost sm', title: 'Шаг ' + C.fmt(hh.step) + ' кг от ' + C.fmt(topW) + ' кг, делённый на 2.5', onclick: () => { it.range = fr.slice(); touch(); render(true); } }, 'по формуле шага: ' + fr[0] + '–' + fr[1]) : null,
     S.canWrite ? goalSelect(it) : null,
-    hh.prevDate ? h('span', null, 'прошлый раз ' + C.fmtDate(hh.prevDate) + (hh.prevSkipped ? ' (не делал)' : '')) : h('span', null, 'первая запись: подбери вес, чтобы в первом подходе вышло ' + it.range[0] + '–' + it.range[1] + ' повторов и в запасе ' + (D.cfg.rir === 1 ? 'остался один' : 'осталось ' + D.cfg.rir))));
+    rirOf(D.cfg, it.ex) > D.cfg.rir ? h('span', null, 'запас ' + rirOf(D.cfg, it.ex) + ': со свободным весом отказ опасен') : null,   // (в эталоне нет) вывод 10 аудита
+    hh.prevDate ? h('span', null, 'прошлый раз ' + C.fmtDate(hh.prevDate) + (hh.prevSkipped ? ' (не делал)' : '')) : h('span', null, 'первая запись: подбери вес, чтобы в первом подходе вышло ' + it.range[0] + '–' + it.range[1] + ' повторов и в запасе ' + (rirOf(D.cfg, it.ex) === 1 ? 'остался один' : 'осталось ' + rirOf(D.cfg, it.ex)))));   // (в эталоне нет) запас по упражнению (вывод 10 аудита)
   const sets = h('div', { class: 'sets' });
-  sets.appendChild(h('div', { class: 'set head' }, h('span'), h('span', null, 'Вес, кг'), h('span'), h('span', null, 'Повторы'), h('span', { title: 'Сколько повторов оставалось до отказа. Пусто — как по методике: ' + D.cfg.rir }, 'Запас'), h('span')));
+  sets.appendChild(h('div', { class: 'set head' }, h('span'), h('span', null, 'Вес, кг'), h('span'), h('span', null, 'Повторы'), h('span', { title: 'Сколько повторов оставалось до отказа. Пусто — как по методике: ' + rirOf(D.cfg, it.ex) }, 'Запас'), h('span')));
   it.sets.forEach((st, i) => {
     const prev = hh.prevSets[i], g = appl && (!baseIt!.sets[i] || baseIt!.sets[i].w !== prop.sets[i].w) ? { rule: 'adj', target: prop.sets[i].tg } : hh.sets[i];
     const track = rangeTrack(it.range!, prev && prev.r != null ? prev.r : null);
@@ -200,6 +201,14 @@ export function dpBlock(card: HTMLElement, d: Workout, it: Item, prim: string[],
   card.appendChild(sets);
   card.appendChild(h('button', { class: 'btn ghost sm', style: 'margin-top:6px', onclick: () => { const l = it.sets[it.sets.length - 1]; it.sets.push({ w: l ? l.w : null, r: null }); touch(); render(true); } }, icon('plus'), 'Подход'));
 }
+/* (в эталоне нет) лёгкий и средний день слушают запас (вывод 7 аудита, 25 ноября 2026): что решил прошлый раз */
+function lightSaid(it: Item, light: boolean, date: string) {
+  if (!light || !appRules()) return null;
+  const L = C.planLight(D.W, D.cfg, it.ex, date) as { move?: number };
+  return L.move! > 0 ? pill('good', 'запас дважды подряд ' + LIGHT_RIR.easy + ' и больше: вес на шаг выше')
+    : L.move! < 0 ? pill('warn', 'в прошлый раз запаса не было или подходы не закрыты: вес на шаг ниже')
+    : null;
+}
 export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string[]) {
   const light = C.isLight(D.cfg, it.ex), par = light ? (D.cfg.ex[it.ex] || {}).of : null;
   const pc: CyclePlan = light ? { prev: null } : C.planCycle(D.W, D.cfg, it.ex, d.date), wv = C.waveOf(D.cfg, it.ex), uid = it.ex;
@@ -208,19 +217,23 @@ export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string
   const tmEl = h('b', null, '');
   const paintTm = () => { const w = it.sets[0] ? it.sets[0].w : null; tmEl.textContent = w ? C.fmt(it.tm || w / (it.cyc!.pct / 100), 1) + ' кг' : '–'; };
   const A = appRules() ? heavyOf(D.cfg, it.ex) : C.AUTO;              // (в эталоне нет) с днями «День N» — тяжёлый день 3 × 4, у изоляции 3 × 6 («Новая схема», 24 ноября 2026)
-  const auto = !light && wv.auto && it.cyc!.pct === A.pct && it.cyc!.reps === A.reps;
+  const auto = !light && wv.auto && it.cyc!.pct === A.pct && (it.cyc!.reps === A.reps || (appRules() && it.cyc!.reps > A.reps && it.cyc!.reps <= A.reps + HEAVY.reps));   // (в эталоне нет) тяжёлый день с прибавкой повторами (вывод 6 аудита, 25 ноября 2026)
   /* «сила по запасу»: what the last session decided, in the words of its rule */
+  const steps = +(pc.steps || 0), was = pc.rz == null ? 'в прошлый раз все подходы закрыты, запас не отмечен' : 'в прошлый раз запас ' + pc.rz + ' в последнем подходе';
   const said = !auto || !pc.prev || pc.verdict === 'start' ? null
-    : pc.verdict === 'up' ? pill('good', (pc.rz == null ? 'в прошлый раз все подходы закрыты, запас не отмечен' : 'в прошлый раз запас ' + pc.rz + ' в последнем подходе') + ': плюс шаг')
+    : appRules() && pc.verdict === 'reps' ? pill('good', was + ': плюс повтор тем же весом — шаг веса велик для этого упражнения')   // (в эталоне нет) вывод 6 аудита, 25 ноября 2026
+    : appRules() && pc.verdict === 'back' ? pill('warn', (pc.closed ? 'в прошлый раз подход шёл в отказ' : 'в прошлый раз подходы не закрыты') + ': на повтор меньше тем же весом')
+    : appRules() && pc.verdict === 'up' && pc.rz == null ? pill('info', was + ': плюс шаг. Отметь запас в последнем подходе — по нему дневник решает, сколько прибавить')
+    : pc.verdict === 'up' ? pill('good', was + ': плюс ' + (steps > 1 ? steps + ' ' + C.plural(steps, ['шаг', 'шага', 'шагов']) : 'шаг'))
     : pc.verdict === 'hold' ? pill('info', 'в прошлый раз запас 1 в последнем подходе: вес тот же')
     : pill('warn', (pc.closed ? 'в прошлый раз подход шёл в отказ' : 'в прошлый раз подходы не закрыты') + ': вес −' + C.AUTO.down + '%');
   card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
-    auto ? h('span', null, A.sets + ' × ' + A.reps + ' одним весом · цель — запас ' + C.AUTO.aim + ' в последнем подходе · расчётный максимум ', tmEl)
+    auto ? h('span', null, A.sets + ' × ' + it.cyc!.reps + ' одним весом · цель — запас ' + C.AUTO.aim + ' в последнем подходе' + (appRules() ? ', отметь его' : '') + ' · расчётный максимум ', tmEl)
       : h('span', null, it.cyc!.pct + '% от расчётного максимума ' + (light && par ? 'в упражнении «' + C.exName(D.cfg, par) + '» ' : ''), tmEl),
     light ? h('span', null, !appRules() ? 'лёгкий день: техника и скорость, до отказа далеко' : (D.cfg.ex[it.ex] || {}).mid ? 'средний день: между тяжёлым и лёгким' : 'лёгкий день: вес меньше, повторов больше, чем в тяжёлом') : null,   // (в эталоне нет) «Новая схема»: запас и в лёгком дне около 2
     S.canWrite ? goalSelect(it) : null,
     pc.prev ? h('span', null, 'прошлый раз ' + C.fmtDate(pc.prev.date) + ': ' + C.fmt(pc.prev.top.w) + ' × ' + pc.prev.item.cyc!.reps) : null,
-    said || (pc.repeat ? pill('warn', 'в прошлый раз подходы не закрыты: неделя повторяется') : pc.hard ? pill('warn', 'в прошлый раз был подход в отказ: максимум не повышен') : null)));
+    said || lightSaid(it, light, d.date) || (pc.repeat ? pill('warn', 'в прошлый раз подходы не закрыты: неделя повторяется') : pc.hard ? pill('warn', 'в прошлый раз был подход в отказ: максимум не повышен') : null)));
   const repsRow = h('div', { class: 'cyc-sets' });
   const paintSets = () => {
     repsRow.textContent = '';
@@ -228,7 +241,8 @@ export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string
     it.sets.forEach((st, i) => repsRow.appendChild(h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'cr-' + uid + '-' + i, 'aria-label': 'Повторы, подход ' + (i + 1), placeholder: it.cyc!.reps, value: st.r == null ? '' : st.r, oninput: e => { st.r = toInt(e.target.value); touch(); } })));
     repsRow.appendChild(h('button', { class: 'btn sm', onclick: () => { it.sets.forEach(s => { s.r = it.cyc!.reps; }); touch(); paintSets(); } }, 'Все по ' + it.cyc!.reps));
     repsRow.appendChild(h('span', { class: 'sub' }, auto ? 'Запас: сколько повторов оставалось до отказа. Отметь хотя бы в последнем подходе — он решает вес на следующей неделе: ' + C.AUTO.aim + ' и больше — плюс шаг, 1 — тот же, 0 — минус ' + C.AUTO.down + '%'
-      : 'Запас по подходам: сколько повторов оставалось до отказа. По расчёту здесь около ' + Math.max(0, C.estRir(it.cyc!.pct, it.cyc!.reps))));
+      : 'Запас по подходам: сколько повторов оставалось до отказа. По расчёту здесь около ' + Math.max(0, C.estRir(it.cyc!.pct, it.cyc!.reps))
+        + (light && appRules() ? '. Отметь в последнем подходе: ' + LIGHT_RIR.easy + ' и больше два раза подряд — вес на шаг выше, 0 — на шаг ниже' : '')));   // (в эталоне нет) вывод 7 аудита
     it.sets.forEach((st, i) => repsRow.appendChild(h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'cq-' + uid + '-' + i, 'aria-label': 'Запас повторов (RIR), подход ' + (i + 1), placeholder: '–', value: st.q == null ? '' : st.q, oninput: e => { const v = toInt(e.target.value); if (v == null) delete st.q; else st.q = Math.max(0, Math.min(5, v)); touch(); } })));
   };
   card.appendChild(h('div', { class: 'cyc' },

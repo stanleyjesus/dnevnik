@@ -5,12 +5,12 @@ import { dnum, fmtDate } from './dates.ts';
 import { fmt, nSets, plural } from './format.ts';
 import { clone } from './records.ts';
 import { exName, isLight, kindOf } from './config.ts';
-import { effReps, estRir, TARGET } from './sets.ts';
+import { effReps, estRir, TARGET, work } from './sets.ts';
 import { goalOf, goalRange, GOALS, waveOf } from './goals.ts';
 import { allStats, exStats, program, sessions, stalledSets } from './stats.ts';
 import { formulaRange, hints, lastSessionItem, plan, planCycle, roundTo, startWeight, suggestSet } from './plan.ts';
 import { planned } from './tally.ts';
-import { appRules, byPct, rdlDef } from './rules.ts';
+import { appRules, byPct, rdlDef, RIR_CHECK, rirOf } from './rules.ts';
 import type { Tally } from './tally.ts';
 import type { Add, AddCtx, Addition, Cfg, Cyc, ExDef, MuscleMap, Prop, PropSet, Range, Session, Slot, Workout } from './types.ts';
 
@@ -162,8 +162,8 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
     /* the same rule, read with the logged reserve: 10 reps with 3 left are worth 12, 12 reps to failure are worth 11 */
     prev.forEach((p, i) => {
       if (!sets[i] || !h.sets[i] || p.r == null || stalled[i]) return;
-      const pr = effReps(p), base = h.sets[i].rule, rule = pr >= hi ? 'up' : pr < lo ? 'down' : 'hold', was = sets[i].w;
-      const seen = p.q != null && p.q !== TARGET ? p.r + ' ' + plural(p.r, ['повтор', 'повтора', 'повторов']) + ' с запасом ' + p.q : null;
+      const aim = appRules() ? rirOf(cfg, it.ex) : TARGET, pr = appRules() ? p.r + (p.q == null ? 0 : p.q - aim) : effReps(p), base = h.sets[i].rule, rule = pr >= hi ? 'up' : pr < lo ? 'down' : 'hold', was = sets[i].w;   // (в эталоне нет) запас по упражнению (вывод 10 аудита)
+      const seen = p.q != null && p.q !== aim ? p.r + ' ' + plural(p.r, ['повтор', 'повтора', 'повторов']) + ' с запасом ' + p.q : null;
       if (rule === 'up') {
         const extra = p.w! > 0 && pr >= hi + 2 ? Math.floor(((pr - hi) * 0.025 * p.w!) / step) : 0;
         if (base === 'up' && extra < 1) return;
@@ -208,6 +208,18 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
     }
     if (notes.length) push(tags.join(' · '), notes, sets);
   });
+  /* (в эталоне нет) с днями «День N» — проверка запаса: последний подход одного изолирующего упражнения до отказа (вывод 11 аудита, rules.ts, RIR_CHECK) */
+  if (appRules() && !deload && past.length && dnum(date) - Math.min(...past.map(w => dnum(w.date))) >= RIR_CHECK.days
+    && !past.some(w => dnum(date) - dnum(w.date) < RIR_CHECK.days && w.items.some(it => kindOf(cfg, it.ex) === 'iso' && work(it).some(s => s.q === 0)))) {
+    let idx = -1;
+    base.items.forEach((it, i) => { if (!it.cyc && kindOf(cfg, it.ex) === 'iso' && !props.some(p => p.ex === it.ex) && lastSessionItem(past, it.ex, null, null)) idx = i; });
+    if (idx >= 0) {
+      const it = base.items[idx], h = hints(workouts, cfg, it.ex, slot, date);
+      props.push({ key: it.ex, ex: it.ex, idx, tag: 'Проверка запаса', note: RIR_CHECK.note, cyc: null, range: null,
+        notes: ['последний подход — до отказа и запас в нём 0: так видно, насколько точно ты оцениваешь запас. За четыре недели отказа в изоляции не было'],
+        sets: it.sets.map((x, i) => ({ w: x.w, tg: h.sets[i] ? h.sets[i].target.slice() : it.range!.slice() })) });
+    }
+  }
 
   const adds = deload ? [] : (additions(past, cfg, pl)[slot] || []).filter(d => { const e = d.def || cfg.ex[d.exId] || {} as ExDef; if (room < d.sets - 0.01 || !fitsDay(e, d.sets)) return false; room -= d.sets; return true; });
   for (const d of adds) if (cfg.ex[d.exId] && !lastSessionItem(past, d.exId, null, null)) d.w = startWeight(past, cfg, d.exId, d.range);   // a named weight for an exercise new to the journal
@@ -232,6 +244,7 @@ export function applyAdapt(a: Adapted, off?: Record<string, boolean> | null) {
     items[p.idx].sets = p.sets.map(x => ({ w: x.w, r: null }));
     if (p.cyc) { items[p.idx].cyc = { pct: p.cyc.pct, reps: p.cyc.reps }; items[p.idx].tm = null; }
     if (p.range) items[p.idx].range = p.range.slice();
+    if (p.note && !items[p.idx].note) items[p.idx].note = p.note;   // (в эталоне нет) проверка запаса
     used.push(p.key);
   }
   for (const d of a.adds) {

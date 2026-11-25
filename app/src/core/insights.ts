@@ -10,7 +10,7 @@ import { allStats, stalledSets, weeksInfo } from './stats.ts';
 import { avgVolume, volume, zone } from './volume.ts';
 import { planCycle } from './plan.ts';
 import { planned, ruleBreaks } from './tally.ts';
-import { appRules, byPct, heavyOf } from './rules.ts';
+import { appRules, byPct, heavyOf, rirOf } from './rules.ts';
 import { bodyRate } from './body.ts';
 import type { ExStat } from './stats.ts';
 import type { Insight, Item, Muscle, State, Workout } from './types.ts';
@@ -66,7 +66,7 @@ export function insights(st: State) {
       add('warn', 'Прогресс', (s.status === 'down' ? 'Откат: ' : 'Застой: ') + exName(cfg, s.id),
         'Лучший подход (' + fmt(p.w) + ' × ' + p.r + ') был ' + s.sincePR + ' ' + plural(s.sincePR, ['тренировку', 'тренировки', 'тренировок']) + ' назад, ' + fmtDate(s.pr.date, true) + '. ' +
         (s.status === 'down' ? 'Последний результат ниже рекорда больше чем на 5%. Проверь сон, питание и отдых между подходами; если так же в других упражнениях — нужна разгрузочная неделя.'
-          : 'Убедись, что подход идёт до RIR ' + TARGET + '. Если да — сбрось вес на 10% на 1–2 недели и набери повторы заново, либо смени вариант упражнения.'), 'progress');
+          : 'Убедись, что подход идёт до RIR ' + (appRules() ? rirOf(cfg, s.id) : TARGET) + '. Если да — сбрось вес на 10% на 1–2 недели и набери повторы заново, либо смени вариант упражнения.'), 'progress');
     }
   }
   /* a set stuck for four sessions of the same day while the sets before it did not grow either */

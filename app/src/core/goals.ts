@@ -1,9 +1,9 @@
 /* Цели упражнений и волны базовых.
    Перенесено из reference/src/core.js: тела функций без изменений, кроме методики под цель с днями «День N» (rules.ts, решение владельца 24 ноября 2026). */
 import { isLight, kindOf, LIGHT } from './config.ts';
-import { appGoal, appRules, BASE_SETS, heavyOf, HOLD, isoLift } from './rules.ts';
+import { appGoal, appRules, BASE_SETS, heavyOf, HOLD, lightFor } from './rules.ts';
 import { EASY, estRir } from './sets.ts';
-import { DAY_L, DAY_M, ISO_LIGHT } from './strength.ts';
+import { DAY_M } from './strength.ts';
 import type { Cfg, ExDef, Goal, PctMap, Range, Workout } from './types.ts';
 
 /* what the athlete wants from one exercise. It sets the rep range of a double-progression exercise and the wave of a percentage lift */
@@ -37,8 +37,9 @@ export function waveOf(cfg: Cfg, id: string) {
     sets: (r: number) => auto ? AUTO.sets : strong ? (WAVE_S.sets[r] || 4) : hold ? Math.max(2, cfg.cycle.sets - 1) : cfg.cycle.sets, inc: auto ? 0 : strong ? WAVE_S.inc : hold ? 0 : cfg.cycle.inc, perCycle: strong };
 }
 /* the light day follows its lift: 3 × 5 at 75% beside a wave, 3 × 4 at 78% beside «сила по запасу»; (в эталоне нет) с днями «День N» — «Новая схема»
-   (решение владельца, 24 ноября 2026; strength.ts): лёгкий день 3 × 8 на 75%, средний день «Силы: <движение>» 3 × 6 на 79%, у изоляции 3 × 10 на 71% */
-export const lightOf = (cfg: Cfg, id: string) => appRules() ? ((cfg.ex[id] || {} as ExDef).mid ? DAY_M : isoLift(cfg, id) ? ISO_LIGHT : DAY_L) : goalOf(cfg, isLight(cfg, id) ? (cfg.ex[id] || {} as ExDef).of! : id) === 'auto' ? LIGHT_A : LIGHT;
+   (решение владельца, 24 ноября 2026; strength.ts): лёгкий день 3 × 8 на 75%, средний день «Силы: <движение>» 3 × 6 на 79%, у изоляции 3 × 10 на 71%;
+   у становой — 3 × 6 на 79% (решение владельца, 25 ноября 2026; rules.ts, lightFor) */
+export const lightOf = (cfg: Cfg, id: string) => appRules() ? ((cfg.ex[id] || {} as ExDef).mid ? DAY_M : lightFor(cfg, id)) : goalOf(cfg, isLight(cfg, id) ? (cfg.ex[id] || {} as ExDef).of! : id) === 'auto' ? LIGHT_A : LIGHT;
 export const cycleVol = (cfg: Cfg, id: string) => {
   if (isLight(cfg, id)) { const L = lightOf(cfg, id); return estRir(L.pct, L.reps) >= EASY ? 0.5 : 1; }
   const e = Object.entries(waveOf(cfg, id).pct);

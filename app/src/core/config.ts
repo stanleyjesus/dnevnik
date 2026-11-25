@@ -2,7 +2,7 @@
    Перенесено из reference/src/core.js: тела функций без изменений. */
 import { clone } from './records.ts';
 import { GEAR, NO_GEAR, placed } from './gear.ts';
-import { appCfg, appEx } from './rules.ts';
+import { OFF_APP, appCfg, appEx, appRules } from './rules.ts';
 import type { Cfg, ExDef } from './types.ts';
 
 /* ---------- config ---------- */
@@ -30,7 +30,7 @@ export function mergeCfg(raw: any): Cfg {
   /* muscles left out of the count: the diary gives them no sets of its own and does not call them a gap.
      Calves, abs and erectors are out by default (the athlete adds to them by hand); a stored 0 puts a muscle back in. */
   c.ignore = {};
-  { const ig = Object.assign({}, OFF_DEFAULT, raw.ignore || {}); for (const k of Object.keys(ig)) if (ig[k]) c.ignore[k] = 1; }
+  { const ig = Object.assign({}, OFF_DEFAULT, appRules() ? OFF_APP : {}, raw.ignore || {}); for (const k of Object.keys(ig)) if (ig[k]) c.ignore[k] = 1; }   // (в эталоне нет) с днями «День N» предплечья тоже вне расчёта (решение владельца, 25 ноября 2026; rules.ts, OFF_APP)
   c.rir = raw.rir != null && +raw.rir >= 0 && +raw.rir <= 4 ? Math.round(+raw.rir) : 1;   // reps left in reserve by the method
   c.bw = raw.bw === 'track' ? 'track' : 'gain';                 // body weight: watched for gaining, or only recorded
   /* the athlete's own limits: sets for one muscle in one training day, working sets in the whole week */

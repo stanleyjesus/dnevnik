@@ -6,9 +6,11 @@ import { DAYS } from './days.ts';
 import { placed } from './gear.ts';
 import { e1, estRir, work } from './sets.ts';
 import { STARTER, starterOf } from './starter.ts';
-import { DAY_H, ISO, TARGETS, TRIAD } from './strength.ts';
+import { DAY_H, DAY_L, DL_LIGHT, ISO, ISO_LIGHT, TARGETS, TRIAD } from './strength.ts';
 import type { Cfg, ExDef, Item, MuscleMap, ProgramCfg, Range, SetRec } from './types.ts';
 
+/** Цель запаса и спад тяжёлого дня — как у силы по запасу первой версии (goals.ts, AUTO.aim и AUTO.down) */
+const AUTO_AIM = 2, AUTO_DOWN = 5;
 /** Выключатель для проверок: tests/days.test.ts сверяет дни «День 1…3» с таблицей эталона при одних и тех же правилах */
 export const RULES = { on: true };
 /** Правила приложения включены: дни выбраны приложением, а не взяты из таблицы эталона */
@@ -28,7 +30,7 @@ export const isRdl = (name: string | null | undefined) => RDL_NAME.test(' ' + St
 
 /* Типовая румынская тяга сборки и поправок: в эталоне разгибатели в ней основные */
 const RDL_REF: ExDef = { n: 'Румынская тяга', pat: 'hinge', m: RDL_OLD };
-const RDL_APP: ExDef = { n: 'Румынская тяга', pat: 'hinge', m: RDL_M };
+const RDL_APP: ExDef = { n: 'Румынская тяга', pat: 'hinge', m: Object.assign({}, RDL_M, { forearms: 0.5 }) };   // хват — половина подхода (appMap)
 /** Типовая румынская тяга: в приложении разгибатели помогают, с таблицей дней эталона — как в эталоне */
 export const rdlDef = (): ExDef => appRules() ? RDL_APP : RDL_REF;
 
@@ -79,12 +81,45 @@ export function roomFor<E extends { ex: string; n?: number }>(L: E[], id: string
 /** У двух упражнений одни и те же мышцы с той же долей: с днями «День N» сборка не ставит их в один день — подходы прибавляются в том, что уже стоит */
 export const sameMuscles = (a: MuscleMap, b: MuscleMap) => JSON.stringify(Object.entries(a || {}).filter(x => x[1] > 0).sort()) === JSON.stringify(Object.entries(b || {}).filter(x => x[1] > 0).sort());
 
+/* Карты мышц по выводам аудита методики (решение владельца, 25 ноября 2026; разбор — docs/03, раздел 16).
+   - Предплечья вне расчёта по умолчанию, как икры, пресс и разгибатели (OFF_APP): отдельные сгибания кистей занимали в программе столько же подходов,
+     сколько грудь. Вместо них хват засчитывается половиной подхода там, где он держит вес: в тягах (горизонтальных и вертикальных), подтягиваниях,
+     становой и румынской тяге и в сгибаниях на бицепс. Сравнений роста предплечий от тяг и от сгибаний кистей нет — это тренерское правило [Т].
+   - Ягодицы в приседаниях — основные (1), а не помогают: глубокий присед растил ягодицы не меньше, чем квадрицепс (Kubo и соавт., 2019),
+     и не хуже ягодичного моста (Plotkin и соавт., 2023) [И]. Жим ногами и гакк-приседания — как были: по ним сравнений нет.
+   Меняется только карта, которую давало прежнее правило по названию или встроенный справочник; свою карту атлета дневник не трогает,
+   в хранилище ничего не переписывается */
+/** Мышцы вне расчёта по умолчанию в приложении сверх эталонных (config.ts, OFF_DEFAULT) */
+export const OFF_APP: Record<string, number> = { forearms: 1 };
+/** Становая тяга по названию (румынская — RDL_NAME) */
+export const DEADLIFT_NAME = /станов|deadlift/;
+/** Сгибания на бицепс по названию: не бедра */
+const CURL_NAME = /бицепс|сгибан\S* рук|curl/, NOT_CURL = /б[её]др|ног|голен|leg curl|кист|запяст|wrist/;
+/** Приседания по названию: не жим ногами и не гакк */
+const SQUAT_NAME = /присед|squat/, NOT_SQUAT = /гакк|hack|жим\S* ног|leg press/;
+const PULL_OLD: MuscleMap = { lats: 1, upper_back: 0.5, biceps: 0.5 }, ROW_OLD: MuscleMap = { upper_back: 1, lats: 0.5, delt_rear: 0.5, biceps: 0.5 };
+const SQUAT_OLD: MuscleMap = { quads: 1, glutes: 0.5 }, CURL_OLD: MuscleMap = { biceps: 1 };
+/** Карта мышц, как её читает приложение, по названию, движению и карте прежнего правила. Возвращает ту же карту или новую */
+export function appMap(name: string | null | undefined, pat: string | null | undefined, m: MuscleMap | undefined): MuscleMap | undefined {
+  if (!m) return m;
+  const s = ' ' + String(name || '').toLowerCase().replace(/ё/g, 'е').replace(/\s+/g, ' ').trim() + ' ';
+  let out = m;
+  if (isRdl(s) && sameMap(out, RDL_OLD)) out = Object.assign({}, RDL_M);
+  const hinge = pat === 'hinge' && (isRdl(s) || DEADLIFT_NAME.test(s)) && (sameMap(out, RDL_OLD) || sameMap(out, RDL_M));
+  const pull = (pat === 'v_pull' && sameMap(out, PULL_OLD)) || (pat === 'h_pull' && sameMap(out, ROW_OLD));
+  const curl = pat === 'iso' && sameMap(out, CURL_OLD) && CURL_NAME.test(s) && !NOT_CURL.test(s);
+  if (hinge || pull || curl) out = Object.assign({}, out, { forearms: 0.5 });
+  if (pat === 'knee' && sameMap(out, SQUAT_OLD) && SQUAT_NAME.test(s) && !NOT_SQUAT.test(s)) out = Object.assign({}, out, { glutes: 1 });
+  return out;
+}
+
 /** Упражнение справочника, как его читает приложение. Румынская тяга с картой прежнего правила по названию читается с разгибателями,
-    которые помогают: так сборка не убирает её из профиля, где разгибатели вне расчёта. Карту, которую атлет поменял сам, дневник не трогает;
-    в хранилище ничего не переписывается. Возвращает то же упражнение или его копию с новой картой */
+    которые помогают: так сборка не убирает её из профиля, где разгибатели вне расчёта. Хват и присед — по выводам аудита (appMap).
+    Карту, которую атлет поменял сам, дневник не трогает; в хранилище ничего не переписывается. Возвращает то же упражнение или его копию с новой картой */
 export function appEx(e: ExDef): ExDef {
-  if (!appRules() || !isRdl(e.n) || !sameMap(e.m, RDL_OLD)) return e;
-  return Object.assign({}, e, { m: Object.assign({}, RDL_M) });
+  if (!appRules() || !e) return e;
+  const m = appMap(e.n, e.pat, e.m);
+  return m === e.m ? e : Object.assign({}, e, { m });
 }
 
 /* Методика под цель (решение владельца, 24 ноября 2026; разбор — docs/03, раздел 15). С днями «День N» проценты, повторы и прибавку дневник
@@ -212,9 +247,92 @@ export function isoLift(cfg: Cfg, id: string) {
   const e = cfg.ex[id], x = e && e.mode === 'light' ? cfg.ex[e.of!] : e;
   return !!x && x.mode === 'cycle' && x.pat === 'iso';
 }
+/** Это становая тяга, а не румынская: по названию */
+export const isDeadlift = (name: string | null | undefined) => { const s = ' ' + String(name || '').toLowerCase().replace(/\s+/g, ' ').trim() + ' '; return DEADLIFT_NAME.test(s) && !isRdl(s); };
+/** Числа лёгкого дня силовой роли для движения id: у изоляции 3 × 10 на 71%, у становой 3 × 6 на 79%, у остальных 3 × 8 на 75% (strength.ts) */
+export function lightFor(cfg: Cfg, id: string) {
+  const e = cfg.ex[id], x = e && e.mode === 'light' ? cfg.ex[e.of!] : e;
+  return isoLift(cfg, id) ? ISO_LIGHT : x && isDeadlift(x.n) ? DL_LIGHT : DAY_L;
+}
 /** Тяжёлый день силовой роли: 3 × 4 одним весом на 83%, у изоляции 3 × 6 на 79%; вес решает запас в последнем подходе («Новая схема»,
     решение владельца 24 ноября 2026; strength.ts, DAY_H и ISO). С таблицей дней эталона тяжёлый день — 4 × 4 (AUTO, goals.ts) */
 export const heavyOf = (cfg: Cfg, id: string) => isoLift(cfg, id) ? ISO : DAY_H;
+/* Вес тяжёлого дня по запасу (решение владельца, 25 ноября 2026, вывод 6 аудита; разбор — docs/03, раздел 16). Решение по запасу в последнем подходе прежнее:
+   0 или не закрыл — вниз, 1 — тот же вес, 2 и больше или не отмечен — вверх. Меняется, насколько вверх и вниз:
+   - запас от 4 — сразу несколько шагов: около 2.5% веса на каждый повтор запаса сверх двух, как в поправке «Недогруз» у подсобки;
+   - шаг больше 5% веса (бицепс со штангой: 2.5 кг на 30 кг — это 8%) — сначала повторы: 3 × 4 → 3 × 5 → 3 × 6 одним весом, потом шаг и снова 3 × 4;
+     не закрыл на 3 × 5 или 3 × 6 — назад на повтор тем же весом, а не −5%.
+   ACSM советует прибавлять 2–10% веса, в мелких упражнениях меньше; вес по запасу работает не хуже процентов, когда его подгоняют под запас
+   (Helms и соавт., 2018; Hickmott и соавт., 2022) [И]. Точные пороги — правило дневника [Т] */
+/** Тяжёлый день: с какого запаса прибавка в несколько шагов (fast), доля веса на повтор запаса сверх цели (per), шаг больше какой доли веса — сначала повторы (big),
+    на сколько повторов выше обычных они растут (reps), больше какой доли веса за раз не прибавляется (max: 10%, верх совета ACSM) */
+export const HEAVY = { fast: 4, per: 0.025, big: 0.05, reps: 2, max: 0.1 };
+/** Следующий тяжёлый день: lw — вес прошлого раза, q — шаг, lr — его повторы, r0 — обычные повторы дня (4, у изоляции 6), verdict — по запасу, rz — запас последнего подхода */
+export function heavyStep(lw: number, q: number, lr: number, r0: number, verdict: string, rz: number | null) {
+  const big = lw > 0 && q / lw > HEAVY.big + 1e-9, fix = (v: number) => +v.toFixed(3);
+  if (verdict === 'hold') return { w: lw, reps: lr, verdict, steps: 0 };
+  if (verdict === 'down') {
+    if (big && lr > r0) return { w: lw, reps: lr - 1, verdict: 'back', steps: 0 };
+    return { w: fix(Math.min(lw - q, Math.round(lw * (1 - AUTO_DOWN / 100) / q) * q)), reps: r0, verdict, steps: -1 };
+  }
+  const k = rz != null && rz >= HEAVY.fast && q > 0 ? Math.min(Math.round((rz - AUTO_AIM) * HEAVY.per * lw / q), Math.floor(HEAVY.max * lw / q + 1e-9)) : 0;
+  if (k >= 2 || (k >= 1 && big)) return { w: fix(lw + k * q), reps: r0, verdict: 'up', steps: k };
+  if (big && lr < r0 + HEAVY.reps) return { w: lw, reps: lr + 1, verdict: 'reps', steps: 0 };
+  return { w: fix(lw + q), reps: r0, verdict: 'up', steps: 1 };
+}
+/* Проверка запаса (решение владельца, 25 ноября 2026, вывод 11 аудита; docs/03, раздел 16): люди ошибаются в запасе в среднем примерно на повтор
+   и чаще недооценивают, сколько могли ещё (Halperin и соавт., 2022) [И]. Если журнал старше четырёх недель, а за последние четыре недели ни один подход изоляции
+   не дошёл до отказа, план предлагает поправкой: последний подход одного изолирующего упражнения — до отказа. Поправку можно снять; принятая, она пишет заметку
+   к упражнению. Раз в 4–6 недель и изоляция, а не базовое, — тренерское правило [Т] */
+/** Проверка запаса: сколько дней журнала до первой проверки и между проверками; заметка, которую поправка ставит упражнению */
+export const RIR_CHECK = { days: 28, note: 'Проверка запаса: последний подход — до отказа' };
+/* Запас 2 в многосуставных со свободным весом, где отказ опасен или ломает технику (решение владельца, 25 ноября 2026, вывод 10 аудита; docs/03, раздел 16):
+   на штанге — приседания, становая, румынская тяга, тяга в наклоне, жимы; румынская и становая с гантелями. Ягодичный мост и гиперэкстензия — нет: отказ в них не опасен.
+   В тренажёрах, на блоке, в изоляции и с весом тела — запас профиля, по умолчанию 1. Запас 2 почти не теряет в росте против 1 (Robinson и соавт., 2024;
+   Refalo и соавт., 2023), а после подходов у самого отказа восстановление дольше (Morán-Navarro и соавт., 2017) [И]; список упражнений — тренерское правило [Т] */
+export const FREE_RIR = 2;
+const SAFE_HINGE = /мост|bridge|thrust|гипер|hyperext/;
+/** Многосуставное со свободным весом, где запас не меньше двух: штанга, кроме моста и гиперэкстензии, и тяги от пола с гантелями */
+export function freeLift(cfg: Cfg, id: string) {
+  const e = cfg.ex[id];
+  if (!appRules() || !e || e.mode === 'light' || !e.pat || e.pat === 'iso' || SAFE_HINGE.test((e.n || '').toLowerCase())) return false;
+  const g = e.gear || '', gn = ((cfg.gear || {})[g] || {} as { n?: string }).n || '';
+  return g === 'barbell' || /штанг/i.test(gn) || (e.pat === 'hinge' && (g === 'dumbbell' || /гантел/i.test(gn)));
+}
+/** Запас по методике для упражнения: у многосуставных со свободным весом не меньше двух, у остальных — запас профиля */
+export const rirOf = (cfg: Cfg, id: string) => freeLift(cfg, id) ? Math.max(cfg.rir, FREE_RIR) : cfg.rir;
+/** Запас словами для заметки сборки о нескольких упражнениях */
+export function rirText(cfg: Cfg, ids: string[]) {
+  const r = [...new Set(ids.map(id => rirOf(cfg, id)))];
+  return r.length === 1 ? 'с запасом ' + r[0] : 'с запасом ' + cfg.rir + ', со свободным весом ' + Math.max(cfg.rir, FREE_RIR);
+}
+/* Варианты, где мышца работает растянутой (решение владельца, 25 ноября 2026, вывод 3 аудита; docs/03, раздел 16): сгибания ног сидя дали больше роста
+   бицепса бедра, чем лёжа (Maeo и соавт., 2021), разгибания на трицепс из-за головы — больше, чем вниз на блоке (Maeo и соавт., 2022) [И].
+   Сборка из упражнений на ту же мышцу берёт такой вариант раньше, кнопка «+» у мышцы — тоже, и в списке замены он выше. Для других мышц данных мало — там порядок прежний */
+/** Насколько сборка и кнопка «+» предпочитают растянутый вариант: столько стоит новое упражнение меньше обычного */
+export const LONG_K = 0.1;
+export const LONG_NAME = { hams: /сидя|seated/, triceps: /из.за головы|над головой|overhead/ };
+/** 1 — изоляция на бицепс бедра или трицепс в растянутом положении, иначе 0; только с днями «День N» */
+export function stretchOf(e: { n?: string; m?: MuscleMap; pat?: string } | null | undefined) {
+  if (!appRules() || !e || e.pat !== 'iso') return 0;
+  const n = (e.n || '').toLowerCase(), m = e.m || {};
+  return (m.hams || 0) >= 1 && LONG_NAME.hams.test(n) ? 1 : (m.triceps || 0) >= 1 && LONG_NAME.triceps.test(n) ? 1 : 0;
+}
+/* Лёгкий и средний день слушают запас (решение владельца, 25 ноября 2026, вывод 7 аудита; docs/03, раздел 16). Вес дня — доля от расчётного максимума
+   плюс сдвиг в шагах, который живёт в журнале: сдвиг прошлого раза — его вес против доли от максимума, записанного с ним (вес, поправленный руками, сдвиг снимает).
+   Запас в последнем подходе 4 и больше два раза подряд при том же сдвиге — на шаг выше; 0 или подходы не закрыты — на шаг ниже; иначе сдвиг тот же.
+   Не дальше двух шагов от доли и всегда легче тяжёлого дня. Около 2 в запасе — цель дня (Helms и соавт., 2018: вес по запасу) [И]; пороги 4 и 0 — правило дневника [Т] */
+/** Лёгкий день: с какого запаса вес растёт (easy, два раза подряд), насколько далеко от доли максимума он уходит (far, шагов) */
+export const LIGHT_RIR = { easy: 4, far: 2 };
+/** Сдвиг лёгкого дня: hist — прошлые разы этого дня, от старых к новым: сдвиг в шагах (off), запас последнего подхода (rz), все подходы закрыты (closed) */
+export function lightShift(hist: { off: number; rz: number | null; closed: boolean }[]) {
+  const n = hist.length, last = hist[n - 1], prev = hist[n - 2];
+  if (!last) return { steps: 0, move: 0 };
+  const k0 = last.off, easy = (x: { rz: number | null }) => x.rz != null && x.rz >= LIGHT_RIR.easy;
+  const want = !last.closed || last.rz === 0 ? -1 : prev && prev.off === k0 && easy(last) && easy(prev) ? 1 : 0;
+  const steps = Math.max(-LIGHT_RIR.far, Math.min(LIGHT_RIR.far, k0 + want));
+  return { steps, move: steps - k0 };
+}
 /** В вес входит тело: подтягивания, отжимания, брусья — по названию упражнения или его снаряда. Лёгкий день такого базового не легче
     самого лёгкого веса в журнале (легче тела не бывает); у остальных он — ровно доля от расчётного максимума, и у новой цели тоже (пункт 8, 24 ноября 2026) */
 export const BODY_NAME = /подтяг|отжим|брус/;
@@ -224,12 +342,13 @@ export function withBody(cfg: Cfg, id: string) {
 }
 /** Роли программы: on — что идёт по проценту; plain — базовые справочника, кроме on, идут по двойной прогрессии */
 export interface Roles { on: string[]; plain: boolean }
-/** Роли принятой программы: «Сила: тройка» и «Сила: <упражнение>» — по проценту только цель; «Гибрид» — цель и, как раньше, остальные базовые справочника;
+/** Роли принятой программы: «Сила: тройка» и «Сила: <упражнение>» — по проценту только цель; «Гибрид» — цель и остальные базовые справочника,
+    а с остальными «как подсобка» — только цель;
     «Масса», «Вручную» и силовой режим «все базовые», принятый до 24 ноября 2026, — справочник как есть */
 export function programRoles(P: ProgramCfg | null | undefined): Roles | null {
   if (!appRules() || !P) return null;
   if (P.triad && P.triad.length) return { on: P.triad.slice(), plain: true };
-  return P.focus ? { on: [P.focus], plain: !!P.strength } : null;
+  return P.focus ? { on: [P.focus], plain: !!P.strength || P.others === 'plain' } : null;   // «Гибрид» с остальными базовыми «как подсобка» — как под «Силой» (25 ноября 2026)
 }
 /** Справочник под роли (меняет c.ex): цель — базовое, остальные базовые — по двойной прогрессии, если так велит роль. Сохранённый режим помнит
     поле stored; шаг и округление — снова от снаряда, лёгкий день цели округляет, как она */
