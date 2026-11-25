@@ -8,7 +8,7 @@ import { backupDraft, flushSave, saveCfg, saveT, setSaveState, touch, uniqueId }
 import { D, go, render } from './render.ts';
 import { dayTitle, durText, paintEta, planLegend, planRows, planSets, propList, restSelect, setWord, startWorkout } from './overview.ts';
 import { exForm } from './setup.ts';
-import { appRules, HEAVY, heavyOf, LIGHT_RIR, lightWhy, restOf, restWords, rirOf } from '../core/rules.ts';
+import { appRules, HEAVY, heavyOf, LIGHT_RIR, lightWhy, restTag, rirOf } from '../core/rules.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
 import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
 
@@ -175,7 +175,7 @@ export function dpBlock(card: HTMLElement, d: Workout, it: Item, prim: string[],
   const topW = it.sets.reduce((m, s) => Math.max(m, s.w || 0), 0), fr = C.formulaRange(topW, hh.step, it.range[0]);
   const rIn = (k: number, lab: string) => h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'rng-' + idx + '-' + k, 'aria-label': lab, value: it.range![k], onchange: e => { const v = toInt(e.target.value); if (v != null && v > 0) { it.range![k] = v; if (it.range![1] <= it.range![0]) it.range![1] = it.range![0] + 1; touch(); } render(true); } });
   card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
-    appRules() ? h('span', { class: 'tag', title: 'Отдых между подходами: его ставит дневник по типу упражнения' }, 'отдых ' + restWords(restOf(D.cfg, it.ex) * ((D.cfg.ex[it.ex] || {}).uni ? 0.5 : 1))) : null,   // (в эталоне нет) просьба владельца, 25 ноября 2026
+    appRules() ? h('span', { class: 'tag', title: 'Отдых между подходами: его ставит дневник по типу упражнения' }, restTag(D.cfg, it.ex)) : null,   // (в эталоне нет) просьба владельца, 25 ноября 2026
     h('span', null, 'Диапазон'), rIn(0, 'Нижняя граница повторов'), '–', rIn(1, 'Верхняя граница повторов'),
     (fr[1] !== it.range[1]) && topW > 0 ? h('button', { class: 'btn ghost sm', title: 'Шаг ' + C.fmt(hh.step) + ' кг от ' + C.fmt(topW) + ' кг, делённый на 2.5', onclick: () => { it.range = fr.slice(); touch(); render(true); } }, 'по формуле шага: ' + fr[0] + '–' + fr[1]) : null,
     S.canWrite ? goalSelect(it) : null,
@@ -222,7 +222,7 @@ export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string
     : pc.verdict === 'hold' ? pill('info', 'в прошлый раз запас 1 в последнем подходе: вес тот же')
     : pill('warn', (pc.closed ? 'в прошлый раз подход шёл в отказ' : 'в прошлый раз подходы не закрыты') + ': вес −' + C.AUTO.down + '%');
   card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
-    appRules() ? h('span', { class: 'tag', title: 'Отдых между подходами: его ставит дневник по типу упражнения' }, 'отдых ' + restWords(restOf(D.cfg, it.ex) * ((D.cfg.ex[it.ex] || {}).uni ? 0.5 : 1))) : null,   // (в эталоне нет) просьба владельца, 25 ноября 2026
+    appRules() ? h('span', { class: 'tag', title: 'Отдых между подходами: его ставит дневник по типу упражнения' }, restTag(D.cfg, it.ex)) : null,   // (в эталоне нет) просьба владельца, 25 ноября 2026
     auto ? h('span', null, A.sets + ' × ' + it.cyc!.reps + ' одним весом · цель — запас ' + C.AUTO.aim + ' в последнем подходе' + (appRules() ? ', отметь его' : '') + ' · расчётный максимум ', tmEl)
       : h('span', null, it.cyc!.pct + '% от расчётного максимума ' + (light && par ? 'в упражнении «' + C.exName(D.cfg, par) + '» ' : ''), tmEl),
     light ? h('span', null, !appRules() ? 'лёгкий день: техника и скорость, до отказа далеко' : (D.cfg.ex[it.ex] || {}).mid ? 'средний день: между тяжёлым и лёгким' : 'лёгкий день: вес меньше, повторов больше, чем в тяжёлом') : null,   // (в эталоне нет) «Новая схема»: запас и в лёгком дне около 2

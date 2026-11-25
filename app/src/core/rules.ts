@@ -340,6 +340,12 @@ export function restOf(cfg: Cfg, id: string, def?: ExDef) {
 }
 /** Отдых словами: «4 мин», «2 мин 30 с» */
 export const restWords = (sec: number) => Math.floor(sec / 60) + ' мин' + (sec % 60 ? ' ' + (sec % 60) + ' с' : '');
+/* метка отдыха в карточке упражнения. Стороны в паре идут по очереди: пока работает одна, отдыхает другая, — поэтому между сторонами отдых вдвое короче,
+   а у каждой стороны между её подходами он тот же, что у упражнения (так же считает и оценка времени, time.ts) */
+export function restTag(cfg: Cfg, id: string) {
+  const r = restOf(cfg, id);
+  return (cfg.ex[id] || {} as ExDef).uni ? 'отдых ' + restWords(r / 2) + ' между сторонами' : 'отдых ' + restWords(r);
+}
 /** Запас по методике для упражнения: у многосуставных со свободным весом не меньше двух, у остальных — запас профиля */
 export const rirOf = (cfg: Cfg, id: string) => freeLift(cfg, id) ? Math.max(cfg.rir, FREE_RIR) : cfg.rir;
 /** Запас словами для заметки сборки о нескольких упражнениях */

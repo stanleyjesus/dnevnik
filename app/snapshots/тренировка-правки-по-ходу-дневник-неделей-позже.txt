@@ -33,7 +33,6 @@
   a(href="#setup") Настройка
 поля: целиком
   wk-date=2025-11-19
-  wk-rest=120
   rng-0-0=8
   rng-0-1=12
   w-0-0=52.5
@@ -197,7 +196,7 @@
       h2 Среда, 19 ноября
      span.sub
       | "Неделя 11 · "
-      span#eta по плану ≈ 1 ч 30 мин · осталось ≈ 1 ч 25 мин
+      span#eta по плану ≈ 1 ч 25 мин · осталось ≈ 1 ч 20 мин
       | " · "
       span#save-state сохранено
     div.row
@@ -210,14 +209,6 @@
        button(type="button" aria-pressed="false") День 1
        button(type="button" aria-pressed="true") День 2
        button(type="button" aria-pressed="false") День 3
-     label.f
-      span Отдых между подходами
-      select#wk-rest
-       option(value="60") 1:00 мин
-       option(value="90") 1:30 мин
-       option(value="120" selected="") 2:00 мин
-       option(value="150") 2:30 мин
-       option(value="180") 3:00 мин
    div.ex
     div.ex-h
      h3 Разгибания ног в тренажере
@@ -239,6 +230,7 @@
      div.muted Уже внесено в подходы ниже.
     div.ex-meta
      span.tag Квадрицепс
+     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
      span Диапазон
      input#rng-0-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
      | –
@@ -342,6 +334,7 @@
      div.muted Уже внесено в подходы ниже.
     div.ex-meta
      span.tag Квадрицепс
+     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
      span Диапазон
      input#rng-1-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
      | –
@@ -461,6 +454,7 @@
        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
     div.ex-meta
      span.tag Грудь
+     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
      span Диапазон
      input#rng-2-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
      | –
@@ -588,6 +582,7 @@
      div.muted Уже внесено в подходы ниже.
     div.ex-meta
      span.tag Верх спины
+     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин 30 с
      span Диапазон
      input#rng-3-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
      | –
@@ -726,6 +721,7 @@
        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
     div.ex-meta
      span.tag Бицепс
+     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
      span Диапазон
      input#rng-4-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
      | –
@@ -823,6 +819,7 @@
        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
     div.ex-meta
      span.tag Предплечья
+     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 1 мин
      span Диапазон
      input#rng-5-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
      | –
@@ -920,6 +917,7 @@
        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
     div.ex-meta
      span.tag Предплечья
+     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 1 мин
      span Диапазон
      input#rng-6-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
      | –
@@ -1017,6 +1015,7 @@
        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
     div.ex-meta
      span.tag Задние дельты
+     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
      span Диапазон
      input#rng-7-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
      | –
@@ -1153,10 +1152,10 @@
 
 === 9. поправка: вернуть по правилу
 поля: правки к шагу 8
-@@ 8 -1 +1
+@@ 7 -1 +1
 - w-0-1=52.5
 + w-0-1=50
-@@ 11 -1 +1
+@@ 10 -1 +1
 - w-0-2=42.5
 + w-0-2=45
 черновик:
@@ -1165,22 +1164,22 @@
 @@ 11 -1 +1
 -     span#save-state сохранено
 +     span#save-state есть несохранённые изменения
-@@ 45 -1 +1
+@@ 37 -1 +1
 -     button.btn.sm Вернуть по правилу
 +     button.btn.sm.primary Применить
-@@ 48 -1 +1
+@@ 40 -1 +1
 -    div.muted Уже внесено в подходы ниже.
 +    div.muted Не внесено: подходы ниже идут по правилу или с твоими правками.
-@@ 90 -1 +1
+@@ 83 -1 +1
 -     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
 +     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="11+")
-@@ 105 -1 +1
+@@ 98 -1 +1
 -        | поправка дневника, цель 8+
 +        | цель 11+
-@@ 112 -1 +1
+@@ 105 -1 +1
 -     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="12+")
 +     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8+")
-@@ 127 -1 +1
+@@ 120 -1 +1
 -        | поправка дневника, цель 12+
 +        | новый вес, цель 8+
 
@@ -1195,69 +1194,69 @@
 
 === 11. диапазон: нижняя граница
 поля: правки к шагу 1
-@@ 3 -1 +1
+@@ 2 -1 +1
 - rng-0-0=8
 + rng-0-0=6
 черновик:
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[6,12],"sets":[{"w":52.5,"r":null},{"w":52.5,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 10
-@@ 55 -0 +1
+@@ 48 -0 +1
 +    button.btn.ghost.sm(title="Шаг 2.5 кг от 52.5 кг, делённый на 2.5") по формуле шага: 6–10
-@@ 70 -1 +1
+@@ 63 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 12")
 +     div.rr(role="img" aria-label="Диапазон 6–12, прошлый раз 12")
-@@ 72 -1 +1
+@@ 65 -1 +1
 -      span.lo 8
 +      span.lo 6
-@@ 83 -1 +1
+@@ 76 -1 +1
 -        | новый вес, цель 8+
 +        | новый вес, цель 6+
-@@ 92 -1 +1
+@@ 85 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10")
 +     div.rr(role="img" aria-label="Диапазон 6–12, прошлый раз 10")
-@@ 94 -1 +1
+@@ 87 -1 +1
 -      span.lo 8
 +      span.lo 6
-@@ 96 -1 +1
+@@ 89 -1 +1
 -      i.p(title="прошлый раз: 10" style="left: calc(50% + 0px);")
 +      i.p(title="прошлый раз: 10" style="left: calc(66.6667% - 2px);")
-@@ 114 -1 +1
+@@ 107 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 12")
 +     div.rr(role="img" aria-label="Диапазон 6–12, прошлый раз 12")
-@@ 116 -1 +1
+@@ 109 -1 +1
 -      span.lo 8
 +      span.lo 6
 
 === 12. диапазон: верхняя граница
 поля: правки к шагу 11
-@@ 4 -1 +1
+@@ 3 -1 +1
 - rng-0-1=12
 + rng-0-1=10
 черновик:
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[6,10],"sets":[{"w":52.5,"r":null},{"w":52.5,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 11
-@@ 55 -1 +0
+@@ 48 -1 +0
 -    button.btn.ghost.sm(title="Шаг 2.5 кг от 52.5 кг, делённый на 2.5") по формуле шага: 6–10
-@@ 71 -1 +1
+@@ 64 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–12, прошлый раз 12")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
-@@ 74 -2 +2
+@@ 67 -2 +2
 -      span.hi 12
 -      i.p(title="прошлый раз: 12" style="left: calc(100% - 6px);")
 +      span.hi 10
 +      i.p(title="прошлый раз: 12" style="left: calc(108% - 6.96px);")
-@@ 93 -1 +1
+@@ 86 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–12, прошлый раз 10")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 10")
-@@ 96 -2 +2
+@@ 89 -2 +2
 -      span.hi 12
 -      i.p(title="прошлый раз: 10" style="left: calc(66.6667% - 2px);")
 +      span.hi 10
 +      i.p(title="прошлый раз: 10" style="left: calc(100% - 6px);")
-@@ 115 -1 +1
+@@ 108 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–12, прошлый раз 12")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
-@@ 118 -2 +2
+@@ 111 -2 +2
 -      span.hi 12
 -      i.p(title="прошлый раз: 12" style="left: calc(100% - 6px);")
 +      span.hi 10
@@ -1274,32 +1273,35 @@
 
 === 16. добавить подход
 поля: правки к шагу 15
-@@ 14 -0 +3
+@@ 13 -0 +3
 + w-0-3=42.5
 + r-0-3=
 + q-0-3=
 черновик:
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[6,10],"sets":[{"w":52.5,"r":null},{"w":52.5,"r":null},{"w":42.5,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 15
-@@ 45 -1 +1
+@@ 9 -1 +1
+-     span#eta по плану ≈ 1 ч 25 мин · осталось ≈ 1 ч 20 мин
++     span#eta по плану ≈ 1 ч 30 мин · осталось ≈ 1 ч 25 мин
+@@ 37 -1 +1
 -     button.btn.sm Вернуть по правилу
 +     button.btn.sm.primary Применить
-@@ 48 -1 +1
+@@ 40 -1 +1
 -    div.muted Уже внесено в подходы ниже.
 +    div.muted Не внесено: подходы ниже идут по правилу или с твоими правками.
-@@ 90 -1 +1
+@@ 83 -1 +1
 -     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
 +     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="11+")
-@@ 105 -1 +1
+@@ 98 -1 +1
 -        | поправка дневника, цель 8+
 +        | цель 11+
-@@ 112 -1 +1
+@@ 105 -1 +1
 -     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="12+")
 +     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8+")
-@@ 127 -1 +1
+@@ 120 -1 +1
 -        | поправка дневника, цель 12+
 +        | новый вес, цель 6+
-@@ 129 -0 +15
+@@ 122 -0 +15
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +    div.set
 +     span.i 4
@@ -1318,123 +1320,129 @@
 
 === 17. убрать второй подход
 поля: правки к шагу 12
-@@ 8 -1 +1
+@@ 7 -1 +1
 - w-0-1=52.5
 + w-0-1=42.5
 черновик:
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[6,10],"sets":[{"w":52.5,"r":null},{"w":42.5,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 16
-@@ 130 -15 +0
+@@ 9 -1 +1
+-     span#eta по плану ≈ 1 ч 30 мин · осталось ≈ 1 ч 25 мин
++     span#eta по плану ≈ 1 ч 25 мин · осталось ≈ 1 ч 20 мин
+@@ 122 -15 +0
 
 === 18. упражнение ниже
 поля: правки к шагу 16
-@@ 5 -1 +1
+@@ 4 -1 +1
 - w-0-0=52.5
 + w-0-0=157.5
-@@ 8 -1 +1
+@@ 7 -1 +1
 - w-0-1=52.5
 + w-0-1=157.5
-@@ 11 -1 +1
+@@ 10 -1 +1
 - w-0-2=42.5
 + w-0-2=157.5
-@@ 14 -1 +1
+@@ 13 -1 +1
 - w-0-3=42.5
 + w-0-3=157.5
-@@ 20 -1 +1
+@@ 19 -1 +1
 - w-1-0=157.5
 + w-1-0=52.5
-@@ 23 -1 +1
+@@ 22 -1 +1
 - w-1-1=157.5
 + w-1-1=42.5
-@@ 26 -1 +1
+@@ 25 -1 +1
 - w-1-2=157.5
 + w-1-2=42.5
-@@ 29 -3 +0
+@@ 28 -3 +0
 - w-1-3=157.5
 - r-1-3=
 - q-1-3=
 черновик:
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_ext","cyc":null,"range":[6,10],"sets":[{"w":52.5,"r":null},{"w":42.5,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 16
-@@ 32 -1 +1
+@@ 9 -1 +1
+-     span#eta по плану ≈ 1 ч 30 мин · осталось ≈ 1 ч 25 мин
++     span#eta по плану ≈ 1 ч 25 мин · осталось ≈ 1 ч 20 мин
+@@ 24 -1 +1
 -    h3 Разгибания ног в тренажере
 +    h3 Жим ногами
-@@ 44 -5 +4
+@@ 36 -5 +4
 +     b Поправка дневника · Плато
 +     button.btn.sm Вернуть по правилу
 +    div 3 тренировки без рекорда (лучший — 180 × 4, 22 октября): все подходы −10%, повторы набираются заново до верха диапазона.
 +    div.muted Уже внесено в подходы ниже.
-@@ 68 -1 +1
+@@ 61 -1 +1
 -     input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
 +     input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="7+")
-@@ 70 -1 +1
+@@ 63 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 5")
-@@ 74 -1 +1
+@@ 67 -1 +1
 -      i.p(title="прошлый раз: 12" style="left: calc(108% - 6.96px);")
 +      i.p(title="прошлый раз: 5" style="left: calc(-8% + 6.96px);")
-@@ 78 -2 +2
+@@ 71 -2 +2
 -      b 50 × 12
 -      | ", запас 1 "
 +      b 175 × 5
 +      | ", запас 2 "
-@@ 83 -1 +1
+@@ 76 -1 +1
 -        | новый вес, цель 6+
 +        | поправка дневника, цель 7+
-@@ 90 -1 +1
+@@ 83 -1 +1
 -     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="11+")
 +     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="7+")
-@@ 92 -1 +1
+@@ 85 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 10")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 5")
-@@ 96 -1 +1
+@@ 89 -1 +1
 -      i.p(title="прошлый раз: 10" style="left: calc(100% - 6px);")
 +      i.p(title="прошлый раз: 5" style="left: calc(-8% + 6.96px);")
-@@ 100 -2 +2
+@@ 93 -2 +2
 -      b 50 × 10
 -      | ", запас 3 "
 +      b 175 × 5
 +      | ", запас 2 "
-@@ 105 -1 +1
+@@ 98 -1 +1
 -        | цель 11+
 +        | поправка дневника, цель 7+
-@@ 112 -1 +1
+@@ 105 -1 +1
 -     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8+")
 +     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="7+")
-@@ 114 -1 +1
+@@ 107 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 5")
-@@ 118 -1 +1
+@@ 111 -1 +1
 -      i.p(title="прошлый раз: 12" style="left: calc(108% - 6.96px);")
 +      i.p(title="прошлый раз: 5" style="left: calc(-8% + 6.96px);")
-@@ 122 -2 +2
+@@ 115 -2 +2
 -      b 42.5 × 12
 -      | ", запас 0 "
 +      b 175 × 5
 +      | ", запас 1 "
-@@ 127 -1 +1
+@@ 120 -1 +1
 -        | новый вес, цель 6+
 +        | поправка дневника, цель 7+
-@@ 134 -1 +1
+@@ 127 -1 +1
 -     input#r-0-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 +     input#r-0-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="7+")
-@@ 136 -1 +1
+@@ 129 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 5")
-@@ 140 -0 +1
+@@ 133 -0 +1
 +      i.p(title="прошлый раз: 5" style="left: calc(-8% + 6.96px);")
-@@ 142 -0 +3
+@@ 135 -0 +3
 +      | "было "
 +      b 175 × 5
 +      | ", запас 0 "
-@@ 143 -0 +3
+@@ 136 -0 +3
 +       span.pill.info
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 +        | поправка дневника, цель 7+
-@@ 151 -1 +1
+@@ 144 -1 +1
 -    h3 Жим ногами
 +    h3 Разгибания ног в тренажере
-@@ 163 -4 +5
+@@ 156 -4 +5
 -     b Поправка дневника · Плато
 -     button.btn.sm Вернуть по правилу
 -    div 3 тренировки без рекорда (лучший — 180 × 4, 22 октября): все подходы −10%, повторы набираются заново до верха диапазона.
@@ -1444,52 +1452,52 @@
 +    div Подход 2: 52.5 кг вместо 50 — в прошлый раз 10 повторов с запасом 3.
 +    div Подход 3: остаётся 42.5 кг вместо 45 — 12 повторов получились только в отказ.
 +    div.muted Не внесено: подходы ниже идут по правилу или с твоими правками.
-@@ 186 -1 +1
+@@ 180 -1 +1
 -     input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="7+")
 +     input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
-@@ 188 -1 +1
+@@ 182 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 5")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
-@@ 192 -1 +1
+@@ 186 -1 +1
 -      i.p(title="прошлый раз: 5" style="left: calc(-8% + 6.96px);")
 +      i.p(title="прошлый раз: 12" style="left: calc(108% - 6.96px);")
-@@ 196 -2 +2
+@@ 190 -2 +2
 -      b 175 × 5
 -      | ", запас 2 "
 +      b 50 × 12
 +      | ", запас 1 "
-@@ 201 -1 +1
+@@ 195 -1 +1
 -        | поправка дневника, цель 7+
 +        | новый вес, цель 6+
-@@ 208 -1 +1
+@@ 202 -1 +1
 -     input#r-1-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="7+")
 +     input#r-1-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="11+")
-@@ 210 -1 +1
+@@ 204 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 5")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 10")
-@@ 214 -1 +1
+@@ 208 -1 +1
 -      i.p(title="прошлый раз: 5" style="left: calc(-8% + 6.96px);")
 +      i.p(title="прошлый раз: 10" style="left: calc(100% - 6px);")
-@@ 218 -2 +2
+@@ 212 -2 +2
 -      b 175 × 5
 -      | ", запас 2 "
 +      b 50 × 10
 +      | ", запас 3 "
-@@ 223 -1 +1
+@@ 217 -1 +1
 -        | поправка дневника, цель 7+
 +        | цель 11+
-@@ 230 -1 +1
+@@ 224 -1 +1
 -     input#r-1-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="7+")
 +     input#r-1-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8+")
-@@ 232 -1 +1
+@@ 226 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 5")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
-@@ 236 -1 +1
+@@ 230 -1 +1
 -      i.p(title="прошлый раз: 5" style="left: calc(-8% + 6.96px);")
 +      i.p(title="прошлый раз: 12" style="left: calc(108% - 6.96px);")
-@@ 240 -23 +1
+@@ 234 -23 +1
 +      b 42.5 × 12
-@@ 267 -2 +2
+@@ 261 -2 +2
 -        | поправка дневника, цель 7+
 -     button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
 +        | новый вес, цель 6+
@@ -1497,88 +1505,88 @@
 
 === 19. упражнение выше
 поля: правки к шагу 18
-@@ 20 -1 +1
+@@ 19 -1 +1
 - w-1-0=52.5
 + w-1-0=26
-@@ 23 -1 +1
+@@ 22 -1 +1
 - w-1-1=42.5
 + w-1-1=24
-@@ 26 -1 +1
+@@ 25 -1 +1
 - w-1-2=42.5
 + w-1-2=24
-@@ 29 -0 +3
+@@ 28 -0 +3
 + w-1-3=22
 + r-1-3=
 + q-1-3=
-@@ 32 -1 +1
+@@ 31 -1 +1
 - w-2-0=26
 + w-2-0=52.5
-@@ 35 -1 +1
+@@ 34 -1 +1
 - w-2-1=24
 + w-2-1=42.5
-@@ 38 -1 +1
+@@ 37 -1 +1
 - w-2-2=24
 + w-2-2=42.5
-@@ 41 -3 +0
+@@ 40 -3 +0
 - w-2-3=22
 - r-2-3=
 - q-2-3=
 черновик:
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_ext","cyc":null,"range":[6,10],"sets":[{"w":52.5,"r":null},{"w":42.5,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 18
-@@ 157 -1 +1
+@@ 150 -1 +1
 -    h3 Разгибания ног в тренажере
 +    h3 Жим гантелей под углом 45
-@@ 167 -7 +0
-@@ 175 -1 +1
+@@ 160 -7 +0
+@@ 168 -1 +1
 -    span.tag Квадрицепс
 +    span.tag Грудь
-@@ 193 -1 +1
+@@ 187 -1 +1
 -     input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
 +     input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="6+")
-@@ 195 -1 +1
+@@ 189 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 11")
-@@ 199 -1 +1
+@@ 193 -1 +1
 -      i.p(title="прошлый раз: 12" style="left: calc(108% - 6.96px);")
 +      i.p(title="прошлый раз: 11" style="left: calc(108% - 6.96px);")
-@@ 203 -2 +2
+@@ 197 -2 +2
 -      b 50 × 12
 -      | ", запас 1 "
 +      b 24 × 11
 +      | ", запас 3 "
-@@ 215 -1 +1
+@@ 209 -1 +1
 -     input#r-1-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="11+")
 +     input#r-1-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="9+")
-@@ 217 -1 +1
+@@ 211 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 10")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 8")
-@@ 221 -1 +1
+@@ 215 -1 +1
 -      i.p(title="прошлый раз: 10" style="left: calc(100% - 6px);")
 +      i.p(title="прошлый раз: 8" style="left: calc(50% + 0px);")
-@@ 225 -2 +2
+@@ 219 -2 +2
 -      b 50 × 10
 -      | ", запас 3 "
 +      b 24 × 8
 +      | ", запас 0 "
-@@ 230 -1 +1
+@@ 224 -1 +1
 -        | цель 11+
 +        | цель 9+
-@@ 237 -1 +1
+@@ 231 -1 +1
 -     input#r-1-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8+")
 +     input#r-1-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="6+")
-@@ 239 -1 +1
+@@ 233 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 10")
-@@ 243 -1 +1
+@@ 237 -1 +1
 -      i.p(title="прошлый раз: 12" style="left: calc(108% - 6.96px);")
 +      i.p(title="прошлый раз: 10" style="left: calc(100% - 6px);")
-@@ 247 -2 +2
+@@ 241 -2 +2
 -      b 42.5 × 12
 -      | ", запас 0 "
 +      b 22 × 10
 +      | ", запас 1 "
-@@ 255 -0 +22
+@@ 249 -0 +22
 +    div.set
 +     span.i 4
 +     input#w-1-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
@@ -1601,10 +1609,10 @@
 +        | цель 10+
 +     button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 261 -1 +1
+@@ 255 -1 +1
 -    h3 Жим гантелей под углом 45
 +    h3 Разгибания ног в тренажере
-@@ 271 -0 +7
+@@ 265 -0 +7
 +   div.adj-box
 +    div.row.between
 +     b Поправка дневника · Недогруз · Отказ
@@ -1612,72 +1620,72 @@
 +    div Подход 2: 52.5 кг вместо 50 — в прошлый раз 10 повторов с запасом 3.
 +    div Подход 3: остаётся 42.5 кг вместо 45 — 12 повторов получились только в отказ.
 +    div.muted Не внесено: подходы ниже идут по правилу или с твоими правками.
-@@ 272 -1 +1
+@@ 266 -1 +1
 -    span.tag Грудь
 +    span.tag Квадрицепс
-@@ 290 -1 +1
+@@ 285 -1 +1
 -     input#r-2-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="6+")
 +     input#r-2-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8+")
-@@ 292 -1 +1
+@@ 287 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 11")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
-@@ 296 -1 +1
+@@ 291 -1 +1
 -      i.p(title="прошлый раз: 11" style="left: calc(108% - 6.96px);")
 +      i.p(title="прошлый раз: 12" style="left: calc(108% - 6.96px);")
-@@ 300 -2 +2
+@@ 295 -2 +2
 -      b 24 × 11
 -      | ", запас 3 "
 +      b 50 × 12
 +      | ", запас 1 "
-@@ 312 -1 +1
+@@ 307 -1 +1
 -     input#r-2-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="9+")
 +     input#r-2-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="11+")
-@@ 314 -1 +1
+@@ 309 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 8")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 10")
-@@ 318 -1 +1
+@@ 313 -1 +1
 -      i.p(title="прошлый раз: 8" style="left: calc(50% + 0px);")
 +      i.p(title="прошлый раз: 10" style="left: calc(100% - 6px);")
-@@ 322 -2 +2
+@@ 317 -2 +2
 -      b 24 × 8
 -      | ", запас 0 "
 +      b 50 × 10
 +      | ", запас 3 "
-@@ 327 -1 +1
+@@ 322 -1 +1
 -        | цель 9+
 +        | цель 11+
-@@ 334 -1 +1
+@@ 329 -1 +1
 -     input#r-2-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="6+")
 +     input#r-2-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8+")
-@@ 336 -1 +1
+@@ 331 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 10")
 +     div.rr(role="img" aria-label="Диапазон 6–10, прошлый раз 12")
-@@ 340 -1 +1
+@@ 335 -1 +1
 -      i.p(title="прошлый раз: 10" style="left: calc(100% - 6px);")
 +      i.p(title="прошлый раз: 12" style="left: calc(108% - 6.96px);")
-@@ 344 -2 +2
+@@ 339 -2 +2
 -      b 22 × 10
 -      | ", запас 1 "
 +      b 42.5 × 12
 +      | ", запас 0 "
-@@ 351 -22 +0
+@@ 346 -22 +0
 
 === 20. не делал
 поля: правки к шагу 19
-@@ 45 -18 +0
+@@ 44 -18 +0
 черновик:
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_ext","cyc":null,"range":[6,10],"sets":[{"w":52.5,"r":null},{"w":42.5,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null,"skip":true},{"w":30,"r":null,"skip":true},{"w":32.5,"r":null,"skip":true},{"w":30,"r":null,"skip":true},{"w":30,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 19
 @@ 9 -1 +1
--     span#eta по плану ≈ 1 ч 30 мин · осталось ≈ 1 ч 25 мин
-+     span#eta по плану ≈ 1 ч 15 мин · осталось ≈ 1 ч 10 мин
-@@ 378 -1 +1
+-     span#eta по плану ≈ 1 ч 25 мин · осталось ≈ 1 ч 20 мин
++     span#eta по плану ≈ 1 ч 10 мин · осталось ≈ 1 ч 5 мин
+@@ 373 -1 +1
 -  div.ex
 +  div.ex.skipped
-@@ 386 -1 +1
+@@ 381 -1 +1
 -     button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
 +     button.icon-btn(title="Вернуть в тренировку" aria-label="Вернуть в тренировку" aria-pressed="true")
-@@ 390 -134 +1
+@@ 385 -135 +1
 +   p.sub Отмечено «не делал». План: 32.5 · 30 · 32.5 · 30 · 30 кг.
 
 === 21. вернуть в тренировку
@@ -1688,157 +1696,159 @@
 
 === 22. не делал: оставить
 поля: правки к шагу 21
-@@ 33 -12 +0
+@@ 32 -12 +0
 черновик:
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_ext","cyc":null,"range":[6,10],"sets":[{"w":52.5,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 21
 @@ 9 -1 +1
--     span#eta по плану ≈ 1 ч 30 мин · осталось ≈ 1 ч 25 мин
+-     span#eta по плану ≈ 1 ч 25 мин · осталось ≈ 1 ч 20 мин
 +     span#eta по плану ≈ 1 ч 20 мин · осталось ≈ 1 ч 15 мин
-@@ 274 -1 +1
+@@ 268 -1 +1
 -  div.ex
 +  div.ex.skipped
-@@ 282 -1 +1
+@@ 276 -1 +1
 -     button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
 +     button.icon-btn(title="Вернуть в тренировку" aria-label="Вернуть в тренировку" aria-pressed="true")
-@@ 286 -92 +1
+@@ 280 -93 +1
 +   p.sub Отмечено «не делал». План: 52.5 · 42.5 · 42.5 кг.
 
 === 23. убрать упражнение
 поля: правки к шагу 22
-@@ 52 -2 +2
+@@ 51 -2 +2
 - rng-4-1=12
 - w-4-0=30
 + rng-4-1=15
 + w-4-0=15
-@@ 56 -1 +1
+@@ 55 -1 +1
 - w-4-1=30
 + w-4-1=15
-@@ 59 -1 +1
+@@ 58 -1 +1
 - w-4-2=27.5
 + w-4-2=12.5
-@@ 64 -2 +2
+@@ 63 -2 +2
 - rng-5-1=15
 - w-5-0=15
 + rng-5-1=16
 + w-5-0=12.5
-@@ 68 -1 +1
+@@ 67 -1 +1
 - w-5-1=15
 + w-5-1=12.5
-@@ 76 -2 +2
+@@ 75 -2 +2
 - rng-6-1=16
 - w-6-0=12.5
 + rng-6-1=12
 + w-6-0=
-@@ 80 -1 +1
+@@ 79 -1 +1
 - w-6-1=12.5
 + w-6-1=
-@@ 83 -1 +1
+@@ 82 -1 +1
 - w-6-2=12.5
 + w-6-2=
-@@ 87 -12 +0
+@@ 86 -12 +0
 черновик:
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_ext","cyc":null,"range":[6,10],"sets":[{"w":52.5,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 22
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 20 мин · осталось ≈ 1 ч 15 мин
 +     span#eta по плану ≈ 1 ч 10 мин · осталось ≈ 1 ч 5 мин
-@@ 435 -1 +1
+@@ 430 -1 +1
 -    h3 Бицепс со штангой стоя
 +    h3 Кисть на блоке правая
-@@ 446 -1 +1
+@@ 441 -2 +2
 -    span.tag Бицепс
+-    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
 +    span.tag Предплечья
-@@ 466 -97 +0
-@@ 581 -1 +1
++    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 1 мин
+@@ 462 -98 +0
+@@ 578 -1 +1
 -     input#w-5-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     input#w-4-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 583 -2 +2
+@@ 580 -2 +2
 -     input#r-5-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
 -     input#q-5-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +     input#r-4-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8+")
 +     input#q-4-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 603 -1 +1
+@@ 600 -1 +1
 -     input#w-5-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     input#w-4-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 605 -2 +2
+@@ 602 -2 +2
 -     input#r-5-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="15+")
 -     input#q-5-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +     input#r-4-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="15+")
 +     input#q-4-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 626 -1 +1
+@@ 623 -1 +1
 -   input#ex-note-5(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +   input#ex-note-4(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 642 -1 +1
+@@ 640 -1 +1
 -    input#rng-6-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    input#rng-5-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
-@@ 644 -1 +1
+@@ 642 -1 +1
 -    input#rng-6-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 +    input#rng-5-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
-@@ 656 -1 +1
+@@ 654 -1 +1
 -     input#w-6-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +     input#w-5-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 658 -2 +2
+@@ 656 -2 +2
 -     input#r-6-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="15+")
 -     input#q-6-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +     input#r-5-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="15+")
 +     input#q-5-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 678 -1 +1
+@@ 676 -1 +1
 -     input#w-6-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     input#w-5-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 680 -2 +2
+@@ 678 -2 +2
 -     input#r-6-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="14+")
 -     input#q-6-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +     input#r-5-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="14+")
 +     input#q-5-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 700 -1 +1
+@@ 698 -1 +1
 -     input#w-6-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     input#w-5-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 702 -2 +2
+@@ 700 -2 +2
 -     input#r-6-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="13+")
 -     input#q-6-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +     input#r-5-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="13+")
 +     input#q-5-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 723 -1 +1
+@@ 721 -1 +1
 -   input#ex-note-6(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +   input#ex-note-5(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 739 -1 +1
+@@ 738 -1 +1
 -    input#rng-7-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    input#rng-6-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
-@@ 741 -1 +1
+@@ 740 -1 +1
 -    input#rng-7-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 +    input#rng-6-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
-@@ 753 -1 +1
+@@ 752 -1 +1
 -     input#w-7-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +     input#w-6-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 755 -2 +2
+@@ 754 -2 +2
 -     input#r-7-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 -     input#q-7-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +     input#r-6-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +     input#q-6-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 768 -1 +1
+@@ 767 -1 +1
 -     input#w-7-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     input#w-6-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 770 -2 +2
+@@ 769 -2 +2
 -     input#r-7-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 -     input#q-7-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +     input#r-6-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +     input#q-6-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 783 -1 +1
+@@ 782 -1 +1
 -     input#w-7-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     input#w-6-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 785 -2 +2
+@@ 784 -2 +2
 -     input#r-7-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 -     input#q-7-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +     input#r-6-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 +     input#q-6-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 799 -1 +1
+@@ 798 -1 +1
 -   input#ex-note-7(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +   input#ex-note-6(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 
 === 24. упражнение из списка
 поля: правки к шагу 23
-@@ 87 -0 +15
+@@ 86 -0 +15
 + rng-7-0=8
 + rng-7-1=12
 + w-7-0=47.5
@@ -1860,7 +1870,7 @@
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 10 мин · осталось ≈ 1 ч 5 мин
 +     span#eta по плану ≈ 1 ч 20 мин · осталось ≈ 1 ч 15 мин
-@@ 703 -0 +119
+@@ 701 -0 +120
 +  div.ex
 +   div.ex-h
 +    h3 Бабочка
@@ -1875,6 +1885,7 @@
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +   div.ex-meta
 +    span.tag Грудь
++    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
 +    span Диапазон
 +    input#rng-7-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    | –
@@ -1983,7 +1994,7 @@
 
 === 25. базовое из списка
 поля: правки к шагу 24
-@@ 102 -0 +15
+@@ 101 -0 +15
 + rng-8-0=6
 + rng-8-1=10
 + w-8-0=77.5
@@ -2004,8 +2015,8 @@
 экран: правки к шагу 24
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 20 мин · осталось ≈ 1 ч 15 мин
-+     span#eta по плану ≈ 1 ч 40 мин · осталось ≈ 1 ч 35 мин
-@@ 822 -0 +107
++     span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
+@@ 821 -0 +108
 +  div.ex
 +   div.ex-h
 +    h3 Жим лежа
@@ -2020,6 +2031,7 @@
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +   div.ex-meta
 +    span.tag Грудь
++    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
 +    span Диапазон
 +    input#rng-8-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    | –
@@ -2116,7 +2128,7 @@
 
 === 26. новое упражнение: форма
 поля: правки к шагу 25
-@@ 117 -1 +22
+@@ 116 -1 +22
 - add-ex=pec_fly
 + xf-new-n=
 + xf-new-mode=dp
@@ -2285,14 +2297,14 @@
 
 === 28. новое упражнение: без мышц
 поля: правки к шагу 27
-@@ 117 -1 +1
+@@ 116 -1 +1
 - xf-new-n=
 + xf-new-n=Фермерская прогулка
 сообщение: "Отметь хотя бы одну мышцу"
 
 === 29. новое упражнение: сохранить
 поля: правки к шагу 25
-@@ 117 -0 +12
+@@ 116 -0 +12
 + rng-9-0=8
 + rng-9-1=12
 + w-9-0=
@@ -2312,9 +2324,9 @@
   + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null},{"w":157.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_ext","cyc":null,"range":[6,10],"sets":[{"w":52.5,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null},{"ex":"pec_fly","cyc":null,"range":[8,12],"sets":[{"w":47.5,"r":null},{"w":42.5,"r":null},{"w":42.5,"r":null},{"w":40,"r":null}],"note":"","skip":false,"rir":null},{"ex":"bench","cyc":null,"range":[6,10],"sets":[{"w":77.5,"r":null},{"w":77.5,"r":null},{"w":77.5,"r":null},{"w":77.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_mi5u0dhk","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 25
 @@ 9 -1 +1
--     span#eta по плану ≈ 1 ч 40 мин · осталось ≈ 1 ч 35 мин
-+     span#eta по плану ≈ 1 ч 45 мин · осталось ≈ 1 ч 40 мин
-@@ 929 -0 +76
+-     span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
++     span#eta по плану ≈ 1 ч 40 мин · осталось ≈ 1 ч 35 мин
+@@ 929 -0 +77
 +  div.ex
 +   div.ex-h
 +    h3 Фермерская прогулка
@@ -2329,6 +2341,7 @@
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +   div.ex-meta
 +    span.tag Предплечья
++    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 1 мин
 +    span Диапазон
 +    input#rng-9-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
 +    | –
@@ -2416,56 +2429,56 @@
 -      button(type="button" aria-pressed="false") День 3
 +      button(type="button" aria-pressed="false") День 2
 +      button(type="button" aria-pressed="true") День 3
-@@ 42 -6 +0
-@@ 67 -1 +1
+@@ 34 -6 +0
+@@ 60 -1 +1
 -     input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="7+")
 +     input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="6+")
-@@ 80 -3 +0
+@@ 73 -3 +0
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | поправка дневника, цель 7+
-@@ 89 -1 +1
+@@ 82 -1 +1
 -     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="7+")
 +     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="6+")
-@@ 102 -3 +0
+@@ 95 -3 +0
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | поправка дневника, цель 7+
-@@ 111 -1 +1
+@@ 104 -1 +1
 -     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="7+")
 +     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="6+")
-@@ 124 -3 +0
+@@ 117 -3 +0
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | поправка дневника, цель 7+
-@@ 133 -1 +1
+@@ 126 -1 +1
 -     input#r-0-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="7+")
 +     input#r-0-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="6+")
-@@ 146 -3 +0
+@@ 139 -3 +0
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | поправка дневника, цель 7+
-@@ 299 -8 +0
-@@ 349 -1 +1
+@@ 293 -8 +0
+@@ 344 -1 +1
 -     input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="9+")
 +     input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="6+")
-@@ 364 -1 +1
+@@ 359 -1 +1
 -        | поправка дневника, цель 9+
 +        | новый вес, цель 6+
-@@ 371 -1 +1
+@@ 366 -1 +1
 -     input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="6+")
 +     input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="10+")
-@@ 386 -1 +1
+@@ 381 -1 +1
 -        | поправка дневника, цель 6+
 +        | цель 10+
-@@ 415 -1 +1
+@@ 410 -1 +1
 -     input#r-3-4.num(type="text" inputmode="numeric" aria-label="Повторы, подход 5" placeholder="6+")
 +     input#r-3-4.num(type="text" inputmode="numeric" aria-label="Повторы, подход 5" placeholder="")
-@@ 424 -3 +0
+@@ 419 -3 +0
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | поправка дневника, цель 6+
-@@ 715 -0 +7
+@@ 713 -0 +7
 +   div.adj-box
 +    div.row.between
 +     b Поправка дневника · Недогруз
@@ -2475,15 +2488,14 @@
 +    div.muted Не внесено: подходы ниже идут по правилу или с твоими правками.
 
 === 32. отдых 2 минуты
-записи:
-  + config/main {"cycle":{"inc":2,"pct":{"3":87,"4":82,"5":77},"sets":4},"ex":{"abduction":{"hi":15,"lo":10,"m":{"glutes":1},"n":"Отведение ног в тренажере","pat":"iso","step":5},"abs":{"m":{"abs":1},"n":"Пресс","pat":"iso","step":1},"back_ext":{"hi":15,"lo":10,"m":{"erectors":1,"glutes":0.5,"hams":0.5},"n":"Гиперэкстензия","pat":"hinge","step":5},"barbell_curl":{"m":{"biceps":1},"n":"Бицепс со штангой стоя","pat":"iso","step":5},"bayesian_curl":{"m":{"biceps":1},"n":"Бицепс Bayesian curl","pat":"iso","step":5},"bench":{"m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","n":"Жим лежа","pat":"h_push","round":5},"chest_press":{"m":{"chest":1,"delt_front":0.5,"triceps":0.5},"n":"Жим в тренажере на грудь","pat":"h_push","step":2.5},"db_bench":{"m":{"chest":1,"delt_front":0.5,"triceps":0.5},"n":"Жим гантелей лежа","pat":"h_push","step":2},"db_ohp":{"m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"n":"Жим гантелей сидя","pat":"v_push","step":2},"hammer":{"m":{"biceps":1,"forearms":0.5},"n":"Молотки с гантелями","pat":"iso","step":1},"hip_thrust":{"m":{"glutes":1,"hams":0.5},"n":"Ягодичный мост со штангой","pat":"hinge","step":2.5},"incline_db":{"m":{"chest":1,"delt_front":0.5,"triceps":0.5},"n":"Жим гантелей под углом 45","pat":"h_push","step":1},"lat_pulldown":{"m":{"biceps":0.5,"lats":1,"upper_back":0.5},"n":"Вертикальная тяга в тренажере","pat":"v_pull","step":5},"lat_raise":{"hi":20,"lo":10,"m":{"delt_mid":1},"n":"Махи гантелями в стороны","pat":"iso","step":2},"lat_raise_db":{"m":{"delt_mid":1},"n":"Махи с гантелями на плечи","pat":"iso","step":1},"lat_raise_machine":{"m":{"delt_mid":1},"n":"Средние дельты в тренажере","pat":"iso","step":5},"leg_curl_lying":{"m":{"hams":1},"n":"Бицепс бедра на тренажере лежа на животе","pat":"iso","step":5},"leg_curl_seated":{"m":{"hams":1},"n":"Бицепс бедра сидя в тренажере","pat":"iso","step":5},"leg_ext":{"m":{"quads":1},"n":"Разгибания ног в тренажере","pat":"iso","step":5},"leg_press":{"m":{"glutes":0.5,"quads":1},"mode":"cycle","n":"Жим ногами","pat":"knee","round":5},"lunge":{"m":{"glutes":1,"quads":1},"n":"Выпады с гантелями","pat":"knee","step":2},"pec_fly":{"m":{"chest":1,"delt_front":0.5},"n":"Бабочка","pat":"iso","step":2.5},"pullup":{"gear":"belt","m":{"biceps":0.5,"lats":1,"upper_back":0.5},"mode":"cycle","n":"Подтягивания","pat":"v_pull","round":1},"rdl":{"m":{"erectors":1,"glutes":1,"hams":1},"n":"Румынская тяга","pat":"hinge","step":5},"row_machine":{"m":{"biceps":0.5,"delt_rear":0.5,"lats":0.5,"upper_back":1},"n":"Горизонтальная тяга в тренажере","pat":"h_pull","step":5},"squat":{"m":{"glutes":0.5,"quads":1},"n":"Приседания со штангой","pat":"knee","step":5},"tbar_row":{"m":{"biceps":0.5,"delt_rear":0.5,"lats":0.5,"upper_back":1},"n":"Горизонтальная тяга Т-бар","pat":"h_pull","step":5},"tri_overhead":{"m":{"triceps":1},"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","step":1.25},"tri_pushdown":{"m":{"triceps":1},"n":"Трицепс с косичкой на блоке","pat":"iso","step":5},"wrist_cable_l":{"m":{"forearms":1},"n":"Кисть на блоке левая","pat":"iso","step":1.25,"uni":true},"wrist_cable_r":{"m":{"forearms":1},"n":"Кисть на блоке правая","pat":"iso","step":1.25,"uni":true},"wrist_db_l":{"m":{"forearms":1},"n":"Кисть с гантелью левая рука","pat":"iso","step":1,"uni":true},"wrist_db_r":{"m":{"forearms":1},"n":"Кисть с гантелью правая рука","pat":"iso","step":1,"uni":true},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5}},"x_mi5u0dhk":{"n":"Фермерская прогулка","pat":"iso","m":{"upper_back":0.5,"forearms":1},"lo":10,"hi":15,"uni":true}},"gear":{"belt":{"n":"Пояс с отягощением","step":1}},"method":"Примерный дневник: атлет выдуман, записи посчитаны генератором data/make.cjs. Занятий в неделе три. Три базовых упражнения - жим лежа, жим ногами, подтягивания - ведутся волной: четыре подхода на 5, 4 и 3 повтора при 77, 82 и 87 процентах от расчётного максимума; максимум за неделю прибавляет не больше 2 процентов. В остальных упражнениях сначала растут повторы, потом вес, у каждого подхода свой счёт; до отказа остаётся один повтор.","start":"2025-09-08","zones":{"high":20,"min":4,"opt":10},"rest":120}
+пропущен: кнопки шага на этих записях нет
 
 === 33. заметки
 поля: правки к шагу 32
-@@ 17 -1 +1
+@@ 16 -1 +1
 - ex-note-0=
 + ex-note-0=хват уже
-@@ 130 -1 +1
+@@ 129 -1 +1
 - wk-note=
 + wk-note=мало спал
 черновик:
@@ -2500,32 +2512,32 @@
 
 === 35. после перезагрузки всё на месте
 поля: правки к шагу 34
-@@ 77 -1 +1
+@@ 76 -1 +1
 - w-6-0=
 + w-6-0=0
-@@ 80 -1 +1
+@@ 79 -1 +1
 - w-6-1=
 + w-6-1=0
-@@ 83 -1 +1
+@@ 82 -1 +1
 - w-6-2=
 + w-6-2=0
-@@ 119 -1 +1
+@@ 118 -1 +1
 - w-9-0=
 + w-9-0=0
-@@ 122 -1 +1
+@@ 121 -1 +1
 - w-9-1=
 + w-9-1=0
-@@ 125 -1 +1
+@@ 124 -1 +1
 - w-9-2=
 + w-9-2=0
 экран: правки к шагу 34
-@@ 1029 -1 +1
+@@ 1030 -1 +1
 -   textarea#wk-note(placeholder="Самочувствие, сон, что мешало")
 +   textarea#wk-note(placeholder="Самочувствие, сон, что мешало") мало спал
 
 === 36. завершить: вопрос с подсчётом
 экран: правки к шагу 35
-@@ 1031 -3 +5
+@@ 1032 -3 +5
 -   div.row.between
 -    button.btn.primary Завершить тренировку
 -    button.btn.ghost.danger(title="Удалить эту тренировку") Отменить
@@ -2581,7 +2593,7 @@
        div.eyebrow Следующая тренировка
        h2 Среда, 19 ноября
       a.btn.primary(href="#workout") Открыть план
-     p.sub(style="margin-bottom:6px") 24 подхода, ≈ 1 ч 20 мин при отдыхе 2:00. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
+     p.sub(style="margin-bottom:6px") 24 подхода, ≈ 1 ч 20 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
      div.plan-list
       div.plan-row
        span.n

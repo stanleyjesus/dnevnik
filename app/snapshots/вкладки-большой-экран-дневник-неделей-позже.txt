@@ -102,7 +102,7 @@
        div.eyebrow Следующая тренировка
        h2 Среда, 19 ноября
       a.btn.primary(href="#workout") Открыть план
-     p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 30 мин при отдыхе 2:00. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
+     p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 25 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
      div.plan-list
       div.plan-row
        span.n
@@ -394,7 +394,6 @@
 + a(href="#workout" aria-current="page") Тренировка
 поля: целиком
   np-date=2025-11-19
-  np-rest=120
   pp-leg_ext=true
   pp-leg_press=true
   pp-tbar_row=true
@@ -421,14 +420,6 @@
       div.seg(role="group" aria-label="Вариант плана")
        button(type="button" aria-pressed="true") С поправками дневника
        button(type="button" aria-pressed="false") Только по моим правилам
-     label.f
-      span Отдых между подходами
-      select#np-rest
-       option(value="60") 1:00 мин
-       option(value="90") 1:30 мин
-       option(value="120" selected="") 2:00 мин
-       option(value="150") 2:30 мин
-       option(value="180") 3:00 мин
     div.adj-box(style="margin-bottom:12px")
      div.eyebrow(style="margin-bottom:2px") Что дневник меняет в плане и почему
      p.sub Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.
@@ -466,8 +457,8 @@
         div.sub 3 подхода по 8–12: задние дельты работают только косвенно: 2 подхода в неделю при рабочей зоне от 10
     p.sub(style="margin-bottom:6px") Основа — тренировка 12 ноября. В плане 25 подходов (по правилам было бы 21). Всё можно поправить по ходу.
     p.sub(style="margin-bottom:6px")
-     b Время: ≈ 1 ч 30 мин
-     | " — разминка, 25 подходов и отдых по 2:00 (в базовых на минуту дольше)."
+     b Время: ≈ 1 ч 25 мин
+     | " — разминка, 25 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин."
     div.plan-list
      div.plan-row
       span.n
@@ -3445,13 +3436,11 @@
 поля: целиком
   pm=even
   pt=0
-  pb-budget=100
-  prog-rest=120
   pa-mon=pec_fly
   pa-wed=pec_fly
   pa-fri=leg_curl_seated
 экран: правки к шагу 6
-@@ 5 -82 +927
+@@ 5 -82 +911
 +     div.eyebrow Действует сейчас
 +     h2 Своя программа
 +    span.sub 67 подходов в неделю
@@ -3520,7 +3509,7 @@
 +    div.pday
 +     div.pday-h
 +      b День 3
-+      span.sub 24 подхода · ≈ 1 ч 25 мин
++      span.sub 24 подхода · ≈ 1 ч 20 мин
 +     div.prow
 +      div.grow
 +       div.pn Подтягивания
@@ -3594,24 +3583,8 @@
 +      option(value="90") до 1 ч 30 мин
 +      option(value="105") до 1 ч 45 мин
 +      option(value="120") до 2 ч
-+    label.f
-+     span Подходов в неделю, не больше
-+     select#pb-budget
-+      option(value="40") 40
-+      option(value="50") 50
-+      option(value="60") 60
-+      option(value="70") 70
-+      option(value="80") 80
-+      option(value="90") 90
-+      option(value="100" selected="") 100 — твой лимит
-+    label.f
-+     span Отдых между подходами
-+     select#prog-rest
-+      option(value="60") 1:00 мин
-+      option(value="90") 1:30 мин
-+      option(value="120" selected="") 2:00 мин
-+      option(value="150") 2:30 мин
-+      option(value="180") 3:00 мин
++      option(value="135") до 2 ч 15 мин
++      option(value="150") до 2 ч 30 мин
 +   div.grid3
 +    div.pday
 +     div.pday-h
@@ -3912,7 +3885,7 @@
 +    div.pday
 +     div.pday-h
 +      b День 3
-+      span.sub 25 подходов · было 24 · ≈ 1 ч 30 мин
++      span.sub 25 подходов · было 24 · ≈ 1 ч 25 мин
 +     div.prow
 +      div.grow
 +       div.pn Подтягивания
@@ -4072,7 +4045,7 @@
 +      button#pb-fri.btn.sm
 +       svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       | В день
-+   p.sub(style="margin-top:8px") Полоса слева — то, что меняется. Время — разминка, подходы и отдых по 2:00.
++   p.sub(style="margin-top:8px") Полоса слева — то, что меняется. Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
 +   hr.rule
 +   div.grid2.even
 +    div(style="min-width:0")
@@ -4443,7 +4416,7 @@
   pr-new=
   pr-copy=true
 экран: правки к шагу 7
-@@ 4 -183 +82
+@@ 4 -167 +82
 +    h2 Упражнения
 +    button#ex-new.btn
 +     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
@@ -4526,7 +4499,7 @@
 +        option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
 +        option(value="hip_thrust") Ягодичный мост со штангой (штанга)
 +       button#gear-btn-machine.btn.sm
-@@ 188 -16 +57
+@@ 172 -16 +57
 +        | Добавить
 +     div#gear-cable.pday
 +      div.pday-h(style="align-items:center")
@@ -4584,7 +4557,7 @@
 +        option(value="lat_raise_machine") Средние дельты в тренажере (тренажёр)
 +        option(value="hip_thrust") Ягодичный мост со штангой (штанга)
 +       button#gear-btn-cable.btn.sm
-@@ 205 -150 +22
+@@ 189 -150 +22
 +        | Добавить
 +     div#gear-barbell.pday
 +      div.pday-h(style="align-items:center")
@@ -4607,7 +4580,7 @@
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Приседания со штангой")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
-@@ 356 -10 +34
+@@ 340 -10 +34
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Ягодичный мост со штангой")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +      div.row(style="flex-wrap:nowrap")
@@ -4642,7 +4615,7 @@
 +        option(value="tri_overhead") Трицепс из за головы на блоке с косичкой (блок)
 +        option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
 +       button#gear-btn-barbell.btn.sm
-@@ 367 -50 +34
+@@ 351 -50 +34
 +        | Добавить
 +     div#gear-dumbbell.pday
 +      div.pday-h(style="align-items:center")
@@ -4677,7 +4650,7 @@
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Кисть с гантелью правая рука")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
-@@ 418 -10 +37
+@@ 402 -10 +37
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Махи гантелями в стороны")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +       span.chip
@@ -4715,7 +4688,7 @@
 +        option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
 +        option(value="hip_thrust") Ягодичный мост со штангой (штанга)
 +       button#gear-btn-dumbbell.btn.sm
-@@ 429 -54 +50
+@@ 413 -54 +50
 +        | Добавить
 +     div#gear-belt.pday
 +      div.pday-h(style="align-items:center")
@@ -4766,7 +4739,7 @@
 +        option(value="tri_pushdown") Трицепс с косичкой на блоке (блок)
 +        option(value="hip_thrust") Ягодичный мост со штангой (штанга)
 +       button#gear-btn-belt.btn.sm
-@@ 484 -448 +427
+@@ 468 -448 +427
 +        | Добавить
 +     div#gear-none.pday.gear-loose
 +      div.pday-h(style="align-items:center")

@@ -9,7 +9,7 @@ import { useDays } from '../src/core/days.ts';
 import { withStarter } from '../src/core/starter.ts';
 import { ADDS } from '../src/core/adapt.ts';
 import { LIB } from '../src/core/program.ts';
-import { EVEN, RDL_M, REST, TIMES, TIME_EX, appRules, fillTop, inTime, isRdl, moreTime, restOf, restWords } from '../src/core/rules.ts';
+import { EVEN, RDL_M, REST, TIMES, TIME_EX, appRules, fillTop, inTime, isRdl, moreTime, restOf, restTag, restWords } from '../src/core/rules.ts';
 import type { BuildOpts, Cfg, ExDef, MuscleMap, ProgSlots, Workout } from '../src/core/types.ts';
 
 type Raw = { ex: Record<string, ExDef> };
@@ -195,6 +195,8 @@ test('отдых между подходами — по упражнению: т
     assert.deepEqual([of(bench, ['bench', 'bench_light']), of(curl, ['barbell_curl', 'barbell_curl_light'])], [[300, 180], [180, 180]]);
     /* остальное — по типу упражнения: штанга и тяга от пола с гантелями — 2 мин 30 с, тренажёр, блок, гантели, вес тела и изоляция — 2 мин; ягодичный мост и гиперэкстензия — не «свободный вес» */
     assert.deepEqual(of(bench, ['squat', 'rdl', 'db_rdl', 'ohp', 'leg_press', 'pullup', 'db_ohp', 'hip_thrust', 'back_ext', 'lat_raise', 'skullcrusher']), [150, 150, 150, 150, 120, 120, 120, 120, 120, 120, 120]);
+    /* метка в карточке: у стороны в паре — отдых между сторонами, вдвое короче: стороны идут по очереди */
+    assert.deepEqual([restTag(bench.cfg, 'bench'), restTag(bench.cfg, 'skullcrusher'), restTag(cfg, 'wrist_db_l')], ['отдых 5 мин', 'отдых 2 мин', 'отдых 1 мин между сторонами']);
     /* время тренировки берёт отдых упражнения, а не профиля: с отдыхом профиля 1:00 и 3:00 — одно и то же */
     const items = [{ ex: 'squat', n: 3 }, { ex: 'lat_raise', n: 3 }], fast = Core.mergeCfg(withStarter(null)); fast.rest = 60;
     assert.equal(Math.round(Core.estMinutes(cfg, items) * 60), 300 + 2 * 60 + 3 * (40 + 150) + 3 * (40 + 120));
