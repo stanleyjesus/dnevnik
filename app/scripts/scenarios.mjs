@@ -684,9 +684,12 @@ export const SCENARIOS = [
       + expect('/^Получится: \\d+ подход\\S* в неделю, самая длинная тренировка ≈ /.test(document.getElementById("onb-sum").textContent)', 'строка «Получится: … в неделю, самая длинная тренировка ≈ …»')],
     ['дальше: программа', click('#onb-next') + settle + expect(onbAt(3, 5), 'шаг 3 из 5') + 'const r = ' + draftRows + ';'
       + expect('r.length === 2 && r[0][0].startsWith("Жим лежа") && r[1][0].startsWith("Жим лежа — лёгкий день")', 'два дня: день 1 — жим лежа на силу, день 2 — его лёгкий день')
-      + expect('!document.getElementById("prog-free") && !document.querySelector("#view .mtab")', 'таблицы мышц и счётчика подходов в онбординге нет')],
-    ['заменить упражнение: список', click('#view .linkbtn') + settle + expect('!!document.querySelector("#view .swaprow select")', 'список замены открыт')],
-    ['заменить упражнение', pickAt('#view .swaprow select', 1) + settle + expect('document.getElementById("toast").textContent.includes("→")', 'сообщение о замене')],
+      + expect('!document.getElementById("prog-free") && !document.querySelector("#view .mtab")', 'таблицы мышц и счётчика подходов в онбординге нет')
+      + expect('!document.querySelector("#view .pctl, #view [id^=pa-], #view [id^=pb-]") && ![...document.querySelectorAll("#view .prow .tag")].some(t => t.textContent === "новое")', 'программу собрал дневник: без «выше», «−», «+», «убрать», «новое» и «В день»')
+      + expect('[...document.querySelectorAll("#view .prow [id^=sw-]")].length > 0 && [...document.querySelectorAll("#view .prow [id^=sw-]")].every(b => b.textContent === "Заменить")', 'у упражнений — кнопка «Заменить»')],
+    ['заменить упражнение: список', click('#view .prow [id^="sw-"]') + settle + expect('document.querySelectorAll("#view .swaprow .ex-card").length > 0 && document.querySelector("#view .prow.swapping [id^=sw-]").textContent === "Отмена"', 'под кнопкой — упражнения на замену, кнопка стала «Отмена»')],
+    ['заменить упражнение', click('#view .swaprow .ex-card') + settle + expect('document.getElementById("toast").textContent.includes("→")', 'сообщение о замене')
+      + expect('!document.querySelector("#view .swaprow") && [...document.querySelectorAll("#view .prow.changed .sub")].some(e => e.textContent.includes("вместо «"))', 'список закрыт, у замены — «вместо «…»»')],
     ['принять программу', click('#onb-accept') + settle + accepted + expect(onbAt(4, 5), 'шаг 4 из 5: веса') + expect(cfgMain + '.program.focus === "bench"', 'программа вокруг жима лежа в хранилище')],
     ['дальше без шага веса', click('#onb-next') + settle + expect('document.getElementById("toast").textContent.startsWith("Укажи шаг веса: ")', 'сообщение «Укажи шаг веса»') + expect(onbAt(4, 5), 'остались на шаге 4')],
     ['шаг штанги — свой', type('#onb-step-barbell', '2,5') + settle + expect('document.getElementById("onb-step-barbell").value === "2.5" && !document.getElementById("onb-step-usual-barbell")', 'шаг штанги 2.5, подсказки «обычно» больше нет')],

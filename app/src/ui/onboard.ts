@@ -15,7 +15,7 @@ import { toast } from './toast.ts';
 import { saveCfg } from './storage.ts';
 import { D, go, render } from './render.ts';
 import { restSelect } from './overview.ts';
-import { acceptProgram, loadText, progDay } from './program.ts';
+import { acceptProgram, loadText, progDay, progScheme } from './program.ts';
 import { progDraft, progLifts } from './draft.ts';
 import { goalOf, goalPicker, modeBudget } from './goal.ts';
 import { TIMES, timeOf } from './fit.ts';
@@ -25,8 +25,8 @@ import { DAY_COUNTS, useDays } from '../core/days.ts';
 import { appRules } from '../core/rules.ts';
 import { pasteDays, pasteMatch } from '../core/paste.ts';
 import type { PasteDay } from '../core/paste.ts';
-import type { ExDef } from '../core/types.ts';
-import type { El, Kid, View } from './types.ts';
+import type { Cfg, ExDef, ProgEntry, Slot, Swap } from '../core/types.ts';
+import type { El, Kid, ProgEdit, View } from './types.ts';
 
 type Step = 'start' | 'goal' | 'paste' | 'prog' | 'weights' | 'done';
 /** Программа из текста: text — как вставлен, days — разбор, pick — что взять в строке «день-строка» (id, '' — не брать, NEW — новое упражнение),
@@ -198,6 +198,37 @@ function vGoal(): View {
     () => to('start'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('prog') }, 'Дальше'))];
 }
 
+/* (решение владельца, 25 ноября 2026) день программы, которую собрал дневник: порядок и подходы уже посчитала сборка, поэтому у упражнения
+   только «Заменить» — под кнопкой упражнения на те же мышцы, а частично совпадающие — в свёрнутой строке (или сразу, когда других нет).
+   Стрелки «выше», «−» и «+» подходов, «убрать», пометки «новое» и строки «В день» здесь нет: они остались своей программе и программе
+   текстом (progDay) и вкладке «Программа». Замена — та же, что на «Программе» (draft.ts): подходы остаются, «вместо «…»» показывает, что было */
+function builtDay(cfg: Cfg, sl: Slot, list: ProgEntry[], load: number, edit: ProgEdit) {
+  const rows = list.map((e, i) => {
+    const k = C.kindOf(cfg, e.ex), nm = C.exName(cfg, e.ex), sid = 'sw-' + sl.id + '-' + i, goal = k === 'base' ? C.goalName(cfg, e.ex) : null;
+    const alts = k === 'compound' || k === 'iso' ? C.swapsFor(cfg, e.ex, list.map(x => x.ex)) : null, can = !!alts && alts.same.length + alts.near.length > 0;
+    const open = can && edit.swapAt === sl.id + ':' + i;
+    let first = true;                                                   // первое упражнение списка получает фокус, когда список открывается (swapOpen в draft.ts)
+    const card = (x: Swap, note: string) => h('button', { type: 'button', class: 'ex-card', id: first ? (first = false, sid + '-to') : null, onclick: () => edit.swap(sl.id, i, x) }, h('span', { class: 'nm' }, x.n), note ? h('span', { class: 'sub' }, note) : null);
+    const added = (x: Swap) => x.def ? 'добавится в справочник' : '';
+    const near = (x: Swap) => card(x, ['мышцы совпадают частично: ' + x.main!.map(m => C.MUSCLE[m].n.toLowerCase()).join(', '), added(x)].filter(Boolean).join(' · '));
+    const pick = open ? h('div', { class: 'stack swaprow', style: 'gap:6px' },
+      alts!.same.map(x => card(x, added(x))),
+      !alts!.near.length ? null : alts!.same.length
+        ? h('details', null, h('summary', { class: 'sub', style: 'cursor:pointer' }, 'Ещё похожие: ' + alts!.near.length), h('div', { class: 'stack', style: 'gap:6px;margin-top:6px' }, alts!.near.map(near)))
+        : alts!.near.map(near)) : null;
+    return h('div', { class: 'prow' + (e.was ? ' changed' : '') + (open ? ' swapping' : '') },
+      h('div', { class: 'grow' },
+        h('div', { class: 'pn' }, nm, goal ? h('span', { class: 'tag' + (['strength', 'auto'].includes(C.goalOf(cfg, e.ex)!) ? ' accent' : '') }, goal) : null),
+        h('div', { class: 'sub' }, progScheme(cfg, e), e.was ? ' · вместо «' + C.exName(cfg, e.was) + '»' : '')),
+      can ? h('button', { type: 'button', class: 'btn sm' + (open ? ' ghost' : ''), id: sid, 'aria-expanded': open ? 'true' : 'false', 'aria-label': (open ? 'Не заменять: ' : 'Заменить упражнение: ') + nm,
+        onclick: () => edit.swapOpen(open ? null : sl.id, i) }, open ? 'Отмена' : 'Заменить') : null,
+      pick);
+  });
+  return h('div', { class: 'pday' },
+    h('div', { class: 'pday-h' }, h('b', null, sl.n), h('span', { class: 'sub' }, loadText(load) + (list.length ? ' · ≈ ' + C.fmtDur(C.estMinutes(cfg, list, D.cfg.rest)) : ''))),
+    rows.length ? rows : h('p', { class: 'sub', style: 'padding:10px 0' }, 'В этот день упражнений пока нет.'));
+}
+
 function vProg(): View {
   const cfg = D.cfg, d = draft(), pr = d.pr, P = cfg.program, own = O!.path !== 'build', text = O!.path === 'paste';
   const mins = C.SLOTS.filter(sl => pr.slots[sl.id].length).map(sl => C.estMinutes(pr.cfg, pr.slots[sl.id], cfg.rest));
@@ -213,10 +244,10 @@ function vProg(): View {
   return [frame(own ? 'Твоя программа' : 'Программа',
     text ? 'Так разложилась твоя программа. Поправь подходы и порядок, добавь недостающее из списка.'
       : own ? 'Добавь в каждый день свои упражнения из списка, поставь подходы и порядок. Нет нужного упражнения — заведёшь его в «Настройке».'
-      : 'Так дневник раскладывает упражнения по дням. Любое можно заменить на похожее, поменять число подходов или порядок.', [
+      : 'Так дневник раскладывает упражнения по дням: порядок и подходы он посчитал сам. Любое упражнение можно заменить на похожее.', [
     own ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, daysRow(), restSelect('onb-rest')) : null,
     h('p', { class: 'sub', id: 'onb-sum', style: 'margin-bottom:8px' }, loadText(total(pr.after.load)) + ' в неделю' + (mins.length ? ' · самая длинная тренировка ≈ ' + C.fmtDur(Math.max(...mins)) : '')),
-    h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null))),
+    h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit))),
     h('p', { class: 'sub', style: 'margin-top:8px' }, 'Нагрузка по мышцам и подходы в неделю — на вкладке «Программа», когда закончишь.')],
     () => to(text ? 'paste' : own ? 'start' : 'goal'), next)];
 }
