@@ -16,6 +16,8 @@ const J = v => JSON.stringify(v);
 
 /* действия */
 export const go = view => 'await __t.go(' + J(view) + ');';                                   // открыть вкладку
+/* открыть вкладку из меню: вкладки «Советы» с днями «День N» нет (решение владельца, 25 ноября 2026) — такой шаг идёт через maybe и там пропускается */
+export const tab = view => '__t.el(' + J('#tabs a[href="#' + view + '"]') + '); ' + go(view);
 export const press = (text, n = 0) => '__t.press(' + J(text) + ', ' + n + ');';              // кнопка по её тексту, n — номер среди одинаковых
 export const click = (sel, n = 0) => '__t.click(' + J(sel) + ', ' + n + ');';                // элемент по селектору
 export const type = (sel, value, n = 0) => '__t.type(' + J(sel) + ', ' + n + ', ' + J(value) + ');';   // ввести в поле
@@ -37,7 +39,7 @@ export const size = (w, h) => '@size ' + w + ' ' + h;                           
 export const RELOAD = '@reload';                                                              // перезагрузить обе страницы
 
 const TABS = ['overview', 'workout', 'journal', 'progress', 'muscles', 'coach', 'program', 'setup'];
-const tabs = note => TABS.map(v => [v + (note ? ' ' + note : ''), go(v)]);
+const tabs = note => TABS.map(v => [v + (note ? ' ' + note : ''), v === 'coach' ? maybe(tab(v)) : go(v)]);
 const AUTOSAVE = 2800;                                                                        // черновик сохраняется через 2,5 с после правки
 const BIG = [1280, 900];
 
@@ -123,7 +125,9 @@ export const SCENARIOS = [
     ['вернуться', press('Вернуться')],
     ['завершить', press('Завершить тренировку') + settle + press('Завершить')],
     ['журнал после тренировки', go('journal')],
-    ['новый план', go('workout')],
+    /* то же, что в «журнале» у шага «вместо правки снова план»: после «Завершить» вкладка «Тренировка» иногда успевает отрисоваться посреди перехода
+       на «Обзор», ещё без законченной записи, и у той страницы, где это случилось, план остался бы прежним (среда вместо пятницы). Кнопка дня берёт план заново */
+    ['новый план', go('workout') + settle + press('Пятница')],
     ['вторая тренировка в тот же день', typeDay('#np-date', 0) + settle + press('Начать с пустого листа')],
     ['автосохранение второй', type('#wk-note', 'вторая за день') + wait(AUTOSAVE)],
     ['отменить вторую: вопрос', press('Отменить')],
@@ -229,7 +233,7 @@ export const SCENARIOS = [
     ['обзор', go('overview')],
     ['открыть план', press('Открыть план')],
     ['назад к обзору', go('overview')],
-    ['все советы', click('#view a[href="#coach"]')],
+    ['все советы', maybe(click('#view a[href="#coach"]'))],
     ['обзор ещё раз', go('overview')],
     ['нагрузка по неделям', press('По неделям')],
     ['обзор в третий раз', go('overview')],
@@ -396,7 +400,7 @@ export const SCENARIOS = [
     ['вес тела: неделю назад', typeDay('#bw-date', -7) + type('#bw-kg', '74.8') + press('Записать')],
     ['вес тела: две недели назад', typeDay('#bw-date', -14) + type('#bw-kg', '74.5') + press('Записать')],
     ['вес тела: удалить запись', click('button[aria-label^="Удалить запись"]', 1)],
-    ['советы с весом тела', go('coach')],
+    ['советы с весом тела', maybe(tab('coach'))],
     ['большой экран', size(...BIG)],
     ['прогресс на большом экране', go('progress')],
     ['после перезагрузки то же', RELOAD]
@@ -480,7 +484,7 @@ export const SCENARIOS = [
     ['объём по мышцам', go('muscles')],
     ['ячейка последней недели', click('table.heat tr:nth-child(2) button.hc', -1)],
     ['ячейка предпоследней недели', click('table.heat tr:nth-child(2) button.hc', -2)],
-    ['советы', go('coach')],
+    ['советы', maybe(tab('coach'))],
     ['после перезагрузки то же', RELOAD]
   ] },
 
@@ -503,7 +507,7 @@ export const SCENARIOS = [
     ['неделя 5: вес снижен после недобора', go('overview') + settle + seen('short', 'на пятой неделе карточка базового говорит «подходы не закрыты: вес −5%»')],
     ['прогресс жима', click('button.ex-card')],
     ['мышцы', go('muscles')],
-    ['советы', go('coach')],
+    ['советы', maybe(tab('coach'))],
     ['после перезагрузки то же', RELOAD]
   ] },
 
@@ -540,7 +544,6 @@ export const SCENARIOS = [
     ...week(2, 1, null, NEW_W + mark('запас 2 в последнем подходе: плюс шаг', 'up')),
     ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seen('up', 'на второй неделе карточка движения говорит «запас 2 в последнем подходе: плюс шаг»')],
     ['мышцы: сила и масса', go('muscles') + settle + expect('[...document.querySelectorAll("[id^=mavg-]")].some(e => /масса [\\d.,]+ · сила [\\d.,]+/.test(e.textContent))', 'у среднего объёма мышцы видна разбивка «масса … · сила …»')],
-    ['советы', go('coach')],
     ['после перезагрузки то же', RELOAD],
     ['программа после перезагрузки', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 'p') + ' && document.querySelector("#view section.card").textContent.includes("Сила в тройке")', 'тройка на месте после перезагрузки')]
   ] },
@@ -580,7 +583,6 @@ export const SCENARIOS = [
     ...week(2, 1, null, mark('запас 2 в последнем подходе: плюс шаг', 'up')),
     ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seen('up', 'на второй неделе карточка базового говорит «запас 2 в последнем подходе: плюс шаг»')],
     ['мышцы: сила и масса', go('muscles') + settle + expect('[...document.querySelectorAll("[id^=mavg-]")].some(e => /масса [\\d.,]+ · сила [\\d.,]+/.test(e.textContent))', 'у среднего объёма мышцы видна разбивка «масса … · сила …»')],
-    ['советы', go('coach')],
     ['после перезагрузки то же', RELOAD],
     ['программа после перезагрузки', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && document.querySelector("#view section.card").textContent.includes("Сила: «Жим лежа»")', 'режим на месте после перезагрузки')]
   ] },
@@ -978,18 +980,30 @@ export const SCENARIOS = [
   { name: 'ширины экрана', steps: WIDTHS.flatMap(([w, h]) => [['ширина ' + w, size(w, h)], ...tabs('при ширине ' + w)]) },
 
   { name: 'советы', steps: [
-    ['советы', go('coach')],
+    ['советы', maybe(tab('coach'))],
     ['раздел из первого замечания', maybe(click('.ins a.btn'))],
-    ['советы снова', go('coach')],
+    ['советы снова', maybe(tab('coach'))],
     ['раздел из третьего замечания', maybe(click('.ins a.btn', 2))],
     ['большой экран', size(...BIG)],
-    ['советы на большом экране', go('coach')]
+    ['советы на большом экране', maybe(tab('coach'))]
   ] },
 
   { name: 'советы: сохранённый разбор', data: 'notes', steps: [
-    ['советы', go('coach')],
+    ['советы', maybe(tab('coach'))],
     ['резервная копия хранит разбор', go('setup') + settle + click('#setup-more > summary') + settle + click('#backup-all')],
     ['после перезагрузки то же', RELOAD]
+  ] },
+
+  /* только в приложении: лишнего на экранах нет (решение владельца, 25 ноября 2026) — вкладки «Советы» нет, на «Обзоре» сверху две плитки
+     и нет блока «Требует внимания», на «Тренировке» нет выбора «Вариант плана»: план всегда с поправками дневника, снять можно каждую галочкой */
+  { name: 'лишнего на экранах нет', data: 'seed', app: true, steps: [
+    ['меню: семь вкладок, «Советов» нет', go('overview') + settle + expect('[...document.querySelectorAll("#tabs a")].map(a => a.getAttribute("href")).join() === "#overview,#workout,#journal,#progress,#muscles,#program,#setup"', 'в меню семь вкладок, «Советов» среди них нет')],
+    ['обзор: две плитки, без «Требует внимания»', expect('[...document.querySelectorAll("#view .tiles.two .tile .l")].map(e => e.textContent).join() === "Тренировок записано,Индекс силы" && ![...document.querySelectorAll("#view h2")].some(e => e.textContent === "Требует внимания") && !document.querySelector("#view a[href=\\"#coach\\"]")', 'сверху только «Тренировок записано» и «Индекс силы», блока «Требует внимания» и ссылки на советы нет')],
+    ['адрес «Советов» открывает обзор', go('coach') + settle + expect('location.hash === "#coach" && !!document.querySelector("#view .tiles.two") && document.querySelector("#tabs a[aria-current=page]").getAttribute("href") === "#overview"', 'по адресу #coach открыт «Обзор»')],
+    ['план: с поправками, выбора варианта нет', go('workout') + settle + expect('!document.querySelector("#view [aria-label=\\"Вариант плана\\"]") && !document.getElementById("view").innerText.includes("Только по моим правилам") && document.querySelectorAll("#view input[id^=\\"pp-\\"]").length > 1 && [...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].every(e => e.checked) && document.querySelectorAll("#view .plan-row .tag.accent").length > 0', 'план с поправками дневника, все включены, переключателя варианта нет')],
+    ['снять поправку галочкой', click('input[id^="pp-"]') + settle + expect('!document.querySelector("#view input[id^=\\"pp-\\"]").checked && [...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].slice(1).every(e => e.checked) && !document.querySelector("#view [aria-label=\\"Вариант плана\\"]")', 'первая поправка снята, остальные на месте')],
+    ['после перезагрузки', RELOAD],
+    ['план после перезагрузки снова со всеми поправками', go('workout') + settle + expect('[...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].every(e => e.checked) && !document.querySelector("#view [aria-label=\\"Вариант плана\\"]")', 'после перезагрузки все поправки снова включены')]
   ] },
 
   /* только в приложении: загрузка резервной копии с экрана */

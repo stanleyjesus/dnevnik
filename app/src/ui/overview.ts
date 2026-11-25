@@ -117,11 +117,11 @@ export function vOverview() {
   for (const m of tracked) zc[C.zone(D.avg[m.id], D.cfg.zones)]++;
   const refTxt = D.wi.ref.length ? 'среднее за недели ' + D.wi.ref[0].no + '–' + D.wi.ref[D.wi.ref.length - 1].no : 'нет полных недель';
   const gaps = D.wi.weeks.filter(w => !w.count && !w.current).length;
-  out.push(h('div', { class: 'tiles' },
+  out.push(h('div', { class: appRules() ? 'tiles two' : 'tiles' },
     h('div', { class: 'tile' }, h('span', { class: 'l' }, 'Тренировок записано'), h('span', { class: 'v' }, done.length), h('span', { class: 'd' }, (done.length ? 'с ' + C.fmtDate(done[0].date, true) : '') + (gaps ? ' · пропущено недель: ' + gaps : ''))),
     h('div', { class: 'tile' }, h('span', { class: 'l' }, 'Индекс силы'), h('div', { class: 'tile-top' }, h('span', { class: 'v' }, last ? C.fmt(last.idx, 0) : '–'), spark(D.idx.map(x => x.idx))), h('span', { class: 'd' }, last ? C.signed(last.idx - 100) + '% к первой неделе' : '')),
-    h('div', { class: 'tile' }, h('span', { class: 'l' }, 'Рабочих подходов в неделю'), h('span', { class: 'v' }, C.fmt(refSets, 0)), h('span', { class: 'd' }, refTxt)),
-    h('div', { class: 'tile' }, h('span', { class: 'l' }, 'Мышц в рабочей зоне'), h('span', { class: 'v' }, D.wi.ref.length ? zc.opt : '–', h('small', null, 'из ' + tracked.length)), h('span', { class: 'd' }, D.wi.ref.length ? 'без нагрузки: ' + zc.none + ' · мало: ' + (zc.low + zc.base) : 'считается после первой полной недели'))
+    appRules() ? null : h('div', { class: 'tile' }, h('span', { class: 'l' }, 'Рабочих подходов в неделю'), h('span', { class: 'v' }, C.fmt(refSets, 0)), h('span', { class: 'd' }, refTxt)),   // (в эталоне нет) с днями «День N» сверху только две плитки (решение владельца, 25 ноября 2026)
+    appRules() ? null : h('div', { class: 'tile' }, h('span', { class: 'l' }, 'Мышц в рабочей зоне'), h('span', { class: 'v' }, D.wi.ref.length ? zc.opt : '–', h('small', null, 'из ' + tracked.length)), h('span', { class: 'd' }, D.wi.ref.length ? 'без нагрузки: ' + zc.none + ' · мало: ' + (zc.low + zc.base) : 'считается после первой полной недели'))
   ));
 
   /* next workout + attention */
@@ -140,7 +140,7 @@ export function vOverview() {
   const top = D.ins.filter(i => i.sev === 'crit' || i.sev === 'warn').slice(0, 4);
   const att = h('div', { class: 'card' }, h('div', { class: 'sec-h' }, h('h2', null, 'Требует внимания'), h('a', { class: 'btn ghost sm', href: '#coach' }, 'Все советы: ' + D.ins.length)),
     top.length ? top.map(i => insightEl(i)) : h('p', { class: 'sub' }, 'Критичных замечаний нет.'));
-  out.push(h('div', { class: 'grid2' }, nextCard, att));
+  out.push(appRules() ? nextCard : h('div', { class: 'grid2' }, nextCard, att));   // (в эталоне нет) с днями «День N» блока «Требует внимания» нет: вкладки «Советы» нет, поправки — в плане тренировки
 
   /* wave lifts (в приложении — базовые в силовой роли: сила по запасу и поддержание, решение владельца 24 ноября 2026) */
   const cyc = D.stats.filter(s => byPct(D.cfg, s.id) && s.active), app = appRules();
