@@ -10,7 +10,8 @@ import { goalOf, goalRange, GOALS, waveOf } from './goals.ts';
 import { allStats, exStats, program, sessions, stalledSets } from './stats.ts';
 import { formulaRange, hints, lastSessionItem, plan, planCycle, roundTo, startWeight, suggestSet } from './plan.ts';
 import { planned } from './tally.ts';
-import { appRules, byPct, rdlDef, RIR_CHECK, rirOf } from './rules.ts';
+import { appRules, byPct, rdlDef, RIR_CHECK, rirOf, shown } from './rules.ts';
+import { estMinutes } from './time.ts';
 import { SKIP, skipFixes } from './skips.ts';
 import type { Tally } from './tally.ts';
 import type { Add, AddCtx, Addition, Cfg, Cyc, ExDef, MuscleMap, Prop, PropSet, Range, Session, Slot, Workout } from './types.ts';
@@ -239,6 +240,15 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
     if (d > 0) { if (lean || extra + d > 2) off0[p.key] = true; else extra += d; }
   }
   adds.slice().sort((a, b) => a.a.prio - b.a.prio).forEach((d, i) => { if (i > 0 || lean) off0[d.key] = true; });
+  /* (в эталоне нет) программа собрана под выбранное время (просьба владельца, 25 ноября 2026; docs/03, раздел 20): прибавки плана — подход сверх плана
+     и новое упражнение — включены, только пока тренировка с ними укладывается в это время по оценке с темпом атлета; остальные предлагаются галочкой.
+     Иначе план добавлял бы обратно то, что сборка или дневник убрали, чтобы тренировка влезла */
+  const T = appRules() && cfg.program && cfg.program.fit ? cfg.program.fit.time : 0;
+  if (T) {
+    const more = props.filter(p => !off0[p.key] && p.sets.length > base.items[p.idx].sets.length).map(p => p.key).concat(adds.filter(d => !off0[d.key]).map(d => d.key));
+    const long = () => shown(estMinutes(cfg, applyAdapt({ base, props, adds, off0, deload, worse: worse.length, of: dps.length }, off0).items)) > T;
+    while (more.length && long()) off0[more.pop()!] = true;
+  }
   return { base, props, adds, off0, deload, worse: worse.length, of: dps.length };
 }
 /* the plan with the chosen proposals applied; `off` holds the keys the athlete unticked */

@@ -1002,6 +1002,31 @@ export const SCENARIOS = [
     ['время записи', type('#wk-min', 70) + press('Сохранить изменения') + settle + expect(savedW + '.find(w => w.date === __t.day(14)).min === 70', 'время записано')]
   ] },
 
+  /* программа короче, когда не успеваешь (просьба владельца, 25 ноября 2026; docs/03, раздел 20): программа принята под 1 ч 30 мин, а тренировки идут
+     около двух часов. После двух таких тренировок дневник только считает время по темпу; после третьей сам собирает программу той же цели под то же время,
+     уже с темпом, и принимает её. «Вернуть прежнюю» отменяет сокращение, и ту программу дневник больше сам не сокращает */
+  { name: 'программа короче, когда не успеваешь', data: 'seed', app: true, steps: [
+    ['программа под полтора часа', go('program') + settle + pick('#pt', 90) + settle + click('#prog-accept') + settle + accepted
+      + expect(cfgMain + '.program.fit.time === 90 && !' + cfgMain + '.program.trim', 'программа принята под 1 ч 30 мин')],
+    ...[[1, 0], [2, 2], [3, 4]].flatMap(([n, d]) => [
+      ['день ' + n + ': план', go('workout') + settle + press('День ' + n) + settle + typeDay('#np-date', d)],
+      ['день ' + n + ': старт и подходы', press('Начать тренировку') + settle + typeAll('input[id^="r-"]', 10)],
+      ['день ' + n + ': шла 1 ч 58 мин', press('Завершить тренировку') + settle + type('#wk-min', 118) + press('Завершить') + settle
+        + (n < 3 ? expect(toastIs('Тренировка сохранена') + ' && !' + cfgMain + '.program.trim', 'программа та же: долгих тренировок с ответом пока меньше трёх')
+          : expect('document.getElementById("toast").textContent.startsWith("Тренировка сохранена. Программа сокращена под 1 ч 30 мин: тренировки идут ×1.3 к расчёту, подходов в неделю 83 → 60")', 'сообщение: программа сокращена, почему и насколько')
+            + expect('(t => t && t.k === 1.3 && t.time === 90 && t.to < t.from)(' + cfgMain + '.program.trim) && ' + cfgMain + '.program.fit.time === 90', 'новая программа под то же время, подходов меньше'))]
+    ]),
+    ['план: строка о сокращении', go('workout') + settle + press('День 1') + settle + typeDay('#np-date', 7) + settle
+      + expect('!!document.getElementById("trim-note") && document.getElementById("trim-note").textContent.startsWith("Дневник сократил программу под 1 ч 30 мин")', 'над планом сказано, что программу сократил дневник')
+      + expect('(m => m && (+m[1] || 0) * 60 + (+m[2] || 0) <= 90)(document.getElementById("view").textContent.match(/≈ (?:(\\d+) ч)?\\s*(?:(\\d+) мин)?/))', 'план с поправками дневника укладывается в 1 ч 30 мин по темпу')],
+    ['программа: кто сократил', go('program') + settle + expect('document.getElementById("view").textContent.includes("Сократил дневник: тренировки шли ×1.3 к расчёту")', 'в строке о программе — что её сократил дневник')],
+    ['вернуть прежнюю', click('#prog-undo') + settle + expect(cfgMain + '.program.trimOff === true && !' + cfgMain + '.program.trim && ' + cfgMain + '.program.fit.time === 90', 'прежняя программа вернулась, дневник её больше сам не сокращает')],
+    ['день 1: план', go('workout') + settle + press('День 1') + settle + typeDay('#np-date', 7) + settle + expect('!document.getElementById("trim-note")', 'строки о сокращении нет')],
+    ['день 1: старт и подходы', press('Начать тренировку') + settle + typeAll('input[id^="r-"]', 10)],
+    ['день 1: снова долго', press('Завершить тренировку') + settle + type('#wk-min', 118) + press('Завершить') + settle
+      + expect(toastIs('Тренировка сохранена') + ' && !' + cfgMain + '.program.trim', 'программа не сокращена: атлет её вернул')]
+  ] },
+
   /* программа второго профиля: приоритет «ягодицы» при лимите 60, известные веса, первая тренировка */
   { name: 'программа второго профиля', steps: [
     ['второй профиль', pick('#prof', 'p2')],

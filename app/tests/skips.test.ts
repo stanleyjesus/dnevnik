@@ -159,3 +159,21 @@ test('время по факту: с таблицей дней эталона о
   assert.deepEqual(Core.toDoc(Core.fromDoc('2025-11-12', old)), old, 'запись без времени — та же');
   assert.deepEqual([okMin(4), okMin(5), okMin(62.4), okMin(300), okMin(301), okMin(null), okMin(NaN)], [null, 5, 62, 300, null, null, null]);
 });
+
+test('программа под выбранное время: прибавки плана включены, только пока тренировка с ними укладывается; остальные — галочкой', () => withDays(3, () => {
+  /* программа короче, когда не успеваешь (просьба владельца, 25 ноября 2026; docs/03, раздел 20): иначе план вернул бы подходы, которые сборка убрала ради времени */
+  const raw = seedRaw(), W = seedW(), last = W[W.length - 1].date, date = Core.addDays(last, 1), slots = Core.currentSlots(W, Core.mergeCfg(raw));
+  const withFit = (time: number | null) => { const r = Core.clone(raw); r.program = { name: 'Программа', since: date, slots }; if (time) r.program.fit = { time, rest: 120, mode: 'even', days: 3 }; return Core.mergeCfg(r); };
+  const more = (A: Adapted) => A.props.filter(p => p.sets.length > A.base.items[p.idx].sets.length).map(p => p.key).concat(A.adds.map(d => d.key));
+  const free = withFit(null), A0 = Core.adapt(W, free, 'mon', date);
+  const on0 = more(A0).filter(k => !A0.off0[k]);
+  assert.equal(on0.length, 3, 'без выбранного времени в дне 1 включены три прибавки');
+  assert.equal(Math.round(Core.estMinutes(free, A0.base.items)), 73);
+  assert.equal(Math.round(Core.estMinutes(free, Core.applyAdapt(A0, A0.off0).items)), 87, 'с ними тренировка — 87 минут');
+  const cut = withFit(75), A1 = Core.adapt(W, cut, 'mon', date);
+  assert.deepEqual(more(A1), more(A0), 'прибавки те же и в плане остаются');
+  assert.ok(Core.fmtDur(Core.estMinutes(cut, Core.applyAdapt(A1, A1.off0).items)) === '1 ч 15 мин', 'под 1 ч 15 мин включено столько, сколько влезает');
+  assert.equal(more(A1).filter(k => !A1.off0[k]).length, 1, 'включена одна из трёх, две — галочкой');
+  const wide = withFit(150), A2 = Core.adapt(W, wide, 'mon', date);
+  assert.deepEqual(A2.off0, A0.off0, 'когда время с запасом, включено то же, что без него');
+}));

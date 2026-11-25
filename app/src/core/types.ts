@@ -78,7 +78,9 @@ export type ProgSlots = Record<string, ProgEntry[]>;
     в неделе, если перед принятием его меняли. fit (только приложение) — программа принята с лимитом недели, найденным по времени на тренировку:
     время, отдых, режим сборки и число дней, при которых он найден; пока они те же, дневник большего лимита не ищет.
     triad (только приложение) — «Сила: пауэрлифтерская тройка», три движения по id: по проценту идут только они (rules.ts, programRoles) */
-export interface ProgramCfg { name?: string; focus?: string | null; others?: string | null; prio?: string; budget?: number; lean?: boolean; strength?: boolean; since: string; made?: string; slots: ProgSlots; prev?: { goals?: Record<string, string>; program?: ProgramCfg; days?: number }; fit?: { time: number; rest: number; mode: string; days: number }; drop?: string[]; triad?: string[] }
+export interface ProgramCfg { name?: string; focus?: string | null; others?: string | null; prio?: string; budget?: number; lean?: boolean; strength?: boolean; since: string; made?: string; slots: ProgSlots; prev?: { goals?: Record<string, string>; program?: ProgramCfg; days?: number }; fit?: { time: number; rest: number; mode: string; days: number }; drop?: string[]; triad?: string[];
+  /* (в эталоне нет) программу сократил сам дневник: тренировки шли дольше расчёта и не влезали во время (ui/trim.ts); trimOff — атлет вернул прежнюю, сам дневник её больше не сокращает */
+  trim?: { from: number; to: number; k: number; time: number }; trimOff?: boolean }
 /** Настройка профиля после mergeCfg: все значения по умолчанию подставлены */
 export interface Cfg {
   start: string | null;                       // понедельник первой недели программы

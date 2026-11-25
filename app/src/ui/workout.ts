@@ -12,6 +12,7 @@ import { appRules, HEAVY, heavyOf, LIGHT_RIR, lightWhy, restTag, rirOf } from '.
 import { okMin } from '../core/pace.ts';
 import { goneOf, movesOf, skipProgram } from './skipfix.ts';
 import { minField, paceText } from './pace.ts';
+import { trimLine, trimProgram } from './trim.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
 import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
 
@@ -43,6 +44,7 @@ export function vWorkout() {
         h('button', { type: 'button', 'aria-pressed': String(!adj), onclick: () => { pl.variant = 'base'; render(true); } }, 'Только по моим правилам'))) : null,
       restSelect('np-rest')),
     A.deload ? h('div', { class: 'banner', style: 'margin-bottom:12px' }, h('b', null, 'Похоже на накопленную усталость. '), 'В ' + A.worse + ' из ' + A.of + ' упражнений последняя тренировка слабее предыдущей, поэтому ' + (appRules() ? 'в плане разгрузка: половина подходов.' : 'вариант с поправками — разгрузочный.')) : null,
+    trimLine(),   // (в эталоне нет) программу сократил дневник: тренировки не влезали во время (trim.ts)
     n && adj ? h('div', { class: 'adj-box', style: 'margin-bottom:12px' }, h('div', { class: 'eyebrow', style: 'margin-bottom:2px' }, 'Что дневник меняет в плане и почему'), h('p', { class: 'sub' }, 'Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.'),
       propList(A, pl.off, (k, isOff) => { if (isOff) pl.off![k] = true; else delete pl.off![k]; render(true); })) : null,
     h('p', { class: 'sub', style: 'margin-bottom:6px' }, A.base.prog ? 'Основа — программа «' + D.cfg.program!.name + '»: в этот день она идёт первый раз, ' + (D.W.some(w => !w.open) ? 'веса взяты из последних тренировок каждого упражнения' : 'вес в каждом упражнении подбирается на месте') + '. В плане ' + setWord(selSets) + (adj && selSets !== baseSets ? ' (по программе ' + baseSets + ')' : '') + '. Всё можно поправить по ходу.' : A.base.template ? 'Основа — тренировка ' + C.fmtDate(A.base.template.slice(0, 10), true) + '. В плане ' + setWord(selSets) + (adj && selSets !== baseSets ? ' (по правилам было бы ' + baseSets + ')' : '') + '. Всё можно поправить по ходу.' : '',
@@ -286,7 +288,10 @@ export async function finishWorkout(confirmed: boolean) {
   if (!ok) { d.open = true; render(true); return; }
   S.draft = null; S.dirty = false; S.ui.confirm = null; backupDraft();
   const moved = fx.length ? await skipProgram(d, fx) : false;
-  toast('Тренировка сохранена' + (moved ? '. Программа поправлена: ' + fx.map(f => C.exName(D.cfg, f.ex) + (f.kind === 'move' ? ' — в ' + C.SLOT[f.to!].n : ' — подходы другим упражнениям')).join(', ') : ''));
+  /* (в эталоне нет) запись уже в хранилище, а список журнала догонит её сам; программа, которая с темпом атлета не влезает во время, сокращается (trim.ts) */
+  let cut: string | null = null;
+  if (appRules()) { S.workouts = C.sortW(S.workouts.filter(w => w.id !== d.id).concat([C.clone(d)])); cut = await trimProgram(); }
+  toast('Тренировка сохранена' + (moved ? '. Программа поправлена: ' + fx.map(f => C.exName(D.cfg, f.ex) + (f.kind === 'move' ? ' — в ' + C.SLOT[f.to!].n : ' — подходы другим упражнениям')).join(', ') : '') + (cut ? '. ' + cut : ''));
   go('overview');
 }
 export async function saveEdit() {

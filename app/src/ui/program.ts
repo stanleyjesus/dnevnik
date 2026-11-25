@@ -116,6 +116,7 @@ export async function undoProgram() {
     /* (в эталоне нет) программа принималась под другое число дней: прежняя возвращается вместе со своим */
     if (!weekDays() && P.prev && P.prev.days) { if (daysOf(P.prev) === 3) delete raw.days; else raw.days = daysOf(P.prev); }
     if (P.prev && P.prev.program) raw.program = P.prev.program; else delete raw.program;
+    if (P.trim && raw.program) raw.program.trimOff = true;   // (в эталоне нет) атлет вернул программу, которую сократил дневник: её дневник сам больше не сокращает (trim.ts)
   });
   useDays(daysOf(S.cfgRaw), weekDays());
   if (!ok) return;
@@ -154,7 +155,9 @@ export function vProgram() {
       P.strength && appRules() && P.triad && P.triad.length ? ' Сила в тройке: ' + C.list(P.triad.filter(id => cfg.ex[id]).map(id => C.exName(cfg, id).toLowerCase())) + ' — каждое два раза в неделю, остальные базовые — обычные упражнения, подсобка — ниже рабочей зоны.'
         : P.strength && appRules() && P.focus && cfg.ex[P.focus] ? ' Сила: «' + C.exName(cfg, P.focus) + '»' + (on > 1 ? '. ' + soloNow(on, C.SLOTS.length).replace(/^о/, 'О') : '') + '; остальные базовые — обычные упражнения, подсобка — ниже рабочей зоны.'
         : P.strength ? (P.focus && cfg.ex[P.focus] ? (on > 1 ? ' Сила в одном базовом: ' + soloNow(on, C.SLOTS.length) + ', подсобка — ниже рабочей зоны.' : ' Сила в одном базовом, подсобка — ниже рабочей зоны.') : ' Силовой режим: каждое базовое идёт два раза в неделю, подсобка — ниже рабочей зоны.') : '',
-      P.budget ? ' Лимит недели — ' + P.budget + ' подходов.' : ''),
+      P.budget ? ' Лимит недели — ' + P.budget + ' подходов.' : '',
+      /* (в эталоне нет) программу сократил дневник: тренировки не влезали во время (trim.ts) */
+      appRules() && P.trim ? ' Сократил дневник: тренировки шли ×' + C.fmt(P.trim.k, 2) + ' к расчёту и не влезали в ' + C.fmtDur(P.trim.time) + ', было ' + C.nSets(P.trim.from) + ' в неделю.' : ''),
     !started && !ro && P.prev ? h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn sm', id: 'prog-undo', onclick: undoProgram }, 'Вернуть прежнюю')) : null];
   } else state = h('p', { class: 'sub' }, empty ? 'Программы пока нет. Собери её ниже: добавь упражнения в дни и нажми «Принять программу».' : 'Она ведётся по тренировкам: дневник берёт за основу последнюю тренировку каждого дня и строит по ней следующую.');
   /* (в эталоне нет) дней в неделе стало меньше, а в убранном дне что-то стоит: в план оно не попадает, пока не принята программа на новое число дней */
