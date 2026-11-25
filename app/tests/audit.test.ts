@@ -7,8 +7,8 @@ import { Core } from '../src/core/index.ts';
 import { useDays } from '../src/core/days.ts';
 import { withStarter } from '../src/core/starter.ts';
 import { DAY_L, DL_LIGHT, ISO_LIGHT } from '../src/core/strength.ts';
-import { HEAVY, RIR_CHECK, byPct, heavyStep, lightShift, rirOf, stretchOf } from '../src/core/rules.ts';
-import type { BuildOpts, ExDef, ProgSlots, Workout } from '../src/core/types.ts';
+import { HEAVY, MANY_EX, RIR_CHECK, byPct, heavyStep, lightShift, rirOf, stretchOf } from '../src/core/rules.ts';
+import type { BuildOpts, ExDef, ItemDoc, ProgSlots, Workout } from '../src/core/types.ts';
 
 type Raw = { ex: Record<string, ExDef>; ignore?: Record<string, number>; rir?: number; program?: Record<string, unknown> };
 type Built = ReturnType<typeof Core.buildProgram>;
@@ -28,7 +28,7 @@ function acceptAs(raw: Raw, pr: Built, since: string): Raw {
   r.program = Object.assign({ name: pr.name, focus: pr.focus || '', others: pr.others || '', since, made: since, slots }, pr.strength ? { strength: true, lean: true } : {});
   return r;
 }
-const one = (date: string, slot: string, item: Record<string, unknown>) => Core.fromDoc(date, { date, slot, items: [item] });
+const one = (date: string, slot: string, item: ItemDoc) => Core.fromDoc(date, { date, slot, items: [item] });
 
 test('предплечья вне расчёта по умолчанию, хват — половина подхода в тягах, подтягиваниях, становой и сгибаниях на бицепс; ягодицы в приседаниях — основные', () => {
   const ref = Core.mergeCfg(starter());
@@ -171,4 +171,23 @@ test('проверка запаса: журнал старше четырёх н
     assert.ok(!Core.adapt(W.filter(w => w.date < '2025-09-30'), cfg, 'mon', '2025-10-01').props.some(x => x.tag === 'Проверка запаса'));
   });
   assert.ok(!Core.adapt(W, Core.mergeCfg(plain(raw)), 'mon', '2025-11-17').props.some(x => x.tag === 'Проверка запаса'), 'с таблицей дней эталона — нет');
+});
+
+test('без выбранного времени в дне от шести упражнений два упражнения на одну мышцу сливаются в одно, когда баланс недели от этого не хуже; с временем и с таблицей дней эталона — нет', () => {
+  const W = seedW(), raw = seedRaw();
+  const twin = (r: Raw) => { const p = r.program as { slots: ProgSlots }; p.slots.mon = p.slots.mon.map(e => e.ex === 'tri_overhead' ? { ex: e.ex, n: 2 } : e).concat([{ ex: 'tri_pushdown', n: 2 }]); return r; };
+  const fold = (pr: Built) => pr.notes.find(n => n.t === 'Одно упражнение вместо двух');
+  withDays(3, () => {
+    const pr = Core.buildProgram(W, Core.mergeCfg(plain(raw)), { budget: 100 });
+    const acc = acceptAs(raw, pr, '2025-11-19');
+    assert.ok((acc.program as { slots: ProgSlots }).slots.mon.length >= MANY_EX, 'день 1 длинный');
+    const pr2 = Core.buildProgram(W, Core.mergeCfg(twin(plain(acc))), { budget: 100 }), mon = pr2.slots.mon;
+    assert.ok(fold(pr2), 'заметка о слиянии');
+    assert.ok(!mon.some(e => e.ex === 'tri_pushdown'), 'второе упражнение на трицепс ушло из дня 1');
+    assert.equal(mon.find(e => e.ex === 'tri_overhead')!.n! >= 3, true, 'его подходы — в растянутом варианте');
+    assert.ok(pr2.after.pv.triceps >= pr.after.pv.triceps - 0.01, 'трицепс получает не меньше');
+    assert.ok(!fold(Core.buildProgram(W, Core.mergeCfg(twin(plain(acc))), { budget: 100, time: 90 })), 'с выбранным временем — правила времени, слияния нет');
+  });
+  const pr = Core.buildProgram(W, Core.mergeCfg(plain(raw)), { budget: 100 });
+  assert.ok(!fold(Core.buildProgram(W, Core.mergeCfg(twin(acceptAs(raw, pr, '2025-11-19'))), { budget: 100 })), 'с таблицей дней эталона — как в эталоне');
 });

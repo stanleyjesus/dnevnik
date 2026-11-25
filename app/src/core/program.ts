@@ -13,11 +13,11 @@ import { ADDS } from './adapt.ts';
 import { DAY_H, DAY_L, DAY_M, DL_LIGHT, SOLO, STRONG } from './strength.ts';
 import { STARTER, STARTER_GEAR } from './starter.ts';
 import { DAYS, awayDays, dayNo } from './days.ts';
-import { BASE_SETS, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayOrder, fillTop, heavyOf, inTime, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, rirText, roomFor, sameMuscles, stretchOf, triadIds } from './rules.ts';
+import { BASE_SETS, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayOrder, fillTop, heavyOf, inTime, MANY_EX, MAX_SETS, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, rirText, roomFor, sameMuscles, stretchOf, triadIds } from './rules.ts';
 import { estMinutes, fmtDur } from './time.ts';
 import type { Tally } from './tally.ts';
 import type { Roles } from './rules.ts';
-import type { Add, BuildOpts, Cfg, Cut, DayOf, ExDef, LibEntry, Move, MuscleMap, OptOpts, ProgEntry, ProgNote, ProgSlots, Slot, Swap, Workout } from './types.ts';
+import type { Add, BuildOpts, Cfg, Cut, DayOf, ExDef, Fold, LibEntry, Move, MuscleMap, OptOpts, ProgEntry, ProgNote, ProgSlots, Slot, Swap, Workout } from './types.ts';
 
 export function currentSlots(workouts: Workout[], cfg: Cfg) {
   const pl = planned(workouts.filter(w => !w.open), cfg), out: ProgSlots = {};
@@ -102,7 +102,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
   const z = o.z, ign: Record<string, number> = o.ignore || {}, prio: Record<string, number> = o.prio || {}, lvl = o.level != null ? o.level : z.opt;
   const tgt = (m: string) => ign[m] ? 0 : prio[m] ? Math.min(z.high - 2, Math.round(lvl * PRIO_K)) : lvl, top = (m: string) => tgt(m) + 2;
   const used = SLOTS.filter(sl => slots[sl.id].length), days = o.allDays || !used.length ? SLOTS.slice() : used;   // allDays: в расчёте все выбранные дни, а не только занятые — при сборке с нуля и всегда с днями «День N»; иначе только те, что заняли базовые
-  const dayMax = Math.ceil(o.budget / days.length) + 2, cut: Cut[] = [];
+  const dayMax = Math.ceil(o.budget / days.length) + 2, cut: Cut[] = [], fold: Fold[] = [];
   const info = (id: string) => c2.ex[id] || (LIB.find(L => L.id === id) || {} as LibEntry).def || { m: {} } as ExDef;
   const mOf = (id: string) => info(id).m || {};
   const uniF = (id: string) => info(id).uni ? 0.5 : 1;
@@ -168,7 +168,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
     const sb = sibling(L, best);
     for (const x of [best, sb]) if (x) { L.splice(L.indexOf(x), 1); cut.push({ ex: x.ex, sl }); }
   }
-  if (o.noFill) return { left: [], cut, once: [], hit: null };
+  if (o.noFill) return { left: [], cut, fold, once: [], hit: null };
   /* a local search. A shortfall below the aim costs six times more than an excess above aim + 2.
      One step changes one exercise; when a day or the week is full, two at once: a set or an exercise goes and another comes. */
   {
@@ -182,10 +182,42 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
        Второй день мышцы тогда ищется с первого шага: время делят подходы и второй день, и второй день — требование (каждая мышца больше одного раза в неделю) */
     let fq = !!o.time;
     const rest = c2.rest || 120, setSec = (id: string) => info(id).uni ? 80 + rest : 40 + rest;
+    /* (в эталоне нет) вывод 8 аудита, без выбранного времени (решение владельца, 25 ноября 2026; rules.ts, MANY_EX): когда поиск больше ничего не находит,
+       в дне от шести упражнений упражнение в два подхода отдаёт их другому упражнению на ту же основную мышцу — если баланс недели от этого не хуже,
+       второй день ни у кого не пропадает и лимиты дня соблюдены. Слитое в этот день поиск обратно не ставит, и поиск идёт дальше */
+    const folding = same && !o.time;
+    const foldOnce = () => {
+      if (!folding) return false;
+      const T = now(), vol0 = cost(T.pv), miss0 = miss((d, m) => T.day[d][m] || 0);
+      let best: { sc: number; sl: Slot; a: ProgEntry; b: ProgEntry } | null = null;
+      for (const sl of days) {
+        const L = slots[sl.id];
+        if (weight(L) < MANY_EX - 0.01) continue;
+        const ok = (e: ProgEntry) => !!e.n && isDp(e.ex) && !byHand(e.ex) && !info(e.ex).uni;
+        for (const b of L) {
+          if (!ok(b) || b.n! > 2 || b.pin) continue;
+          for (const a of L) {
+            if (a === b || !ok(a) || a.n! + b.n! > MAX_SETS || !Object.entries(mOf(b.ex)).some(([m, c]) => c >= 1 && !ign[m] && (mOf(a.ex)[m] || 0) >= 1)) continue;
+            const i = L.indexOf(b), nb = b.n!;
+            a.n! += nb; L.splice(i, 1);
+            const T2 = now(), vol = cost(T2.pv), fine = vol <= vol0 + 0.01 && miss((d, m) => T2.day[d][m] || 0) <= miss0
+              && !MUSCLES.some(m => (T2.day[sl.id][m.id] || 0) > Math.max(o.dayCap, T.day[sl.id][m.id] || 0) + 0.01 || (!ign[m.id] && (T2.pv[m.id] || 0) > (T.pv[m.id] || 0) + 0.01 && (T2.pv[m.id] || 0) > z.high + 0.01));
+            a.n! -= nb; L.splice(i, 0, b);
+            const sc = vol0 - vol + 0.01 * (stretchOf(info(a.ex)) - stretchOf(info(b.ex))) + 0.001 * (a.n! - nb);   // при равном балансе остаётся растянутый вариант (вывод 3), потом то, где подходов больше
+            if (fine && (!best || sc > best.sc + 1e-9)) best = { sc, sl, a, b };
+          }
+        }
+      }
+      if (!best) return false;
+      const L = slots[best.sl.id];
+      step(L, best.a, best.b.n!); L.splice(L.indexOf(best.b), 1);
+      fold.push({ ex: best.b.ex, sl: best.sl, into: best.a.ex, n: best.b.n!, was: !best.b.isNew || !!best.b.from });
+      return true;
+    };
     for (let g = 0; g < 360; g++) {
       const T = now(), tot = total(T), dNow = (d: string, m: string) => T.day[d][m] || 0, vol0 = cost(T.pv), base = vol0 + (fq ? FQ.pen * miss(dNow) : 0);
       const sec = o.time ? Object.fromEntries(SLOTS.map(sl => [sl.id, estMinutes(c2, slots[sl.id]) * 60])) : null;
-      if (base < 0.01) { if (fq) break; fq = true; continue; }
+      if (base < 0.01) { if (fq) { if (foldOnce()) continue; break; } fq = true; continue; }
       const pool = Object.keys(c2.ex).filter(id => isDp(id) && !c2.ex[id].uni).concat(LIB.filter(L => !c2.ex[L.id] && !L.def.uni && !Object.keys(c2.ex).some(id => isDp(id) && sameM(mOf(id), L.def.m))).map(L => L.id));
       const nDays = (id: string) => SLOTS.filter(x => slots[x.id].some(e => e.ex === id)).length;
       /* a step up is worth trying only for a muscle that is short, a step down alone only for one that is above the top */
@@ -212,7 +244,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
         /* (в эталоне нет) с днями «День N» в день не ставится второе упражнение с теми же мышцами: подходы прибавляются в том, что уже стоит.
            Иначе два варианта одного движения по два подхода занимают два места из девяти, и поиск застревает ниже достижимого уровня (rules.ts) */
         const twin = (id: string) => same && L.some(e => sameM(mOf(e.ex), mOf(id)));
-        for (const id of pool) if ((hits(id, short) || fills(id, sl)) && !mainOff(id) && !L.some(e => e.ex === id) && !twin(id) && !cut.some(c => c.ex === id && c.sl === sl)) more.push({ sl, e: null, id, f: uniF(id), dn: 2, dw: 1, pen: (c2.ex[id] ? 0.4 : 0.5) + 0.3 * aside(id) - LONG_K * stretchOf(info(id)), add: true });   // (в эталоне нет) растянутый вариант раньше (вывод 3 аудита)
+        for (const id of pool) if ((hits(id, short) || fills(id, sl)) && !mainOff(id) && !L.some(e => e.ex === id) && !twin(id) && !cut.some(c => c.ex === id && c.sl === sl) && !fold.some(c => c.ex === id && c.sl === sl)) more.push({ sl, e: null, id, f: uniF(id), dn: 2, dw: 1, pen: (c2.ex[id] ? 0.4 : 0.5) + 0.3 * aside(id) - LONG_K * stretchOf(info(id)), add: true });   // (в эталоне нет) растянутый вариант раньше (вывод 3 аудита)
       }
       const rate = (list: Move[]) => {
         const dt = list.reduce((a, x) => a + x.dn * x.f, 0);
@@ -256,7 +288,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
         for (const to of days) if (to !== sl && !slots[to.id].some(x => x.ex === e.ex || (same && sameM(mOf(x.ex), mOf(e.ex)))) && !cut.some(c => c.ex === e.ex && c.sl === to))   // (в эталоне нет) и не в день, где уже стоит упражнение с теми же мышцами
           take([{ sl, e, id: e.ex, f: 1, dn: -e.n, dw: -1, pen: 0.3, drop: true, to }, { sl: to, e: null, id: e.ex, f: 1, dn: e.n, dw: 1, pen: 0, add: true, n: e.n, from: sl }]);
       }
-      if (!best) { if (fq) break; fq = true; continue; }
+      if (!best) { if (fq) { if (foldOnce()) continue; break; } fq = true; continue; }
       for (const a of best.list) {
         const L = slots[a.sl.id];
         if (a.add) {
@@ -272,7 +304,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
     /* half a set short still counts as level: indirect work comes in halves */
     const T = now(), left = MUSCLES.filter(m => !ign[m.id] && (T.pv[m.id] || 0) < tgt(m.id) - 0.75).map(m => m.id);
     const over = MUSCLES.filter(m => !ign[m.id] && (T.pv[m.id] || 0) > top(m.id) + 1.25).map(m => m.id);
-    return { left, over, cut, once: thinOf((d, m) => T.day[d][m] || 0), hit: left.length ? (total(T) >= o.budget - 1.5 ? 'budget' : 'full') : null };
+    return { left, over, cut, fold, once: thinOf((d, m) => T.day[d][m] || 0), hit: left.length ? (total(T) >= o.budget - 1.5 ? 'budget' : 'full') : null };
   }
 
 }
@@ -715,7 +747,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
        под прежнее число дней, и первый проход часто останавливается на уровне ниже достижимого — сразу после «Принять» та же сборка давала заметно
        больше. Поэтому поиск повторяется от найденной раскладки, пока общий уровень растёт (не больше четырёх раз) */
     if (reshape && !pick!.res.left.length && pick!.level < aim) for (let k = 0; k < 4; k++) {
-      const was = pick!.level, cutWas = pick!.res.cut;
+      const was = pick!.level, cutWas = pick!.res.cut, foldWas = pick!.res.fold;
       start = clone(pick!.slots);
       const again = attempt(aim);
       if (!again.ok && aim > z.min) {
@@ -724,7 +756,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
         if (lv < aim) { if (attempt(lv).ok) { while (lv + 1 < aim && attempt(lv + 1).ok) lv++; } else while (lv > was + 1 && !attempt(--lv).ok); }
       }
       if (pick!.level === was) break;
-      pick!.res.cut = cutWas.concat(pick!.res.cut);
+      pick!.res.cut = cutWas.concat(pick!.res.cut); pick!.res.fold = foldWas.concat(pick!.res.fold);
     }
     /* (в эталоне нет) с выбранным временем в «Массе» и «Гибриде» время заполняется подходами (решение владельца, 25 ноября 2026; rules.ts, fillTop):
        уровень растёт выше начала рабочей зоны, пока все мышцы его достают, дни укладываются во время и неделя — в лимит */
@@ -740,7 +772,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
         if (pick !== was && good()) continue;
         pick = was; start = clone(was.slots);
         attempt(lv);
-        if (pick !== was && good()) { pick!.res.cut = was.res.cut.concat(pick!.res.cut); continue; }
+        if (pick !== was && good()) { pick!.res.cut = was.res.cut.concat(pick!.res.cut); pick!.res.fold = was.res.fold.concat(pick!.res.fold); continue; }
         pick = was; break;
       }
       start = start0;
@@ -882,6 +914,9 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     else if (once.length) note('Один день в неделю: ' + names(once), 'Второй день для этих мышц не поместился: мешает лимит недели или дня, а переносить упражнения дальше — значит ломать баланс объёма. Можно добавить подход кнопкой «+» у мышцы или перенести упражнение вручную.');
     res.cut = res.cut.filter(c => !SLOTS.some(sl => slots[sl.id].some(e => e.ex === c.ex && e.from === c.sl.id)));
     if (res.cut.length) note('Убрано из программы', res.cut.map(c => nm(c.ex) + ' (' + c.sl.s.toLowerCase() + ')').join(', ') + ': эти упражнения давали лишнее мышцам, которые и так выше своего уровня, или не помещались в лимит недели' + (time ? ' либо в ' + fmtDur(time) + ' на тренировку' : '') + '.');
+    /* (в эталоне нет) вывод 8 аудита: что из программы атлета слилось с другим упражнением того же дня */
+    const folded = (res.fold || []).filter(f => f.was && slots[f.sl.id].some(e => e.ex === f.into) && !slots[f.sl.id].some(e => e.ex === f.ex));
+    if (folded.length) note('Одно упражнение вместо двух', folded.map(f => nm(f.into) + ' (' + f.sl.s.toLowerCase() + ') +' + f.n + ' вместо ' + nm(f.ex)).join(', ') + '. В длинном дне подходы на мышцу собраны в одно упражнение: для роста считаются подходы, а каждое упражнение — это ещё разминка и настройка снаряда.');
   }
 
   /* (в эталоне нет) Порядок упражнений в дне (решение владельца, 24 ноября 2026, вопрос сборки 13; rules.ts, dayOrder): первым движение цели «Гибрида» и «Силы: …»

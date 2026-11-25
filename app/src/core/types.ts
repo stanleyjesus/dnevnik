@@ -146,6 +146,8 @@ export interface Swap { id: string; n: string; m: MuscleMap; uni: boolean; def?:
 export interface OptOpts { z: Zones; ignore?: Record<string, number>; prio?: Record<string, number>; budget: number; dayCap: number; level?: number; noFill?: boolean; allDays?: boolean; time?: number }
 /** Упражнение, убранное сборкой из дня */
 export interface Cut { ex: string; sl: Slot; to?: string | null }
+/** (в эталоне нет) упражнение, чьи подходы сборка отдала другому упражнению того же дня на ту же мышцу (вывод 8 аудита): was — оно стояло в программе до сборки */
+export interface Fold { ex: string; sl: Slot; into: string; n: number; was: boolean }
 /** Один шаг поиска в сборке: в каком дне, с каким упражнением, на сколько подходов (dn) и упражнений (dw), его цена (pen) */
 export interface Move { sl: Slot; e: ProgEntry | null; id: string; f: number; dn: number; dw: number; pen: number; drop?: boolean; add?: boolean; to?: Slot; n?: number; from?: Slot }
 /** Сколько подходов день даёт мышце */
