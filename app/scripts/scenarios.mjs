@@ -996,10 +996,14 @@ export const SCENARIOS = [
     ['понятно', press('Понятно') + settle + expect('!' + box, 'сообщение закрыто')],
     ['чужой файл', loadCopy('JSON.stringify({ format: "other", version: 1 })') + settle + expect(box + ' && ' + box + '.textContent.includes("Копия не загружена")', 'чужой файл не принят') + press('Понятно')],
     ['копия новее приложения', loadCopy('JSON.stringify({ format: "training-diary-backup", version: 99, profiles: [] })') + settle + expect(box + ' && ' + box + '.textContent.includes("Копия не загружена")', 'копия новой версии не принята') + press('Понятно')],
-    ['верная копия: видно, что внутри', loadCopy('__t.pack') + settle + expect(box + '.textContent.includes("Загрузить копию от") && ' + box + '.textContent.includes("24 тренировки") && ' + box + '.textContent.includes("Сейчас в нём записей нет")', 'состав копии и что сейчас записей нет')],
+    ['верная копия: видно, что внутри', loadCopy('__t.pack') + settle + expect(box + '.textContent.includes("Загрузить копию от") && ' + box + '.textContent.includes("24 тренировки") && ' + box + '.textContent.includes("Сейчас в нём записей нет")', 'состав копии и что сейчас записей нет')
+      /* справочники примерных данных — неполные, как у копии первой версии: загрузка дополнит их встроенным (решение владельца, 25 ноября 2026) */
+      + expect('document.getElementById("import-fill").textContent === "Справочник дополнится встроенным — «Мой дневник»: на снаряды — 6, новых упражнений — 40; «Второй профиль»: на снаряды — 5, новых упражнений — 30."', 'видно, как дополнится справочник каждого профиля')],
     ['отмена: записи не тронуты', press('Отмена') + settle + expect('!' + box + ' && ' + stored + ' === "[]"', 'после отмены в хранилище пусто')],
     ['заменить записи', loadCopy('__t.pack') + settle + click('#import-go') + settle + expect('document.getElementById("toast").textContent === "Копия загружена: 24 тренировки"', 'сообщение о загрузке 24 тренировок')
-      + expect('JSON.parse(' + stored + ').length === 27', 'в хранилище 27 документов: список профилей, две настройки и 24 тренировки')],
+      + expect('JSON.parse(' + stored + ').length === 27', 'в хранилище 27 документов: список профилей, две настройки и 24 тренировки')
+      + expect('JSON.parse(' + stored + ').filter(x => x[0].startsWith("config/") && x[1].ex).map(x => Object.keys(x[1].ex).length).join() === "63,63"', 'в справочнике каждого профиля 63 упражнения')],
+    ['настройка: все упражнения на снарядах', go('setup') + settle + expect(chips + ' === 63 && ' + looseN + ' === "0" && !document.getElementById("starter-tools")', '63 упражнения на снарядах, «без снаряда» пусто, разложить и добавить нечего')],
     ['журнал: 24 записи', go('journal') + settle + expect('document.querySelectorAll(".wo").length === 24', 'в журнале 24 записи')],
     ['второй профиль на месте', expect('[...document.getElementById("prof").options].map(o => o.textContent).join() === "Мой дневник,Второй профиль"', 'в шапке два профиля')],
     ['после перезагрузки записи на месте', RELOAD],
@@ -1013,12 +1017,17 @@ export const SCENARIOS = [
     ...TABS.slice(1).map(v => [v + ': открывается с тем же сообщением', go(v) + settle + expect('!!document.querySelector(".banner.crit")', 'сообщение о сбое на вкладке ' + v)])
   ] },
 
+  /* справочники примерных данных неполные, а загрузка копии дополняет их встроенным: сначала они дополняются кнопками —
+     полный справочник загрузка возвращает как есть, и записи после загрузки те же */
   { name: 'копия туда и обратно', app: true, steps: [
-    ['настройка', go('setup') + settle + click('#setup-more > summary')],
+    ['полный справочник: первый профиль', go('setup') + settle + click('#starter-sort') + settle + click('#starter-add') + settle + expect('!document.getElementById("starter-tools")', 'разложить и добавить нечего')],
+    ['полный справочник: второй профиль', pick('#prof', 'p2') + settle + go('setup') + settle + click('#starter-sort') + settle + click('#starter-add') + settle + expect('!document.getElementById("starter-tools")', 'разложить и добавить нечего')],
+    ['настройка', pick('#prof', 'me') + settle + go('setup') + settle + click('#setup-more > summary')],
     ['сохранить копию', 'sessionStorage.setItem("keep", ' + stored + ');' + click('#backup-all') + settle + 'const s = JSON.parse((await __t.look()).saved || "null");'
       + expect('s && /^dnevnik-backup-\\d{4}-\\d\\d-\\d\\d\\.json$/.test(s.filename)', 'имя файла копии с датой') + 'sessionStorage.setItem("file", s.text);'],
     ['испортить записи: удалить тренировку', go('journal') + settle + press('Удалить') + settle + click('.wo .btn.sm.danger:not(.ghost)') + settle + expect(stored + ' !== sessionStorage.getItem("keep")', 'записи изменились')],
-    ['загрузить сохранённую копию', go('setup') + settle + loadCopy('sessionStorage.getItem("file")') + settle + expect(box + ' && ' + box + '.textContent.includes("Сейчас в нём")', 'видно, сколько записей будет заменено') + click('#import-go')],
+    ['загрузить сохранённую копию', go('setup') + settle + loadCopy('sessionStorage.getItem("file")') + settle + expect(box + ' && ' + box + '.textContent.includes("Сейчас в нём")', 'видно, сколько записей будет заменено')
+      + expect('!document.getElementById("import-fill")', 'справочники полные: дополнять нечего') + click('#import-go')],
     ['записи те же, что до правки', expect(stored + ' === sessionStorage.getItem("keep")', 'после загрузки копии записи совпадают с сохранёнными')],
     ['сначала сохранить нынешние', loadCopy('sessionStorage.getItem("file")') + settle + press('Сначала сохранить нынешние') + settle + 'const s = JSON.parse((await __t.look()).saved || "null");'
       + expect('s && JSON.stringify(JSON.parse(s.text).profiles) === JSON.stringify(JSON.parse(sessionStorage.getItem("file")).profiles)', 'копия нынешних записей совпадает с загружаемой') + press('Отмена')],

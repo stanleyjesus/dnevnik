@@ -7,13 +7,12 @@ import { S } from './state.ts';
 import { toast } from './toast.ts';
 import { saveCfg } from './storage.ts';
 import { D, render } from './render.ts';
-import { STARTER, STARTER_GEAR, starterGear, starterMissing } from '../core/starter.ts';
-import type { RawCfg } from './types.ts';
+import { STARTER, STARTER_GEAR, needGear, starterGear, starterMissing } from '../core/starter.ts';
 
 /* план и черновик программы посчитаны со старым справочником */
 const fresh = () => { S.ui.plan = null; if (S.ui.prog) S.ui.prog.draft = null; };
-/* свой снаряд встроенного списка заводится в профиле, когда на него кладут упражнение */
-export const needGear = (raw: RawCfg, g: string) => { if (STARTER_GEAR[g] && !(raw.gear && raw.gear[g])) { raw.gear = raw.gear || {}; raw.gear[g] = C.clone(STARTER_GEAR[g]); } };
+/* свой снаряд встроенного списка заводится в профиле, когда на него кладут упражнение (core/starter.ts) */
+export { needGear };
 
 /** Упражнения профиля, лежащие «без снаряда», которым встроенный список знает место: id и снаряд */
 export function sortable() {
