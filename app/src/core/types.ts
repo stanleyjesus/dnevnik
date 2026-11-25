@@ -28,11 +28,11 @@ export interface Cyc { pct: number; reps: number }
 /** Упражнение в тренировке: либо диапазон (двойная прогрессия), либо cyc (по процентам); tm — расчётный максимум */
 export interface Item { ex: string; range: Range | null; cyc: Cyc | null; sets: SetRec[]; note: string; skip: boolean; rir: null; tm?: number | null }
 /** Тренировка. slot — день программы; open — ещё идёт */
-export interface Workout { id: string; date: string; slot: string | null; note: string; open: boolean; items: Item[] }
+export interface Workout { id: string; date: string; slot: string | null; note: string; open: boolean; items: Item[]; min?: number }   // min — (в эталоне нет) сколько минут тренировка шла по словам атлета (pace.ts)
 /** Упражнение тренировки в том виде, в каком оно лежит в хранилище: подходы и диапазон записаны текстом */
 export interface ItemDoc { ex: string; cyc?: string; tm?: number; rng?: string; sets?: string; note?: string; skip?: boolean; rir?: number }
 /** Тренировка в том виде, в каком она лежит в хранилище */
-export interface WorkoutDoc { date: string; slot: string; items: ItemDoc[]; note?: string; open?: boolean }
+export interface WorkoutDoc { date: string; slot: string; items: ItemDoc[]; note?: string; open?: boolean; min?: number }
 /** Запись веса тела */
 export interface BodyRec { id?: string; date: string; kg: number }
 
@@ -78,7 +78,9 @@ export type ProgSlots = Record<string, ProgEntry[]>;
     в неделе, если перед принятием его меняли. fit (только приложение) — программа принята с лимитом недели, найденным по времени на тренировку:
     время, отдых, режим сборки и число дней, при которых он найден; пока они те же, дневник большего лимита не ищет.
     triad (только приложение) — «Сила: пауэрлифтерская тройка», три движения по id: по проценту идут только они (rules.ts, programRoles) */
-export interface ProgramCfg { name?: string; focus?: string | null; others?: string | null; prio?: string; budget?: number; lean?: boolean; strength?: boolean; since: string; made?: string; slots: ProgSlots; prev?: { goals?: Record<string, string>; program?: ProgramCfg; days?: number }; fit?: { time: number; rest: number; mode: string; days: number }; drop?: string[]; triad?: string[] }
+export interface ProgramCfg { name?: string; focus?: string | null; others?: string | null; prio?: string; budget?: number; lean?: boolean; strength?: boolean; since: string; made?: string; slots: ProgSlots; prev?: { goals?: Record<string, string>; program?: ProgramCfg; days?: number }; fit?: { time: number; rest: number; mode: string; days: number }; drop?: string[]; triad?: string[];
+  /* (в эталоне нет) программу сократил сам дневник: тренировки шли дольше расчёта и не влезали во время (ui/trim.ts); trimOff — атлет вернул прежнюю, сам дневник её больше не сокращает */
+  trim?: { from: number; to: number; k: number; time: number }; trimOff?: boolean }
 /** Настройка профиля после mergeCfg: все значения по умолчанию подставлены */
 export interface Cfg {
   start: string | null;                       // понедельник первой недели программы
@@ -136,7 +138,9 @@ export interface Addition { key: string; a: Add; exId: string; def: ExDef | null
 /** Подход в поправке: вес и цель по повторам */
 export interface PropSet { w: number | null; tg: Range }
 /** Поправка к упражнению плана: тег, причины, новые подходы */
-export interface Prop { key: string; ex: string; idx: number; tag: string; notes: string[]; sets: PropSet[]; cyc: Cyc | null; range: Range | null; note?: string }   // note — (в эталоне нет) заметка к упражнению, которую ставит поправка
+export interface Prop { key: string; ex: string; idx: number; tag: string; notes: string[]; sets: PropSet[]; cyc: Cyc | null; range: Range | null; note?: string; drop?: boolean; fix?: SkipFix }   // note — (в эталоне нет) заметка к упражнению, которую ставит поправка; drop и fix — (в эталоне нет) упражнение уходит из дня после двух пропусков подряд (skips.ts)
+/** (в эталоне нет) Что делать с упражнением, которое два раза подряд не сделано (skips.ts): перенести в другой день (to), раздать подходы другим упражнениям (adds) или убрать; n — его подходы, left — сколько не поместилось */
+export interface SkipFix { ex: string; kind: 'move' | 'spread' | 'drop'; n: number; to?: string; adds?: { sl: string; ex: string; k: number }[]; left?: number; notes: string[] }
 
 /* ---------- сборка программы ---------- */
 

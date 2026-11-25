@@ -131,7 +131,7 @@ test('два дня, примерные данные: в «Массе» базо
     /* «Гибрид» вокруг жима лежа: лишнее по правилу — базовое из дня вне недели (подтягивания); в днях остаётся то базовое, что в них стояло (решение владельца, 23 ноября 2026) */
     const pb = Core.buildProgram(W, cfg, { focus: 'bench' });
     sound(cfg, pb, 100);
-    assert.deepEqual([loads(pb), span(cfg, pb)], [[35, 36], '9.5–14']);
+    assert.deepEqual([loads(pb), span(cfg, pb)], [[36, 35], '9.5–14']);
     assert.deepEqual([daysWith(pb, 'bench'), daysWith(pb, 'leg_press'), daysWith(pb, 'pullup')], [['mon'], ['wed'], []]);
     assert.deepEqual([pb.dropped, pb.dropFrom], [['pullup'], ['leg_press', 'pullup']], 'цель «Гибрида» в списке «Без базового» не стоит');
     const n = pb.notes.find(v => v.t === 'Не в программе: Подтягивания');
@@ -158,7 +158,7 @@ test('два дня: у пауэрбилдинга отдельного дня �
   withDays(2, () => {
     const pb = Core.buildProgram(W, cfg, { focus: 'bench' });
     sound(cfg, pb, 100);
-    assert.deepEqual(loads(pb), [35, 36]); assert.equal(span(cfg, pb), '9.5–14');
+    assert.deepEqual(loads(pb), [36, 35]); assert.equal(span(cfg, pb), '9.5–14');
     assert.deepEqual(pb.dropped, ['pullup'], 'третье базовое ушло, приоритетное осталось');
     assert.deepEqual([daysWith(pb, 'bench'), daysWith(pb, 'bench_light')], [['mon'], ['wed']]);
     assert.equal(pb.slots.wed[0].ex, 'bench_light', 'лёгкий день — первым');
@@ -213,10 +213,10 @@ test('четыре дня: новое упражнение, переставле
     const rdl = legs.slots.d4.find(e => e.ex === 'x_rdl');
     assert.ok(rdl && rdl.isNew && !rdl.from, 'новое упражнение помечено переносом');
     /* «объём за неделю тот же» — про переезд; если та же сборка изменила у переехавшего упражнения число подходов, это названо отдельно
-       (на примерных данных — с приоритетом «Грудь и плечи»: бицепс бедра лёжа из дня 3) */
-    const chest = Core.buildProgram(W, cfg, { prio: 'chest' });
+       (на примерных данных — «Гибрид» вокруг жима лежа: разгибания ног из дня 3; с разминочными подходами в оценке времени, решение владельца 25 ноября 2026) */
+    const chest = Core.buildProgram(W, cfg, { focus: 'bench' });
     for (const pr of [legs, chest]) for (const e of pr.slots.d4) if (e.from && e.chg) { const nt = pr.notes.find(v => v.t === (e.chg! > 0 ? 'Прибавлены подходы' : 'Убраны подходы')); assert.ok(nt && nt.x!.includes(Core.exName(cfg, e.ex) + ' (день 4)'), Core.exName(cfg, e.ex) + ': изменение подходов не названо'); }
-    assert.ok(chest.slots.d4.some(e => e.ex === 'leg_curl_lying' && e.from && e.chg), 'на примерных данных у переехавшего упражнения меняется число подходов');
+    assert.ok(chest.slots.d4.some(e => e.ex === 'leg_ext' && e.from && e.chg), 'на примерных данных у переехавшего упражнения меняется число подходов');
   });
 });
 
@@ -238,7 +238,7 @@ test('четыре дня: у пауэрбилдинга день на масс�
     /* «Сила: пауэрлифтерская тройка» (пункт 8): приседаний и становой в справочнике нет — сборка добавила их из встроенного */
     const tri = Core.buildProgram(W, cfg, { strength: true, triad: true, budget: 80 });
     sound(cfg, tri, 80);
-    assert.deepEqual(loads(tri), [17, 16, 18, 16]); assert.equal(span(cfg, tri), '8–12');
+    assert.deepEqual(loads(tri), [17, 16, 20, 14]); assert.equal(span(cfg, tri), '8–12');
     assert.deepEqual(tri.triad, ['squat', 'bench', 'deadlift']);
     for (const id of tri.triad!) { const h = daysWith(tri, id), l = daysWith(tri, id + '_light'); assert.equal(h.length, 1, id); assert.equal(l.length, 1, id + '_light'); assert.notEqual(h[0], l[0], id + ': тяжёлый и лёгкий день в одной тренировке'); }
   });
@@ -494,7 +494,7 @@ test('дневник неделей позже: два и четыре дня с
   withDays(2, () => { for (const [opts, b] of modes) sound(cfg, Core.buildProgram(W, cfg, opts), b); assert.deepEqual(loads(Core.buildProgram(W, cfg, {})), [34, 34]); });
   withDays(4, () => {
     for (const [opts, b] of modes.concat([[{ strength: true, triad: true, budget: 80 }, 80]])) sound(cfg, Core.buildProgram(W, cfg, opts), b);
-    assert.deepEqual(loads(Core.buildProgram(W, cfg, { focus: 'bench', strength: true, budget: 80 })), [14, 19, 19, 18]);
-    assert.deepEqual(loads(Core.buildProgram(W, cfg, { strength: true, triad: true, budget: 80 })), [17, 16, 18, 16]);
+    assert.deepEqual(loads(Core.buildProgram(W, cfg, { focus: 'bench', strength: true, budget: 80 })), [16, 19, 19, 16]);
+    assert.deepEqual(loads(Core.buildProgram(W, cfg, { strength: true, triad: true, budget: 80 })), [17, 16, 20, 14]);
   });
 });

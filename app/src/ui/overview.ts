@@ -28,10 +28,11 @@ export function insightEl(i: Insight, withLink?: boolean) {
 }
 /* a plan as rows. A = the diary's proposals for that day, used = keys of the ones applied to `items` */
 export function planRows(items: Item[], slot: string, date: string, A: Adapted | null, used: string[] | null) {
-  const rows = [], on = (k: string) => !!used && used.includes(k);
+  const rows: HTMLElement[] = [], on = (k: string) => !!used && used.includes(k);
+  const gone = A ? A.props.filter(p => p.drop && on(p.key)) : [];   // (в эталоне нет) убранные поправкой «Не делал два раза» (core/skips.ts)
   items.forEach((it, idx) => {
     const prop = A && on(it.ex) ? A.props.find(p => p.ex === it.ex) : null;
-    const add = A && idx >= A.base.items.length ? A.adds.find(a => a.exId === it.ex && on(a.key)) : null;
+    const add = A && idx >= A.base.items.length - gone.length ? A.adds.find(a => a.exId === it.ex && on(a.key)) : null;
     const baseIt = prop ? A!.base.items[prop.idx] : null;
     let right;
     const so = !prop ? C.startOf(D.W, D.cfg, it.ex) : null;           // (в эталоне нет) вес, оценённый по похожему упражнению, помечен «оценка»
@@ -54,6 +55,8 @@ export function planRows(items: Item[], slot: string, date: string, A: Adapted |
     }
     rows.push(h('div', { class: 'plan-row' }, h('span', { class: 'n' }, add ? add.name : C.exName(D.cfg, it.ex), !prop && goalTag(D.cfg, it.ex) ? h('span', { class: 'tag', style: 'margin-left:6px' }, goalTag(D.cfg, it.ex)) : null, prop ? h('span', { class: 'tag accent', style: 'margin-left:6px' }, prop.tag) : add ? h('span', { class: 'tag accent', style: 'margin-left:6px' }, 'новое') : null), right));
   });
+  for (const p of gone) rows.splice(Math.min(p.idx, rows.length), 0, h('div', { class: 'plan-row' }, h('span', { class: 'n muted' }, C.exName(D.cfg, p.ex), h('span', { class: 'tag accent', style: 'margin-left:6px' }, p.tag)),
+    h('div', { class: 'chips' }, h('span', { class: 'tag' }, p.fix && p.fix.kind === 'move' ? 'в ' + C.SLOT[p.fix.to!].n : p.fix && p.fix.kind === 'spread' ? 'подходы — другим' : 'убрано'))));
   if (!rows.length) rows.push(h('div', { class: 'empty', text: 'Для этого дня ещё нет прошлой тренировки. Начни с пустого листа и добавь упражнения.' }));
   return h('div', { class: 'plan-list' }, rows);
 }

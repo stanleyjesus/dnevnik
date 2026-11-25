@@ -16,7 +16,8 @@ import type { Cfg, ProgEntry, Slot, Swap } from '../core/types.ts';
 import type { ProgEdit } from './types.ts';
 
 /** Красные пилюли больных мест, которые нагружает упражнение */
-export const carePills = (cfg: Cfg, id: string, def?: { n?: string } | null) => careOf(cfg, id, def).map(z => h('span', { class: 'tag crit' }, zoneName(z)));
+/* больные места — из нынешней настройки (D.cfg), а не из черновика: отметка в «Что беречь» видна сразу, без пересборки */
+export const carePills = (cfg: Cfg, id: string, def?: { n?: string } | null) => careOf(D.cfg, id, cfg.ex[id] || def).map(z => h('span', { class: 'tag crit' }, zoneName(z)));
 export function builtDay(cfg: Cfg, sl: Slot, list: ProgEntry[], load: number, edit: ProgEdit) {
   const rows = list.map((e, i) => {
     const k = C.kindOf(cfg, e.ex), nm = C.exName(cfg, e.ex), sid = 'sw-' + sl.id + '-' + i, goal = k === 'base' ? C.goalName(cfg, e.ex) : null;

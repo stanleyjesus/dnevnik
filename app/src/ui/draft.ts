@@ -8,7 +8,7 @@ import { D, render } from './render.ts';
 import { progSig } from './program.ts';
 import { lostMode, modeAfter, modeBudget, modeKey, othersOf, setMode } from './goal.ts';
 import { fitBudget, timeOf } from './fit.ts';
-import { appRules, targetIds } from '../core/rules.ts';
+import { appRules, PACE, targetIds } from '../core/rules.ts';
 import type { Cfg, ProgSlots } from '../core/index.ts';
 import type { ProgEdit } from './types.ts';
 
@@ -36,13 +36,14 @@ export function progDraft(cfg: Cfg, cur: ProgSlots, empty: boolean, lifts: strin
   const triad = st.focus === 'p';                                      // «Сила: пауэрлифтерская тройка»: в эталоне нет (решение владельца, 24 ноября 2026)
   if (!budgets.includes(st.budget)) st.budget = cfg.caps.week;
   /* время на тренировку (в эталоне нет: решение владельца, 19 ноября 2026): лимит недели — самый большой из списка, при котором самая длинная
-     тренировка укладывается в названное время. Сборки-примерки считаются по одной на лимит и помнятся, пока не изменилось то, от чего они зависят */
+     тренировка укладывается в названное время. Сборки-примерки считаются по одной на лимит и помнятся, пока не изменилось то, от чего они зависят,
+     в том числе темп атлета (core/pace.ts): с ним оценка времени другая */
   const time = manual ? 0 : timeOf(S.cfgRaw);
   /* (в эталоне нет) от времени зависит и число упражнений в дне (решение владельца, 23 ноября 2026): сборка получает его вместе с лимитом */
   const build = (budget: number) => C.buildProgram(D.W, cfg, { manual, focus: lift || solo, others: st.others, prio, budget, strength: strong || !!solo || triad, triad, time, drop: st.drop });
   let fit = null as ReturnType<typeof fitBudget> | null;
   if (time) {
-    const fkey = st.focus + '|' + st.others + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + JSON.stringify(cfg.ex) + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + cfg.rest + '|' + time + '|' + C.SLOTS.length + '|' + awaySig + (st.drop ? '|' + st.drop.join(',') : '');
+    const fkey = st.focus + '|' + st.others + '|' + progSig(cur) + '|' + PACE.k + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + JSON.stringify(cfg.ex) + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + cfg.rest + '|' + time + '|' + C.SLOTS.length + '|' + awaySig + (st.drop ? '|' + st.drop.join(',') : '');
     if (!st.fit || st.fit.key !== fkey) st.fit = { key: fkey, max: {} };
     const max = st.fit.max, longest = (b: number) => { if (max[b] == null) { const t = build(b); st.fit!.made = { b, t }; max[b] = Math.max(...C.SLOTS.map(sl => C.estMinutes(t.cfg, t.slots[sl.id], cfg.rest))); } return max[b]; };
     const F = P && P.fit, held = F && F.time === time && F.rest === cfg.rest && F.mode === modeKey(st) && F.days === C.SLOTS.length ? budgets.filter(b => b <= +P.budget!) : [];
@@ -52,7 +53,7 @@ export function progDraft(cfg: Cfg, cur: ProgSlots, empty: boolean, lifts: strin
   /* (в эталоне нет) с днями «День N» списка «Подходов в неделю» нет (просьба владельца, 25 ноября 2026): без выбранного времени лимит — потолок методики,
      лимит профиля (100), а под «Силой» — 80, как с первого дня силового режима; с выбранным временем — по времени, как выше */
   else if (appRules()) st.budget = modeBudget(st.focus, cfg.caps.week);
-  const key = st.focus + '|' + st.others + '|' + st.budget + '|' + progSig(cur) + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + Object.keys(cfg.ex).length + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + C.SLOTS.length + '|' + awaySig + (time ? '|' + time + '/' + cfg.rest : '') + (st.drop ? '|' + st.drop.join(',') : '');
+  const key = st.focus + '|' + st.others + '|' + st.budget + '|' + progSig(cur) + '|' + PACE.k + '|' + lifts.map(id => C.goalOf(cfg, id) || '').join(',') + '|' + (P ? P.since : '') + '|' + Object.keys(cfg.ex).length + '|' + cfg.caps.day + '/' + cfg.caps.week + '|' + Object.keys(cfg.ignore).sort().join(',') + '|' + C.SLOTS.length + '|' + awaySig + (time ? '|' + time + '/' + cfg.rest : '') + (st.drop ? '|' + st.drop.join(',') : '');
   /* (в эталоне нет) черновик — та же сборка, что примерка по времени в этом показе, если лимит тот же: сборка с выбранным временем дольше (время заполняется подходами), и дважды её не считаем */
   const made = st.fit && st.fit.made; if (st.fit) delete st.fit.made;
   if (!st.draft || st.key !== key) { st.draft = made && made.b === st.budget ? made.t : build(st.budget); st.key = key; st.edited = false; st.name = null; st.swapAt = null; }

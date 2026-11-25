@@ -89,7 +89,7 @@ test('дни подряд: пары соседних дней по кругу, �
   withDays(4, () => assert.deepEqual(dayPlaces(Core.mergeCfg(starter({ pairs: ['mon-wed', 'fri-d4'] })), Core.SLOTS), { mon: 1, wed: 2, fri: 5, d4: 6 }));
 });
 
-test('дни подряд: мышца основная только в одном из двух, у каждой — два дня в неделе, объём тот же; сразу после «Принять» — та же программа', () => {
+test('дни подряд: мышца основная только в одном из двух, у каждой — два дня в неделе, без выбранного времени объём тот же, со временем — сколько влезает; сразу после «Принять» — та же программа', () => {
   const groups = PAIR_GROUPS.flat();
   for (const [n, pairs, time] of [[3, ['mon-wed'], 90], [3, ['fri-mon'], 60], [4, ['mon-wed', 'fri-d4'], 75], [4, ['mon-wed', 'wed-fri', 'fri-d4'], 75], [3, ['wed-fri'], 0]] as [number, string[], number][]) withDays(n, () => {
     const label = n + ' дня, ' + pairs.join(' ') + ', ' + time, raw = starter({ pairs }), cfg = Core.mergeCfg(raw);
@@ -98,8 +98,12 @@ test('дни подряд: мышца основная только в одно�
     for (const [a, b] of links) { const A = mainsIn(pr, a), B = mainsIn(pr, b); assert.deepEqual([...A].filter(m => B.has(m)), [], label + ': в днях ' + a + ' и ' + b); }
     assert.deepEqual(pairClash(links, d => pr.slots[d].map(e => e.ex), m => (pr.cfg.ex[m] || { m: {} }).m, pr.cfg.ignore), []);
     for (const m of groups) if (!cfg.ignore[m]) assert.ok(daysOf(pr, m) >= 2, label + ': ' + m + ' — один день');
-    assert.ok(Math.abs(total(pr) - total(base)) <= 3, label + ': ' + total(pr) + ' подходов против ' + total(base));
-    assert.ok(noteOf(pr, /^Дни подряд: /) && !noteOf(pr, /в обоих/), label);
+    /* без выбранного времени объём тот же; со временем — сколько влезает: разминка в днях пары короче, а день вне пары берёт все мышцы (разминка во времени, 25 ноября 2026) */
+    if (!time) assert.ok(Math.abs(total(pr) - total(base)) <= 3, label + ': ' + total(pr) + ' подходов против ' + total(base));
+    else for (const sl of Core.SLOTS) assert.ok(Core.estMinutes(pr.cfg, pr.slots[sl.id]) <= time + 2.5, label + ': ' + sl.id + ' не влезает');
+    const say = noteOf(pr, /^Дни подряд: /);
+    assert.ok(say && !noteOf(pr, /в обоих/), label);
+    assert.equal(say!.x!.includes('Подходов со временем на тренировку может выйти больше или меньше'), !!time && Core.SLOTS.some(sl => !links.some(l => l.includes(sl.id))), label + ': ' + say!.x);
     const again = Core.buildProgram([], acceptAs(raw, pr, '2025-11-20'), { time });
     assert.equal(again.same, true, label + ': после «Принять»');
   });

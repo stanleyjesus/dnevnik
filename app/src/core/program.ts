@@ -13,7 +13,7 @@ import { ADDS } from './adapt.ts';
 import { DAY_H, DAY_L, DAY_M, DL_LIGHT, SOLO, STRONG } from './strength.ts';
 import { STARTER, STARTER_GEAR } from './starter.ts';
 import { DAYS, awayDays, dayNo } from './days.ts';
-import { BASE_SETS, EVEN, HEAVY, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayGap, dayOrder, fillTop, PAIR_PEN, pairClash, pairSplit, pairsOf, heavyOf, inTime, MANY_EX, MAX_SETS, OFF_APP, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, restOf, REST, rirText, roomFor, sameMuscles, stopOf, stretchOf, triadIds } from './rules.ts';
+import { BASE_SETS, EVEN, HEAVY, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayGap, dayOrder, fillTop, PAIR_PEN, pairClash, pairSplit, pairsOf, heavyOf, inTime, MANY_EX, MAX_SETS, OFF_APP, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, restOf, REST, rirText, roomFor, sameMuscles, stopOf, stretchOf, triadIds, PACE, WARM, warmSets, freshFor } from './rules.ts';
 import { estMinutes, fmtDur } from './time.ts';
 import type { Tally } from './tally.ts';
 import type { Roles } from './rules.ts';
@@ -190,7 +190,11 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
        пока укладывается в это время по оценке дневника (estMinutes) — подход с отдыхом, у пары сторон по подходу на каждую, минута на упражнение (rules.ts).
        Второй день мышцы тогда ищется с первого шага: время делят подходы и второй день, и второй день — требование (каждая мышца больше одного раза в неделю) */
     let fq = !!o.time;
-    const rest = c2.rest || 120, setSec = (id: string) => { const r = same ? restOf(c2, id, info(id)) : rest; return info(id).uni ? 80 + r : 40 + r; };   // (в эталоне нет) с днями «День N» — отдых упражнения (rules.ts, restOf)
+    const rest = c2.rest || 120, setSec = (id: string) => { const r = same ? restOf(c2, id, info(id)) : rest; return info(id).uni ? 80 + r : 40 + r; };
+    /* (в эталоне нет) с днями «День N» новое упражнение в дне — ещё и его разминочные подходы (rules.ts, WARM; решение владельца, 25 ноября 2026),
+       а прибавка времени считается по темпу атлета, как и сама оценка дня (estMinutes) */
+    const paceK = same ? PACE.k : 1;
+    const warmSec = (id: string, d: string) => same ? warmSets(c2, id, freshFor(info(id).m, new Set(slots[d].flatMap(e => Object.entries(info(e.ex).m || {}).filter(x => x[1] > 0).map(x => x[0]))))) * WARM.sec : 0;   // (в эталоне нет) с днями «День N» — отдых упражнения (rules.ts, restOf)
     /* (в эталоне нет) вывод 8 аудита, без выбранного времени (решение владельца, 25 ноября 2026; rules.ts, MANY_EX): когда поиск больше ничего не находит,
        в дне от шести упражнений упражнение в два подхода отдаёт их другому упражнению на ту же основную мышцу — если баланс недели от этого не хуже,
        второй день ни у кого не пропадает и лимиты дня соблюдены. Слитое в этот день поиск обратно не ставит, и поиск идёт дальше */
@@ -267,7 +271,7 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
         for (const d of Object.keys(load)) {
           if (load[d] > 0.01 && T.load[d] + load[d] > dayMax + 0.01) return null;
           if (wt[d] > 0 && weight(slots[d]) + wt[d] > (sec ? TIME_EX.day : MAX_EX) + 0.6) return null;   // (в эталоне нет) с выбранным временем — не больше десяти (rules.ts)
-          if (sec) { const s = list.reduce((a, x) => a + (x.sl.id === d ? x.dn * setSec(x.id) + x.dw * 60 : 0), 0); if (s > 0.01 && !inTime((sec[d] + s + (sec[d] ? 0 : 300)) / 60, o.time!)) return null; }
+          if (sec) { const s = list.reduce((a, x) => a + (x.sl.id === d ? x.dn * setSec(x.id) + x.dw * 60 + (x.dw > 0 ? warmSec(x.id, d) : 0) : 0), 0); if (s > 0.01 && !inTime((sec[d] + (s + (sec[d] ? 0 : 300)) * paceK) / 60, o.time!)) return null; }   // (в эталоне нет) новому упражнению — его разминка, всё — по темпу атлета
           for (const [m, v] of Object.entries(dayM[d])) if (v > 0.01 && (T.day[d][m] || 0) + v > o.dayCap + 0.01) return null;
         }
         for (const a of list) if (a.add && nDays(a.id) - list.filter(x => x.drop && x.id === a.id).length + 1 > lim(a.id)) return null;
@@ -754,7 +758,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     /* (в эталоне нет) в дне нет места ещё одному упражнению по два подхода: в нём девять упражнений, а с выбранным временем — оно уже не укладывается */
     const places = (L: ProgEntry[]) => L.reduce((a, e) => a + ((c2.ex[e.ex] || {} as ExDef).uni ? 0.5 : 1), 0);
     const crowded = (L: ProgEntry[]) => places(L) + 1 > (time ? TIME_EX.day : MAX_EX) + 0.6;   // (в эталоне нет) с выбранным временем — десять упражнений (rules.ts)
-    const full = (L: ProgEntry[]) => crowded(L) || (!!time && !inTime(estMinutes(c2, L) + (60 + 2 * (40 + (appRules() ? REST.other : c2.rest || 120))) / 60, time));
+    const full = (L: ProgEntry[]) => crowded(L) || (!!time && !inTime(estMinutes(c2, L) + (60 + 2 * (40 + (appRules() ? REST.other : c2.rest || 120))) / 60 * (appRules() ? PACE.k : 1), time));   // (в эталоне нет) прибавка — по темпу атлета
     /* (в эталоне нет) дни подряд (решение владельца, 25 ноября 2026; rules.ts, pairSplit): группы мышц делятся между днями пары, и каждая получает
        не меньше двух дней без двух подряд. Базовые и закреплённое стоят, где стоят: их дни своим группам остаются */
     const pairLinks = pairsOf(cfg0, SLOTS);
@@ -940,6 +944,24 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
       const t = tried[lv];
       if (!t.res.left.length && !thin(t.res, t.slots).length) { pick = { level: lv, res: t.res, slots: t.slots, ev: t.ev }; thinUp = up; break; }
     }
+    /* (в эталоне нет) дни подряд с выбранным временем: разминка во времени (25 ноября 2026) делает день вне пары дороже, и первый проход часто
+       останавливается ниже достижимого — сразу после «Принять» та же сборка давала больше. Поэтому поиск повторяется от найденной раскладки,
+       пока общий уровень растёт и второй день есть у всех мышц (не больше четырёх раз), — как у недели под другое число дней */
+    if (split && time && !pick!.res.left.length) for (let k = 0; k < 4; k++) {
+      const was = pick!, hi = Math.max(aim, top || 0);
+      let got = null as typeof pick;
+      start = clone(was.slots);
+      for (let lv = was.level + 1; lv <= hi; lv++) {
+        pick = was; attempt(lv);
+        const t = tried[lv];
+        if (t.res.left.length || thin(t.res, t.slots).length || (top && lv > aim && (t.res.over || []).length > over0)) break;
+        got = { level: lv, res: t.res, slots: t.slots, ev: t.ev };
+      }
+      pick = was;
+      if (!got) break;
+      got.res.cut = was.res.cut.concat(got.res.cut); got.res.fold = was.res.fold.concat(got.res.fold);
+      pick = got; thinUp = [];
+    }
     const level = pick!.level, res = pick!.res;
     for (const sl of SLOTS) slots[sl.id] = pick!.slots[sl.id];
     for (const id of Object.keys(create)) if (!SLOTS.some(sl => slots[sl.id].some(e => e.ex === id))) { delete create[id]; delete c2.ex[id]; }
@@ -1050,8 +1072,9 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
       const days = 'Дни подряд: ' + pairLinks.map(([a, b]) => dayNo(a) + '–' + dayNo(b)).join(', '), why = ' Это тренерское правило, прямых исследований нет.';
       if (!split) note(days + ' — мышцы в обоих днях', 'Тренировки идут три дня подряд: у мышцы два дня в неделе, а не соседних дней только два — первый и последний, и средний день остался бы пустым. Поэтому дни собраны как без отметки.' + why);
       else {
-        const m = SLOTS.filter(sl => slots[sl.id].length).map(sl => estMinutes(c2, slots[sl.id])), uneven = m.length > 1 && Math.max(...m) - Math.min(...m) > EVEN.min;
-        note(days + (both.length ? ' · в обоих: ' + names(both) : ''), 'В двух днях подряд мышца основная только в одном, второй её день в неделе — не соседний: после тяжёлой работы у неё есть сутки отдыха.' + why + (both.length ? ' ' + names(both).replace(/^./, c => c.toUpperCase()) + ' — в обоих днях: так стоят базовые и закреплённое упражнение, сборка их не двигает.' : '') + (uneven ? ' Дни из-за этого разной длины: мышцы делятся между днями пары группами — жимы, тяги, ноги, средние дельты.' : ''));
+        const m = SLOTS.filter(sl => slots[sl.id].length).map(sl => estMinutes(c2, slots[sl.id])), uneven = m.length > 1 && Math.max(...m) - Math.min(...m) > EVEN.min,
+          free = !!time && SLOTS.some(sl => !pairLinks.some(l => l.includes(sl.id)));
+        note(days + (both.length ? ' · в обоих: ' + names(both) : ''), 'В двух днях подряд мышца основная только в одном, второй её день в неделе — не соседний: после тяжёлой работы у неё есть сутки отдыха.' + why + (both.length ? ' ' + names(both).replace(/^./, c => c.toUpperCase()) + ' — в обоих днях: так стоят базовые и закреплённое упражнение, сборка их не двигает.' : '') + (uneven ? ' Дни из-за этого разной длины: мышцы делятся между днями пары группами — жимы, тяги, ноги, средние дельты.' : '') + (free ? ' Подходов со временем на тренировку может выйти больше или меньше, чем без отметки: в днях пары мышц меньше и разминка короче, а день вне пары берёт все мышцы.' : ''));
       }
     }
     if (folded.length) note('Одно упражнение вместо двух', folded.map(f => nm(f.into) + ' (' + f.sl.s.toLowerCase() + ') +' + f.n + ' вместо ' + nm(f.ex)).join(', ') + '. В длинном дне подходы на мышцу собраны в одно упражнение: для роста считаются подходы, а каждое упражнение — это ещё разминка и настройка снаряда.');

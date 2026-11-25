@@ -13,13 +13,14 @@ import { goalPicker, mixText, modeBudget, modeKey, soloNow, soloText } from './g
 import { needGear } from './starter.ts';
 import { TIMES, timeOf } from './fit.ts';
 import { progDraft, progLifts } from './draft.ts';
-import { builtDay } from './builtday.ts';
+import { builtDay, carePills } from './builtday.ts';
 import { pairsRow } from './care.ts';
 import { weekDays } from './platform.ts';
 import { DAY_COUNTS, awayDays, daysOf, useDays } from '../core/days.ts';
-import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift } from '../core/rules.ts';
+import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift, stopOf } from '../core/rules.ts';
 import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../core/index.ts';
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
+import { paceText } from './pace.ts';
 
 /* ---------- UI: the programme — what runs now, and a new one: by hand or built around a priority ---------- */
 export const progSig = (slots: ProgSlots) => C.SLOTS.map(sl => (slots[sl.id] || []).map(e => e.ex + ':' + (e.n || '')).join(',')).join('|');
@@ -56,11 +57,12 @@ export function progDay(cfg: Cfg, sl: Slot, list: ProgEntry[], load: number, was
         alts.same.length ? h('optgroup', { label: 'Те же мышцы' }, alts.same.map(x => opt(x))) : null,
         alts.near.length ? h('optgroup', { label: 'Близкие: мышцы совпадают частично' }, alts.near.map(x => opt(x, ' — ' + x.main!.map(m => C.MUSCLE[m].n.toLowerCase()).join(', ')))) : null),
       h('button', { type: 'button', class: 'btn ghost sm', onclick: () => edit!.swapOpen(null) }, 'Отмена')) : null;
-    return h('div', { class: 'prow' + (e.isNew || e.chg || e.was || (marked && marked(e)) ? ' changed' : '') + (open ? ' swapping' : '') }, h('div', { class: 'grow' }, h('div', { class: 'pn' }, nm, tags), sub), ctl, picker);
+    return h('div', { class: 'prow' + (e.isNew || e.chg || e.was || (marked && marked(e)) ? ' changed' : '') + (open ? ' swapping' : '') }, h('div', { class: 'grow' }, h('div', { class: 'pn' }, nm, tags, carePills(cfg, e.ex)), sub), ctl, picker);   // (в эталоне нет) пилюли больных мест, решение владельца 25 ноября 2026
   });
   let adder = null;
   if (edit) {
-    const ids = Object.keys(cfg.ex).filter(id => !C.isLight(cfg, id) && !list.some(e => e.ex === id)).sort((a, b) => C.exName(cfg, a).localeCompare(C.exName(cfg, b), 'ru'));
+    const stop = stopOf(D.cfg);                                       // (в эталоне нет) стоп-упражнения список дня не предлагает, решение владельца 25 ноября 2026
+    const ids = Object.keys(cfg.ex).filter(id => !C.isLight(cfg, id) && !list.some(e => e.ex === id) && !stop(id)).sort((a, b) => C.exName(cfg, a).localeCompare(C.exName(cfg, b), 'ru'));
     adder = ids.length ? h('div', { class: 'row', style: 'margin-top:8px;flex-wrap:nowrap' },
       h('select', { id: 'pa-' + sl.id, class: 'grow', 'aria-label': 'Упражнение для дня: ' + sl.n, style: 'min-width:0' }, ids.map(id => h('option', { value: id, text: C.exName(cfg, id) }))),
       h('button', { class: 'btn sm', id: 'pb-' + sl.id, onclick: () => edit.add(sl.id, $('pa-' + sl.id)!.value) }, icon('plus'), 'В день')) : null;
@@ -115,6 +117,7 @@ export async function undoProgram() {
     /* (в эталоне нет) программа принималась под другое число дней: прежняя возвращается вместе со своим */
     if (!weekDays() && P.prev && P.prev.days) { if (daysOf(P.prev) === 3) delete raw.days; else raw.days = daysOf(P.prev); }
     if (P.prev && P.prev.program) raw.program = P.prev.program; else delete raw.program;
+    if (P.trim && raw.program) raw.program.trimOff = true;   // (в эталоне нет) атлет вернул программу, которую сократил дневник: её дневник сам больше не сокращает (trim.ts)
   });
   useDays(daysOf(S.cfgRaw), weekDays());
   if (!ok) return;
@@ -153,7 +156,9 @@ export function vProgram() {
       P.strength && appRules() && P.triad && P.triad.length ? ' Сила в тройке: ' + C.list(P.triad.filter(id => cfg.ex[id]).map(id => C.exName(cfg, id).toLowerCase())) + ' — каждое два раза в неделю, остальные базовые — обычные упражнения, подсобка — ниже рабочей зоны.'
         : P.strength && appRules() && P.focus && cfg.ex[P.focus] ? ' Сила: «' + C.exName(cfg, P.focus) + '»' + (on > 1 ? '. ' + soloNow(on, C.SLOTS.length).replace(/^о/, 'О') : '') + '; остальные базовые — обычные упражнения, подсобка — ниже рабочей зоны.'
         : P.strength ? (P.focus && cfg.ex[P.focus] ? (on > 1 ? ' Сила в одном базовом: ' + soloNow(on, C.SLOTS.length) + ', подсобка — ниже рабочей зоны.' : ' Сила в одном базовом, подсобка — ниже рабочей зоны.') : ' Силовой режим: каждое базовое идёт два раза в неделю, подсобка — ниже рабочей зоны.') : '',
-      P.budget ? ' Лимит недели — ' + P.budget + ' подходов.' : ''),
+      P.budget ? ' Лимит недели — ' + P.budget + ' подходов.' : '',
+      /* (в эталоне нет) программу сократил дневник: тренировки не влезали во время (trim.ts) */
+      appRules() && P.trim ? ' Сократил дневник: тренировки шли ×' + C.fmt(P.trim.k, 2) + ' к расчёту и не влезали в ' + C.fmtDur(P.trim.time) + ', было ' + C.nSets(P.trim.from) + ' в неделю.' : ''),
     !started && !ro && P.prev ? h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn sm', id: 'prog-undo', onclick: undoProgram }, 'Вернуть прежнюю')) : null];
   } else state = h('p', { class: 'sub' }, empty ? 'Программы пока нет. Собери её ниже: добавь упражнения в дни и нажми «Принять программу».' : 'Она ведётся по тренировкам: дневник берёт за основу последнюю тренировку каждого дня и строит по ней следующую.');
   /* (в эталоне нет) дней в неделе стало меньше, а в убранном дне что-то стоит: в план оно не попадает, пока не принята программа на новое число дней */
@@ -240,7 +245,7 @@ export function vProgram() {
       manual ? h('label', { class: 'f grow' }, h('span', null, 'Название программы'), h('input', { type: 'text', id: 'prog-name', value: st.name != null ? st.name : pr.name, oninput: e => { st.name = e.target.value; } })) : null),
     fit && !fit.fits ? h('p', { class: 'sub', id: 'pt-note', role: 'status', style: 'margin:-4px 0 12px' }, 'За ' + C.fmtDur(time) + ' не уложиться: даже ' + fit.budget + ' подходов в неделю — это тренировка ≈ ' + C.fmtDur(fit.min) + (appRules() ? '. Выбери больше времени или больше дней в неделю.' : '. Увеличь время или сократи отдых.')) : null,
     h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => appRules() && !manual ? builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], edit) : progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], empty ? null : pr.before.load[sl.id], edit, marked))),   // (в эталоне нет) с днями «День N» у программы, которую собрал дневник, только «Заменить» (builtday.ts, решение владельца 25 ноября 2026)
-    h('p', { class: 'sub', style: 'margin-top:8px' }, (appRules() && !manual ? 'Полоса слева — замена. ' : 'Полоса слева — то, что меняется. ') + 'Время — разминка, подходы и отдых ' + (appRules() ? 'по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.' : 'по ' + C.fmtRest(cfg.rest) + '.')),
+    h('p', { class: 'sub', style: 'margin-top:8px' }, (appRules() && !manual ? 'Полоса слева — замена. ' : 'Полоса слева — то, что меняется. ') + 'Время — разминка, подходы и отдых ' + (appRules() ? 'по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.' + paceText() : 'по ' + C.fmtRest(cfg.rest) + '.')),
     rulesBox(C.ruleBreaks(pr.cfg, pr.after)),
 
     h('hr', { class: 'rule' }),
