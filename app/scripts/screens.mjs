@@ -333,8 +333,9 @@ try {
     await ref.goto(REF + '/__ref/harness.html');
     await mine.goto(APP + '/', noStore ? '!!window.__t && !!document.querySelector("#sync.bad")' : undefined);
     if (data.backup) {
-      /* приложение получает записи так же, как их получит атлет: загрузкой резервной копии с экрана */
-      await mine.run('window.__dnevnik.loadBackupText(' + J(JSON.stringify(data.backup)) + ', "backup.json"); for (let i = 0; i < 100 && !document.getElementById("import-go"); i++) await __t.pause(50);'
+      /* приложение получает записи так же, как их получит атлет: загрузкой резервной копии с экрана, но без дополнения справочника встроенным —
+         те же записи, что получает эталон; дополнение проверяет сценарий «загрузка копии» */
+      await mine.run('window.__dnevnik.loadBackupText(' + J(JSON.stringify(data.backup)) + ', "backup.json", true); for (let i = 0; i < 100 && !document.getElementById("import-go"); i++) await __t.pause(50);'
         + ' document.getElementById("import-go").click(); for (let i = 0; i < 200 && (document.getElementById("import-box") || window.__dnevnik.S.conn !== "ready"); i++) await __t.pause(50); await __t.settle();');
       await mine.reload();
     }

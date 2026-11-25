@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { BACKENDS, plain, readJson } from './helpers.ts';
 import { Core } from '../src/core/index.ts';
-import { exKey, STARTER, STARTER_GEAR, STARTER_OWN, starterGear, starterMissing, starterOf, withStarter } from '../src/core/starter.ts';
+import { exKey, fillStarter, STARTER, STARTER_GEAR, STARTER_OWN, starterGear, starterMissing, starterOf, withStarter } from '../src/core/starter.ts';
 import { loadProfile } from '../src/data/load.ts';
 import type { ExDef } from '../src/core/types.ts';
 
@@ -113,6 +113,56 @@ test('чего профилю не хватает и куда положить �
   /* в первом профиле без снаряда лежат шесть упражнений — каждому список знает место */
   const cfg = Core.mergeCfg({ ex: me }), loose = Object.keys(cfg.ex).filter(id => Core.gearOf(cfg, id) === Core.NO_GEAR);
   assert.ok(loose.length > 0 && loose.every(id => !!starterGear(id, cfg.ex[id].n)), 'остаются без места: ' + loose.filter(id => !starterGear(id, cfg.ex[id].n)).join(', '));
+});
+
+test('копия первой версии: справочник дополняется встроенным — шесть упражнений на снаряды, сорок новых, своё не меняется (решение владельца, 25 ноября 2026)', () => {
+  const raw = readJson('data/config.json'), before = JSON.stringify(raw);
+  const f = fillStarter(raw), got = f.raw!;
+  assert.equal(JSON.stringify(raw), before, 'исходная настройка изменена');
+  assert.deepEqual(f.sorted, ['bench', 'leg_press', 'pullup', 'pec_fly', 'bayesian_curl', 'abs']);
+  assert.equal(f.added.length, 40);
+  assert.deepEqual(f.added, starterMissing(raw.ex));
+  /* свои упражнения на месте и такие же: меняется только снаряд у тех, что лежали «без снаряда», и уходят шаг и округление, которые не читаются */
+  for (const [id, e] of Object.entries(raw.ex as Record<string, ExDef>)) {
+    const x = Object.assign({}, got.ex[id]), y = Object.assign({}, e);
+    if (f.sorted.includes(id)) { assert.equal(x.gear, STARTER[id].gear, id + ': снаряд'); delete x.gear; delete y.step; delete y.round; }
+    assert.deepEqual(x, y, id + ': своё упражнение изменилось');
+  }
+  for (const id of f.added) assert.deepEqual(got.ex[id], STARTER[id], id);
+  assert.deepEqual(got.gear, { g_pullup: { n: 'Подтягивания', step: 1 } });
+  /* после загрузки — как у нового профиля: 63 упражнения, «без снаряда» пусто, подтягивания с шагом 1 кг */
+  const cfg = Core.mergeCfg(got);
+  assert.equal(Object.keys(cfg.ex).length, 63);
+  assert.deepEqual(Object.keys(cfg.ex).filter(id => Core.gearOf(cfg, id) === Core.NO_GEAR), []);
+  for (const id of ids) assert.equal(Core.gearOf(cfg, id), STARTER[id].gear, id + ': снаряд');
+  assert.equal(cfg.ex.pullup.round, 1);
+  /* второй раз дополнять нечего: та же настройка, тот же объект */
+  const again = fillStarter(got);
+  assert.equal(again.raw, got); assert.deepEqual([again.sorted, again.added], [[], []]);
+});
+
+test('дополнение встроенным не трогает выбор атлета, лёгкий день, полный справочник и настройку без упражнений', () => {
+  assert.deepEqual(fillStarter(null), { raw: null, sorted: [], added: [] });
+  const none = { start: '2025-11-10', ex: {} };
+  assert.equal(fillStarter(none).raw, none, 'без упражнений встроенный список подставит загрузка профиля');
+  const full = withStarter(null);
+  assert.equal(fillStarter(full).raw, full, 'полный справочник, выгруженный приложением, — без изменений');
+  const raw = { ex: {
+    bench: { n: 'Жим лежа', m: { chest: 1 }, mode: 'cycle', gear: 'none', round: 5 },            // «без снаряда» выбрал атлет
+    bench_light: { n: 'Жим лежа — лёгкий день', m: { chest: 1 }, mode: 'light', of: 'bench' },
+    pec_fly: { n: 'Бабочка', m: { chest: 1 }, gear: 'g_old', step: 5 },                             // свой снаряд, которого больше нет: лежит по названию — «без снаряда»
+    leg_press: { n: 'Жим ногами', m: { quads: 1 }, mode: 'cycle', gear: 'g_sled' },                  // свой снаряд остаётся
+    x_1: { n: 'Фермерская прогулка', m: { forearms: 1 } },                                             // встроенный список его не знает
+    x_2: { n: 'Тяга гантели в наклоне одной рукой', m: { upper_back: 1 } }                             // лежит по названию на гантели
+  } as Record<string, ExDef>, gear: { g_sled: { n: 'Платформа', step: 10 } } };
+  const f = fillStarter(raw), got = f.raw!;
+  assert.deepEqual(f.sorted, ['pec_fly']);
+  assert.equal(got.ex.pec_fly.gear, 'machine'); assert.equal(got.ex.pec_fly.step, undefined);
+  assert.deepEqual(got.ex.bench, raw.ex.bench); assert.deepEqual(got.ex.bench_light, raw.ex.bench_light); assert.deepEqual(got.ex.leg_press, raw.ex.leg_press);
+  assert.deepEqual(got.ex.x_1, raw.ex.x_1); assert.deepEqual(got.ex.x_2, raw.ex.x_2);
+  assert.ok(!f.added.includes('bench') && !f.added.includes('leg_press') && !f.added.includes('pec_fly'));
+  assert.equal(f.added.length, 60);
+  assert.deepEqual(got.gear, { g_sled: { n: 'Платформа', step: 10 }, g_pullup: { n: 'Подтягивания', step: 1 } });
 });
 
 for (const b of BACKENDS) test('пустое хранилище (' + b.name + '): профиль считается со встроенным списком, в хранилище ничего не пишется', async () => {
