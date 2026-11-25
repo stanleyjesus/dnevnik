@@ -6,7 +6,7 @@ import { S } from './state.ts';
 import { toast } from './toast.ts';
 import { D, render } from './render.ts';
 import { progSig } from './program.ts';
-import { lostMode, modeAfter, modeKey, setMode } from './goal.ts';
+import { lostMode, modeAfter, modeKey, othersOf, setMode } from './goal.ts';
 import { fitBudget, timeOf } from './fit.ts';
 import { appRules, targetIds } from '../core/rules.ts';
 import type { Cfg, ProgSlots } from '../core/index.ts';
@@ -28,7 +28,7 @@ export function progDraft(cfg: Cfg, cur: ProgSlots, empty: boolean, lifts: strin
   const ui = S.ui;
   const budgets = [40, 50, 60, 70, 80, 90, 100, 110, 120].filter(v => v < cfg.caps.week).concat(cfg.caps.week);
   if (!ui.prog) ui.prog = { focus: P && P.strength && P.triad && P.triad.length && appRules() ? 'p' : P && P.strength && P.focus && lifts.includes(P.focus) ? 's:' + P.focus : P && P.strength && lifts.length ? 's' : P && P.focus && lifts.includes(P.focus) ? 'l:' + P.focus : P && P.prio && C.PRIOS.some(g => g.id === P.prio) ? 'm:' + P.prio : empty ? 'manual' : 'even',
-    others: P && P.others === 'grow' ? 'grow' : !appRules() || (P && P.others === 'hold') ? 'hold' : 'plain', budget: P && +P.budget! > 0 && +P.budget! <= cfg.caps.week ? +P.budget! : cfg.caps.week, draft: null, key: '' };
+    others: othersOf(P), budget: P && +P.budget! > 0 && +P.budget! <= cfg.caps.week ? +P.budget! : cfg.caps.week, draft: null, key: '' };
   if (lostMode(ui.prog.focus, lifts)) setMode(ui.prog, modeAfter(ui.prog.focus, lifts), cfg.caps.week);   // выбранного базового больше нет в справочнике: в эталоне экран оставался в режиме, которого уже не собрать
   const st = ui.prog, manual = st.focus === 'manual', lift = st.focus.startsWith('l:') ? st.focus.slice(2) : null, prio = st.focus.startsWith('m:') ? st.focus.slice(2) : '';
   const strong = st.focus === 's';                                    // силовой режим: в эталоне его нет (решение владельца, 19 ноября 2026)
