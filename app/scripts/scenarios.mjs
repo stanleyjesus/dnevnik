@@ -630,6 +630,9 @@ export const SCENARIOS = [
       + expect('[...document.getElementById("pl").options].map(o => o.textContent).join("|") === "Жим лежа|Приседания со штангой|Жим ногами|Подтягивания|Становая тяга|Ягодичный мост со штангой|Жим штанги стоя|Бицепс со штангой стоя"', 'в списке — названия; того, чего в справочнике нет, — по встроенному')
       + expect('!!document.getElementById("po-hold") && ' + listIs('pb-budget', '70'), 'есть переключатель «Остальные базовые», лимит прежний')
       + expect(progTitle + ' === "Пауэрбилдинг: жим лежа"', 'название программы')],
+    ['гибрид: остальные базовые — поддержание', expect('document.getElementById("po-plain").getAttribute("aria-pressed") === "true"', 'по умолчанию остальные базовые — «Как подсобка» (вывод 5 аудита)') + click('#po-hold') + settle
+      + expect('document.getElementById("po-hold").getAttribute("aria-pressed") === "true"', 'выбрано «Поддержание»')],
+    ['гибрид: остальные базовые снова как подсобка', click('#po-plain') + settle + expect('document.getElementById("po-plain").getAttribute("aria-pressed") === "true"', 'снова «Как подсобка»')],
     ['гибрид: другая цель', pick('#pl', 'l:leg_press') + settle + expect(goalIs('mix') + ' && ' + listIs('pl', 'l:leg_press'), 'в списке — жим ногами') + expect(progTitle + ' === "Пауэрбилдинг: жим ногами"', 'название программы')],
     ['обратно к массе: спина на месте', click('#pg-mass') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back'), 'выбор под целью «Масса» запомнен') + expect(progTitle + ' === "Приоритет: спина"', 'название программы')],
     ['обратно к гибриду: то же базовое', click('#pg-mix') + settle + expect(goalIs('mix') + ' && ' + listIs('pl', 'l:leg_press'), 'выбор под целью «Гибрид» запомнен')],
