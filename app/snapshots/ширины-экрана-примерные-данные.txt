@@ -2888,7 +2888,7 @@
 +      div.grow
 +       div.pn Кисть с гантелью левая рука
 +       div.sub 3 × 8–16
-@@ 40 -474 +174
+@@ 40 -474 +180
 +     div.eyebrow Новая программа
 +     h2 Равномерно на всё тело
 +    span.sub 80 подходов в неделю · сейчас 67 · тренировка ≈ 1 ч 30 мин
@@ -2918,6 +2918,12 @@
 +      button#pd-2(type="button" aria-pressed="false") 2
 +      button#pd-3(type="button" aria-pressed="true") 3
 +      button#pd-4(type="button" aria-pressed="false") 4
++    div#pp.pf
++     span Дни подряд
++     div.picks(role="group" aria-label="Какие дни программы идут подряд")
++      button#pp-mon-wed.btn.sm(type="button" aria-pressed="false") 1–2
++      button#pp-wed-fri.btn.sm(type="button" aria-pressed="false") 2–3
++      button#pp-fri-mon.btn.sm(type="button" aria-pressed="false") 3–1
 +    label.f
 +     span Время на тренировку
 +     select#pt
@@ -3397,12 +3403,13 @@
   gear-to-leg_press=
   gear-to-pullup=
   gear-to-abs=
+  stop-add=
   pr-n-me=Мой дневник
   pr-n-p2=Второй профиль
   pr-new=
   pr-copy=true
 экран: правки к шагу 4
-@@ 2 -194 +380
+@@ 2 -194 +420
 +  section.card
 +   div.sec-h
 +    h2 Упражнения
@@ -3753,7 +3760,47 @@
 +       div.kw-n Пресс
 +       div.kw-log.sub Есть в журнале: 7.5 кг × 15, 3 окт — веса берутся из него.
 +  details#setup-more.morebox
-+   summary Остальные настройки: профили, справочник, данные
++   summary Остальные настройки: что беречь, профили, справочник, данные
++   section#care-card.card
++    div.sec-h
++     h2 Что беречь
++    div#care
++     div.eyebrow(style="margin-bottom:4px") Что болит
++     p.note(style="margin-bottom:8px") Упражнения, которые нагружают отмеченное место, останутся в программе с красной пометкой: заменить их ты решишь сам.
++     div.picks(role="group" aria-label="Что болит")
++      button#care-shoulder.btn.sm(type="button" aria-pressed="false") Плечо
++      button#care-elbow.btn.sm(type="button" aria-pressed="false") Локоть
++      button#care-wrist.btn.sm(type="button" aria-pressed="false") Запястье
++      button#care-lowback.btn.sm(type="button" aria-pressed="false") Поясница
++      button#care-hip.btn.sm(type="button" aria-pressed="false") Тазобедренный сустав
++      button#care-knee.btn.sm(type="button" aria-pressed="false") Колено
++     div.eyebrow(style="margin:14px 0 4px") Стоп-упражнения
++     p.note(style="margin-bottom:8px") Их дневник не поставит в программу и не предложит в заменах.
++     select#stop-add(aria-label="Добавить стоп-упражнение")
++      option(value="" selected="") Добавить стоп-упражнение…
++      option(value="pec_fly") Бабочка
++      option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе
++      option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
++      option(value="barbell_curl") Бицепс со штангой стоя
++      option(value="bayesian_curl") Бицепс Bayesian curl
++      option(value="lat_pulldown") Вертикальная тяга в тренажере
++      option(value="row_machine") Горизонтальная тяга в тренажере
++      option(value="tbar_row") Горизонтальная тяга Т-бар
++      option(value="incline_db") Жим гантелей под углом 45
++      option(value="bench") Жим лежа
++      option(value="leg_press") Жим ногами
++      option(value="wrist_cable_l") Кисть на блоке левая
++      option(value="wrist_cable_r") Кисть на блоке правая
++      option(value="wrist_db_l") Кисть с гантелью левая рука
++      option(value="wrist_db_r") Кисть с гантелью правая рука
++      option(value="lat_raise_db") Махи с гантелями на плечи
++      option(value="hammer") Молотки с гантелями
++      option(value="pullup") Подтягивания
++      option(value="abs") Пресс
++      option(value="leg_ext") Разгибания ног в тренажере
++      option(value="lat_raise_machine") Средние дельты в тренажере
++      option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
++      option(value="tri_pushdown") Трицепс с косичкой на блоке
 +   section.card
 +    div.sec-h
 +     div

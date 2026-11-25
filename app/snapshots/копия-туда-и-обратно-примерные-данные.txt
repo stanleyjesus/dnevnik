@@ -161,6 +161,7 @@
   kw-work-hip_thrust=
   kw-workR-hip_thrust=
   kw-max-hip_thrust=
+  stop-add=
   pr-n-me=Мой дневник
   pr-n-p2=Второй профиль
   pr-new=
@@ -1117,7 +1118,87 @@
         div.kw-n Пресс
         div.kw-log.sub Есть в журнале: 7.5 кг × 15, 3 окт — веса берутся из него.
    details#setup-more.morebox
-    summary Остальные настройки: профили, справочник, данные
+    summary Остальные настройки: что беречь, профили, справочник, данные
+    section#care-card.card
+     div.sec-h
+      h2 Что беречь
+     div#care
+      div.eyebrow(style="margin-bottom:4px") Что болит
+      p.note(style="margin-bottom:8px") Упражнения, которые нагружают отмеченное место, останутся в программе с красной пометкой: заменить их ты решишь сам.
+      div.picks(role="group" aria-label="Что болит")
+       button#care-shoulder.btn.sm(type="button" aria-pressed="false") Плечо
+       button#care-elbow.btn.sm(type="button" aria-pressed="false") Локоть
+       button#care-wrist.btn.sm(type="button" aria-pressed="false") Запястье
+       button#care-lowback.btn.sm(type="button" aria-pressed="false") Поясница
+       button#care-hip.btn.sm(type="button" aria-pressed="false") Тазобедренный сустав
+       button#care-knee.btn.sm(type="button" aria-pressed="false") Колено
+      div.eyebrow(style="margin:14px 0 4px") Стоп-упражнения
+      p.note(style="margin-bottom:8px") Их дневник не поставит в программу и не предложит в заменах.
+      select#stop-add(aria-label="Добавить стоп-упражнение")
+       option(value="" selected="") Добавить стоп-упражнение…
+       option(value="pec_fly") Бабочка
+       option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе
+       option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
+       option(value="barbell_curl") Бицепс со штангой стоя
+       option(value="bayesian_curl") Бицепс Bayesian curl
+       option(value="bulgarian") Болгарские выпады с гантелями
+       option(value="lat_pulldown") Вертикальная тяга в тренажере
+       option(value="lunge") Выпады с гантелями
+       option(value="hack_squat") Гакк-приседания
+       option(value="back_ext") Гиперэкстензия
+       option(value="row_machine") Горизонтальная тяга в тренажере
+       option(value="tbar_row") Горизонтальная тяга Т-бар
+       option(value="chest_press") Жим в тренажере на грудь
+       option(value="shoulder_press_machine") Жим в тренажере на плечи
+       option(value="db_bench") Жим гантелей лежа
+       option(value="incline_db") Жим гантелей под углом 45
+       option(value="db_ohp") Жим гантелей сидя
+       option(value="bench") Жим лежа
+       option(value="close_grip_bench") Жим лежа узким хватом
+       option(value="leg_press") Жим ногами
+       option(value="incline_bench") Жим штанги под углом
+       option(value="ohp") Жим штанги стоя
+       option(value="wrist_cable_l") Кисть на блоке левая
+       option(value="wrist_cable_r") Кисть на блоке правая
+       option(value="wrist_db_l") Кисть с гантелью левая рука
+       option(value="wrist_db_r") Кисть с гантелью правая рука
+       option(value="cable_lat_raise") Махи в стороны на блоке
+       option(value="rear_delt_db") Махи гантелями в наклоне
+       option(value="lat_raise") Махи гантелями в стороны
+       option(value="lat_raise_db") Махи с гантелями на плечи
+       option(value="hammer") Молотки с гантелями
+       option(value="x_rear") Обратная бабочка
+       option(value="abduction") Отведение ног в тренажере
+       option(value="cable_kickback") Отведение ноги назад на блоке
+       option(value="pullup") Подтягивания
+       option(value="calf_seated") Подъем на носки сидя
+       option(value="calf_standing") Подъем на носки стоя
+       option(value="abs") Пресс
+       option(value="squat") Приседания со штангой
+       option(value="pullover_cable") Пуловер на верхнем блоке
+       option(value="db_fly") Разводка гантелей лежа
+       option(value="leg_ext") Разгибания ног в тренажере
+       option(value="rdl") Румынская тяга
+       option(value="db_rdl") Румынская тяга с гантелями
+       option(value="cable_fly") Сведение рук в кроссовере
+       option(value="wrist_curl") Сгибания кистей со штангой
+       option(value="cable_curl") Сгибания рук на блоке
+       option(value="preacher_curl") Сгибания рук на скамье Скотта
+       option(value="db_curl") Сгибания рук с гантелями
+       option(value="cable_crunch") Скручивания на блоке
+       option(value="lat_raise_machine") Средние дельты в тренажере
+       option(value="deadlift") Становая тяга
+       option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
+       option(value="tri_pushdown") Трицепс с косичкой на блоке
+       option(value="pulldown_cable") Тяга верхнего блока
+       option(value="db_row") Тяга гантели в наклоне
+       option(value="face_pull") Тяга к лицу на блоке
+       option(value="seated_row") Тяга нижнего блока к поясу
+       option(value="barbell_row") Тяга штанги в наклоне
+       option(value="skullcrusher") Французский жим лежа
+       option(value="shrug") Шраги с гантелями
+       option(value="glute_bridge_machine") Ягодичный мост в тренажере
+       option(value="hip_thrust") Ягодичный мост со штангой
     section.card
      div.sec-h
       div
@@ -1938,153 +2019,157 @@
 +       div#kw-out-tri_pushdown.kw-out.sub вес подберёшь на первой тренировке
 +      div.kw-row
 @@ 833 -84 +0
-@@ 923 -1 +1
+@@ 937 -1 +0
+-      option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе
+@@ 982 -0 +1
++      option(value="leg_curl_lying") Сгибания ног лежа
+@@ 1003 -1 +1
 -      p.note У каждого профиля свои тренировки, программа, упражнения и настройка. Переключатель — в шапке страницы; всё ниже относится к открытому профилю: Мой дневник.
 +      p.note У каждого профиля свои тренировки, программа, упражнения и настройка. Переключатель — в шапке страницы; всё ниже относится к открытому профилю: Второй профиль.
-@@ 927 -1 +1
+@@ 1007 -1 +1
 -      span.tag.accent открыт
 +      button.btn.sm Открыть
-@@ 930 -1 +1
+@@ 1010 -1 +1
 -      button.btn.sm Открыть
 +      span.tag.accent открыт
-@@ 948 -2 +2
+@@ 1028 -2 +2
 -      span.n Бабочка
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Грудь, Передние дельты ½
 +      span.n Вертикальная тяга в тренажере
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Широчайшие, Бицепс ½, Верх спины ½, Предплечья ½
-@@ 952 -2 +2
+@@ 1032 -2 +2
 -      span.n Бицепс бедра на тренажере лежа на животе
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Бицепс бедра
 +      span.n Выпады с гантелями
 +      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Ягодицы, Квадрицепс
-@@ 956 -2 +2
+@@ 1036 -2 +2
 -      span.n Бицепс бедра сидя в тренажере
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Бицепс бедра
 +      span.n Гиперэкстензия
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Разгибатели спины, Ягодицы ½, Бицепс бедра ½
-@@ 960 -2 +2
+@@ 1040 -2 +2
 -      span.n Бицепс со штангой стоя
 -      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Бицепс, Предплечья ½
 +      span.n Горизонтальная тяга в тренажере
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Верх спины, Бицепс ½, Задние дельты ½, Широчайшие ½, Предплечья ½
-@@ 964 -2 +2
+@@ 1044 -2 +2
 -      span.n Бицепс Bayesian curl
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Бицепс, Предплечья ½
 +      span.n Жим в тренажере на грудь
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Грудь, Передние дельты ½, Трицепс ½
-@@ 968 -9 +1
+@@ 1048 -9 +1
 +      span.n Жим гантелей лежа
-@@ 980 -2 +2
+@@ 1060 -2 +2
 -      span.n Жим лежа
 -      span.sub(style="flex:2 1 220px") штанга · базовое, шаг 2.5 кг · Грудь, Трицепс ½, Передние дельты ½
 +      span.n Жим гантелей сидя
 +      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Передние дельты, Средние дельты ½, Трицепс ½
-@@ 985 -1 +1
+@@ 1065 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · базовое, шаг 2.5 кг · Квадрицепс, Ягодицы ½
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Квадрицепс, Ягодицы ½
-@@ 988 -2 +2
+@@ 1068 -2 +2
 -      span.n Кисть на блоке левая
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Предплечья
 +      span.n Махи гантелями в стороны
 +      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Средние дельты
-@@ 992 -2 +2
+@@ 1072 -2 +2
 -      span.n Кисть на блоке правая
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Предплечья
 +      span.n Отведение ног в тренажере
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Ягодицы
-@@ 996 -2 +2
+@@ 1076 -2 +2
 -      span.n Кисть с гантелью левая рука
 -      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Предплечья
 +      span.n Пресс
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Пресс
-@@ 1000 -2 +2
+@@ 1080 -2 +2
 -      span.n Кисть с гантелью правая рука
 -      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Предплечья
 +      span.n Приседания со штангой
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Ягодицы, Квадрицепс
-@@ 1004 -2 +2
+@@ 1084 -2 +2
 -      span.n Молотки с гантелями
 -      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Бицепс, Предплечья ½
 +      span.n Румынская тяга
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Бицепс бедра, Ягодицы, Разгибатели спины ½, Предплечья ½
-@@ 1008 -2 +2
+@@ 1088 -2 +2
 -      span.n Подтягивания
 -      span.sub(style="flex:2 1 220px") подтягивания · базовое, шаг 1 кг · Широчайшие, Верх спины ½, Бицепс ½, Предплечья ½
 +      span.n Сгибания ног лежа
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Бицепс бедра
-@@ 1012 -2 +2
+@@ 1092 -2 +2
 -      span.n Разгибания ног в тренажере
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Квадрицепс
 +      span.n Ягодичный мост со штангой
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Ягодицы, Бицепс бедра ½
-@@ 1016 -2 +4
+@@ 1096 -2 +4
 -      span.n Средние дельты в тренажере
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Средние дельты
 +      span.n
 +       | Бабочка
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Грудь, Передние дельты ½
-@@ 1019 -0 +1
+@@ 1099 -0 +1
 +      button#ex-del-pec_fly.btn.ghost.sm(aria-label="Убрать из справочника: Бабочка") Убрать
-@@ 1020 -2 +4
+@@ 1100 -2 +4
 -      span.n Трицепс из за головы на блоке с косичкой
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Трицепс
 +      span.n
 +       | Бицепс бедра сидя в тренажере
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Бицепс бедра
-@@ 1023 -0 +1
+@@ 1103 -0 +1
 +      button#ex-del-leg_curl_seated.btn.ghost.sm(aria-label="Убрать из справочника: Бицепс бедра сидя в тренажере") Убрать
-@@ 1024 -2 +4
+@@ 1104 -2 +4
 -      span.n Трицепс с косичкой на блоке
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Трицепс
 +      span.n
 +       | Бицепс со штангой стоя
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Бицепс, Предплечья ½
-@@ 1027 -0 +1
+@@ 1107 -0 +1
 +      button#ex-del-barbell_curl.btn.ghost.sm(aria-label="Убрать из справочника: Бицепс со штангой стоя") Убрать
-@@ 1029 -1 +1
+@@ 1109 -1 +1
 -       | Болгарские выпады с гантелями
 +       | Бицепс Bayesian curl
-@@ 1031 -1 +1
+@@ 1111 -1 +1
 -      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Квадрицепс, Ягодицы
 +      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Бицепс, Предплечья ½
-@@ 1033 -1 +1
+@@ 1113 -1 +1
 -      button#ex-del-bulgarian.btn.ghost.sm(aria-label="Убрать из справочника: Болгарские выпады с гантелями") Убрать
 +      button#ex-del-bayesian_curl.btn.ghost.sm(aria-label="Убрать из справочника: Бицепс Bayesian curl") Убрать
-@@ 1036 -1 +1
+@@ 1116 -1 +1
 -       | Выпады с гантелями
 +       | Болгарские выпады с гантелями
-@@ 1040 -1 +1
+@@ 1120 -1 +1
 -      button#ex-del-lunge.btn.ghost.sm(aria-label="Убрать из справочника: Выпады с гантелями") Убрать
 +      button#ex-del-bulgarian.btn.ghost.sm(aria-label="Убрать из справочника: Болгарские выпады с гантелями") Убрать
-@@ 1050 -1 +1
+@@ 1130 -1 +1
 -       | Гиперэкстензия
 +       | Горизонтальная тяга Т-бар
-@@ 1052 -1 +1
+@@ 1132 -1 +1
 -      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Разгибатели спины, Ягодицы ½, Бицепс бедра ½
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Верх спины, Бицепс ½, Задние дельты ½, Широчайшие ½, Предплечья ½
-@@ 1054 -1 +1
+@@ 1134 -1 +1
 -      button#ex-del-back_ext.btn.ghost.sm(aria-label="Убрать из справочника: Гиперэкстензия") Убрать
 +      button#ex-del-tbar_row.btn.ghost.sm(aria-label="Убрать из справочника: Горизонтальная тяга Т-бар") Убрать
-@@ 1057 -13 +0
-@@ 1077 -1 +1
+@@ 1137 -13 +0
+@@ 1157 -1 +1
 -       | Жим гантелей лежа
 +       | Жим гантелей под углом 45
-@@ 1081 -1 +1
+@@ 1161 -1 +1
 -      button#ex-del-db_bench.btn.ghost.sm(aria-label="Убрать из справочника: Жим гантелей лежа") Убрать
 +      button#ex-del-incline_db.btn.ghost.sm(aria-label="Убрать из справочника: Жим гантелей под углом 45") Убрать
-@@ 1084 -1 +1
+@@ 1164 -1 +1
 -       | Жим гантелей сидя
 +       | Жим лежа
-@@ 1086 -1 +1
+@@ 1166 -1 +1
 -      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Передние дельты, Средние дельты ½, Трицепс ½
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Грудь, Передние дельты ½, Трицепс ½
-@@ 1088 -1 +1
+@@ 1168 -1 +1
 -      button#ex-del-db_ohp.btn.ghost.sm(aria-label="Убрать из справочника: Жим гантелей сидя") Убрать
 +      button#ex-del-bench.btn.ghost.sm(aria-label="Убрать из справочника: Жим лежа") Убрать
-@@ 1112 -0 +28
+@@ 1192 -0 +28
 +       | Кисть на блоке левая
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Предплечья
@@ -2113,49 +2198,49 @@
 +      button#ex-del-wrist_db_r.btn.ghost.sm(aria-label="Убрать из справочника: Кисть с гантелью правая рука") Убрать
 +     div.plan-row
 +      span.n
-@@ 1126 -1 +1
+@@ 1206 -1 +1
 -       | Махи гантелями в стороны
 +       | Махи с гантелями на плечи
-@@ 1130 -1 +1
+@@ 1210 -1 +1
 -      button#ex-del-lat_raise.btn.ghost.sm(aria-label="Убрать из справочника: Махи гантелями в стороны") Убрать
 +      button#ex-del-lat_raise_db.btn.ghost.sm(aria-label="Убрать из справочника: Махи с гантелями на плечи") Убрать
-@@ 1133 -1 +1
+@@ 1213 -1 +1
 -       | Махи с гантелями на плечи
 +       | Молотки с гантелями
-@@ 1135 -1 +1
+@@ 1215 -1 +1
 -      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Средние дельты
 +      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Бицепс, Предплечья ½
-@@ 1137 -0 +1
+@@ 1217 -0 +1
 +      button#ex-del-hammer.btn.ghost.sm(aria-label="Убрать из справочника: Молотки с гантелями") Убрать
-@@ 1146 -1 +1
+@@ 1226 -1 +1
 -       | Отведение ног в тренажере
 +       | Отведение ноги назад на блоке
-@@ 1148 -1 +1
+@@ 1228 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Ягодицы
 +      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Ягодицы
-@@ 1150 -1 +1
+@@ 1230 -1 +1
 -      button#ex-del-abduction.btn.ghost.sm(aria-label="Убрать из справочника: Отведение ног в тренажере") Убрать
 +      button#ex-del-cable_kickback.btn.ghost.sm(aria-label="Убрать из справочника: Отведение ноги назад на блоке") Убрать
-@@ 1153 -1 +1
+@@ 1233 -1 +1
 -       | Отведение ноги назад на блоке
 +       | Подтягивания
-@@ 1155 -1 +1
+@@ 1235 -1 +1
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Ягодицы
 +      span.sub(style="flex:2 1 220px") подтягивания · шаг 1 кг · Широчайшие, Бицепс ½, Верх спины ½, Предплечья ½
-@@ 1157 -1 +1
+@@ 1237 -1 +1
 -      button#ex-del-cable_kickback.btn.ghost.sm(aria-label="Убрать из справочника: Отведение ноги назад на блоке") Убрать
 +      button#ex-del-pullup.btn.ghost.sm(aria-label="Убрать из справочника: Подтягивания") Убрать
-@@ 1174 -13 +0
-@@ 1201 -1 +1
+@@ 1254 -13 +0
+@@ 1281 -1 +1
 -       | Румынская тяга
 +       | Разгибания ног в тренажере
-@@ 1203 -1 +1
+@@ 1283 -1 +1
 -      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Бицепс бедра, Ягодицы, Разгибатели спины ½, Предплечья ½
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Квадрицепс
-@@ 1205 -1 +1
+@@ 1285 -1 +1
 -      button#ex-del-rdl.btn.ghost.sm(aria-label="Убрать из справочника: Румынская тяга") Убрать
 +      button#ex-del-leg_ext.btn.ghost.sm(aria-label="Убрать из справочника: Разгибания ног в тренажере") Убрать
-@@ 1257 -0 +7
+@@ 1337 -0 +7
 +       | Средние дельты в тренажере
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Средние дельты
@@ -2163,7 +2248,7 @@
 +      button#ex-del-lat_raise_machine.btn.ghost.sm(aria-label="Убрать из справочника: Средние дельты в тренажере") Убрать
 +     div.plan-row
 +      span.n
-@@ 1264 -0 +14
+@@ 1344 -0 +14
 +       | Трицепс из за головы на блоке с косичкой
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Трицепс
@@ -2178,8 +2263,8 @@
 +      button#ex-del-tri_pushdown.btn.ghost.sm(aria-label="Убрать из справочника: Трицепс с косичкой на блоке") Убрать
 +     div.plan-row
 +      span.n
-@@ 1318 -7 +0
-@@ 1329 -1 +1
+@@ 1398 -7 +0
+@@ 1409 -1 +1
 -      p.note Записей в дневнике: 24. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
 +      p.note Записей в дневнике: 0. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
 

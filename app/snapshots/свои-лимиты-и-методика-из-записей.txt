@@ -2901,7 +2901,7 @@
 +   div.rules(role="alert")
 +    b Выходит за твои лимиты
 +    div В неделю 67 подходов при лимите 60
-@@ 40 -507 +145
+@@ 40 -507 +151
 +     div.eyebrow Новая программа
 +     h2 Равномерно на всё тело
 +    span.sub 60 подходов в неделю · сейчас 67 · тренировка ≈ 1 ч 10 мин
@@ -2931,6 +2931,12 @@
 +      button#pd-2(type="button" aria-pressed="false") 2
 +      button#pd-3(type="button" aria-pressed="true") 3
 +      button#pd-4(type="button" aria-pressed="false") 4
++    div#pp.pf
++     span Дни подряд
++     div.picks(role="group" aria-label="Какие дни программы идут подряд")
++      button#pp-mon-wed.btn.sm(type="button" aria-pressed="false") 1–2
++      button#pp-wed-fri.btn.sm(type="button" aria-pressed="false") 2–3
++      button#pp-fri-mon.btn.sm(type="button" aria-pressed="false") 3–1
 +    label.f
 +     span Время на тренировку
 +     select#pt
@@ -3381,12 +3387,13 @@
   gear-to-leg_press=
   gear-to-pullup=
   gear-to-abs=
+  stop-add=
   pr-n-me=Мой дневник
   pr-n-p2=Второй профиль
   pr-new=
   pr-copy=true
 экран: правки к шагу 3
-@@ 2 -194 +380
+@@ 2 -194 +420
 +  section.card
 +   div.sec-h
 +    h2 Упражнения
@@ -3737,7 +3744,47 @@
 +       div.kw-n Пресс
 +       div.kw-log.sub Есть в журнале: 7.5 кг × 15, 3 окт — веса берутся из него.
 +  details#setup-more.morebox
-+   summary Остальные настройки: профили, справочник, данные
++   summary Остальные настройки: что беречь, профили, справочник, данные
++   section#care-card.card
++    div.sec-h
++     h2 Что беречь
++    div#care
++     div.eyebrow(style="margin-bottom:4px") Что болит
++     p.note(style="margin-bottom:8px") Упражнения, которые нагружают отмеченное место, останутся в программе с красной пометкой: заменить их ты решишь сам.
++     div.picks(role="group" aria-label="Что болит")
++      button#care-shoulder.btn.sm(type="button" aria-pressed="false") Плечо
++      button#care-elbow.btn.sm(type="button" aria-pressed="false") Локоть
++      button#care-wrist.btn.sm(type="button" aria-pressed="false") Запястье
++      button#care-lowback.btn.sm(type="button" aria-pressed="false") Поясница
++      button#care-hip.btn.sm(type="button" aria-pressed="false") Тазобедренный сустав
++      button#care-knee.btn.sm(type="button" aria-pressed="false") Колено
++     div.eyebrow(style="margin:14px 0 4px") Стоп-упражнения
++     p.note(style="margin-bottom:8px") Их дневник не поставит в программу и не предложит в заменах.
++     select#stop-add(aria-label="Добавить стоп-упражнение")
++      option(value="" selected="") Добавить стоп-упражнение…
++      option(value="pec_fly") Бабочка
++      option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе
++      option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
++      option(value="barbell_curl") Бицепс со штангой стоя
++      option(value="bayesian_curl") Бицепс Bayesian curl
++      option(value="lat_pulldown") Вертикальная тяга в тренажере
++      option(value="row_machine") Горизонтальная тяга в тренажере
++      option(value="tbar_row") Горизонтальная тяга Т-бар
++      option(value="incline_db") Жим гантелей под углом 45
++      option(value="bench") Жим лежа
++      option(value="leg_press") Жим ногами
++      option(value="wrist_cable_l") Кисть на блоке левая
++      option(value="wrist_cable_r") Кисть на блоке правая
++      option(value="wrist_db_l") Кисть с гантелью левая рука
++      option(value="wrist_db_r") Кисть с гантелью правая рука
++      option(value="lat_raise_db") Махи с гантелями на плечи
++      option(value="hammer") Молотки с гантелями
++      option(value="pullup") Подтягивания
++      option(value="abs") Пресс
++      option(value="leg_ext") Разгибания ног в тренажере
++      option(value="lat_raise_machine") Средние дельты в тренажере
++      option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
++      option(value="tri_pushdown") Трицепс с косичкой на блоке
 +   section.card
 +    div.sec-h
 +     div
@@ -3912,90 +3959,90 @@
 +     div.seg.multi(role="group" aria-label="Остальные базовые упражнения")
 +      button#po-plain(type="button" aria-pressed="true") Как подсобка
 +      button#po-grow(type="button" aria-pressed="false") Растут как раньше
-@@ 156 -1 +1
+@@ 162 -1 +1
 -      span.sub 19 подходов · ≈ 1 ч 5 мин
 +      span.sub 20 подходов · ≈ 1 ч 10 мин
-@@ 159 -2 +2
+@@ 165 -2 +2
 -       div.pn Жим лежа
 -       div.sub 4 × 6–10
 +       div.pn Бицепс со штангой стоя — лёгкий день
 +       div.sub 3 × 10 на 71% от максимума
-@@ 164 -1 +1
+@@ 170 -1 +1
 -       div.sub 3 × 6–10
 +       div.sub 2 × 6–10
-@@ 168 -0 +4
+@@ 174 -0 +4
 +       div.pn Жим над головой
 +       div.sub 4 × 6–10
 +     div.prow
 +      div.grow
-@@ 169 -2 +2
+@@ 175 -2 +2
 -       div.sub 4 × 8–12
 -      button#sw-mon-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Средние дельты в тренажере") Заменить
 +       div.sub 3 × 8–12
 +      button#sw-mon-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Средние дельты в тренажере") Заменить
-@@ 173 -3 +2
+@@ 179 -3 +2
 -       div.pn Трицепс из за головы на блоке с косичкой
 -       div.sub 3 × 8–13
 -      button#sw-mon-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
 +       div.pn Подъёмы на носки
 +       div.sub 4 × 8–12
-@@ 179 -1 +1
+@@ 185 -1 +1
 -       div.sub 3 × 8–12
 +       div.sub 2 × 8–12
-@@ 182 -2 +3
+@@ 188 -2 +3
 -       div.pn Подъёмы на носки
 -       div.sub 2 × 8–12
 +       div.pn Пуловер на верхнем блоке
 +       div.sub 2 × 10–15
 +      button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Пуловер на верхнем блоке") Заменить
-@@ 187 -1 +1
+@@ 193 -1 +1
 -      span.sub 21 подход · ≈ 1 ч 15 мин
 +      span.sub 19 подходов · ≈ 1 ч 10 мин
-@@ 190 -0 +6
+@@ 196 -0 +6
 +       div.pn
 +        | Бицепс со штангой стоя
 +        span.tag.accent сила по запасу
 +       div.sub 3 × 6 одним весом, вес по запасу
 +     div.prow
 +      div.grow
-@@ 191 -1 +2
+@@ 197 -1 +2
 -       div.sub 4 × 6–10
 +       div.sub 5 × 6–10
 +      button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим ногами") Заменить
-@@ 195 -2 +2
+@@ 201 -2 +2
 -       div.sub 2 × 6–10
 -      button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей под углом 45") Заменить
 +       div.sub 3 × 6–10
 +      button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей под углом 45") Заменить
-@@ 200 -2 +2
+@@ 206 -2 +2
 -       div.sub 2 × 6–10
 -      button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
 +       div.sub 3 × 6–10
 +      button#sw-wed-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
-@@ 204 -14 +0
-@@ 219 -1 +1
+@@ 210 -14 +0
+@@ 225 -1 +1
 -       div.sub 5 × 8–12
 +       div.sub 3 × 8–12
-@@ 224 -1 +1
+@@ 230 -1 +1
 -      button#sw-wed-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
 +      button#sw-wed-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
-@@ 228 -1 +1
+@@ 234 -1 +1
 -      span.sub 20 подходов · ≈ 1 ч 5 мин
 +      span.sub 21 подход · ≈ 1 ч 10 мин
-@@ 231 -2 +3
+@@ 237 -2 +3
 -       div.pn Подтягивания
 -       div.sub 4 × 6–10
 +       div.pn Бицепс Bayesian curl
 +       div.sub 2 × 8–16
 +      button#sw-fri-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс Bayesian curl") Заменить
-@@ 235 -3 +3
+@@ 241 -3 +3
 -       div.pn Бабочка
 -       div.sub 4 × 8–12
 -      button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бабочка") Заменить
 +       div.pn Румынская тяга
 +       div.sub 3 × 6–10
 +      button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
-@@ 240 -0 +10
+@@ 246 -0 +10
 +       div.pn Горизонтальная тяга в тренажере
 +       div.sub 2 × 6–10
 +      button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
@@ -4006,23 +4053,23 @@
 +      button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим лежа") Заменить
 +     div.prow
 +      div.grow
-@@ 241 -2 +2
+@@ 247 -2 +2
 -       div.sub 3 × 8–12
 -      button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра на тренажере лежа на животе") Заменить
 +       div.sub 2 × 8–12
 +      button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра на тренажере лежа на животе") Заменить
-@@ 245 -3 +3
+@@ 251 -3 +3
 -       div.pn Бицепс Bayesian curl
 -       div.sub 3 × 8–16
 -      button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс Bayesian curl") Заменить
 +       div.pn Трицепс с косичкой на блоке
 +       div.sub 2 × 8–12
 +      button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс с косичкой на блоке") Заменить
-@@ 251 -1 +2
+@@ 257 -1 +2
 -       div.sub 3 × 8–12
 +       div.sub 2 × 8–12
 +      button#sw-fri-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Разгибания ног в тренажере") Заменить
-@@ 255 -1 +6
+@@ 261 -1 +6
 -       div.sub 3 × 8–12
 +       div.sub 2 × 8–12
 +     div.prow
@@ -4030,13 +4077,13 @@
 +       div.pn Пуловер на верхнем блоке
 +       div.sub 2 × 10–15
 +      button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Пуловер на верхнем блоке") Заменить
-@@ 263 -1 +1
+@@ 269 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#e825b1d687
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#38fbb061d7
-@@ 266 -1 +1
+@@ 272 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#0e134efcff
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#44b357c8dc
-@@ 271 -1 +13
+@@ 277 -1 +13
 -       b Нагрузка поровну: от 7 до 10 подходов на мышцу
 +       b Бицепс со штангой стоя — сила по запасу
 +       div.sub 3 × 6 одним весом, первый вес — 79% от расчётного максимума. Дальше решает запас в последнем подходе: 2–3 повтора — на следующей неделе плюс шаг; 4 и больше — сразу несколько шагов, но не больше 10% веса; 1 — вес тот же; 0 или подходы не закрыты — минус 5%. Если шаг больше 5% веса, сначала растут повторы: 3 × 7, 3 × 8, потом шаг. Запас отмечается в карточке упражнения.
@@ -4051,58 +4098,58 @@
 +       div.sub Упражнение на те же мышцы в режиме массы: 8–16 повторов почти до отказа. Оно уже стоит в этом дне.
 +      div.why
 +       b Нагрузка поровну: от 6.5 до 10.5 подходов на мышцу
-@@ 274 -0 +3
+@@ 280 -0 +3
 +       b Чуть выше своего уровня: бицепс
 +       div.sub Эти мышцы работают попутно почти во всех упражнениях на соседние или в базовых, где число подходов постоянное. Убрать у них ещё — значит недодать соседям.
 +      div.why
-@@ 275 -1 +1
+@@ 281 -1 +1
 -       div.sub 3 × 6–10. Бицепс бедра: было 7, станет 7 в неделю; Ягодицы: было 2, станет 7 в неделю.
 +       div.sub 2 × 6–10. Бицепс бедра: было 7, станет 7 в неделю; Ягодицы: было 2, станет 7.5 в неделю.
-@@ 277 -2 +2
+@@ 283 -2 +2
 -       b Новое в день 1: Обратная бабочка
 -       div.sub 3 × 8–12. Задние дельты: было 2, станет 7 в неделю.
 +       b Новое в день 1: Жим над головой
 +       div.sub 4 × 6–10. Передние дельты: было 6, станет 7.5 в неделю.
-@@ 281 -1 +1
+@@ 287 -1 +1
 -       div.sub 2 × 8–12. Икры: было 0, станет 7 в неделю.
 +       div.sub 4 × 8–12. Икры: было 0, станет 7 в неделю.
-@@ 283 -2 +2
+@@ 289 -2 +2
 -       b Новое в день 2: Ягодичный мост
 -       div.sub 2 × 6–10. Ягодицы: было 2, станет 7 в неделю.
 +       b Новое в день 1: Обратная бабочка
 +       div.sub 2 × 8–12. Задние дельты: было 2, станет 6.5 в неделю.
-@@ 286 -2 +2
+@@ 292 -2 +2
 -       b Новое в день 2: Жим над головой
 -       div.sub 2 × 6–10. Передние дельты: было 6, станет 7 в неделю.
 +       b Новое в день 1: Пуловер на верхнем блоке
 +       div.sub 2 × 10–15. Широчайшие: было 10, станет 6.5 в неделю.
-@@ 290 -1 +1
+@@ 296 -1 +1
 -       div.sub 5 × 8–12. Икры: было 0, станет 7 в неделю.
 +       div.sub 3 × 8–12. Икры: было 0, станет 7 в неделю.
-@@ 295 -0 +6
+@@ 301 -0 +6
 +       b Новое в день 3: Румынская тяга
 +       div.sub 3 × 6–10. Бицепс бедра: было 7, станет 7 в неделю; Ягодицы: было 2, станет 7.5 в неделю.
 +      div.why
 +       b Новое в день 3: Горизонтальная тяга в тренажере
 +       div.sub 2 × 6–10. Верх спины: было 8, станет 7 в неделю.
 +      div.why
-@@ 296 -1 +1
+@@ 302 -1 +1
 -       div.sub 3 × 8–12. Задние дельты: было 2, станет 7 в неделю.
 +       div.sub 2 × 8–12. Задние дельты: было 2, станет 6.5 в неделю.
-@@ 298 -0 +6
+@@ 304 -0 +6
 +       b Новое в день 3: Пуловер на верхнем блоке
 +       div.sub 2 × 10–15. Широчайшие: было 10, станет 6.5 в неделю.
 +      div.why
 +       b Прибавлены подходы
 +       div.sub Жим ногами (день 2) +1.
 +      div.why
-@@ 299 -1 +1
+@@ 305 -1 +1
 -       div.sub Жим гантелей под углом 45 (день 2) −2, Горизонтальная тяга Т-бар (день 2) −2. Эти мышцы получали заметно больше, чем им отведено.
 +       div.sub Средние дельты в тренажере (день 1) −1, Жим гантелей под углом 45 (день 2) −1, Горизонтальная тяга Т-бар (день 2) −1, Бицепс бедра на тренажере лежа на животе (день 3) −1, Трицепс с косичкой на блоке (день 3) −2, Бицепс Bayesian curl (день 3) −1, Разгибания ног в тренажере (день 3) −1. Эти мышцы получали заметно больше, чем им отведено.
-@@ 305 -1 +1
+@@ 311 -1 +1
 -       div.sub Вертикальная тяга в тренажере (день 1 → день 2). Чтобы каждая мышца получала нагрузку хотя бы в два дня недели: объём за неделю тот же, меняется только день.
 +       div.sub Жим лежа (день 1 → день 3). Чтобы каждая мышца получала нагрузку хотя бы в два дня недели: объём за неделю тот же, меняется только день.
-@@ 308 -1 +10
+@@ 314 -1 +10
 -       div.sub Бицепс со штангой стоя (день 2), Молотки с гантелями (день 1), Разгибания ног в тренажере (день 2), Трицепс с косичкой на блоке (день 3), Бицепс бедра сидя в тренажере (день 1): эти упражнения давали лишнее мышцам, которые и так выше своего уровня, или не помещались в лимит недели.
 +       div.sub Молотки с гантелями (день 1), Трицепс из за головы на блоке с косичкой (день 1), Разгибания ног в тренажере (день 2), Бицепс бедра сидя в тренажере (день 1), Вертикальная тяга в тренажере (день 1), Подтягивания (день 3): эти упражнения давали лишнее мышцам, которые и так выше своего уровня, или не помещались в лимит недели.
 +      div.why
@@ -4114,92 +4161,92 @@
 +      div.why
 +       b Порядок упражнений: день 3
 +       div.sub Сначала бицепс со штангой стоя, затем остальные базовые, затем упражнение на массу, многосуставные — раньше изоляции, соседние упражнения — на разные мышцы. По исследованиям в упражнении ближе к началу тренировки больше повторов и сильнее растёт сила; чередование мышц — правило дневника. Свой порядок — в «Вручную»: там сборка его не трогает.
-@@ 332 -2 +2
+@@ 338 -2 +2
 -          span.tag.accent(style="margin-right:6px") −2
 -          b 10
 +          span.tag.accent(style="margin-right:6px") −5
 +          b 7
-@@ 335 -3 +3
+@@ 341 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.warn
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +           | ниже рабочей зоны
-@@ 348 -2 +2
+@@ 354 -2 +2
 -          span.tag.accent(style="margin-right:6px") −3
 -          b 7
 +          span.tag.accent(style="margin-right:6px") −3.5
 +          b 6.5
-@@ 363 -1 +3
+@@ 369 -1 +3
 -         td 8
 +         td
 +          span.tag.accent(style="margin-right:6px") −1
 +          b 7
-@@ 378 -2 +2
+@@ 384 -2 +2
 -          span.tag.accent(style="margin-right:6px") +1
 -          b 7
 +          span.tag.accent(style="margin-right:6px") +1.5
 +          b 7.5
-@@ 410 -2 +2
+@@ 416 -2 +2
 -          span.tag.accent(style="margin-right:6px") +5
 -          b 7
 +          span.tag.accent(style="margin-right:6px") +4.5
 +          b 6.5
-@@ 423 -1 +4
+@@ 429 -1 +4
 -         td Бицепс
 +         td
 +          | Бицепс
 +          span.tag(style="margin-left:6px") приоритет
 +          span#msn-biceps.msplit.under масса 4.5 · сила 6
-@@ 426 -2 +3
+@@ 432 -2 +3
 -          span.tag.accent(style="margin-right:6px") −8
 -          b 7
 +          span.tag.accent(style="margin-right:6px") −4.5
 +          b 10.5
 +          span#ms-biceps.msplit (масса 4.5 · сила 6)
-@@ 429 -3 +3
+@@ 435 -3 +3
 -          span.pill.warn
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 -           | ниже рабочей зоны
 +          span.pill.good
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +           | рабочая зона
-@@ 442 -2 +2
+@@ 448 -2 +2
 -          span.tag.accent(style="margin-right:6px") −4
 -          b 7
 +          span.tag.accent(style="margin-right:6px") −3.5
 +          b 7.5
-@@ 455 -1 +4
+@@ 461 -1 +4
 -         td Предплечья
 +         td
 +          | Предплечья
 +          span.tag(style="margin-left:6px") помогает
 +          span#msn-forearms.msplit.under масса 6 · сила 3
-@@ 458 -2 +3
+@@ 464 -2 +3
 -          span.tag.accent(style="margin-right:6px") −9.5
 -          b 7
 +          span.tag.accent(style="margin-right:6px") −7.5
 +          b 9
 +          span#ms-forearms.msplit (масса 6 · сила 3)
-@@ 461 -3 +3
+@@ 467 -3 +3
 -          span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
 -           | вне расчёта
 +          span.pill.good
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +           | рабочая зона
-@@ 488 -2 +2
+@@ 494 -2 +2
 -          span.tag.accent(style="margin-right:6px") +1.5
 -          b 1.5
 +          span.tag.accent(style="margin-right:6px") +2.5
 +          b 2.5
-@@ 534 -2 +2
+@@ 540 -2 +2
 -          span.tag.accent(style="margin-right:6px") +5
 -          b 7
 +          span.tag.accent(style="margin-right:6px") +5.5
 +          b 7.5
-@@ 562 -0 +1
+@@ 568 -0 +1
 +     p#ms-note.sub(style="margin-top:8px") В скобках: масса — подсобка, сила — базовые по процентам. Силовой подход с запасом от 3 повторов идёт в объём мышцы за половину.
 
 === 10. лимит недели: самый малый
