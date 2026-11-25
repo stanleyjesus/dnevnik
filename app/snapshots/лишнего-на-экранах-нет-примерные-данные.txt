@@ -1,0 +1,432 @@
+Снимок сценария «лишнего на экранах нет · примерные данные» с днями приложения «День 1…N».
+Сверяет: npm run screens -- --дни. Переписать (только намеренно): npm run screens -- --переписать. Как устроен — app/scripts/snapshots.mjs.
+
+=== 1. меню: семь вкладок, «Советов» нет
+адрес: "#overview"
+шапка: целиком
+  div.wrap
+   | "\n  "
+   div.brand
+    svg(viewBox="0 0 24 24" aria-hidden="true") …#37e8870c3f
+    h1 Тренировочный дневник
+   | "\n  "
+   div.top-meta
+    span#prof-slot
+     select#prof.prof(aria-label="Чей дневник открыт")
+      option(value="me" selected="") Мой дневник
+      option(value="p2") Второй профиль
+    span#week-badge Неделя 10 · 10 ноя – 16 ноя
+    span#sync.sync.ok
+     i
+     span
+   | "\n"
+  | " профиль=me"
+  a(href="#overview" aria-current="page") Обзор
+  a(href="#workout") Тренировка
+  a(href="#journal") Журнал
+  a(href="#progress") Прогресс
+  a(href="#muscles") Мышцы
+  a(href="#program") Программа
+  a(href="#setup") Настройка
+поля: —
+сообщение: ""
+курсор: ""
+файл: ""
+буфер: ""
+записи:
+  config/main 0ad6609c57
+  config/p2 81fcdb67e5
+  config/profiles 304989c7da
+  workouts/2025-09-08 60c270d39a
+  workouts/2025-09-10 941e594b86
+  workouts/2025-09-12 e4e9b93c7f
+  workouts/2025-09-15 9eca0c3b9f
+  workouts/2025-09-19 dffe7844a8
+  workouts/2025-09-22 5de032b523
+  workouts/2025-09-24 ab8b7b8965
+  workouts/2025-09-26 167e26c559
+  workouts/2025-09-29 8874a7171a
+  workouts/2025-10-01 c09af81e94
+  workouts/2025-10-03 ed3b1add2b
+  workouts/2025-10-13 8c3a16e6d5
+  workouts/2025-10-15 33e8268f62
+  workouts/2025-10-17 4684cf0ff2
+  workouts/2025-10-20 269c7e08c7
+  workouts/2025-10-22 184b91fb0f
+  workouts/2025-10-24 02bb02ca64
+  workouts/2025-10-27 572948a158
+  workouts/2025-10-29 9af25e8991
+  workouts/2025-10-31 91f5258ccd
+  workouts/2025-11-03 e5ea9e35b6
+  workouts/2025-11-05 7ff89a3942
+  workouts/2025-11-07 07af07f9b7
+  workouts/2025-11-10 d323f65cd6
+черновик:
+  td-profile me
+экран: целиком
+  div.wrap.stack
+   div.tiles.two
+    div.tile
+     span.l Тренировок записано
+     span.v 24
+     span.d с 8 сентября · пропущено недель: 1
+    div.tile
+     span.l Индекс силы
+     div.tile-top
+      span.v 117
+      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#de7525cdb7
+     span.d +17% к первой неделе
+   div.card
+    div.sec-h
+     div
+      div.eyebrow Следующая тренировка
+      h2 Среда, 12 ноября
+     a.btn.primary(href="#workout") Открыть план
+    p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 25 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
+    div.plan-list
+     div.plan-row
+      span.n Разгибания ног в тренажере
+      div.chips
+       span.chip
+        | 50
+        small 11+
+       span.chip.up 50 ↑
+       span.chip.down 42.5 ↓
+     div.plan-row
+      span.n
+       | Жим ногами
+       span.tag.accent(style="margin-left:6px") Отказ
+      div.chips
+       span.chip.adj
+        | 192.5
+        small 6+
+       span.chip.adj
+        | 192.5
+        small 6+
+       span.chip.adj
+        | 192.5
+        small 6+
+       span.chip.adj
+        | 192.5
+        small 6+
+     div.plan-row
+      span.n Жим гантелей под углом 45
+      div.chips
+       span.chip
+        | 24
+        small 10+
+       span.chip.up 24 ↑
+       span.chip 22
+       span.chip.up 22 ↑
+     div.plan-row
+      span.n
+       | Горизонтальная тяга Т-бар
+       span.tag.accent(style="margin-left:6px") Мало объёма
+      div.chips
+       span.chip.up 32.5 ↑
+       span.chip
+        | 30
+        small 9+
+       span.chip.up 30 ↑
+       span.chip.up 30 ↑
+       span.chip.adj
+        | 30
+        small 6+
+     div.plan-row
+      span.n
+       | Бицепс со штангой стоя
+       span.tag.accent(style="margin-left:6px") Проверка запаса
+      div.chips
+       span.chip 30
+       span.chip 27.5
+       span.chip 27.5
+     div.plan-row
+      span.n Кисть на блоке правая
+      div.chips
+       span.chip
+        | 15
+        small 10+
+       span.chip.up 15 ↑
+       span.chip.up 15 ↑
+     div.plan-row
+      span.n Кисть на блоке левая
+      div.chips
+       span.chip
+        | 12.5
+        small 15+
+       span.chip
+        | 12.5
+        small 14+
+       span.chip
+        | 12.5
+        small 12+
+     div.plan-row
+      span.n
+       | Обратная бабочка
+       span.tag.accent(style="margin-left:6px") новое
+      div.chips
+       span.chip.adj 3 × 8–12
+    div.legend-line
+     span
+      span.chip.up 40 ↑
+      | " прошлый раз взят верх диапазона, вес повышен"
+     span
+      span.chip
+       | 40
+       small 11+
+      | " тот же вес, цель по повторам"
+     span
+      span.chip.down 40 ↓
+      | " было ниже диапазона"
+     span
+      span.chip.adj
+       | 40
+       small 11+
+      | " поправка дневника"
+   section.card
+    div.sec-h
+     div
+      h2 Нагрузка по мышцам
+      p.sub Подходов в неделю, среднее за недели 7–9. Подсвеченный участок шкалы — рабочая зона 10–20, риска — минимум 4.
+     a.btn.ghost.sm(href="#muscles") По неделям
+    div.meters
+     div.grp.eyebrow Верх
+     span.mn Грудь
+     div.meter(role="img" aria-label="10.3 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-opt(style="width: 43.0556%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 10.3
+     span.pill.good
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+      | рабочая зона
+     span.mn Широчайшие
+     div.meter(role="img" aria-label="8.7 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-base(style="width: 36.1111%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 8.7
+     span.pill.warn
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+      | ниже рабочей зоны
+     span.mn Верх спины
+     div.meter(role="img" aria-label="7.3 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-base(style="width: 30.5556%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 7.3
+     span.pill.warn
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+      | ниже рабочей зоны
+     span.mn Передние дельты
+     div.meter(role="img" aria-label="5.2 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-base(style="width: 21.5278%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 5.2
+     span.pill.warn
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+      | ниже рабочей зоны
+     span.mn Средние дельты
+     div.meter(role="img" aria-label="4 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-base(style="width: 16.6667%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 4
+     span.pill.warn
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+      | ниже рабочей зоны
+     span.mn Задние дельты
+     div.meter(role="img" aria-label="2 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-low(style="width: 8.33333%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 2
+     span.pill.serious
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
+      | мало
+     div.grp.eyebrow Руки
+     span.mn Бицепс
+     div.meter(role="img" aria-label="13 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-opt(style="width: 54.1667%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 13
+     span.pill.good
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+      | рабочая зона
+     span.mn Трицепс
+     div.meter(role="img" aria-label="8.8 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-base(style="width: 36.8056%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 8.8
+     span.pill.warn
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+      | ниже рабочей зоны
+     span.mn Предплечья
+     div.meter(role="img" aria-label="14.2 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-opt(style="width: 59.0278%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 14.2
+     span.pill.good
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
+      | рабочая зона
+     div.grp.eyebrow Корпус
+     span.mn Пресс
+     div.meter(role="img" aria-label="0 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-none(style="width: 0%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 0
+     span.pill вне расчёта
+     span.mn Разгибатели спины
+     div.meter(role="img" aria-label="0 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-none(style="width: 0%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 0
+     span.pill вне расчёта
+     div.grp.eyebrow Ноги
+     span.mn Квадрицепс
+     div.meter(role="img" aria-label="8.7 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-base(style="width: 36.1111%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 8.7
+     span.pill.warn
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+      | ниже рабочей зоны
+     span.mn Бицепс бедра
+     div.meter(role="img" aria-label="7 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-base(style="width: 29.1667%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 7
+     span.pill.warn
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
+      | ниже рабочей зоны
+     span.mn Ягодицы
+     div.meter(role="img" aria-label="1.3 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-low(style="width: 5.55556%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 1.3
+     span.pill.serious
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
+      | мало
+     span.mn Икры
+     div.meter(role="img" aria-label="0 подходов в неделю")
+      i.zone(style="left: 41.6667%; width: 41.6667%;")
+      i.fill.z-none(style="width: 0%;")
+      i.tick(style="left: 16.6667%;")
+     span.mv 0
+     span.pill вне расчёта
+
+=== 2. обзор: две плитки, без «Требует внимания»
+
+=== 3. адрес «Советов» открывает обзор
+адрес: "#coach"
+
+=== 4. план: с поправками, выбора варианта нет
+адрес: "#workout"
+шапка: правки к шагу 3
+@@ 18 -2 +2
+- a(href="#overview" aria-current="page") Обзор
+- a(href="#workout") Тренировка
++ a(href="#overview") Обзор
++ a(href="#workout" aria-current="page") Тренировка
+поля: целиком
+  np-date=2025-11-12
+  pp-leg_press=true
+  pp-tbar_row=true
+  pp-barbell_curl=true
+  pp-add-rear=true
+экран: правки к шагу 3
+@@ 2 -11 +0
+@@ 16 -1 +1
+-     div.eyebrow Следующая тренировка
++     div.eyebrow Новая тренировка
+@@ 18 -2 +49
+-    a.btn.primary(href="#workout") Открыть план
+-   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 25 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
++   div.row(style="margin-bottom:12px")
++    label.f
++     span Дата
++     input#np-date(type="date")
++    label.f
++     span День программы
++     div.seg(role="group" aria-label="День программы")
++      button(type="button" aria-pressed="false") День 1
++      button(type="button" aria-pressed="true") День 2
++      button(type="button" aria-pressed="false") День 3
++   div.adj-box(style="margin-bottom:12px")
++    div.eyebrow(style="margin-bottom:2px") Что дневник меняет в плане и почему
++    p.sub Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.
++    div.props
++     label.prop
++      input#pp-leg_press(type="checkbox" checked="")
++      div.grow
++       div
++        b Жим ногами
++        span.tag.accent(style="margin-left:6px") Отказ
++       div.sub подход 1: 195 → 192.5 кг — 3 повторов получились только в отказ
++       div.sub подход 2: 195 → 192.5 кг — 3 повторов получились только в отказ
++       div.sub подход 3: 195 → 192.5 кг — 3 повторов получились только в отказ
++       div.sub подход 4: 195 → 192.5 кг — 3 повторов получились только в отказ
++     label.prop
++      input#pp-tbar_row(type="checkbox" checked="")
++      div.grow
++       div
++        b Горизонтальная тяга Т-бар
++        span.tag.accent(style="margin-left:6px") Мало объёма
++       div.sub +1 подход: верх спины по программе — 8 подходов в неделю, рабочая зона от 10
++     label.prop
++      input#pp-barbell_curl(type="checkbox" checked="")
++      div.grow
++       div
++        b Бицепс со штангой стоя
++        span.tag.accent(style="margin-left:6px") Проверка запаса
++       div.sub последний подход — до отказа и запас в нём 0: так видно, насколько точно ты оцениваешь запас. За четыре недели отказа в изоляции не было
++     label.prop
++      input#pp-add-rear(type="checkbox" checked="")
++      div.grow
++       div
++        b Обратная бабочка
++        span.tag.accent(style="margin-left:6px") Добавить в программу
++       div.sub 3 подхода по 8–12: задние дельты работают только косвенно: 2 подхода в неделю при рабочей зоне от 10
++   p.sub(style="margin-bottom:6px") Основа — тренировка 5 ноября. В плане 25 подходов (по правилам было бы 21). Всё можно поправить по ходу.
++   p.sub(style="margin-bottom:6px")
++    b Время: ≈ 1 ч 25 мин
++    | " — разминка, 25 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин."
+@@ 120 -140 +3
++   div.row(style="margin-top:14px")
++    button.btn.primary Начать тренировку
++    button.btn Начать с пустого листа
+
+=== 5. снять поправку галочкой
+поля: правки к шагу 4
+@@ 2 -1 +1
+- pp-leg_press=true
++ pp-leg_press=false
+экран: правки к шагу 4
+@@ 22 -1 +1
+-      input#pp-leg_press(type="checkbox" checked="")
++      input#pp-leg_press(type="checkbox")
+@@ 66 -3 +1
+-     span.n
+-      | Жим ногами
+-      span.tag.accent(style="margin-left:6px") Отказ
++     span.n Жим ногами
+@@ 70 -12 +4
++      span.chip 170
++      span.chip 170
++      span.chip 170
++      span.chip 170
+
+=== 6. после перезагрузки
+поля: как в шаге 4
+экран: как в шаге 4
+
+=== 7. план после перезагрузки снова со всеми поправками

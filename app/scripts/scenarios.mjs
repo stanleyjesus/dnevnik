@@ -18,6 +18,8 @@ const J = v => JSON.stringify(v);
 export const go = view => 'await __t.go(' + J(view) + ');';                                   // открыть вкладку
 /* открыть вкладку из меню: вкладки «Советы» с днями «День N» нет (решение владельца, 25 ноября 2026) — такой шаг идёт через maybe и там пропускается */
 export const tab = view => '__t.el(' + J('#tabs a[href="#' + view + '"]') + '); ' + go(view);
+/* шаг, который возвращает с «Советов»: с днями «День N» прошлый шаг пропущен, и возвращаться неоткуда — тогда и этот пропускается */
+export const fromCoach = code => maybe('__t.el(' + J('#tabs a[href="#coach"]') + '); ' + code);
 export const press = (text, n = 0) => '__t.press(' + J(text) + ', ' + n + ');';              // кнопка по её тексту, n — номер среди одинаковых
 export const click = (sel, n = 0) => '__t.click(' + J(sel) + ', ' + n + ');';                // элемент по селектору
 export const type = (sel, value, n = 0) => '__t.type(' + J(sel) + ', ' + n + ', ' + J(value) + ');';   // ввести в поле
@@ -40,6 +42,8 @@ export const RELOAD = '@reload';                                                
 
 const TABS = ['overview', 'workout', 'journal', 'progress', 'muscles', 'coach', 'program', 'setup'];
 const tabs = note => TABS.map(v => [v + (note ? ' ' + note : ''), v === 'coach' ? maybe(tab(v)) : go(v)]);
+/* вкладки приложения с днями «День N»: «Советов» там нет (решение владельца, 25 ноября 2026) — для сценариев, которые идут только в приложении */
+const APP_TABS = TABS.filter(v => v !== 'coach');
 const AUTOSAVE = 2800;                                                                        // черновик сохраняется через 2,5 с после правки
 const BIG = [1280, 900];
 
@@ -234,7 +238,7 @@ export const SCENARIOS = [
     ['открыть план', press('Открыть план')],
     ['назад к обзору', go('overview')],
     ['все советы', maybe(click('#view a[href="#coach"]'))],
-    ['обзор ещё раз', go('overview')],
+    ['обзор ещё раз', fromCoach(go('overview'))],
     ['нагрузка по неделям', press('По неделям')],
     ['обзор в третий раз', go('overview')],
     /* с днями «День N» в «Массе» карточек базовых на обзоре нет: базовое идёт по двойной прогрессии, как подсобка (решение владельца, 24 ноября 2026) — тогда прогресс открывается вкладкой */
@@ -274,7 +278,7 @@ export const SCENARIOS = [
       + expect('[...document.querySelectorAll(".card.empty .btn")].map(b => b.id + ":" + b.textContent).join() === "onb-again:Собрать программу,import-first:Загрузить резервную копию"', 'в карточке две кнопки: «Собрать программу» и «Загрузить резервную копию»') + expect('!(' + tabsOff + ')', 'вкладки на месте')],
     ['собрать программу: снова онбординг', click('#onb-again') + settle + expect(onbAt(1, 5) + ' && ' + tabsOff, 'онбординг, шаг 1 из 5, без вкладок')],
     ['и снова пропустить', click('#onb-skip') + settle + expect('!!document.querySelector(".card.empty")', 'карточка «В дневнике пока пусто»')],
-    ...TABS.slice(1).map(v => opens(v)),
+    ...APP_TABS.slice(1).map(v => opens(v)),
     ['настройка: справочник заполнен и разложен по снарядам', go('setup') + settle + expect(chips + ' === 63', '63 упражнения на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')
       + expect('!!document.getElementById("gear-g_pullup")', 'есть снаряд «Подтягивания»') + expect('!document.getElementById("starter-tools")', 'кнопок справочника нет: раскладывать и добавлять нечего')
       + expect(stored + ' === "[]"', 'список встроен: в хранилище по-прежнему пусто')],
@@ -308,7 +312,7 @@ export const SCENARIOS = [
     ['подходы', clickAll('.cyc-sets button') + typeAll('input[id^="w-"]', 20) + typeAll('input[id^="r-"]', 10)],
     ['завершить', FINISH],
     ['журнал: одна запись', go('journal') + settle + journal(1)],
-    ...TABS.filter(v => v !== 'journal').map(v => opens(v, 'после первой тренировки')),
+    ...APP_TABS.filter(v => v !== 'journal').map(v => opens(v, 'после первой тренировки')),
     ['после перезагрузки записи на месте', RELOAD],
     ['журнал после перезагрузки', go('journal') + settle + journal(1)],
     ['справочник после перезагрузки тот же', go('setup') + settle + expect(chips + ' === 63', '63 упражнения на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')]
@@ -402,7 +406,7 @@ export const SCENARIOS = [
     ['вес тела: удалить запись', click('button[aria-label^="Удалить запись"]', 1)],
     ['советы с весом тела', maybe(tab('coach'))],
     ['большой экран', size(...BIG)],
-    ['прогресс на большом экране', go('progress')],
+    ['прогресс на большом экране', fromCoach(go('progress'))],
     ['после перезагрузки то же', RELOAD]
   ] },
 
@@ -938,7 +942,7 @@ export const SCENARIOS = [
     ['настройка', go('setup') + settle + click('#setup-more > summary')],
     ['профиль без копии упражнений', click('#pr-copy') + type('#pr-new', 'Новичок') + click('#pr-add') + settle
       + expect('document.getElementById("prof").selectedOptions[0].textContent === "Новичок"', 'открыт профиль «Новичок»')],
-    ...TABS.map(v => opens(v, 'у новичка')),
+    ...APP_TABS.map(v => opens(v, 'у новичка')),
     ['у новичка встроенный справочник', go('setup') + settle + expect(chips + ' === 63', '63 упражнения на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')],
     ['своё упражнение сверх списка', click('#ex-new') + settle + type('#nx-n', 'Подъём гантелей перед собой') + click('#nx-save') + settle + expect(chips + ' === 64', 'упражнений стало 64')],
     ['название из списка повторить нельзя', click('#ex-new') + settle + type('#nx-n', 'жим лежа') + click('#nx-save') + settle + expect(toastIs('Такое упражнение уже есть'), 'сообщение «Такое упражнение уже есть»') + press('Отмена')],

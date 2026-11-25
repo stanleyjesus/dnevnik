@@ -22,7 +22,6 @@
   a(href="#journal") Журнал
   a(href="#progress") Прогресс
   a(href="#muscles") Мышцы
-  a(href="#coach") Советы
   a(href="#program") Программа
   a(href="#setup") Настройка
 поля: —
@@ -145,25 +144,13 @@
   div.wrap.stack
    div.card.empty Расчёт появится после первых тренировок.
 
-=== 9. coach: открывается
-адрес: "#coach"
+=== 9. program: открывается
+адрес: "#program"
 шапка: правки к шагу 8
 @@ 18 -2 +2
 - a(href="#muscles" aria-current="page") Мышцы
-- a(href="#coach") Советы
-+ a(href="#muscles") Мышцы
-+ a(href="#coach" aria-current="page") Советы
-экран: целиком
-  div.wrap.stack
-   div.card.empty Советы появятся после первых тренировок.
-
-=== 10. program: открывается
-адрес: "#program"
-шапка: правки к шагу 9
-@@ 19 -2 +2
-- a(href="#coach" aria-current="page") Советы
 - a(href="#program") Программа
-+ a(href="#coach") Советы
++ a(href="#muscles") Мышцы
 + a(href="#program" aria-current="page") Программа
 поля: целиком
   prog-name=Своя программа
@@ -668,10 +655,10 @@
      button#prog-accept.btn.primary(disabled="") Принять программу
      span.sub Пока ничего не изменено.
 
-=== 11. setup: открывается
+=== 10. setup: открывается
 адрес: "#setup"
-шапка: правки к шагу 10
-@@ 20 -2 +2
+шапка: правки к шагу 9
+@@ 19 -2 +2
 - a(href="#program" aria-current="page") Программа
 - a(href="#setup") Настройка
 + a(href="#program") Программа
@@ -881,7 +868,7 @@
   pr-n-me=Мой дневник
   pr-new=
   pr-copy=true
-экран: правки к шагу 10
+экран: правки к шагу 9
 @@ 4 -493 +1460
 +    h2 Упражнения
 +    button#ex-new.btn
@@ -2344,29 +2331,29 @@
 +    p.note(style="margin-top:8px") CSV — тренировки открытого профиля. Резервная копия — всё сразу: профили, настройка, программы, тренировки и вес тела. Это единственный способ перенести записи на другое устройство или вернуть их, если это сломается.
 +    p#device-note.note(style="margin-top:6px") Браузер не обещал хранить записи: при нехватке места он может их стереть. Держи свежую резервную копию. Сборка для разработки.
 
-=== 12. настройка: справочник заполнен и разложен по снарядам
+=== 11. настройка: справочник заполнен и разложен по снарядам
 
-=== 13. блока «Лимиты и методика» нет
-экран: правки к шагу 12
+=== 12. блока «Лимиты и методика» нет
+экран: правки к шагу 11
 @@ 984 -1 +1
 -  details#setup-more.morebox
 +  details#setup-more.morebox(open="")
 
-=== 14. программа: вручную, в списке дня — весь справочник
+=== 13. программа: вручную, в списке дня — весь справочник
 адрес: "#program"
-шапка: как в шаге 10
-поля: как в шаге 10
-экран: как в шаге 10
+шапка: как в шаге 9
+поля: как в шаге 9
+экран: как в шаге 9
 
-=== 15. цели: масса, сила, гибрид, вручную
+=== 14. цели: масса, сила, гибрид, вручную
 
-=== 16. равномерно: без базовых, упражнения по мышцам
-поля: правки к шагу 15
+=== 15. равномерно: без базовых, упражнения по мышцам
+поля: правки к шагу 14
 @@ 1 -1 +2
 - prog-name=Своя программа
 + pm=even
 + pt=0
-экран: правки к шагу 15
+экран: правки к шагу 14
 @@ 12 -3 +3
 -     h2 Правка вручную
 -    span.sub 0 подходов в неделю
@@ -3206,12 +3193,12 @@
 +    button#prog-accept.btn.primary Принять программу
 +    span.sub Ближайшая тренировка каждого дня будет построена по ней.
 
-=== 17. пауэрбилдинг с нуля: жим лежа
-поля: правки к шагу 16
+=== 16. пауэрбилдинг с нуля: жим лежа
+поля: правки к шагу 15
 @@ 1 -1 +1
 - pm=even
 + pl=l:bench
-экран: правки к шагу 16
+экран: правки к шагу 15
 @@ 12 -3 +3
 -     h2 Равномерно на всё тело
 -    span.sub 68 подходов в неделю · тренировка ≈ 1 ч 15 мин
@@ -3937,17 +3924,17 @@
 @@ 1034 -0 +1
 +     p#ms-note.sub(style="margin-top:8px") В скобках: масса — подсобка, сила — базовые по процентам. Силовой подход с запасом от 3 повторов идёт в объём мышцы за половину.
 
-=== 18. что изменилось и почему
-экран: правки к шагу 17
+=== 17. что изменилось и почему
+экран: правки к шагу 16
 @@ 699 -1 +1
 -     details#prog-why.whybox
 +     details#prog-why.whybox(open="")
 
-=== 19. принять программу
+=== 18. принять программу
 сообщение: "Программа принята: следующие тренировки пойдут по ней"
 записи:
   + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1}},"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"row_machine","n":2},{"ex":"squat","n":2},{"ex":"db_ohp","n":2},{"ex":"rdl","n":2},{"ex":"pullup","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":3},{"ex":"leg_curl_seated","n":4}],"wed":[{"ex":"chest_press","n":4},{"ex":"row_machine","n":2},{"ex":"squat","n":3},{"ex":"db_ohp","n":3},{"ex":"pullup","n":2},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":4},{"ex":"tri_overhead","n":2}],"fri":[{"ex":"bench_light"},{"ex":"tbar_row","n":2},{"ex":"lunge","n":2},{"ex":"lat_pulldown","n":2},{"ex":"ohp","n":3},{"ex":"leg_press","n":3},{"ex":"barbell_curl","n":4},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2}]},"prev":{"goals":{"bench":""}},"budget":100}}
-экран: правки к шагу 17
+экран: правки к шагу 16
 @@ 6 -2 +128
 -     h2 Программы нет
 -   p.sub Программы пока нет. Собери её ниже: добавь упражнения в дни и нажми «Принять программу».
@@ -4403,7 +4390,7 @@
 +    button#prog-accept.btn.primary(disabled="") Принять программу
 +    span.sub Эта программа совпадает с текущей.
 
-=== 20. обзор: первая тренировка по программе
+=== 19. обзор: первая тренировка по программе
 адрес: "#overview"
 шапка: как в шаге 1
 поля: —
@@ -4479,10 +4466,10 @@
       b Программу можно править
       div.sub Состав дней, порядок и число подходов меняются во вкладке «Программа», упражнения и шаг веса — в «Настройке».
 
-=== 21. известный максимум жима ногами
+=== 20. известный максимум жима ногами
 адрес: "#setup"
-шапка: как в шаге 11
-поля: правки к шагу 11
+шапка: как в шаге 10
+поля: правки к шагу 10
 @@ 13 -3 +24
 - kw-work-pec_fly=
 - kw-workR-pec_fly=
@@ -4575,7 +4562,7 @@
 сообщение: "Жим ногами: сохранено"
 записи:
   + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine","max":200},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1}},"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"row_machine","n":2},{"ex":"squat","n":2},{"ex":"db_ohp","n":2},{"ex":"rdl","n":2},{"ex":"pullup","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":3},{"ex":"leg_curl_seated","n":4}],"wed":[{"ex":"chest_press","n":4},{"ex":"row_machine","n":2},{"ex":"squat","n":3},{"ex":"db_ohp","n":3},{"ex":"pullup","n":2},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":4},{"ex":"tri_overhead","n":2}],"fri":[{"ex":"bench_light"},{"ex":"tbar_row","n":2},{"ex":"lunge","n":2},{"ex":"lat_pulldown","n":2},{"ex":"ohp","n":3},{"ex":"leg_press","n":3},{"ex":"barbell_curl","n":4},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2}]},"prev":{"goals":{"bench":""}},"budget":100}}
-экран: правки к шагу 13
+экран: правки к шагу 12
 @@ 596 -1 +111
 -    p.sub В программе пока нет упражнений.
 +    div.kw
@@ -4807,7 +4794,7 @@
 @@ 1300 -7 +0
 @@ 1375 -7 +0
 
-=== 22. план
+=== 21. план
 адрес: "#workout"
 шапка: как в шаге 5
 поля: как в шаге 5
@@ -4882,8 +4869,8 @@
 @@ 22 -0 +1
 +    button.btn Начать с пустого листа
 
-=== 23. старт
-шапка: правки к шагу 22
+=== 22. старт
+шапка: правки к шагу 21
 @@ 15 -1 +3
 - a(href="#workout" aria-current="page") Тренировка
 + a(href="#workout" aria-current="page")
@@ -5686,7 +5673,7 @@
 +    button.btn.primary Завершить тренировку
 +    button.btn.ghost.danger(title="Удалить эту тренировку") Отменить
 
-=== 24. подходы
+=== 23. подходы
 поля: целиком
   wk-date=2025-11-12
   cw-bench=
@@ -5787,7 +5774,7 @@
   wk-note=
 черновик:
   + td-draft {"id":"2025-11-12","date":"2025-11-12","slot":"mon","note":"","open":true,"items":[{"ex":"bench","cyc":{"pct":83,"reps":4},"range":null,"sets":[{"w":null,"r":4},{"w":null,"r":4},{"w":null,"r":4}],"note":"","skip":false,"rir":null,"tm":null},{"ex":"row_machine","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"squat","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"db_ohp","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"rdl","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"pullup","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"lat_raise","cyc":null,"range":[10,20],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":20,"r":10},{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"leg_curl_seated","cyc":null,"range":[8,12],"sets":[{"w":20,"r":10},{"w":20,"r":10},{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null}]}
-экран: правки к шагу 23
+экран: правки к шагу 22
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 30 мин · осталось ≈ 1 ч 25 мин
 +     span#eta по плану ≈ 1 ч 30 мин · все подходы записаны
@@ -5995,7 +5982,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 +        | в диапазоне: дальше цель 11+
 
-=== 25. завершить
+=== 24. завершить
 адрес: "#overview"
 шапка: как в шаге 1
 поля: —
@@ -6004,234 +5991,24 @@
   + workouts/2025-11-12 {"date":"2025-11-12","slot":"mon","items":[{"ex":"bench","cyc":"83/4","sets":"0x4 0x4 0x4"},{"ex":"row_machine","rng":"6-10","sets":"20x10 20x10"},{"ex":"squat","rng":"6-10","sets":"20x10 20x10"},{"ex":"db_ohp","rng":"6-10","sets":"20x10 20x10"},{"ex":"rdl","rng":"6-10","sets":"20x10 20x10"},{"ex":"pullup","rng":"6-10","sets":"20x10 20x10 20x10"},{"ex":"lat_raise","rng":"10-20","sets":"20x10 20x10"},{"ex":"x_rear","rng":"8-12","sets":"20x10 20x10 20x10"},{"ex":"leg_curl_seated","rng":"8-12","sets":"20x10 20x10 20x10 20x10"}]}
 черновик:
   - td-draft
-экран: целиком
-  div.wrap.stack
-   div.tiles
-    div.tile
-     span.l Тренировок записано
-     span.v 1
-     span.d с 12 ноября
-    div.tile
-     span.l Индекс силы
-     div.tile-top
-      span.v 100
-      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
-     span.d 0% к первой неделе
-    div.tile
-     span.l Рабочих подходов в неделю
-     span.v 0
-     span.d нет полных недель
-    div.tile
-     span.l Мышц в рабочей зоне
-     span.v
-      | –
-      small из 11
-     span.d считается после первой полной недели
-   div.grid2
-    div.card
-     div.sec-h
-      div
-       div.eyebrow Следующая тренировка
-       h2 Четверг, 13 ноября
-      a.btn.primary(href="#workout") Открыть план
-     p.sub(style="margin-bottom:6px") 24 подхода, ≈ 1 ч 20 мин с отдыхом по упражнению. Первый раз по программе «Пауэрбилдинг: жим лежа»: веса взяты из последних тренировок каждого упражнения.  Поправок дневник не предлагает.
-     div.plan-list
-      div.plan-row
-       span.n Жим в тренажере на грудь
-       div.chips
-        span.chip 4 × 6–10
-        span.tag вес подбирается
-      div.plan-row
-       span.n Горизонтальная тяга в тренажере
-       div.chips
-        span.chip.up 22.5 ↑
-        span.chip.up 22.5 ↑
-      div.plan-row
-       span.n Приседания со штангой
-       div.chips
-        span.chip.up 22.5 ↑
-        span.chip.up 22.5 ↑
-        span.chip 22.5
-      div.plan-row
-       span.n Жим гантелей сидя
-       div.chips
-        span.chip.up 22 ↑
-        span.chip.up 22 ↑
-        span.chip 22
-      div.plan-row
-       span.n Подтягивания
-       div.chips
-        span.chip.up 21 ↑
-        span.chip.up 21 ↑
-      div.plan-row
-       span.n Махи гантелями в стороны
-       div.chips
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-      div.plan-row
-       span.n Обратная бабочка
-       div.chips
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-      div.plan-row
-       span.n Бицепс бедра сидя в тренажере
-       div.chips
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-      div.plan-row
-       span.n Трицепс из за головы на блоке с косичкой
-       div.chips
-        span.chip 2 × 8–12
-        span.tag вес подбирается
-     div.legend-line
-      span
-       span.chip.up 40 ↑
-       | " прошлый раз взят верх диапазона, вес повышен"
-      span
-       span.chip
-        | 40
-        small 11+
-       | " тот же вес, цель по повторам"
-      span
-       span.chip.down 40 ↓
-       | " было ниже диапазона"
-    div.card
-     div.sec-h
-      h2 Требует внимания
-      a.btn.ghost.sm(href="#coach") Все советы: 2
-     p.sub Критичных замечаний нет.
-   section
-    div.sec-h
-     h2 Базовые
-     span.sub сила по запасу: 4 × 4, вес по запасу
-    div.grid3
-     button.ex-card
-      span.nm
-       | Жим лежа
-       span.tag.accent(style="margin-left:6px") сила по запасу
-      div.ln
-       div
-        div.big 0 × 4
-        div.sub 12 ноя · 83%
-       svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
-      div.sub
-       | "Расчётный максимум 0 кг · дальше "
-       b 2.5 × 4
-
-=== 26. журнал: одна запись
-адрес: "#journal"
-шапка: как в шаге 6
-сообщение: ""
-экран: целиком
-  div.wrap.stack
-   details.week(open="")
-    summary
-     h2 Неделя 1
-     span.sub 10 ноя – 16 ноя · 1 тренировка · 23 рабочих подходов
-    div.stack(style="gap:10px;padding-bottom:14px")
-     div.wo
-      div.wo-h
-       div.row
-        b Среда, 12 ноября
-        span.tag день 1
-       div.row
-        button.btn.ghost.sm Изменить
-        button.btn.ghost.sm.danger Удалить
-      div.wo-row
-       span.n Жим лежа
-       div.chips
-        span.chip 3 × 4 по 0
-        span.tag 83%
-      div.wo-row
-       span.n Горизонтальная тяга в тренажере
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Приседания со штангой
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Жим гантелей сидя
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Румынская тяга
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Подтягивания
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Махи гантелями в стороны
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Обратная бабочка
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Бицепс бедра сидя в тренажере
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-        span.chip 20 × 10
-        span.chip 20 × 10
-
-=== 27. overview после первой тренировки: открывается
-адрес: "#overview"
-шапка: как в шаге 1
-экран: как в шаге 25
-
-=== 28. workout после первой тренировки: открывается
-адрес: "#workout"
-шапка: как в шаге 5
-поля: целиком
-  np-date=2025-11-13
-экран: правки к шагу 22
-@@ 6 -1 +1
--     h2 Среда, 12 ноября
+экран: правки к шагу 21
+@@ 2 -0 +11
++  div.tiles.two
++   div.tile
++    span.l Тренировок записано
++    span.v 1
++    span.d с 12 ноября
++   div.tile
++    span.l Индекс силы
++    div.tile-top
++     span.v 100
++     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
++    span.d 0% к первой неделе
+@@ 5 -16 +4
++     div.eyebrow Следующая тренировка
 +     h2 Четверг, 13 ноября
-@@ 14 -2 +2
--      button(type="button" aria-pressed="true") День 1
--      button(type="button" aria-pressed="false") День 2
-+      button(type="button" aria-pressed="false") День 1
-+      button(type="button" aria-pressed="true") День 2
-@@ 17 -1 +1
--   p.sub(style="margin-bottom:6px") Основа — программа «Пауэрбилдинг: жим лежа»: в этот день она идёт первый раз, вес в каждом упражнении подбирается на месте. В плане 23 подхода. Всё можно поправить по ходу. Поправок нет: дневник не видит причин отходить от правил.
-+   p.sub(style="margin-bottom:6px") Основа — программа «Пауэрбилдинг: жим лежа»: в этот день она идёт первый раз, веса взяты из последних тренировок каждого упражнения. В плане 24 подхода. Всё можно поправить по ходу. Поправок нет: дневник не видит причин отходить от правил.
-@@ 19 -2 +2
--    b Время: ≈ 1 ч 30 мин
--    | " — разминка, 23 подхода и отдых: у каждого упражнения свой, от 2 до 5 мин."
-+    b Время: ≈ 1 ч 20 мин
-+    | " — разминка, 24 подхода и отдых: у каждого упражнения свой, от 2 до 5 мин."
++    a.btn.primary(href="#workout") Открыть план
++   p.sub(style="margin-bottom:6px") 24 подхода, ≈ 1 ч 20 мин с отдыхом по упражнению. Первый раз по программе «Пауэрбилдинг: жим лежа»: веса взяты из последних тренировок каждого упражнения.  Поправок дневник не предлагает.
 @@ 23 -3 +1
 -     span.n
 -      | Жим лежа
@@ -6301,8 +6078,135 @@
 +     span.n Трицепс из за головы на блоке с косичкой
 +     div.chips
 +      span.chip 2 × 8–12
+@@ 81 -3 +17
+-   div.row(style="margin-top:14px")
+-    button.btn.primary Начать тренировку
+-    button.btn Начать с пустого листа
++  section
++   div.sec-h
++    h2 Базовые
++    span.sub сила по запасу: 4 × 4, вес по запасу
++   div.grid3
++    button.ex-card
++     span.nm
++      | Жим лежа
++      span.tag.accent(style="margin-left:6px") сила по запасу
++     div.ln
++      div
++       div.big 0 × 4
++       div.sub 12 ноя · 83%
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
++     div.sub
++      | "Расчётный максимум 0 кг · дальше "
++      b 2.5 × 4
 
-=== 29. progress после первой тренировки: открывается
+=== 25. журнал: одна запись
+адрес: "#journal"
+шапка: как в шаге 6
+сообщение: ""
+экран: целиком
+  div.wrap.stack
+   details.week(open="")
+    summary
+     h2 Неделя 1
+     span.sub 10 ноя – 16 ноя · 1 тренировка · 23 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 12 ноября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 3 × 4 по 0
+        span.tag 83%
+      div.wo-row
+       span.n Горизонтальная тяга в тренажере
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Приседания со штангой
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Жим гантелей сидя
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Румынская тяга
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Махи гантелями в стороны
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Обратная бабочка
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+        span.chip 20 × 10
+        span.chip 20 × 10
+
+=== 26. overview после первой тренировки: открывается
+адрес: "#overview"
+шапка: как в шаге 1
+экран: как в шаге 24
+
+=== 27. workout после первой тренировки: открывается
+адрес: "#workout"
+шапка: как в шаге 5
+поля: целиком
+  np-date=2025-11-13
+экран: правки к шагу 26
+@@ 2 -11 +0
+@@ 16 -1 +1
+-     div.eyebrow Следующая тренировка
++     div.eyebrow Новая тренировка
+@@ 18 -2 +14
+-    a.btn.primary(href="#workout") Открыть план
+-   p.sub(style="margin-bottom:6px") 24 подхода, ≈ 1 ч 20 мин с отдыхом по упражнению. Первый раз по программе «Пауэрбилдинг: жим лежа»: веса взяты из последних тренировок каждого упражнения.  Поправок дневник не предлагает.
++   div.row(style="margin-bottom:12px")
++    label.f
++     span Дата
++     input#np-date(type="date")
++    label.f
++     span День программы
++     div.seg(role="group" aria-label="День программы")
++      button(type="button" aria-pressed="false") День 1
++      button(type="button" aria-pressed="true") День 2
++      button(type="button" aria-pressed="false") День 3
++   p.sub(style="margin-bottom:6px") Основа — программа «Пауэрбилдинг: жим лежа»: в этот день она идёт первый раз, веса взяты из последних тренировок каждого упражнения. В плане 24 подхода. Всё можно поправить по ходу. Поправок нет: дневник не видит причин отходить от правил.
++   p.sub(style="margin-bottom:6px")
++    b Время: ≈ 1 ч 20 мин
++    | " — разминка, 24 подхода и отдых: у каждого упражнения свой, от 2 до 5 мин."
+@@ 98 -17 +3
++   div.row(style="margin-top:14px")
++    button.btn.primary Начать тренировку
++    button.btn Начать с пустого листа
+
+=== 28. progress после первой тренировки: открывается
 адрес: "#progress"
 шапка: как в шаге 7
 поля: целиком
@@ -6483,11 +6387,11 @@
       input#bw-kg.num(type="text" inputmode="decimal" placeholder="")
      button.btn(style="align-self:flex-end") Записать
 
-=== 30. muscles после первой тренировки: открывается
+=== 29. muscles после первой тренировки: открывается
 адрес: "#muscles"
 шапка: как в шаге 8
 поля: —
-экран: правки к шагу 19
+экран: правки к шагу 18
 @@ 5 -129 +29
 +     h2 Нагрузка на теле
 +     p.note Подходов в неделю, которые даёт текущая программа: полных недель по факту пока нет.
@@ -6712,40 +6616,11 @@
 +    p Способ счёта (прямой подход = 1, косвенный = 0.5) взят из мета-регрессии Pelland и соавторов о дозе недельного объёма; там же показано, что сила выходит на плато при заметно меньшем объёме, чем гипертрофия. Близость к отказу (RIR 1 в твоей методике) важна именно для роста мышц — это вывод мета-регрессии Robinson и соавторов.
 +    p Коэффициенты упражнений и сами границы можно изменить в настройке.
 
-=== 31. coach после первой тренировки: открывается
-адрес: "#coach"
-шапка: как в шаге 9
-экран: правки к шагу 30
-@@ 5 -224 +23
-+     h2 Замечания дневника
-+     p.note Пересчитываются после каждой записи по твоим правилам прогрессии и недельному объёму.
-+    div.row(style="gap:12px")
-+     span.pill.info
-+      svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+      | заметки: 2
-+     span.pill.good
-+      svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+      | хорошо: 0
-+   div.ins.info
-+    svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+    div.grow
-+     div.k Заметка · Базовые
-+     div.t Сила по запасу: вес решает запас в последнем подходе
-+     div.x Жим лежа: расчётный максимум 0 → 0 кг (0% за 1 неделю), дальше 2.5 × 4 — сила по запасу: 3 × 4 одним весом, вес по запасу в последнем подходе. Отмечай запас (RIR) в последнем подходе: 2 и больше — на следующей неделе плюс шаг, 1 — вес тот же, 0 или подходы не закрыты — минус 5%.
-+     a.btn.ghost.sm(href="#progress" style="margin-left:-8px") Открыть раздел
-+   div.ins.info
-+    svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+    div.grow
-+     div.k Заметка · Вес тела
-+     div.t Вес тела пока не записан
-+     div.x Набор мышц проще всего проверить по весу: для набора без лишнего жира ориентир — плюс 0.25–0.5% веса тела в неделю. Записывай вес 2–3 раза в неделю утром во вкладке «Прогресс».
-+     a.btn.ghost.sm(href="#progress" style="margin-left:-8px") Открыть раздел
-
-=== 32. program после первой тренировки: открывается
+=== 30. program после первой тренировки: открывается
 адрес: "#program"
-шапка: как в шаге 10
-поля: как в шаге 17
-экран: правки к шагу 19
+шапка: как в шаге 9
+поля: как в шаге 16
+экран: правки к шагу 18
 @@ 8 -3 +1
 -   p.sub Принята 12 ноября. По ней ещё не было ни одной тренировки. Приоритет — «Жим лежа», остальные базовые идут как подсобка. Лимит недели — 100 подходов.
 -   div.row(style="margin-top:8px")
@@ -6796,12 +6671,12 @@
 +       b Вес пока не задан: 7 упражнений
 +       div.sub Жим в тренажере на грудь, Трицепс из за головы на блоке с косичкой, Горизонтальная тяга Т-бар, Выпады с гантелями, Вертикальная тяга в тренажере, Жим штанги стоя и Бицепс со штангой стоя. Его можно подобрать на первой тренировке — или указать рабочий вес либо разовый максимум в «Настройке» → «Известные веса», тогда дневник поставит его сам.
 
-=== 33. setup после первой тренировки: открывается
+=== 31. setup после первой тренировки: открывается
 адрес: "#setup"
-шапка: как в шаге 11
-поля: правки к шагу 21
+шапка: как в шаге 10
+поля: правки к шагу 20
 @@ 13 -27 +0
-экран: правки к шагу 21
+экран: правки к шагу 20
 @@ 604 -56 +0
 @@ 986 -0 +32
 +    details(style="margin-top:10px")
@@ -6840,20 +6715,20 @@
 -      p.note Записей в дневнике: 0. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
 +      p.note Записей в дневнике: 1. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
 
-=== 34. после перезагрузки записи на месте
-экран: правки к шагу 33
+=== 32. после перезагрузки записи на месте
+экран: правки к шагу 31
 @@ 962 -1 +1
 -  details#setup-more.morebox(open="")
 +  details#setup-more.morebox
 
-=== 35. журнал после перезагрузки
+=== 33. журнал после перезагрузки
 адрес: "#journal"
 шапка: как в шаге 6
 поля: —
-экран: как в шаге 26
+экран: как в шаге 25
 
-=== 36. справочник после перезагрузки тот же
+=== 34. справочник после перезагрузки тот же
 адрес: "#setup"
-шапка: как в шаге 11
-поля: как в шаге 33
-экран: как в шаге 34
+шапка: как в шаге 10
+поля: как в шаге 31
+экран: как в шаге 32
