@@ -222,7 +222,7 @@ test('с выбранным временем заметка называет в�
   });
 });
 
-/* Время заполняется подходами, «Масса» с приоритетом без базовых, не больше десяти упражнений в тренировке (решения владельца, 25 ноября 2026; rules.ts, fillTop и TIME_EX).
+/* Время заполняется подходами, «Масса» без базовых с нуля, не больше десяти упражнений в тренировке (решения владельца, 25 ноября 2026; rules.ts, fillTop и TIME_EX).
    Числа — встроенный справочник, профиль без записей, три дня, отдых 2:00; те же — в docs/04, раздел 3.8, правило 7 */
 const places = (pr: Built, sl: string) => pr.slots[sl].reduce((a, e) => a + (pr.cfg.ex[e.ex].uni ? 0.5 : 1), 0);
 const lifts = (pr: Built) => [...new Set(Core.SLOTS.flatMap(sl => pr.slots[sl.id].filter(e => Core.isCycle(pr.cfg, e.ex)).map(e => e.ex)))];
@@ -248,10 +248,10 @@ test('с выбранным временем время заполняется �
   assert.deepEqual([total(two), spanOf(two, rest), spanOf(two, ['glutes'])], [93, '11.5–15', '20–20']);
   assert.ok(Core.SLOTS.every(sl => inTime(Core.estMinutes(two.cfg, two.slots[sl.id]), 120)));
   assert.ok(noteOf(two, /^Приоритет/)!.x!.includes('Время на тренировку заполнено подходами: общий уровень поднят с 10 до 12 подходов в неделю, у приоритета — до 18, пока каждая тренировка укладывается в 2 ч. Выше не поднимается: у приоритета потолок 18 подходов, и с остальными выше 12 он перестал бы быть в полтора раза больше.'));
-  /* «Равномерно», 2 ч: до 13 — дальше не пускает лимит недели */
+  /* «Равномерно», 2 ч: до 12 — уровнем выше верх спины ушёл бы от остальных («Равномерно» — буквально) */
   const even = Core.buildProgram([], cfg, { time: 120 });
-  assert.deepEqual([total(even), spanOf(even, tracked)], [100, '13–16']);
-  assert.ok(noteOf(even, /^Все мышцы в рабочей зоне/)!.x!.includes('общий уровень поднят с 10 до 13 подходов в неделю, пока каждая тренировка укладывается в 2 ч. Выше не даёт лимит 100 подходов в неделю.'));
+  assert.deepEqual([total(even), spanOf(even, tracked)], [92, '12–14.5']);
+  assert.ok(noteOf(even, /^Все мышцы в рабочей зоне/)!.x!.includes('общий уровень поднят с 10 до 12 подходов в неделю, пока каждая тренировка укладывается в 2 ч. Уровнем выше — перекос: верх спины заметно выше остальных.'));
   /* под «Силой» подсобка по-прежнему ниже рабочей зоны: время подходами не заполняется */
   const str = Core.buildProgram([], cfg, { focus: 'bench', strength: true, time: 120 });
   assert.ok(!str.notes.some(n => /заполнено подходами/.test(n.x || '')) && spanOf(str, tracked.filter(m => !['chest'].includes(m))) === '8–12', spanOf(str, tracked));
@@ -262,15 +262,15 @@ test('с выбранным временем время заполняется �
   }
 }));
 
-test('«Масса» с мышцами в приоритете: базовые справочника с нуля сами не встают; «Всем поровну» и «Гибрид» — как были', () => withDays(3, () => {
+test('«Масса»: базовые справочника с нуля сами не встают — ни с мышцами в приоритете, ни «Всем поровну»; «Гибрид» и «Сила» — как были', () => withDays(3, () => {
   const cfg = Core.mergeCfg(withStarter(null));
-  for (const prio of ['glutes', 'legs', 'arms']) {
-    const pr = Core.buildProgram([], cfg, { prio });
-    assert.deepEqual(lifts(pr), [], prio);
-    assert.ok(!noteOf(pr, /^Базовые — первыми/), prio);
+  for (const prio of ['', 'glutes', 'legs', 'arms']) {
+    const pr = Core.buildProgram([], cfg, prio ? { prio } : {});
+    assert.deepEqual(lifts(pr), [], prio || 'Всем поровну');
+    assert.ok(!noteOf(pr, /^Базовые — первыми/), prio || 'Всем поровну');
   }
-  assert.deepEqual(lifts(Core.buildProgram([], cfg, {})), ['bench', 'leg_press', 'pullup']);
-  assert.ok(lifts(Core.buildProgram([], cfg, { focus: 'bench' })).includes('bench'));
+  assert.deepEqual(lifts(Core.buildProgram([], cfg, { focus: 'bench' })), ['bench', 'leg_press', 'pullup']);
+  assert.deepEqual(lifts(Core.buildProgram([], cfg, { strength: true, triad: true })), ['squat', 'bench', 'deadlift']);
   /* ягодицы в приоритете: первыми в каждом дне — упражнения на ягодицы */
   const pr = Core.buildProgram([], cfg, { prio: 'glutes', time: 120 });
   for (const sl of Core.SLOTS) assert.ok((pr.cfg.ex[pr.slots[sl.id][0].ex].m.glutes || 0) >= 1, sl.n + ': ' + pr.slots[sl.id][0].ex);

@@ -265,9 +265,11 @@ export const SCENARIOS = [
     ['программа: вручную, в списке дня — весь справочник', go('program') + settle + expect(goalIs('hand') + ' && !document.querySelector("#pm, #pl, #ps")', 'для пустого дневника цель «Вручную», уточняющего списка нет')
       + expect('document.querySelectorAll("#pa-mon option").length === 63', 'в списке понедельника 63 упражнения')],
     ['цели: масса, сила, гибрид, вручную', expect(goals + ' === "Масса,Сила,Гибрид,Вручную"', 'четыре кнопки цели: в справочнике есть базовые, поэтому сила и гибрид на месте')],
-    ['равномерно: базовые первыми, по одному в день', mode('even') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'even'), 'цель «Масса», в списке — «Всем поровну»')
+    /* в «Массе» базовые справочника с нуля сами не встают (решение владельца, 25 ноября 2026): упражнения подбираются по мышцам из остального справочника */
+    ['равномерно: без базовых, упражнения по мышцам', mode('even') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'even'), 'цель «Масса», в списке — «Всем поровну»')
       + expect('document.querySelectorAll("#view .prow").length >= 15', 'в черновике не меньше 15 упражнений')
-      + expect(firstRows + '.map(t => t.split("новое")[0]).join("|") === "Жим лежа|Жим ногами|Подтягивания"', 'первыми в понедельник, среду и пятницу стоят жим лежа, жим ногами и подтягивания')],
+      + expect('![...[...document.querySelectorAll("#view section.card")].pop().querySelectorAll(".prow .pn")].some(e => /^(Жим лежа|Жим ногами|Подтягивания)(новое|$)/.test(e.textContent))', 'жима лежа, жима ногами и подтягиваний в черновике нет')
+      + expect('!(document.getElementById("prog-why") || { textContent: "" }).textContent.includes("Базовые — первыми")', 'заметки «Базовые — первыми» нет')],
     ['пауэрбилдинг с нуля: жим лежа', mode('l:bench') + settle + 'const r = ' + firstRows + ';'
       + expect(goalIs('mix') + ' && ' + listOf('pl') + ' === "l:bench,l:squat,l:leg_press,l:pullup,l:deadlift,l:hip_thrust,l:ohp,l:barbell_curl"', 'цель «Гибрид», в списке — восемь движений целей (пункт 8, 24 ноября 2026), первое — жим лежа')
       + expect('r[0].startsWith("Жим лежа") && r[0].includes("сила по запасу")', 'понедельник начинается с жима лежа на силу по запасу')

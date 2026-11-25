@@ -241,14 +241,14 @@ test('четыре дня: у пауэрбилдинга день на масс�
   });
 });
 
-test('с нуля на встроенном списке: при двух днях третье базовое в «Массе» встаёт вторым, а в «Гибриде» уходит с заметкой; при четырёх — четвёртый день без базового', () => {
+test('с нуля на встроенном списке: в «Массе» базовые справочника сами не встают, в «Гибриде» при двух днях третье уходит с заметкой; при четырёх — четвёртый день без базового', () => {
   const cfg = Core.mergeCfg(withStarter(null));
   withDays(2, () => {
-    /* в «Массе» жертвовать нечем (пункт 8): базовых больше, чем дней, — третье встаёт вторым в день 1 */
+    /* в «Массе» базовые с нуля не встают вовсе (решение владельца, 25 ноября 2026; rules.test.ts): жертвовать нечем, упражнения подбираются по мышцам */
     const pr = Core.buildProgram([], cfg, {});
     sound(cfg, pr, 100);
-    assert.deepEqual([pr.slots.mon[0].ex, pr.slots.wed[0].ex, daysWith(pr, 'pullup'), pr.dropped], ['bench', 'leg_press', ['mon'], []]);
-    assert.ok(titles(pr).includes('Базовые — первыми в своих днях: Жим лежа (день 1), Жим ногами (день 2), Подтягивания (день 1, вторым)'), titles(pr).join(' | '));
+    assert.deepEqual([LIFTS.flatMap(id => daysWith(pr, id)), pr.dropped], [[], []]);
+    assert.ok(!titles(pr).some(t => t.startsWith('Базовые — первыми')), titles(pr).join(' | '));
     /* в «Гибриде» с нуля лишнее — последнее по списку; вторым базовое не встаёт (решение владельца, 23 ноября 2026) */
     const pb = Core.buildProgram([], cfg, { focus: 'bench' });
     sound(cfg, pb, 100);
@@ -261,11 +261,12 @@ test('с нуля на встроенном списке: при двух дня
     assert.deepEqual([mine.slots.mon[0].ex, daysWith(mine, 'pullup'), daysWith(mine, 'leg_press'), mine.dropped], ['bench', ['wed'], [], ['leg_press']]);
   });
   withDays(4, () => {
-    const pr = Core.buildProgram([], cfg, {});
-    sound(cfg, pr, 100);
-    assert.deepEqual(Core.SLOTS.map(sl => pr.slots[sl.id][0].ex).slice(0, 3), LIFTS);
-    assert.ok(!pr.slots.d4.some(e => LIFTS.includes(e.ex)));
-    const l = loads(pr); assert.ok(Math.max(...l) - Math.min(...l) <= 4, 'дни разной длины: ' + l.join(' / '));
+    /* в «Гибриде» базовые — первыми в днях 1–3, четвёртый день без базового; дни и в «Массе», и в «Гибриде» одной длины */
+    const pb = Core.buildProgram([], cfg, { focus: 'bench' });
+    sound(cfg, pb, 100);
+    assert.deepEqual(Core.SLOTS.map(sl => pb.slots[sl.id][0].ex).slice(0, 3), LIFTS);
+    assert.ok(!pb.slots.d4.some(e => LIFTS.includes(e.ex)));
+    for (const pr of [pb, Core.buildProgram([], cfg, {})]) { sound(cfg, pr, 100); const l = loads(pr); assert.ok(Math.max(...l) - Math.min(...l) <= 4, 'дни разной длины: ' + l.join(' / ')); }
   });
 });
 

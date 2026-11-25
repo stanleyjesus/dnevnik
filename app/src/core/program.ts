@@ -439,9 +439,10 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     dropped.push(...out);
     return out;
   };
-  /* (в эталоне нет) В «Массе» с мышцами в приоритете базовые справочника с нуля сами не встают (решение владельца, 25 ноября 2026): силовой роли у них там нет
-     (пункт 8), и первым в дне им стоять незачем — упражнения подбираются по мышцам из остального справочника. Базовые, которые в программе уже стоят, остаются */
-  if (scratch && !(appRules() && group)) {
+  /* (в эталоне нет) В «Массе» — и с мышцами в приоритете, и «Всем поровну» — базовые справочника с нуля сами не встают (решение владельца, 25 ноября 2026):
+     силовой роли у них там нет (пункт 8), и первым в дне им стоять незачем — упражнения подбираются по мышцам из остального справочника.
+     Базовые, которые в программе уже стоят, остаются; в «Силе» и «Гибриде» — как было */
+  if (scratch && !(appRules() && !focus && !opts.strength)) {
     const ls = Object.keys(cfg.ex).filter(id => isCycle(cfg, id));
     if (focus) { ls.splice(ls.indexOf(focus), 1); ls.unshift(focus); }
     if (tri) ls.sort((a, b) => aims.indexOf(a) - aims.indexOf(b));   // (в эталоне нет) тройка встаёт по дням в своём порядке: приседания, жим лежа, становая
@@ -827,7 +828,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
         : !nx ? ''
         : nx.res.hit === 'budget' ? 'Выше не даёт лимит ' + budget + ' подходов в неделю.'
         : nx.res.left.length ? names(nx.res.left) + ' выше не поднять — ' + (SLOTS.every(sl => full(nx.slots[sl.id])) ? longIn(nx.slots) : 'упражнения на ' + (nx.res.left.length > 1 ? 'них' : 'неё') + ' уже по пять подходов или упираются в лимит ' + caps.day + ' подходов на мышцу за тренировку') + '.'
-        : (nx.res.over || []).length > over0 ? 'Уровнем выше ' + names(nx.res.over!) + ' ушли бы заметно выше остальных.' : '';
+        : (nx.res.over || []).length > over0 ? 'Уровнем выше — перекос: ' + names(nx.res.over!) + ' заметно выше остальных.' : '';
       filled = ' Время на тренировку заполнено подходами: общий уровень поднят с ' + z.opt + ' до ' + level + ' подходов в неделю' + (pm.length ? ', у приоритета — до ' + Math.min(z.high - 2, Math.round(level * PRIO_K)) : '') + ', пока каждая тренировка укладывается в ' + fmtDur(time) + '.' + (stop ? ' ' + stop.charAt(0).toUpperCase() + stop.slice(1) : '');
     }
     const oneMore = DAYS.week ? 'четвёртый тренировочный день' : SLOTS.length < 4 ? 'ещё один тренировочный день' : '';   // при четырёх днях добавлять уже нечего
