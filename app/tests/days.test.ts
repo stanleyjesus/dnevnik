@@ -8,7 +8,7 @@ import { plain, readJson, Ref } from './helpers.ts';
 import { Core } from '../src/core/index.ts';
 import { DAYS, DAY_COUNTS, DAY_IDS, awayDays, dayNo, daysOf, dayStale, useDays } from '../src/core/days.ts';
 import { withStarter } from '../src/core/starter.ts';
-import { RULES } from '../src/core/rules.ts';
+import { EVEN, RULES } from '../src/core/rules.ts';
 import type { BuildOpts, Cfg, ExDef, ProgSlots, Workout } from '../src/core/types.ts';
 
 type Raw = { ex: Record<string, ExDef>; program?: unknown };
@@ -112,14 +112,14 @@ function threeDays() {
   assert.ok(titles(pb).includes('Второй раз в неделю — в день 3: Жим лежа — лёгкий день') && titles(pb).some(t => t.startsWith('День на массу — в день 2: ')), titles(pb).join(' | '));
 }
 
-test('два дня, примерные данные: в «Массе» базовое из дня 3 переезжает в день 2 — дни 33 и 35 подходов, мышцы 8.5–11.5; в «Гибриде» в тренировке одно базовое — третье уходит с заметкой, каким жертвовать, выбирает атлет', () => {
+test('два дня, примерные данные: в «Массе» базовое из дня 3 переезжает в день 2 — дни по 34 подхода, мышцы 8.5–11.5; в «Гибриде» в тренировке одно базовое — третье уходит с заметкой, каким жертвовать, выбирает атлет', () => {
   const cfg = appCfg(seedRaw()), W = seedW();
   withDays(2, () => {
     /* в «Массе» базовые идут по двойной прогрессии, и жертвовать ими незачем (решение владельца, 24 ноября 2026, пункт 8):
        подтягивания из дня 3 встают в день 2 после жима ногами и помечены переносом, а не новым упражнением */
     const pr = Core.buildProgram(W, cfg, {});
     sound(cfg, pr, 100);
-    assert.deepEqual(loads(pr), [33, 35]); assert.equal(span(cfg, pr), '8.5–11.5');
+    assert.deepEqual(loads(pr), [34, 34]); assert.equal(span(cfg, pr), '8.5–11.5');
     assert.deepEqual([daysWith(pr, 'bench'), daysWith(pr, 'leg_press'), daysWith(pr, 'pullup'), pr.dropped, pr.dropFrom], [['mon'], ['wed'], ['wed'], [], []]);
     const up = pr.slots.wed.find(e => e.ex === 'pullup')!;
     assert.deepEqual([up.isNew, up.from], [true, 'fri']);
@@ -127,7 +127,7 @@ test('два дня, примерные данные: в «Массе» базо
     assert.ok(m && m.x!.includes('Дней в неделе стало меньше') && !titles(pr).some(t => t.startsWith('Не в программе')), titles(pr).join(' | '));
     /* списка «Без базового» в «Массе» нет, и выбор из него не действует */
     const mass = Core.buildProgram(W, cfg, { drop: ['bench'] });
-    assert.deepEqual([mass.dropped, daysWith(mass, 'bench'), loads(mass)], [[], ['mon'], [33, 35]]);
+    assert.deepEqual([mass.dropped, daysWith(mass, 'bench'), loads(mass)], [[], ['mon'], [34, 34]]);
     /* «Гибрид» вокруг жима лежа: лишнее по правилу — базовое из дня вне недели (подтягивания); в днях остаётся то базовое, что в них стояло (решение владельца, 23 ноября 2026) */
     const pb = Core.buildProgram(W, cfg, { focus: 'bench' });
     sound(cfg, pb, 100);
@@ -140,7 +140,7 @@ test('два дня, примерные данные: в «Массе» базо
     /* атлет жертвует жимом ногами: подтягивания встают в день 2 вместо него и помечены переносом из дня 3 */
     const mine = Core.buildProgram(W, cfg, { focus: 'bench', drop: ['leg_press'] });
     sound(cfg, mine, 100);
-    assert.deepEqual([loads(mine), span(cfg, mine)], [[39, 35], '10–12']);
+    assert.deepEqual([loads(mine), span(cfg, mine)], [[38, 36], '10–12']);
     assert.deepEqual([daysWith(mine, 'bench'), daysWith(mine, 'pullup'), daysWith(mine, 'leg_press'), mine.dropped], [['mon'], ['wed'], [], ['leg_press']]);
     const pu = mine.slots.wed.find(e => e.ex === 'pullup')!;
     assert.deepEqual([pu.isNew, pu.from], [true, 'fri']);
@@ -181,41 +181,42 @@ test('два дня: у пауэрбилдинга отдельного дня �
   });
 });
 
-test('четыре дня, примерные данные: новый день заполнен, длинные дни разгружены — 19 / 19 / 20 / 20, мышцы 10–12', () => {
+test('четыре дня, примерные данные: новый день заполнен, длинные дни разгружены — 19 / 18 / 19 / 22 подхода, 1 ч 10 мин — 1 ч 5 мин, мышцы 10–12', () => {
   const cfg = appCfg(seedRaw()), W = seedW();
   withDays(4, () => {
     const pr = Core.buildProgram(W, cfg, {});
     sound(cfg, pr, 100);
-    assert.deepEqual(loads(pr), [19, 19, 20, 20]); assert.equal(span(cfg, pr), '10–12');
+    assert.deepEqual(loads(pr), [19, 18, 19, 22]); assert.equal(span(cfg, pr), '10–12');
     assert.ok(!pr.slots.d4.some(e => LIFTS.includes(e.ex)), 'в четвёртом дне базового нет: их три');
     const n = pr.notes.find(v => v.t === 'Дни выровнены по длине');
     assert.ok(n && n.x!.includes('(день 2 → день 4)') && n.x!.includes('объём за неделю тот же'), JSON.stringify(n));
     /* переездом названо только то, что стояло в другом дне */
     const moved = n!.x!.split('. ')[0].split(', ').map(v => v.replace(/ \(день \d → день \d\)$/, '')), carried = pr.notes.find(v => v.t === 'Перенесено на другой день');
-    assert.deepEqual(moved, ['Жим гантелей под углом 45', 'Бицепс Bayesian curl', 'Разгибания ног в тренажере']);
+    assert.deepEqual(moved, ['Жим гантелей под углом 45', 'Бабочка', 'Вертикальная тяга в тренажере', 'Горизонтальная тяга Т-бар']);
     for (const name of moved) { assert.ok(Core.SLOTS.some(sl => pr.cur[sl.id].some(e => Core.exName(cfg, e.ex) === name)), name + ' в программе не стоял'); assert.ok(!carried || !carried.x!.includes(name + ' ('), name + ' назван перенесённым ради частоты'); }
     /* названные в заметке упражнения помечены переносом, а не новым упражнением */
     for (const name of moved) { const e = pr.slots.d4.find(x => Core.exName(cfg, x.ex) === name); assert.ok(e && e.isNew && e.from, name + ': не помечено переносом'); }
-    /* дальше выравнивать незачем: дни отличаются не больше чем на три подхода (раздел 3.2, пункт 5) */
-    assert.ok(Math.max(...loads(pr)) - Math.min(...loads(pr)) <= 3, String(loads(pr)));
+    /* дальше выравнивать незачем: дни отличаются по длине не больше чем на 10 минут (раздел 3.2, пункт 5; просьба владельца, 25 ноября 2026, rules.ts, EVEN) */
+    const mins = Core.SLOTS.map(sl => Core.estMinutes(pr.cfg, pr.slots[sl.id]));
+    assert.ok(Math.max(...mins) - Math.min(...mins) <= EVEN.min, mins.join(' / '));
   });
 });
 
 test('четыре дня: новое упражнение, переставленное выравниванием, — «Новое в день 4», а не переезд; изменение подходов у переехавшего названо отдельно', () => {
   const cfg = appCfg(seedRaw()), W = seedW();
   withDays(4, () => {
-    /* на примерных данных с приоритетом «Ноги и ягодицы» это румынская тяга: сборка поставила её в день 2, выравнивание перенесло в день 4 */
-    const legs = Core.buildProgram(W, cfg, { prio: 'legs' });
+    /* на примерных данных с приоритетом «Ягодицы» это румынская тяга: сборка поставила её в день 1, выравнивание перенесло в день 4 */
+    const legs = Core.buildProgram(W, cfg, { prio: 'glutes' });
     sound(cfg, legs, 100);
     const n = legs.notes.find(v => v.t === 'Дни выровнены по длине');
     assert.ok(titles(legs).includes('Новое в день 4: Румынская тяга') && !(n && n.x!.includes('Румынская тяга')), titles(legs).join(' | '));
     const rdl = legs.slots.d4.find(e => e.ex === 'x_rdl');
     assert.ok(rdl && rdl.isNew && !rdl.from, 'новое упражнение помечено переносом');
     /* «объём за неделю тот же» — про переезд; если та же сборка изменила у переехавшего упражнения число подходов, это названо отдельно
-       (на примерных данных — с приоритетом «Грудь и плечи»: трицепс с косичкой из дня 3) */
+       (на примерных данных — с приоритетом «Грудь и плечи»: бицепс бедра лёжа из дня 3) */
     const chest = Core.buildProgram(W, cfg, { prio: 'chest' });
     for (const pr of [legs, chest]) for (const e of pr.slots.d4) if (e.from && e.chg) { const nt = pr.notes.find(v => v.t === (e.chg! > 0 ? 'Прибавлены подходы' : 'Убраны подходы')); assert.ok(nt && nt.x!.includes(Core.exName(cfg, e.ex) + ' (день 4)'), Core.exName(cfg, e.ex) + ': изменение подходов не названо'); }
-    assert.ok(chest.slots.d4.some(e => e.ex === 'tri_pushdown' && e.from && e.chg), 'на примерных данных у переехавшего упражнения меняется число подходов');
+    assert.ok(chest.slots.d4.some(e => e.ex === 'leg_curl_lying' && e.from && e.chg), 'на примерных данных у переехавшего упражнения меняется число подходов');
   });
 });
 
@@ -230,7 +231,7 @@ test('четыре дня: у пауэрбилдинга день на масс�
     assert.ok(titles(pb).some(t => t.startsWith('День на массу — в день 3: ')) && titles(pb).includes('Второй раз в неделю — в день 4: Жим лежа — лёгкий день'), titles(pb).join(' | '));
     const solo = Core.buildProgram(W, cfg, { focus: 'bench', strength: true, budget: 80 });
     sound(cfg, solo, 80);
-    assert.deepEqual(loads(solo), [18, 16, 19, 16]); assert.equal(span(cfg, solo), '8–12');
+    assert.deepEqual(loads(solo), [15, 17, 19, 18]); assert.equal(span(cfg, solo), '8–12');
     /* «Сила: <движение>» — тяжёлый и лёгкий день, среднего нет (вывод 9 аудита, 25 ноября 2026): лёгкий — в самом дальнем от тяжёлого дне */
     assert.deepEqual([daysWith(solo, 'bench'), daysWith(solo, 'bench_light'), daysWith(solo, 'bench_mid')], [['mon'], ['d4'], []]);
     assert.ok(titles(solo).includes('Сила: Жим лежа — два раза в неделю'), titles(solo).join(' | '));
@@ -490,10 +491,10 @@ test('дневник неделей позже: два и четыре дня с
   const p = readJson('data/later.json').profiles.find((v: { id: string }) => v.id === 'me');
   const W: Workout[] = Core.sortW(p.workouts.map((d: Record<string, unknown>) => Core.fromDoc(String(d.id), d))), cfg = appCfg(p.config);
   const modes: [BuildOpts, number][] = [[{}, 100], [{ focus: 'bench' }, 100], [{ focus: 'bench', strength: true, budget: 80 }, 80], [{ focus: 'barbell_curl', strength: true, budget: 80 }, 80], [{ prio: 'legs' }, 100]];
-  withDays(2, () => { for (const [opts, b] of modes) sound(cfg, Core.buildProgram(W, cfg, opts), b); assert.deepEqual(loads(Core.buildProgram(W, cfg, {})), [33, 35]); });
+  withDays(2, () => { for (const [opts, b] of modes) sound(cfg, Core.buildProgram(W, cfg, opts), b); assert.deepEqual(loads(Core.buildProgram(W, cfg, {})), [34, 34]); });
   withDays(4, () => {
     for (const [opts, b] of modes.concat([[{ strength: true, triad: true, budget: 80 }, 80]])) sound(cfg, Core.buildProgram(W, cfg, opts), b);
-    assert.deepEqual(loads(Core.buildProgram(W, cfg, { focus: 'bench', strength: true, budget: 80 })), [16, 19, 19, 16]);
+    assert.deepEqual(loads(Core.buildProgram(W, cfg, { focus: 'bench', strength: true, budget: 80 })), [16, 17, 19, 18]);
     assert.deepEqual(loads(Core.buildProgram(W, cfg, { strength: true, triad: true, budget: 80 })), [17, 16, 18, 16]);
   });
 });

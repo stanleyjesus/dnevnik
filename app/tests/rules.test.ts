@@ -9,7 +9,7 @@ import { useDays } from '../src/core/days.ts';
 import { withStarter } from '../src/core/starter.ts';
 import { ADDS } from '../src/core/adapt.ts';
 import { LIB } from '../src/core/program.ts';
-import { RDL_M, TIMES, TIME_EX, appRules, fillTop, inTime, isRdl, moreTime } from '../src/core/rules.ts';
+import { EVEN, RDL_M, TIMES, TIME_EX, appRules, fillTop, inTime, isRdl, moreTime } from '../src/core/rules.ts';
 import type { BuildOpts, Cfg, ExDef, MuscleMap, ProgSlots, Workout } from '../src/core/types.ts';
 
 type Raw = { ex: Record<string, ExDef> };
@@ -238,7 +238,7 @@ function acceptAs(raw: Raw, pr: Built, since: string): Cfg {
   const r = plain(raw) as Raw & { program?: unknown }; Object.assign(r.ex, plain(pr.create));
   for (const [id, g] of Object.entries(pr.goals)) { if (!r.ex[id]) continue; if (g) r.ex[id].goal = g; else delete r.ex[id].goal; }
   const slots: ProgSlots = {}; for (const id of Object.keys(pr.slots)) slots[id] = pr.slots[id].map(e => e.n ? { ex: e.ex, n: e.n } : { ex: e.ex });
-  r.program = { name: pr.name, focus: pr.focus || '', others: pr.others || '', prio: pr.prio, budget: pr.budget, since, made: since, slots };
+  r.program = Object.assign({ name: pr.name, focus: pr.focus || '', others: pr.others || '', prio: pr.prio, budget: pr.budget, since, made: since, slots }, pr.strength ? { strength: true, lean: true } : {}, pr.triad ? { triad: pr.triad.slice() } : {});
   return Core.mergeCfg(r);
 }
 
@@ -255,10 +255,11 @@ test('с выбранным временем время заполняется �
   assert.deepEqual([total(two), spanOf(two, rest), spanOf(two, ['glutes'])], [85, '12–14.5', '20–20']);
   assert.ok(Core.SLOTS.every(sl => inTime(Core.estMinutes(two.cfg, two.slots[sl.id]), 120)));
   assert.ok(noteOf(two, /^Приоритет/)!.x!.includes('Время на тренировку заполнено подходами: общий уровень поднят с 10 до 12 подходов в неделю, у приоритета — до 18, пока каждая тренировка укладывается в 2 ч. Выше не поднимается: у приоритета потолок 18 подходов, и с остальными выше 12 он перестал бы быть в полтора раза больше.'));
-  /* «Равномерно», 2 ч: до 12 — уровнем выше верх спины ушёл бы от остальных («Равномерно» — буквально) */
+  /* «Равномерно», 2 ч: до 14 — выше не даёт лимит недели. До выравнивания дней по длине (просьба владельца, 25 ноября 2026; rules.ts, EVEN) было 84 подхода
+     и уровень 12: первый день упирался во время, пока в третьем оставалось 30 минут, а уровнем выше верх спины уходил от остальных */
   const even = Core.buildProgram([], cfg, { time: 120 });
-  assert.deepEqual([total(even), spanOf(even, tracked)], [84, '12–14.5']);
-  assert.ok(noteOf(even, /^Все мышцы в рабочей зоне/)!.x!.includes('общий уровень поднят с 10 до 12 подходов в неделю, пока каждая тренировка укладывается в 2 ч. Уровнем выше — перекос: верх спины заметно выше остальных.'));
+  assert.deepEqual([total(even), spanOf(even, tracked)], [99, '14–17']);
+  assert.ok(noteOf(even, /^Все мышцы в рабочей зоне/)!.x!.includes('общий уровень поднят с 10 до 14 подходов в неделю, пока каждая тренировка укладывается в 2 ч. Выше не даёт лимит 100 подходов в неделю.'));
   /* под «Силой» подсобка по-прежнему ниже рабочей зоны: время подходами не заполняется */
   const str = Core.buildProgram([], cfg, { focus: 'bench', strength: true, time: 120 });
   assert.ok(!str.notes.some(n => /заполнено подходами/.test(n.x || '')) && spanOf(str, tracked.filter(m => !['chest'].includes(m))) === '8–11', spanOf(str, tracked));
@@ -268,6 +269,48 @@ test('с выбранным временем время заполняется �
     assert.deepEqual([again.same, total(again)], [true, total(pr)], JSON.stringify(opts));
   }
 }));
+
+/* Дни выравниваются по длине тренировки (просьба владельца, 25 ноября 2026; rules.ts, EVEN): с днями «День N» — при любом числе дней и по оценке времени.
+   Пример владельца — встроенный справочник, профиль без записей, «Сила: жим лежа», три дня, 2 ч, отдых 2:00: было 29 / 16 / 13 подходов, 1 ч 40 мин, 55 и 45 мин */
+const minutes = (pr: Built) => Core.SLOTS.map(sl => Core.estMinutes(pr.cfg, pr.slots[sl.id]));
+test('дни выравниваются по длине: «Сила: жим лежа», три дня, 2 ч — 1 ч 10 мин, 1 ч 5 мин и 1 ч 5 мин; подходов и объёма мышц столько же, сразу после «Принять» — та же программа', () => withDays(3, () => {
+  const raw = withStarter(null) as Raw, cfg = Core.mergeCfg(plain(raw)), tracked = Core.MUSCLES.filter(m => !cfg.ignore[m.id]).map(m => m.id), opts: BuildOpts = { focus: 'bench', strength: true, time: 120, budget: 100 };
+  const pr = Core.buildProgram([], cfg, opts);
+  assert.deepEqual([Core.SLOTS.map(sl => pr.after.load[sl.id]), total(pr)], [[20, 19, 19], 58]);
+  assert.deepEqual(minutes(pr).map(m => Core.fmtDur(m)), ['1 ч 10 мин', '1 ч 5 мин', '1 ч 5 мин']);
+  /* уровень мышц тот же, что до выравнивания: под «Силой» подсобка 8, грудь — мышца цели — 12 (выбор владельца 25 ноября 2026: время подходами не заполняется) */
+  assert.deepEqual([spanOf(pr, ['chest']), spanOf(pr, tracked.filter(m => m !== 'chest'))], ['12–12', '8–11']);
+  for (const m of tracked) assert.ok(Core.SLOTS.filter(sl => ((pr.after.day[sl.id] || {})[m] || 0) >= 2 - 0.01).length >= 2, m + ': меньше двух дней в неделю');
+  const again = Core.buildProgram([], acceptAs(raw, pr, '2025-11-20'), opts);
+  assert.deepEqual([again.same, total(again)], [true, 58]);
+}));
+
+/* на примерах — каждая цель так, как её собирает экран («Гибрид» — с остальными базовыми «как подсобка»). Это не обещание для любых данных: выравнивание
+   останавливается, когда переносить нечего — в коротком дне уже девять упражнений (с выбранным временем — десять) или переезд нарушил бы лимиты */
+test('дни выравниваются по длине при любом числе дней и в любой цели: самый длинный день не дольше самого короткого больше чем на 10 минут', () => {
+  assert.deepEqual(EVEN, { min: 10 });
+  const sets: [string, Cfg, Workout[]][] = [['встроенный справочник', appCfg(withStarter(null)), []], ['примерные данные', appCfg(seedRaw()), seedW()]];
+  for (const n of [2, 3, 4]) withDays(n, () => {
+    for (const [name, cfg, W] of sets) for (const opts of [{}, { prio: 'legs' }, { focus: 'bench', others: 'plain' }, { focus: 'bench', strength: true }, { focus: 'squat', strength: true }, { strength: true, triad: true }] as BuildOpts[]) for (const time of [0, 120]) {
+      if (opts.triad && n < 3) continue;
+      const pr = Core.buildProgram(W, cfg, Object.assign({ time }, opts)), m = minutes(pr);
+      assert.ok(Math.max(...m) - Math.min(...m) <= EVEN.min, n + ' дня, ' + name + ', ' + JSON.stringify(opts) + ', ' + time + ': ' + m.map(v => v.toFixed(1)).join(' / '));
+    }
+  });
+});
+
+test('выравнивание дней: подход переезжает в то же упражнение или в упражнение с теми же мышцами другого дня — и это названо одной заметкой, а не прибавкой и убавкой', () => {
+  const cfg = appCfg(seedRaw());
+  withDays(3, () => {
+  const pr = Core.buildProgram(seedW(), cfg, { prio: 'back' });
+  const n = noteOf(pr, /^Дни выровнены по длине/)!;
+  assert.ok(n.x!.startsWith('Разгибания ног в тренажере (день 2 → день 3, 1 подход). Упражнение или подход переезжает из самого длинного дня в самый короткий, пока разница между ними больше 10 минут: объём за неделю тот же, меняется только день.'), String(n.x));
+  assert.deepEqual([pr.slots.wed.find(e => e.ex === 'leg_ext')!.n, pr.slots.fri.find(e => e.ex === 'leg_ext')!.n], [2, 4]);
+  for (const t of [/^Прибавлены подходы/, /^Убраны подходы/]) { const v = noteOf(pr, t); assert.ok(!v || !v.x!.includes('Разгибания ног'), String(v && v.x)); }
+  const bench = Core.buildProgram(seedW(), cfg, { focus: 'bench' });
+  assert.ok(noteOf(bench, /^Дни выровнены по длине/)!.x!.startsWith('Бицепс бедра сидя в тренажере → Бицепс бедра на тренажере лежа на животе (день 1 → день 3, 1 подход).'));
+  });
+});
 
 test('«Масса»: базовые справочника с нуля сами не встают — ни с мышцами в приоритете, ни «Всем поровну»; «Гибрид» и «Сила» — как были', () => withDays(3, () => {
   const cfg = Core.mergeCfg(withStarter(null));
