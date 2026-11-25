@@ -195,7 +195,6 @@ function vGoal(): View {
     h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' },
       goalPicker(st, cfg, progLifts(cfg), d.pick, true),
       daysRow(),
-      pairsRow(),
       h('label', { class: 'f' }, h('span', null, 'Время на тренировку'), h('select', { id: 'pt', onchange: async e => { const v = +e.target.value; await saveCfg(raw => { if (v) raw.time = v; else delete raw.time; }); if (!v) { st.budget = modeBudget(st.focus, cfg.caps.week); delete st.keep; } st.draft = null; render(true); } },
         [0].concat(TIMES.includes(time) || !time ? TIMES : TIMES.concat(time).sort((a, b) => a - b)).map(v => h('option', { value: v, selected: v === time, text: v ? 'до ' + C.fmtDur(v) : 'не ограничено' }))))),
     h('p', { class: 'sub', id: 'onb-goal-note' }, say),
@@ -227,7 +226,8 @@ function vProg(): View {
     text ? 'Так разложилась твоя программа. Поправь подходы и порядок, добавь недостающее из списка.'
       : own ? 'Добавь в каждый день свои упражнения из списка, поставь подходы и порядок. Нет нужного упражнения — заведёшь его в «Настройке».'
       : 'Так дневник раскладывает упражнения по дням: порядок и подходы он посчитал сам. Любое упражнение можно заменить на похожее.', [
-    own ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, daysRow()) : null,
+    own ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, daysRow())
+      : C.SLOTS.length > 2 ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, pairsRow()) : null,   // дни подряд — у дней программы, которую собрал дневник (просьба владельца, 25 ноября 2026)
     h('p', { class: 'sub', id: 'onb-sum', style: 'margin-bottom:8px' }, loadText(total(pr.after.load)) + ' в неделю' + (mins.length ? ' · самая длинная тренировка ≈ ' + C.fmtDur(Math.max(...mins)) : '')),
     h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit))),
     h('p', { class: 'sub', style: 'margin-top:8px' }, 'Нагрузка по мышцам и подходы в неделю — на вкладке «Программа», когда закончишь.')],

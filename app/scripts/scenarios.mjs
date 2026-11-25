@@ -698,10 +698,17 @@ export const SCENARIOS = [
     ['старт', go('overview') + settle + expect(onbAt(1, 6) + ' && ' + tabsOff, 'онбординг, шаг 1 из 6, без вкладок')],
     ['собрать программу: цель и время', click('#onb-build') + settle + expect(onbAt(2, 6), 'шаг 2 из 6') + expect(goalIs('mass') + ' && ' + listIs('pm', 'even'), 'цель «Масса», «Всем поровну»')
       + expect(goals + ' === "Масса,Сила,Гибрид"', 'кнопки цели без «Вручную»: своя программа выбирается на старте')
-      + expect('[...document.querySelectorAll("#pp button")].map(b => b.textContent).join() === "1–2,2–3,3–1"', 'дни подряд — пары соседних дней по кругу')],
+      + expect('!document.getElementById("pp")', 'дней подряд на этом шаге нет: их спрашивает шаг 4, у дней программы')],
+    /* дни подряд — на шаге 4, у дней программы, которую собрал дневник (просьба владельца, 25 ноября 2026) */
+    ['три дня: дальше, что беречь', click('#onb-next') + settle + expect(onbAt(3, 6), 'шаг 3 из 6')],
+    ['дальше: программа и дни подряд', click('#onb-next') + settle + expect(onbAt(4, 6), 'шаг 4 из 6')
+      + expect('[...document.querySelectorAll("#pp button")].map(b => b.textContent).join() === "1–2,2–3,3–1" && !document.querySelector("#pp button[aria-pressed=true]")', 'дни подряд — пары соседних дней по кругу, ничего не отмечено')],
+    ['дни 1 и 2 подряд', click('#pp-mon-wed') + settle + expect('JSON.stringify(' + cfgMain + '.pairs) === \'["mon-wed"]\' && document.getElementById("pp-mon-wed").getAttribute("aria-pressed") === "true" && ' + onbAt(4, 6), 'пара сохранена, мастер на том же шаге')],
+    ['снять дни 1 и 2', click('#pp-mon-wed') + settle + expect('!("pairs" in ' + cfgMain + ')', 'пар нет')],
+    ['назад: что беречь', click('#onb-back') + settle + expect(onbAt(3, 6), 'шаг 3 из 6')],
+    ['назад: цель и время', click('#onb-back') + settle + expect(onbAt(2, 6), 'шаг 2 из 6')],
     ['гибрид вокруг жима лежа', click('#pg-mix') + settle + expect(goalIs('mix') + ' && ' + listIs('pl', 'l:bench'), 'цель «Гибрид», жим лежа')],
-    ['два дня в неделю', click('#pd-2') + settle + expect('document.getElementById("pd-2").getAttribute("aria-pressed") === "true" && ' + cfgMain + '.days === 2', 'два дня, число дней в настройке профиля')
-      + expect('!document.getElementById("pp")', 'при двух днях выбора «Дни подряд» нет')],
+    ['два дня в неделю', click('#pd-2') + settle + expect('document.getElementById("pd-2").getAttribute("aria-pressed") === "true" && ' + cfgMain + '.days === 2', 'два дня, число дней в настройке профиля')],
     ['время на тренировку: полтора часа', pick('#pt', 90) + settle + expect(cfgMain + '.time === 90', 'время 90 минут в настройке профиля')
       + expect('/^Получится: \\d+ подход\\S* в неделю, самая длинная тренировка ≈ /.test(document.getElementById("onb-sum").textContent)', 'строка «Получится: … в неделю, самая длинная тренировка ≈ …»')],
     ['дальше: что беречь', click('#onb-next') + settle + expect(onbAt(3, 6), 'шаг 3 из 6') + expect('[...document.querySelectorAll("#care .picks button")].map(b => b.textContent).join() === "Плечо,Локоть,Запястье,Поясница,Тазобедренный сустав,Колено"', 'шесть мест')],
@@ -710,6 +717,7 @@ export const SCENARIOS = [
     ['дальше: программа', click('#onb-next') + settle + expect(onbAt(4, 6), 'шаг 4 из 6') + 'const r = ' + draftRows + ';'
       + expect('r.length === 2 && r[0][0].startsWith("Жим лежа") && r[1][0].startsWith("Жим лежа — лёгкий день")', 'два дня: день 1 — жим лежа на силу, день 2 — его лёгкий день')
       + expect('!r.flat().some(n => n.startsWith("Приседания со штангой"))', 'стоп-упражнения в программе нет')
+      + expect('!document.getElementById("pp")', 'при двух днях выбора «Дни подряд» нет')
       + expect('[...document.querySelectorAll("#view .prow .pn")].filter(p => p.textContent.startsWith("Жим лежа")).every(p => [...p.querySelectorAll(".tag.crit")].map(t => t.textContent).join() === "Плечо")', 'у жима лежа — красная пилюля «Плечо»')
       + expect('!document.getElementById("prog-free") && !document.querySelector("#view .mtab")', 'таблицы мышц и счётчика подходов в онбординге нет')
       + expect('!document.querySelector("#view .pctl, #view [id^=pa-], #view [id^=pb-]") && ![...document.querySelectorAll("#view .prow .tag")].some(t => t.textContent === "новое")', 'программу собрал дневник: без «выше», «−», «+», «убрать», «новое» и «В день»')
