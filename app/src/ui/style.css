@@ -430,17 +430,39 @@ input.gear-n { flex: 1 1 110px; min-width: 0; min-height: 32px; padding: 2px 8px
 .prow > .swaprow select { flex: 1 1 0; width: 0; min-width: 0; }      /* the list takes the whole width of the row, under the buttons too */
 .swaprow select { min-height: 34px; padding: 2px 8px; font-size: 13px; }
 @supports (-webkit-touch-callout: none) { input:not(.gear-n), select, textarea { font-size: 16px !important; } }   /* отличие от артефакта, только iPhone и iPad: поле с шрифтом мельче 16px приближает экран при каждом нажатии */
-.onb-on .tabs, .onb-on #week-badge { display: none; }
+.onb-on .top, .onb-on .tabs { display: none; }
 .tag.crit { background: var(--crit); color: #ffffff; }
 .ex-card .nm .tag { margin-left: 6px; vertical-align: 1px; }
 .picks { display: flex; flex-wrap: wrap; gap: 6px; }
 .picks .btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 .tag.stop { display: inline-flex; align-items: center; gap: 4px; padding: 3px 4px 3px 9px; font-size: 13px; white-space: normal; }
 .tag.stop .x { border: 0; background: transparent; color: inherit; font: inherit; font-size: 16px; line-height: 1; padding: 0 4px; cursor: pointer; min-width: 24px; min-height: 24px; }
-.pcar { display: flex; align-items: flex-start; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; overscroll-behavior-x: contain; scrollbar-width: none; margin: 0 -16px; padding: 0 16px 2px; }   /* до краёв карточки шага: соседний день виден краем */
-.pcar::-webkit-scrollbar { display: none; }
-.pcar > .pday { flex: 0 0 min(88%, 360px); scroll-snap-align: start; }
-.pdots { display: flex; justify-content: center; gap: 2px; margin-bottom: 6px; }
-.pdots button { width: 28px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; border-radius: 12px; }
-.pdots button::after { content: ""; width: 8px; height: 8px; border-radius: 4px; background: var(--line-2); transition: width .2s, background .2s; }
-.pdots button[aria-current="true"]::after { width: 20px; background: var(--accent); }
+.pcar { --pc: var(--bg); --ease: cubic-bezier(.25, .8, .25, 1); container-type: inline-size; position: relative; display: grid; grid-template-columns: minmax(0, 1fr); margin: 0 -16px; overflow-x: clip; touch-action: pan-y; outline: none; }   /* до краёв карточки шага; края соседних дней обрезаны ими */
+@supports (transition-timing-function: linear(0, 1)) { .pcar { --ease: linear(0, 0.055, 0.17, 0.3, 0.43, 0.545, 0.643, 0.723, 0.787, 0.836, 0.876, 0.906, 0.929, 0.947, 0.96, 0.97, 0.978, 0.984, 0.988, 0.991, 0.993, 0.995, 0.996, 0.997, 1); } }
+.pcar:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 12px; }
+.pcar.drag { user-select: none; -webkit-user-select: none; }
+.pslot { --g: 12px; --pv: 22px; --pw: 56px; --W: min(420px, calc(100cqw - 2 * (var(--g) + var(--pv)))); grid-area: 1 / 1; position: absolute; left: 50%; top: min(8%, 40px); width: var(--pw); height: min(84%, 480px); border-radius: 26px; background: var(--pc); box-shadow: 0 10px 30px rgba(95, 109, 119, .08), 0 4px 12px rgba(95, 109, 119, .06); transform: translateX(calc(var(--x) + var(--dx, 0px))); transition: transform .5s var(--ease), width .5s var(--ease), top .5s var(--ease), opacity .3s; cursor: pointer; z-index: 1; }
+@container (min-width: 600px) { .pslot { --g: 18px; --pv: 84px; --pw: 84px; } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pslot { box-shadow: 0 10px 30px rgba(0, 0, 0, .6), 0 4px 12px rgba(0, 0, 0, .4); } }
+:root[data-theme="dark"] .pslot { box-shadow: 0 10px 30px rgba(0, 0, 0, .6), 0 4px 12px rgba(0, 0, 0, .4); }
+.pslot[data-off="0"] { --x: calc(var(--W) / -2); position: relative; top: 0; width: var(--W); height: auto; z-index: 0; cursor: auto; }
+.pslot[data-off="1"] { --x: calc(var(--W) / 2 + var(--g)); }
+.pslot[data-off="-1"] { --x: calc(var(--W) / -2 - var(--g) - var(--pw)); }
+.pslot[data-off="2"] { --x: calc(var(--W) / 2 + var(--g) + var(--pw) + 40px); opacity: 0; pointer-events: none; }
+.pslot[data-off="-2"] { --x: calc(var(--W) / -2 - var(--g) - 2 * var(--pw) - 40px); opacity: 0; pointer-events: none; }
+.pclip { height: 100%; overflow: hidden; border-radius: inherit; }
+.pcar .pday { width: var(--W); border: 0; border-radius: 0; background: none; padding: 14px 16px 12px; transition: opacity .3s .08s, transform .5s var(--ease); }
+.pslot:not([data-off="0"]) .pday { opacity: 0; transform: translateX(24px); transition: opacity .15s, transform .5s var(--ease); }
+.pslot[data-off^="-"] .pday { transform: translateX(-24px); }
+.plab { position: absolute; top: 0; bottom: 0; left: 0; width: var(--pv); display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; pointer-events: none; transition: opacity .3s; }
+.pslot[data-off^="-"] .plab { left: auto; right: 0; transform: rotate(180deg); }
+.pslot[data-off="0"] .plab { opacity: 0; }
+.pnotch { position: absolute; top: calc(50% - 21px); width: calc(var(--g) + 2px); height: 42px; background: var(--pc); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 37.3338%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0 0C0 0 1.2422 13.5759 10 13.5759C18.7578 13.5759 20 0 20 0V37.3338C20 37.3338 18.7578 23.7578 10 23.7578C1.2422 23.7578 0 37.3338 0 37.3338V0Z%22/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 37.3338%22 preserveAspectRatio=%22none%22%3E%3Cpath d=%22M0 0C0 0 1.2422 13.5759 10 13.5759C18.7578 13.5759 20 0 20 0V37.3338C20 37.3338 18.7578 23.7578 10 23.7578C1.2422 23.7578 0 37.3338 0 37.3338V0Z%22/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat; opacity: 0; pointer-events: none; }
+.pslot[data-off="1"] .pnotch { right: calc(100% - 1px); opacity: 1; transition: opacity .2s .3s; }
+.pslot[data-off="-1"] .pnotch { left: calc(100% - 1px); opacity: 1; transition: opacity .2s .3s; }
+.pcar.drag .pslot, .pcar.drag .pday { transition: none; }
+@media (prefers-reduced-motion: reduce) { .pslot, .pcar .pday, .plab, .pnotch { transition: none !important; } }
+.pdots { display: flex; justify-content: center; align-items: center; margin-bottom: 10px; }
+.pdots button { height: 24px; padding: 0 6px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+.pdots button::after { content: ""; width: 8px; height: 8px; border-radius: 3px; background: var(--line-2); transition: width .3s ease-out, background-color .3s; }
+.pdots button[aria-current="true"]::after { width: 80px; background: var(--accent); }

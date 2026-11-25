@@ -30,7 +30,7 @@ import { appRules, withBody } from '../core/rules.ts';
 import { pasteDays, pasteMatch } from '../core/paste.ts';
 import type { PasteDay } from '../core/paste.ts';
 import type { ExDef, ProgSlots, Swap } from '../core/types.ts';
-import type { El, Kid, Timer, View } from './types.ts';
+import type { El, Kid, View } from './types.ts';
 
 type Step = 'start' | 'goal' | 'care' | 'paste' | 'prog' | 'weights' | 'done';
 /** Программа из текста: text — как вставлен, days — разбор, pick — что взять в строке «день-строка» (id, '' — не брать, NEW — новое упражнение),
@@ -210,26 +210,71 @@ function vCare(): View {
     () => to('goal'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('prog') }, 'Дальше'))];
 }
 
-/* дни программы — карусель (просьба владельца, 25 ноября 2026): день — карточка, дни листаются вбок, а не вниз; соседний день виден краем,
-   над днями — точки дней, нажатая открывает свой день. Страница перерисовывается целиком (замена упражнения, правка подходов), поэтому
-   открытый день хранится в мастере (O.day), и после перерисовки карусель сразу стоит на нём. Точки следуют за прокруткой, когда она закончилась; карусель, которую перерисовка уже убрала, открытый день не трогает */
+/* дни программы — карусель (просьба владельца, 25 ноября 2026, по присланному образцу): открытый день — карточка по центру, соседние —
+   узкие края по бокам, связанные с ней перемычкой, дальние спрятаны. Листать — пальцем вбок, нажатием на край, точками над днями,
+   стрелками на клавиатуре; дни не идут по кругу: у первого дня слева пусто. Открытый день стоит в потоке и задаёт высоту карусели,
+   края — 84% её высоты; смену дня ведут переходы стилей, высоту — анимация (Web Animations), и в разметке от анимации ничего не остаётся.
+   Страница перерисовывается целиком (замена упражнения, правка подходов), поэтому открытый день хранится в мастере (O.day),
+   и после перерисовки карусель сразу стоит на нём */
+const SPRING = 'linear(0, 0.055, 0.17, 0.3, 0.43, 0.545, 0.643, 0.723, 0.787, 0.836, 0.876, 0.906, 0.929, 0.947, 0.96, 0.97, 0.978, 0.984, 0.988, 0.991, 0.993, 0.995, 0.996, 0.997, 1)';   // пружина образца (жёсткость 220, затухание 26, масса 0.75) — 0.5 с; та же в style.css
 function dayCarousel(days: HTMLElement[]): Kid[] {
   const o = O!, n = days.length;
   o.day = Math.max(0, Math.min(o.day, n - 1));
-  const at = (i: number) => { const k = car.children as HTMLCollectionOf<HTMLElement>; return Math.min(k[i].offsetLeft - k[0].offsetLeft, car.scrollWidth - car.clientWidth); };
-  const mark = (i: number) => { o.day = i; dots.forEach((b, j) => b.setAttribute('aria-current', j === i ? 'true' : 'false')); };
-  let t: Timer = 0;
-  const near = () => {                                                       // день, к которому пришла прокрутка; в конце — последний, если открытый не там же
-    const x = car.scrollLeft;
-    if (!car.isConnected || Math.abs(at(o.day) - x) <= 2) return;
-    let b = 0; for (let i = 1; i < n; i++) if (Math.abs(at(i) - x) <= Math.abs(at(b) - x)) b = i;
-    mark(b);
+  const slots = days.map((d, i) => h('div', { class: 'pslot', onclick: () => open(i) },
+    h('div', { class: 'pclip' }, d), h('span', { class: 'plab', 'aria-hidden': 'true' }, C.SLOTS[i].n), h('span', { class: 'pnotch', 'aria-hidden': 'true' })));
+  const dots = C.SLOTS.slice(0, n).map((sl, i) => h('button', { type: 'button', id: 'onb-dot-' + sl.id, 'aria-label': sl.n, onclick: () => open(i) }));
+  const place = () => {                                                      // где какой день: −2 и 2 — дальше краёв, спрятаны
+    slots.forEach((s, i) => { s.setAttribute('data-off', String(Math.max(-2, Math.min(2, i - o.day)))); (s.firstChild as HTMLElement).inert = i !== o.day; });
+    dots.forEach((b, i) => b.setAttribute('aria-current', i === o.day ? 'true' : 'false'));
   };
-  const car = h('div', { class: 'pcar', id: 'onb-days', role: 'group', 'aria-label': 'Дни программы', onscroll: () => { clearTimeout(t); t = setTimeout(near, 120); } }, days);
-  const dots = C.SLOTS.slice(0, n).map((sl, i) => h('button', { type: 'button', id: 'onb-dot-' + sl.id, 'aria-label': sl.n, 'aria-current': i === o.day ? 'true' : 'false',
-    onclick: () => { mark(i); car.scrollTo({ left: at(i), behavior: 'smooth' }); } }));
-  queueMicrotask(() => { if (car.isConnected && o.day) car.scrollLeft = at(o.day); });   // render() уже вставил страницу: карусель — на открытом дне
-  return [n > 1 ? h('div', { class: 'pdots' }, dots) : null, car];   // точки — над днями: день бывает длиннее экрана
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches, ease = CSS.supports('transition-timing-function', SPRING) ? SPRING : 'cubic-bezier(.25, .8, .25, 1)';
+  const open = (i: number) => {
+    if (i < 0 || i >= n || i === o.day) return;
+    const was = slots.map(s => s.offsetHeight);
+    o.day = i; place();
+    if (!still) slots.forEach((s, j) => { const now = s.offsetHeight; if (now !== was[j]) s.animate([{ height: was[j] + 'px' }, { height: now + 'px' }], { duration: 500, easing: ease }); });
+    const top = (bar || car).getBoundingClientRect().top;                    // день бывает длиннее экрана: начало карусели — снова на виду
+    if (top < 0) window.scrollBy({ top: top - 12, behavior: still ? 'auto' : 'smooth' });
+  };
+  /* палец вбок: карусель идёт за ним, у первого и последнего дня — с сопротивлением; отпустил дальше порога — соседний день.
+     Палец вниз — обычная прокрутка страницы (touch-action: pan-y); с полей ввода карусель не листается */
+  let id = -1, x0 = 0, y0 = 0, dx = 0, drag = false, moved = -1e9;
+  const down = (e: PointerEvent) => {
+    if (!e.isPrimary || e.button > 0 || (e.target as Element).closest('input, select, textarea')) return;
+    id = e.pointerId; x0 = e.clientX; y0 = e.clientY; dx = 0; drag = false;
+  };
+  const move = (e: PointerEvent) => {
+    if (e.pointerId !== id) return;
+    const mx = e.clientX - x0, my = e.clientY - y0;
+    if (!drag) {
+      if (Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)) { id = -1; return; }
+      if (Math.abs(mx) < 8) return;
+      drag = true; car.classList.add('drag'); getSelection()?.removeAllRanges();
+      try { car.setPointerCapture(id); } catch { /* указатель уже отпущен */ }
+    }
+    dx = (o.day === 0 && mx > 0) || (o.day === n - 1 && mx < 0) ? mx / 3 : mx;
+    car.style.setProperty('--dx', dx + 'px');
+  };
+  const up = (e: PointerEvent, go: boolean) => {
+    if (e.pointerId !== id) return;
+    id = -1;
+    if (!drag) return;
+    drag = false; moved = performance.now(); car.classList.remove('drag'); car.style.removeProperty('--dx'); if (!car.style.length) car.removeAttribute('style');
+    const far = Math.min(70, car.clientWidth * .18);
+    if (go && dx < -far) open(o.day + 1); else if (go && dx > far) open(o.day - 1);
+  };
+  const key = (e: KeyboardEvent) => {
+    const t = e.target as Element;
+    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || (t !== car && !t.closest('.pdots'))) return;
+    e.preventDefault(); open(o.day + (e.key === 'ArrowRight' ? 1 : -1));
+    if (t !== car) dots[o.day].focus();
+  };
+  const car = h('div', { class: 'pcar', id: 'onb-days', role: 'group', 'aria-roledescription': 'карусель', 'aria-label': 'Дни программы', tabindex: '0',
+    onpointerdown: down, onpointermove: move, onpointerup: (e: PointerEvent) => up(e, true), onpointercancel: (e: PointerEvent) => up(e, false), onkeydown: key }, slots);
+  car.addEventListener('click', e => { if (performance.now() - moved < 350) { moved = -1e9; e.stopPropagation(); e.preventDefault(); } }, true);   // палец листал, а не нажимал: нажатие сразу после — не нажатие
+  const bar = n > 1 ? h('div', { class: 'pdots', onkeydown: key }, dots) : null;
+  place();
+  return [bar, car];   // точки — над днями: день бывает длиннее экрана
 }
 
 function vProg(): View {
