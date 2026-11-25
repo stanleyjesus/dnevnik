@@ -178,8 +178,9 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
       } else if (rule !== base && rule === 'down') {
         const nw = Math.max(0, +(p.w! - step).toFixed(3));
         sets[i] = { w: nw, tg: [lo, hi] };
-        notes.push('подход ' + (i + 1) + ': ' + fmt(p.w) + ' → ' + fmt(nw) + ' кг — ' + p.r + ' повторов получились только в отказ');
-        tag('Отказ');
+        const kept = appRules() && p.q != null && p.q > 0;            // (в эталоне нет) запас был, а повторов с запасом этого упражнения меньше нижней границы (вывод 10 аудита)
+        notes.push('подход ' + (i + 1) + ': ' + fmt(p.w) + ' → ' + fmt(nw) + ' кг — ' + (kept ? 'в прошлый раз ' + p.r + ' ' + plural(p.r, ['повтор', 'повтора', 'повторов']) + ' с запасом ' + p.q + ', а с запасом ' + aim + ' это меньше ' + lo : p.r + ' повторов получились только в отказ'));
+        tag(kept ? 'Перегруз' : 'Отказ');
       }
     });
     /* weekly volume of the main muscle: one more set below the working zone, one less above it */
@@ -212,7 +213,8 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
   if (appRules() && !deload && past.length && dnum(date) - Math.min(...past.map(w => dnum(w.date))) >= RIR_CHECK.days
     && !past.some(w => dnum(date) - dnum(w.date) < RIR_CHECK.days && w.items.some(it => kindOf(cfg, it.ex) === 'iso' && work(it).some(s => s.q === 0)))) {
     let idx = -1;
-    base.items.forEach((it, i) => { if (!it.cyc && kindOf(cfg, it.ex) === 'iso' && !props.some(p => p.ex === it.ex) && lastSessionItem(past, it.ex, null, null)) idx = i; });
+    const fit = (id: string) => { const e = cfg.ex[id] || {} as ExDef; return !e.uni && Object.entries(e.m || {}).some(([m, c]) => c >= 1 && !cfg.ignore[m]); };   // не одна сторона и не мышца вне расчёта
+    base.items.forEach((it, i) => { if (!it.cyc && kindOf(cfg, it.ex) === 'iso' && fit(it.ex) && !props.some(p => p.ex === it.ex) && lastSessionItem(past, it.ex, null, null)) idx = i; });
     if (idx >= 0) {
       const it = base.items[idx], h = hints(workouts, cfg, it.ex, slot, date);
       props.push({ key: it.ex, ex: it.ex, idx, tag: 'Проверка запаса', note: RIR_CHECK.note, cyc: null, range: null,

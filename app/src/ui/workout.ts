@@ -8,7 +8,7 @@ import { backupDraft, flushSave, saveCfg, saveT, setSaveState, touch, uniqueId }
 import { D, go, render } from './render.ts';
 import { dayTitle, durText, paintEta, planLegend, planRows, planSets, propList, restSelect, setWord, startWorkout } from './overview.ts';
 import { exForm } from './setup.ts';
-import { appRules, HEAVY, heavyOf, LIGHT_RIR, rirOf } from '../core/rules.ts';
+import { appRules, HEAVY, heavyOf, LIGHT_RIR, lightWhy, rirOf } from '../core/rules.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
 import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
 
@@ -201,14 +201,6 @@ export function dpBlock(card: HTMLElement, d: Workout, it: Item, prim: string[],
   card.appendChild(sets);
   card.appendChild(h('button', { class: 'btn ghost sm', style: 'margin-top:6px', onclick: () => { const l = it.sets[it.sets.length - 1]; it.sets.push({ w: l ? l.w : null, r: null }); touch(); render(true); } }, icon('plus'), 'Подход'));
 }
-/* (в эталоне нет) лёгкий и средний день слушают запас (вывод 7 аудита, 25 ноября 2026): что решил прошлый раз */
-function lightSaid(it: Item, light: boolean, date: string) {
-  if (!light || !appRules()) return null;
-  const L = C.planLight(D.W, D.cfg, it.ex, date) as { move?: number };
-  return L.move! > 0 ? pill('good', 'запас дважды подряд ' + LIGHT_RIR.easy + ' и больше: вес на шаг выше')
-    : L.move! < 0 ? pill('warn', 'в прошлый раз запаса не было или подходы не закрыты: вес на шаг ниже')
-    : null;
-}
 export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string[]) {
   const light = C.isLight(D.cfg, it.ex), par = light ? (D.cfg.ex[it.ex] || {}).of : null;
   const pc: CyclePlan = light ? { prev: null } : C.planCycle(D.W, D.cfg, it.ex, d.date), wv = C.waveOf(D.cfg, it.ex), uid = it.ex;
@@ -219,6 +211,7 @@ export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string
   const A = appRules() ? heavyOf(D.cfg, it.ex) : C.AUTO;              // (в эталоне нет) с днями «День N» — тяжёлый день 3 × 4, у изоляции 3 × 6 («Новая схема», 24 ноября 2026)
   const auto = !light && wv.auto && it.cyc!.pct === A.pct && (it.cyc!.reps === A.reps || (appRules() && it.cyc!.reps > A.reps && it.cyc!.reps <= A.reps + HEAVY.reps));   // (в эталоне нет) тяжёлый день с прибавкой повторами (вывод 6 аудита, 25 ноября 2026)
   /* «сила по запасу»: what the last session decided, in the words of its rule */
+  const lm = light && appRules() ? +(C.planLight(D.W, D.cfg, it.ex, d.date).move || 0) : 0;   // (в эталоне нет) лёгкий день слушает запас (вывод 7 аудита)
   const steps = +(pc.steps || 0), was = pc.rz == null ? 'в прошлый раз все подходы закрыты, запас не отмечен' : 'в прошлый раз запас ' + pc.rz + ' в последнем подходе';
   const said = !auto || !pc.prev || pc.verdict === 'start' ? null
     : appRules() && pc.verdict === 'reps' ? pill('good', was + ': плюс повтор тем же весом — шаг веса велик для этого упражнения')   // (в эталоне нет) вывод 6 аудита, 25 ноября 2026
@@ -233,7 +226,7 @@ export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string
     light ? h('span', null, !appRules() ? 'лёгкий день: техника и скорость, до отказа далеко' : (D.cfg.ex[it.ex] || {}).mid ? 'средний день: между тяжёлым и лёгким' : 'лёгкий день: вес меньше, повторов больше, чем в тяжёлом') : null,   // (в эталоне нет) «Новая схема»: запас и в лёгком дне около 2
     S.canWrite ? goalSelect(it) : null,
     pc.prev ? h('span', null, 'прошлый раз ' + C.fmtDate(pc.prev.date) + ': ' + C.fmt(pc.prev.top.w) + ' × ' + pc.prev.item.cyc!.reps) : null,
-    said || lightSaid(it, light, d.date) || (pc.repeat ? pill('warn', 'в прошлый раз подходы не закрыты: неделя повторяется') : pc.hard ? pill('warn', 'в прошлый раз был подход в отказ: максимум не повышен') : null)));
+    said || (lm ? pill(lm > 0 ? 'good' : 'warn', lightWhy(lm)) : null) || (pc.repeat ? pill('warn', 'в прошлый раз подходы не закрыты: неделя повторяется') : pc.hard ? pill('warn', 'в прошлый раз был подход в отказ: максимум не повышен') : null)));
   const repsRow = h('div', { class: 'cyc-sets' });
   const paintSets = () => {
     repsRow.textContent = '';
