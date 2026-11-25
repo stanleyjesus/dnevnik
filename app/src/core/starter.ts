@@ -7,6 +7,7 @@
    и 29 распространённых упражнений зала. Каждое лежит на снаряде: «Без снаряда» во встроенном списке пусто.
    Базовые (жим лежа, жим ногами, подтягивания) идут по волне, остальные — двойная прогрессия. */
 import { clone } from './records.ts';
+import { GEAR, NO_GEAR, gearGuess } from './gear.ts';
 import type { ExDef, MuscleMap } from './types.ts';
 
 /** Снаряд сверх четырёх обычных, который нужен списку: подтягивания считаются с шагом 1 кг (решение владельца) */
@@ -107,6 +108,37 @@ export const starterGear = (id: string, name: string | null | undefined): string
 export function starterMissing(ex: Record<string, { n?: string }> | null | undefined): string[] {
   const own = ex || {}, names = new Set(Object.values(own).map(e => exKey(e && e.n)));
   return Object.keys(STARTER).filter(id => !own[id] && !names.has(exKey(STARTER[id].n)));
+}
+type RawGear = Record<string, { n?: string; step?: number }>;
+/** Свой снаряд встроенного списка (подтягивания) заводится в настройке, когда на него кладут упражнение */
+export function needGear(raw: { gear?: RawGear }, g: string) {
+  if (STARTER_GEAR[g] && !(raw.gear && raw.gear[g])) { raw.gear = raw.gear || {}; raw.gear[g] = clone(STARTER_GEAR[g]); }
+}
+/** Где упражнение лежит по настройке, как она сохранена: выбранный снаряд, если он есть (свой — с названием), иначе по названию, иначе «без снаряда» (как placed) */
+const liesOn = (gear: RawGear, e: ExDef) => {
+  const own = e.gear && gear[e.gear] && String(gear[e.gear].n || '').trim();
+  return e.gear && (e.gear === NO_GEAR || GEAR.some(g => g.id === e.gear) || own) ? e.gear : gearGuess(e.n) || NO_GEAR;
+};
+/** Справочник профиля из резервной копии, дополненный встроенным (решение владельца, 25 ноября 2026: копия первой версии приносит свой
+    список упражнений без снарядов, и встроенный справочник после загрузки пропадал). То же, что две кнопки «Настройки» (ui/starter.ts), сразу:
+    - упражнение, которое лежит «без снаряда» только потому, что снаряда у него нет, ложится на снаряд, который знает встроенный список;
+      «без снаряда», выбранное атлетом, и лёгкий день не трогаются; шаг и округление, оставшиеся от старых версий, не читаются и уходят, как у кнопки;
+    - упражнения встроенного списка, которых нет ни по id, ни по названию, добавляются.
+    Свои упражнения, их мышцы и названия, журнал и программа не меняются. Настройка без упражнений остаётся как есть: встроенный список
+    подставит загрузка профиля (withStarter). Полный справочник, выгруженный приложением, возвращается без изменений */
+export function fillStarter<T extends { ex?: Record<string, ExDef>; gear?: RawGear }>(raw: T | null | undefined): { raw: T | null | undefined; sorted: string[]; added: string[] } {
+  if (!raw || !raw.ex || !Object.keys(raw.ex).length) return { raw, sorted: [], added: [] };
+  const out = clone(raw) as T & { ex: Record<string, ExDef> }, gear = out.gear || {}, sorted: string[] = [];
+  for (const id of Object.keys(out.ex)) {
+    const e = out.ex[id];
+    if (!e || e.mode === 'light' || e.gear === NO_GEAR || liesOn(gear, e) !== NO_GEAR) continue;
+    const g = starterGear(id, e.n);
+    if (!g || !(GEAR.some(x => x.id === g) || STARTER_GEAR[g] || gear[g])) continue;
+    needGear(out, g); e.gear = g; delete e.step; delete e.round; sorted.push(id);
+  }
+  const added = starterMissing(out.ex);
+  for (const id of added) { const def = clone(STARTER[id]); needGear(out, def.gear!); out.ex[id] = def; }
+  return { raw: sorted.length || added.length ? out : raw, sorted, added };
 }
 /** Настройка профиля, как она сохранена, — или она же со встроенным списком, если своих упражнений в ней нет.
     Свой справочник профиля список не трогает: ни одно упражнение к нему само не добавляется */
