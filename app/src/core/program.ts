@@ -13,7 +13,7 @@ import { ADDS } from './adapt.ts';
 import { DAY_H, DAY_L, DAY_M, DL_LIGHT, SOLO, STRONG } from './strength.ts';
 import { STARTER, STARTER_GEAR } from './starter.ts';
 import { DAYS, awayDays, dayNo } from './days.ts';
-import { BASE_SETS, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayOrder, fillTop, heavyOf, inTime, MANY_EX, MAX_SETS, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, rirText, roomFor, sameMuscles, stretchOf, triadIds } from './rules.ts';
+import { BASE_SETS, HEAVY, HOLD, MAX_EX, ORDER, TIME_EX, TYPE, appEx, appRules, applyRoles, asStored, canTarget, dayOrder, fillTop, heavyOf, inTime, MANY_EX, MAX_SETS, OFF_APP, isDeadlift, isoLift, lightFor, LONG_K, moreTime, programRoles, rirText, roomFor, sameMuscles, stretchOf, triadIds } from './rules.ts';
 import { estMinutes, fmtDur } from './time.ts';
 import type { Tally } from './tally.ts';
 import type { Roles } from './rules.ts';
@@ -116,7 +116,8 @@ export function optimise(c2: Cfg, slots: ProgSlots, o: OptOpts, define: (id: str
   const byHand = (id: string) => { const ms = Object.entries(mOf(id)).filter(x => x[1] > 0); return ms.length > 0 && ms.every(x => ign[x[0]]); };
   /* how much of an exercise goes to muscles left out of the count: the search prefers a cleaner choice,
      and never brings in a new exercise where such a muscle is a main mover — that would be giving it sets after all */
-  const aside = (id: string) => Object.entries(mOf(id)).reduce((a, x) => a + (ign[x[0]] ? x[1] : 0), 0);
+  /* (в эталоне нет) хват — половина подхода предплечьям во всех тягах и сгибаниях (вывод 2 аудита): чистоте выбора он не мешает, иначе тяги проигрывали бы всему остальному */
+  const aside = (id: string) => Object.entries(mOf(id)).reduce((a, x) => a + (ign[x[0]] && !(appRules() && OFF_APP[x[0]] && x[1] < 1) ? x[1] : 0), 0);
   const mainOff = (id: string) => Object.entries(mOf(id)).some(x => x[1] >= 1 && ign[x[0]]);
 
   /* frequency: a day trains a muscle when it gives it two sets or more (indirect work counts in halves, as everywhere);
@@ -603,7 +604,7 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     if (appRules() && want === 'auto' && was !== 'auto' && id !== focus && !strong) grown.push(id);
   }
   if (focus && inProg(focus)) {
-    if (goalOf(cfg0, focus) !== 'auto') note(nm(focus) + ' — сила по запасу', AH.sets + ' × ' + AH.reps + ' одним весом, первый вес — ' + AH.pct + '% от расчётного максимума. Дальше решает запас в последнем подходе: ' + AUTO.aim + ' повтора и больше — на следующей неделе плюс шаг, 1 — вес тот же, 0 или подходы не закрыты — минус ' + AUTO.down + '%. Запас отмечается в карточке упражнения.');
+    if (goalOf(cfg0, focus) !== 'auto') note(nm(focus) + ' — сила по запасу', AH.sets + ' × ' + AH.reps + ' одним весом, первый вес — ' + AH.pct + '% от расчётного максимума. Дальше решает запас в последнем подходе: ' + (appRules() ? AUTO.aim + '–' + (HEAVY.fast - 1) + ' повтора — на следующей неделе плюс шаг; ' + HEAVY.fast + ' и больше — сразу несколько шагов, но не больше ' + HEAVY.max * 100 + '% веса; 1 — вес тот же; ' : AUTO.aim + ' повтора и больше — на следующей неделе плюс шаг, 1 — вес тот же, ') + '0 или подходы не закрыты — минус ' + AUTO.down + '%.' + (appRules() ? ' Если шаг больше ' + HEAVY.big * 100 + '% веса, сначала растут повторы: ' + AH.sets + ' × ' + (AH.reps + 1) + ', ' + AH.sets + ' × ' + (AH.reps + HEAVY.reps) + ', потом шаг.' : '') + ' Запас отмечается в карточке упражнения.');
     const lid = focus + '_light', home = SLOTS.find(sl => slots[sl.id].some(e => e.ex === focus));
     const at = slots[home!.id].findIndex(e => e.ex === focus);
     if (at > 0) { slots[home!.id].unshift(slots[home!.id].splice(at, 1)[0]); note(nm(focus) + ' — первым упражнением ' + onDay(home!.id), (byRole ? 'Цель программы' : 'Приоритетное упражнение') + ' делается на свежие силы, до всего остального.'); }
@@ -721,6 +722,9 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     if (aimM.length && !tracked.every(m => aimM.includes(m))) for (const m of aimM) prio[m] = 1;   // (в эталоне нет) «Сила: <упражнение>»: мышцы цели в приоритете
     /* muscles left out of the count get nothing from the build: an exercise where such a muscle is a main mover leaves the programme
        (a percentage lift is never touched). The athlete gives such a muscle its sets by hand, with «+» in the volume table. */
+    /* (в эталоне нет) базовые справочника, которые под «Силой» и в «Гибриде» «как подсобка» идут обычными многосуставными, получают подходы сразу:
+       так их читает принятая программа (rules.ts, appCfg), и сразу после «Принять» сборка не меняет их число */
+    if (roles && roles.plain) for (const sl of SLOTS) for (const e of slots[sl.id]) { const x = c2.ex[e.ex]; if (x && x.stored === 'cycle' && x.mode !== 'cycle' && !(+e.n! > 0)) e.n = BASE_SETS; }
     const offMain = (id: string) => Object.entries(mOf(id)).some(([m, c]) => c >= 1 && cfg.ignore[m]), gone: { ex: string; sl: Slot }[] = [];
     for (const sl of SLOTS) slots[sl.id] = slots[sl.id].filter(e => { const k = kindOf(c2, e.ex); if ((k !== 'compound' && k !== 'iso') || !offMain(e.ex)) return true; gone.push({ ex: e.ex, sl }); return false; });
     const empty = SLOTS.every(sl => !slots[sl.id].length);
@@ -802,6 +806,15 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
     const full = (L: ProgEntry[]) => crowded(L) || (!!time && !inTime(estMinutes(c2, L) + (60 + 2 * (40 + (c2.rest || 120))) / 60, time));
     if (reshape) {
       const free = (e: ProgEntry) => { const k = kindOf(c2, e.ex); return !!e.n && (k === 'compound' || k === 'iso') && !e.pin && !c2.ex[e.ex].uni; };
+      const shape = () => JSON.stringify(SLOTS.map(sl => slots[sl.id].map(e => e.ex + ':' + (e.n || 0))));
+      /* (в эталоне нет) выравнивание меняет дни после поиска, и поиск от выровненной раскладки (сразу после «Принять») находил бы шаги, которых не сделал:
+         поэтому после выравнивания поиск идёт ещё раз на том же уровне, и снова выравнивание — пока раскладка меняется (не больше трёх раз) */
+      for (let pass = 0; pass < 3; pass++) {
+      if (pass) {
+        const was = shape(), r2 = optimise(c2, slots, { z, ignore: cfg.ignore, prio, budget, dayCap: caps.day, level, allDays: scratch || everyDay, time }, define);
+        res.cut = res.cut.concat(r2.cut); res.fold = res.fold.concat(r2.fold); res.left = r2.left; res.over = r2.over; res.once = r2.once; res.hit = r2.hit;
+        if (shape() === was) break;
+      }
       for (let g = 0; g < 60; g++) {
         const T1 = now(), byLoad = SLOTS.slice().sort((a, b) => T1.load[b.id] - T1.load[a.id]), hi = byLoad[0], lo = byLoad[byLoad.length - 1], diff = T1.load[hi.id] - T1.load[lo.id];
         if (diff <= 3) break;
@@ -823,6 +836,8 @@ export function buildProgram(workouts: Workout[], cfg: Cfg, opts?: BuildOpts) {
         if (!cand.isNew) { cand.isNew = true; cand.from = hi.id; }
         insert(lo, cand); evened.push(cand);
       }
+      }
+      for (const id of Object.keys(create)) if (!SLOTS.some(sl => slots[sl.id].some(e => e.ex === id))) { delete create[id]; delete c2.ex[id]; }
       if (evenText.length) note('Дни выровнены по длине', evenText.join(', ') + '. Упражнение целиком переехало из самого длинного дня в самый короткий: объём за неделю тот же, меняется только день.');
     }
     const T = now(), tot = SLOTS.reduce((a, sl) => a + (T.load[sl.id] || 0), 0);

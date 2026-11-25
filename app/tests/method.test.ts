@@ -245,9 +245,9 @@ test('порядок в дне: сборка расставляет дни че�
   const W = seedW(), raw = seedRaw(), pr = Core.buildProgram(W, Core.mergeCfg(raw), {});
   /* день 2 начинался с разгибаний ног — изоляции перед жимом ногами на те же мышцы; теперь первым базовое, разгибания — после многосуставных */
   assert.deepEqual(ids(pr.cur.wed).slice(0, 2), ['leg_ext', 'leg_press']);
-  assert.deepEqual(ids(pr.slots.wed), ['leg_press', 'incline_db', 'tbar_row', 'x_thrust', 'leg_ext', 'wrist_cable_r', 'wrist_cable_l', 'x_rear', 'lat_raise_db']);
+  assert.deepEqual(ids(pr.slots.wed), ['leg_press', 'incline_db', 'tbar_row', 'x_thrust', 'x_ohp', 'leg_ext', 'barbell_curl', 'x_rear', 'lat_raise_db']);   // сгибаний кистей нет: предплечья вне расчёта (вывод 2 аудита)
   /* румынская тяга и сгибания ног на бицепс бедра не подряд: между ними жим над головой */
-  assert.deepEqual(ids(pr.slots.mon), ['bench', 'lat_pulldown', 'x_rdl', 'x_ohp', 'leg_curl_seated', 'lat_raise_machine', 'tri_overhead', 'hammer', 'x_rear']);
+  assert.deepEqual(ids(pr.slots.mon), ['bench', 'lat_pulldown', 'x_rdl', 'x_ohp', 'leg_curl_seated', 'lat_raise_machine', 'tri_overhead', 'x_rear']);
   assert.deepEqual(orderNote(pr), ['Порядок упражнений: день 2'], 'в днях 1 и 3 прежние упражнения стоят в прежнем порядке, новое отмечено «новое»');
   assert.ok(!pr.same);
   /* после «Принять» сборка совпадает с принятой и ничего не переставляет */
@@ -256,7 +256,7 @@ test('порядок в дне: сборка расставляет дни че�
   /* мышцы в приоритете — сразу после базового, раньше многосуставных на другие мышцы */
   const arms = Core.buildProgram(W, Core.mergeCfg(raw), { prio: 'arms' });
   assert.deepEqual(ids(arms.slots.mon).slice(0, 4), ['bench', 'tri_overhead', 'hammer', 'lat_pulldown']);
-  assert.deepEqual(ids(arms.slots.fri).slice(0, 4), ['pullup', 'tri_pushdown', 'bayesian_curl', 'pec_fly']);
+  assert.deepEqual(ids(arms.slots.fri).slice(0, 4), ['pullup', 'tri_pushdown', 'bayesian_curl', 'x_thrust']);
   /* гибрид: упражнение на массу — сразу после базового своего дня; лёгкий день жима — раньше базового на поддержании */
   const pb = Core.buildProgram(W, Core.mergeCfg(raw), { focus: 'bench' }), mass = Core.SLOTS.find(sl => pb.slots[sl.id].some(e => e.pin))!;
   assert.deepEqual(ids(pb.slots[mass.id]).slice(0, 2), ['leg_press', 'incline_db']);

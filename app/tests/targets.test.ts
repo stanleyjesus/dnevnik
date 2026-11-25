@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { plain, readJson } from './helpers.ts';
 import { Core } from '../src/core/index.ts';
 import { useDays } from '../src/core/days.ts';
-import { DAY_H, DAY_L, DAY_M, ISO, ISO_LIGHT, TARGETS, TRIAD, TRIAD_DAYS } from '../src/core/strength.ts';
+import { DAY_H, DAY_L, DL_LIGHT, ISO, ISO_LIGHT, TARGETS, TRIAD, TRIAD_DAYS } from '../src/core/strength.ts';
 import { asStored, canTarget, isoLift, programRoles, targetIds, targetName, targetOf, triadIds } from '../src/core/rules.ts';
 import { STARTER_GEAR } from '../src/core/starter.ts';
 import { forceMode, lostMode, mixText, modeAfter, modeKey, soloText, triadOk } from '../src/ui/goal.ts';
@@ -18,6 +18,8 @@ type Built = ReturnType<typeof Core.buildProgram>;
 const seedRaw = (): Raw => readJson('data/config.json');
 const seedW = (): Workout[] => Core.sortW(readJson('data/workouts.json').map((d: { date: string }) => Core.fromDoc(d.date, d)));
 function withDays<T>(n: number, fn: () => T): T { useDays(n, false); try { return fn(); } finally { useDays(null, true); } }
+/* справочник так, как его читает приложение — с днями «День N»: предплечья вне расчёта (вывод 2 аудита) и другие правила mergeCfg. Не вызывать внутри withDays */
+const appCfg = (raw: Raw): Cfg => withDays(3, () => Core.mergeCfg(raw));
 const loads = (pr: Built) => Core.SLOTS.map(sl => pr.after.load[sl.id]);
 const total = (pr: Built) => loads(pr).reduce((a, b) => a + b, 0);
 const span = (pr: Built, ms: string[]) => { const v = ms.map(m => pr.after.pv[m] || 0); return Core.fmt(Math.min(...v), 1) + '–' + Core.fmt(Math.max(...v), 1); };
@@ -54,21 +56,22 @@ test('список целей: восемь упражнений и тройка
   assert.deepEqual([targetOf(own, 'deadlift'), triadIds(own)], ['my_dl', ['squat', 'bench', 'my_dl']]);
 });
 
-test('пауэрлифтерская тройка, три дня, лимит 80: каждое движение — тяжёлый день 3 × 4 и лёгкий 3 × 8; в каждом дне один тяжёлый и один лёгкий; 26 / 24 / 24 подхода, мышцы 8–10.5', () => {
-  const cfg = Core.mergeCfg(seedRaw()), W = seedW();
+test('пауэрлифтерская тройка, три дня, лимит 80: каждое движение — тяжёлый день 3 × 4 и лёгкий 3 × 8 (у становой 3 × 6); в каждом дне один тяжёлый и один лёгкий; 24 / 20 / 23 подхода, мышцы 8–12', () => {
+  const cfg = appCfg(seedRaw()), W = seedW();
   withDays(3, () => {
     const pr = Core.buildProgram(W, cfg, TRI);
     sound(pr, 80);
-    assert.deepEqual([loads(pr), total(pr), span(pr, tracked(cfg))], [[26, 24, 24], 74, '8–10.5']);
+    assert.deepEqual([loads(pr), total(pr), span(pr, tracked(cfg))], [[24, 20, 23], 67, '8–12']);
     assert.deepEqual([pr.name, pr.triad, pr.focus, pr.strength], ['Сила: пауэрлифтерская тройка', ['squat', 'bench', 'deadlift'], null, true]);
     /* приседаний и становой в справочнике нет: сборка взяла их из встроенного, на штанге */
     assert.deepEqual([pr.create.squat.n, pr.create.squat.gear, pr.create.deadlift.n, pr.create.deadlift.gear], ['Приседания со штангой', 'barbell', 'Становая тяга', 'barbell']);
     /* день начинается тяжёлым днём одного движения, за ним — лёгкий день другого */
     assert.deepEqual(Core.SLOTS.map(sl => pr.slots[sl.id].slice(0, 2).map(e => e.ex + ':' + Core.kindOf(pr.cfg, e.ex))), [['bench:base', 'squat_light:light'], ['squat:base', 'deadlift_light:light'], ['deadlift:base', 'bench_light:light']]);
     for (const sl of Core.SLOTS) assert.equal(pr.slots[sl.id].filter(e => ['base', 'light'].includes(Core.kindOf(pr.cfg, e.ex))).length, 2, sl.n);
-    /* подходы движения — от роли («Новая схема», 24 ноября 2026): 3 в тяжёлый день, 3 в лёгкий, всего 6; лёгкий день 3 × 8 на 75% с запасом около 2 считается целым */
+    /* подходы движения — от роли («Новая схема», 24 ноября 2026): 3 в тяжёлый день, 3 в лёгкий, всего 6; лёгкий день 3 × 8 на 75% с запасом около 2 считается целым;
+       у становой лёгкий день 3 × 6 на 79% (вывод 9 аудита, 25 ноября 2026) */
     for (const id of TRIAD) {
-      assert.deepEqual([Core.waveOf(pr.cfg, id).sets(4), plain(Core.waveOf(pr.cfg, id).pct), plain(Core.lightOf(pr.cfg, id + '_light'))], [DAY_H.sets, { 4: 83 }, DAY_L], id);
+      assert.deepEqual([Core.waveOf(pr.cfg, id).sets(4), plain(Core.waveOf(pr.cfg, id).pct), plain(Core.lightOf(pr.cfg, id + '_light'))], [DAY_H.sets, { 4: 83 }, id === 'deadlift' ? DL_LIGHT : DAY_L], id);
       for (const sl of Core.SLOTS) for (const e of pr.slots[sl.id]) if (e.ex === id || e.ex === id + '_light') assert.equal(e.n, undefined, id + ': подходы не от роли');
     }
     assert.deepEqual([pr.after.ps.chest, pr.after.ps.quads], [6, 6]);
@@ -99,20 +102,21 @@ test('тройка — только с трёх дней: при двух её �
   assert.equal(modeKey({ focus: 's:bench', others: 'grow' }), 's:bench|grow');
 });
 
-test('сила в одном движении, становая тяга, три дня, лимит 80: тяжёлый, лёгкий и средний день, мышцы цели 13–14 — в полтора раза выше остальных 8–10; другие базовые — обычные упражнения', () => {
-  const cfg = Core.mergeCfg(seedRaw()), W = seedW(), aim = ['hams', 'glutes'];
+test('сила в одном движении, становая тяга, три дня, лимит 80: тяжёлый и лёгкий день 3 × 6, мышцы цели 12–13 — в полтора раза выше остальных 8–10; другие базовые — обычные упражнения', () => {
+  const cfg = appCfg(seedRaw()), W = seedW(), aim = ['hams', 'glutes'];
   withDays(3, () => {
     const pr = Core.buildProgram(W, cfg, Object.assign({ focus: 'deadlift' }, STRONG80));
     sound(pr, 80);
-    assert.deepEqual([loads(pr), total(pr), pr.name, pr.focus, pr.strength, pr.triad], [[23, 29, 26], 78, 'Сила: становая тяга', 'deadlift', true, null]);
-    /* «Новая схема» (24 ноября 2026): за тяжёлым днём по кругу — лёгкий, за ним — средний: неделя 6–4–8 повторов */
-    assert.deepEqual([daysWith(pr, 'deadlift'), daysWith(pr, 'deadlift_light'), daysWith(pr, 'deadlift_mid')], [['wed'], ['fri'], ['mon']]);
-    assert.deepEqual([span(pr, aim), span(pr, tracked(cfg).filter(m => !aim.includes(m)))], ['13–14', '8–10']);
-    assert.deepEqual([Object.keys(pr.create).slice(0, 3), pr.goals], [['deadlift', 'deadlift_light', 'deadlift_mid'], { deadlift: 'auto' }]);
-    assert.deepEqual([pr.create.deadlift_mid, plain(Core.lightOf(pr.cfg, 'deadlift_mid')), plain(Core.lightOf(pr.cfg, 'deadlift_light'))], [{ n: 'Становая тяга — средний день', mode: 'light', of: 'deadlift', mid: true, pat: 'hinge', m: pr.create.deadlift.m }, DAY_M, DAY_L]);
-    assert.equal(pr.notes.find(n => n.t === 'Сила: Становая тяга — три раза в неделю')!.x!.split('. ').slice(0, 4).join('. '), 'Тяжёлый день — в день 2: 3 × 4 одним весом, вес решает запас в последнем подходе. Лёгкий день — в день 3: 3 × 8 на 75%; средний — в день 1: 3 × 6 на 79%. Во всех днях запас около 2 повторов, вес идёт за тяжёлым днём сам. Всего 9 подходов движения в неделю');
+    assert.deepEqual([loads(pr), total(pr), pr.name, pr.focus, pr.strength, pr.triad], [[20, 28, 23], 71, 'Сила: становая тяга', 'deadlift', true, null]);
+    /* два дня — тяжёлый и лёгкий, среднего нет; у становой лёгкий день 3 × 6 на 79% (выводы аудита, 25 ноября 2026) */
+    assert.deepEqual([daysWith(pr, 'deadlift'), daysWith(pr, 'deadlift_light'), daysWith(pr, 'deadlift_mid')], [['wed'], ['mon'], []]);
+    assert.deepEqual([span(pr, aim), span(pr, tracked(cfg).filter(m => !aim.includes(m)))], ['12–13', '8–10']);
+    assert.deepEqual([Object.keys(pr.create).slice(0, 2), pr.goals], [['deadlift', 'deadlift_light'], { deadlift: 'auto' }]);
+    assert.deepEqual([pr.create.deadlift_mid, plain(Core.lightOf(pr.cfg, 'deadlift_light'))], [undefined, DL_LIGHT]);
+    assert.equal(pr.notes.find(n => n.t === 'Сила: Становая тяга — два раза в неделю')!.x!.split('. ').slice(0, 3).join('. '), 'Тяжёлый день — в день 2: 3 × 4 одним весом, вес решает запас в последнем подходе. Лёгкий день — в день 1: 3 × 6 на 79%. В обоих днях запас около 2 повторов, вес лёгкого дня идёт за тяжёлым');
+    assert.ok(pr.notes.find(n => n.t === 'Сила: Становая тяга — два раза в неделю')!.x!.includes('Всего 6 подходов движения в неделю'));
     assert.deepEqual(['bench', 'leg_press', 'pullup'].map(id => pr.cfg.ex[id].mode), [undefined, undefined, undefined]);
-    for (const t of ['Сила: Становая тяга — три раза в неделю', 'Мышцы цели — от 13 до 14, остальные — от 8 до 10 подходов в неделю', 'Жим лежа, Жим ногами и Подтягивания — по двойной прогрессии', 'Становая тяга — в программу в день 2']) assert.ok(titles(pr).includes(t), t + ' | ' + titles(pr).join(' | '));
+    for (const t of ['Сила: Становая тяга — два раза в неделю', 'Мышцы цели — от 12 до 13, остальные — от 8 до 10 подходов в неделю', 'Жим лежа, Жим ногами и Подтягивания — по двойной прогрессии', 'Становая тяга — в программу в день 2']) assert.ok(titles(pr).includes(t), t + ' | ' + titles(pr).join(' | '));
     const why = pr.notes.find(n => n.t.endsWith('— по двойной прогрессии'))!.x!;
     assert.ok(why.startsWith('Под «Силой» по проценту идёт только цель. Остальные базовые — обычные многосуставные: 6–10 повторов с запасом 1'), why);
     assert.ok(!titles(pr).some(t => t.startsWith('Не в программе')), 'под «Силой» базовыми не жертвуют');
@@ -120,16 +124,16 @@ test('сила в одном движении, становая тяга, три
 });
 
 test('все восемь движений «Силы», три дня, лимит 80: подходы по дням, мышцы цели и остальные, самая длинная тренировка — как в docs/04, раздел 3.3в', () => {
-  const cfg = Core.mergeCfg(seedRaw()), W = seedW(), ms = tracked(cfg);
+  const cfg = appCfg(seedRaw()), W = seedW(), ms = tracked(cfg);
   const want: Record<string, [number, number[], string, string, string]> = {
-    bench: [78, [27, 26, 25], '13–13', '8–10.5', '1 ч 30 мин'],
-    squat: [76, [25, 25, 26], '12–12', '8–10', '1 ч 30 мин'],
-    leg_press: [78, [25, 28, 25], '14–14', '8–10', '1 ч 40 мин'],
-    pullup: [78, [29, 28, 21], '12–12', '8–11', '1 ч 30 мин'],
-    deadlift: [78, [23, 29, 26], '13–14', '8–10', '1 ч 40 мин'],
-    hip_thrust: [77, [23, 27, 27], '11.5–11.5', '8–10', '1 ч 35 мин'],
-    ohp: [77, [23, 29, 25], '14–14', '8–10.5', '1 ч 40 мин'],
-    barbell_curl: [80, [26, 29, 25], '14–14', '8–10', '1 ч 40 мин']
+    bench: [69, [22, 21, 26], '12–12', '8–10', '1 ч 25 мин'],
+    squat: [71, [22, 27, 22], '12–14', '8–10', '1 ч 30 мин'],
+    leg_press: [70, [23, 26, 21], '12–12', '8–10', '1 ч 30 мин'],
+    pullup: [69, [24, 25, 20], '12–12', '8–12', '1 ч 20 мин'],
+    deadlift: [71, [20, 28, 23], '12–13', '8–10', '1 ч 35 мин'],
+    hip_thrust: [71, [21, 25, 25], '12–12', '8–10', '1 ч 25 мин'],
+    ohp: [67, [20, 24, 23], '12.5–12.5', '8–10', '1 ч 20 мин'],
+    barbell_curl: [71, [20, 28, 23], '14–14', '8–10', '1 ч 35 мин']
   };
   withDays(3, () => {
     for (const t of TARGETS) {
@@ -138,22 +142,22 @@ test('все восемь движений «Силы», три дня, лими
       const aims = Object.keys(pr.cfg.ex[t].m).filter(m => pr.cfg.ex[t].m[m] === 1 && ms.includes(m));
       const longest = Core.fmtDur(Math.max(...Core.SLOTS.map(sl => Core.estMinutes(pr.cfg, pr.slots[sl.id]))));
       assert.deepEqual([total(pr), loads(pr), span(pr, aims), span(pr, ms.filter(m => !aims.includes(m))), longest], want[t], t);
-      assert.deepEqual([daysWith(pr, t).length, daysWith(pr, t + '_light').length, daysWith(pr, t + '_mid').length], t === 'barbell_curl' ? [1, 1, 0] : [1, 1, 1], t + ': тяжёлый, лёгкий и средний день; у изоляции среднего нет');
+      assert.deepEqual([daysWith(pr, t).length, daysWith(pr, t + '_light').length, daysWith(pr, t + '_mid').length], [1, 1, 0], t + ': тяжёлый и лёгкий день, среднего нет');
     }
   });
 });
 
 test('изоляция в силовой роли, бицепс со штангой: два дня — тяжёлый 3 × 6 на 79% по запасу и лёгкий 3 × 10 на 71%; бицепс 14, остальные 8–10', () => {
   assert.deepEqual([ISO, ISO_LIGHT], [{ pct: 79, reps: 6, sets: 3, days: 2 }, { pct: 71, reps: 10, sets: 3 }]);
-  const raw = seedRaw(), cfg = Core.mergeCfg(plain(raw)), W = seedW();
-  assert.equal(isoLift(cfg, 'barbell_curl'), false, 'с таблицей дней эталона изоляции в силовой роли нет');
+  const raw = seedRaw(), ref = Core.mergeCfg(plain(raw)), cfg = appCfg(plain(raw)), W = seedW();
+  assert.equal(isoLift(ref, 'barbell_curl'), false, 'с таблицей дней эталона изоляции в силовой роли нет');
   withDays(3, () => {
     const pr = Core.buildProgram(W, cfg, Object.assign({ focus: 'barbell_curl' }, STRONG80));
     sound(pr, 80);
-    assert.deepEqual([loads(pr), total(pr), pr.name], [[26, 29, 25], 80, 'Сила: бицепс со штангой стоя']);
+    assert.deepEqual([loads(pr), total(pr), pr.name], [[20, 28, 23], 71, 'Сила: бицепс со штангой стоя']);
     assert.deepEqual([daysWith(pr, 'barbell_curl'), daysWith(pr, 'barbell_curl_light')], [['wed'], ['mon']]);
     assert.deepEqual([span(pr, ['biceps']), span(pr, tracked(cfg).filter(m => m !== 'biceps'))], ['14–14', '8–10']);
-    assert.deepEqual([isoLift(pr.cfg, 'barbell_curl'), isoLift(pr.cfg, 'barbell_curl_light'), isoLift(pr.cfg, 'bench'), isoLift(cfg, 'barbell_curl')], [true, true, false, false]);
+    assert.deepEqual([isoLift(pr.cfg, 'barbell_curl'), isoLift(pr.cfg, 'barbell_curl_light'), isoLift(pr.cfg, 'bench'), isoLift(ref, 'barbell_curl')], [true, true, false, false]);
     assert.ok(titles(pr).includes('Сила: Бицепс со штангой стоя — два раза в неделю'), titles(pr).join(' | '));
     /* принятая программа: в день 2 — тяжёлый день 3 × 6 на 79%, в день 1 — лёгкий 3 × 10 на 71% */
     const acc = Core.mergeCfg(acceptAs(raw, pr, '2025-11-13'));
@@ -168,26 +172,26 @@ test('изоляция в силовой роли, бицепс со штанг�
   assert.equal(soloText(2, true), 'Оно идёт в каждой тренировке: тяжёлый день 3 × 6 с весом по запасу и лёгкий день.');
   assert.equal(soloText(3, true), 'Оно идёт два дня из трёх: тяжёлый день 3 × 6 с весом по запасу и лёгкий день.');
   assert.equal(soloText(4, true), 'Оно идёт два дня из четырёх: тяжёлый день 3 × 6 с весом по запасу и лёгкий день.');
-  /* не изоляция: с днями «День N» — тяжёлый, лёгкий и средний день */
-  withDays(3, () => assert.deepEqual([soloText(2), soloText(3), soloText(4)], ['Оно идёт в каждой тренировке: тяжёлый день 3 × 4 с весом по запасу и лёгкий день.', 'Оно идёт в каждой тренировке: тяжёлый день 3 × 4 с весом по запасу, лёгкий и средний.', 'Оно идёт три дня из четырёх: тяжёлый день 3 × 4 с весом по запасу, лёгкий и средний.']));
+  /* не изоляция: с днями «День N» — тоже два дня, тяжёлый 3 × 4 и лёгкий, без среднего (выводы аудита, 25 ноября 2026) */
+  withDays(3, () => assert.deepEqual([soloText(2), soloText(3), soloText(4)], ['Оно идёт в каждой тренировке: тяжёлый день 3 × 4 с весом по запасу и лёгкий день.', 'Оно идёт два дня из трёх: тяжёлый день 3 × 4 с весом по запасу и лёгкий день.', 'Оно идёт два дня из четырёх: тяжёлый день 3 × 4 с весом по запасу и лёгкий день.']));
 });
 
 test('цели нет в справочнике: сборка берёт её из встроенного вместе со снарядом — подтягивания на своём снаряде с шагом 1 кг; справочник профиля не меняется', () => {
   const raw = seedRaw(); delete raw.ex.pullup;
-  const cfg = Core.mergeCfg(raw), W = seedW().map(w => Object.assign({}, w, { items: w.items.filter(it => it.ex !== 'pullup') }));
+  const cfg = appCfg(raw), W = seedW().map(w => Object.assign({}, w, { items: w.items.filter(it => it.ex !== 'pullup') }));
   withDays(3, () => {
     const pr = Core.buildProgram(W, cfg, Object.assign({ focus: 'pullup' }, STRONG80));
     sound(pr, 80);
     assert.deepEqual([pr.create.pullup.gear, pr.create.pullup.mode, plain(pr.cfg.gear.g_pullup), cfg.gear.g_pullup, cfg.ex.pullup], ['g_pullup', 'cycle', { n: 'Подтягивания', step: 1, own: true }, undefined, undefined]);
-    assert.deepEqual([Core.stepOf(W, pr.cfg, 'pullup'), daysWith(pr, 'pullup'), daysWith(pr, 'pullup_light'), daysWith(pr, 'pullup_mid'), loads(pr)], [1, ['fri'], ['mon'], ['wed'], [29, 28, 21]]);
-    assert.ok(titles(pr).includes('Подтягивания — в программу в день 3') && titles(pr).includes('Сила: Подтягивания — три раза в неделю'), titles(pr).join(' | '));
+    assert.deepEqual([Core.stepOf(W, pr.cfg, 'pullup'), daysWith(pr, 'pullup'), daysWith(pr, 'pullup_light'), daysWith(pr, 'pullup_mid'), loads(pr)], [1, ['fri'], ['mon'], [], [24, 25, 20]]);
+    assert.ok(titles(pr).includes('Подтягивания — в программу в день 3') && titles(pr).includes('Сила: Подтягивания — два раза в неделю'), titles(pr).join(' | '));
     /* принятая программа: подтягивания и их снаряд — в справочнике, шаг тот же */
     const acc = Core.mergeCfg(acceptAs(raw, pr, '2025-11-13'));
     assert.deepEqual([acc.ex.pullup.gear, acc.gear.g_pullup.step, Core.stepOf(W, acc, 'pullup')], ['g_pullup', 1, 1]);
   });
 });
 
-test('лёгкий и средний день новой цели — 75% и 79% от расчётного максимума с первой недели; «не легче самого лёгкого веса в журнале» — только там, где в вес входит тело', () => {
+test('лёгкий день новой цели — доля от расчётного максимума с первой недели (у становой 3 × 6 на 79%); «не легче самого лёгкого веса в журнале» — только там, где в вес входит тело', () => {
   const raw = seedRaw(); delete raw.ex.pullup;
   const W = seedW().map(w => Object.assign({}, w, { items: w.items.filter(it => it.ex !== 'pullup') }));
   /* одна тяжёлая тренировка цели, которой раньше не было: 3 × 4 одним весом, запас 2 в последнем подходе */
@@ -195,47 +199,52 @@ test('лёгкий и средний день новой цели — 75% и 79%
   withDays(3, () => {
     const dl = Core.buildProgram(W, Core.mergeCfg(plain(raw)), Object.assign({ focus: 'deadlift' }, STRONG80));
     const a1 = Core.mergeCfg(acceptAs(raw, dl, '2025-11-12')), W1 = Core.sortW(W.concat(heavy('deadlift', 120, 'fri')));
-    const l1 = Core.planLight(W1, a1, 'deadlift_light', null), m1 = Core.planLight(W1, a1, 'deadlift_mid', null);
-    assert.deepEqual([Core.fmt(l1.tm!, 1), l1.w, l1.sets, l1.reps], ['144.6', 107.5, 3, 8], 'становая: 120 / 0.83 = 144.6, 75% — 108.5, до шага штанги — 107.5 кг, хотя легче 120 её ещё не записывали');
+    const l1 = Core.planLight(W1, a1, 'deadlift_light', null);
+    assert.deepEqual([Core.fmt(l1.tm!, 1), l1.w, l1.sets, l1.reps], ['144.6', 115, 3, 6], 'становая: 120 / 0.83 = 144.6, 79% — 114.2, до шага штанги — 115 кг, хотя легче 120 её ещё не записывали');
+    /* без подтягиваний в справочнике тяжёлый день становой — день 3, лёгкий — день 1; среднего дня сборка не ставит (выводы аудита, 25 ноября 2026) */
+    assert.deepEqual([daysWith(dl, 'deadlift'), daysWith(dl, 'deadlift_light'), daysWith(dl, 'deadlift_mid')], [['fri'], ['mon'], []]);
+    assert.equal(Core.plan(W1, a1, 'mon', '2025-11-17').items.find(it => it.ex === 'deadlift_light')!.sets[0].w, 115, 'в плане дня — тот же вес');
+    /* средний день программы, принятой 24 ноября, до пересборки планируется как раньше: 3 × 6 на 79% */
+    const m24 = plain(acceptAs(raw, dl, '2025-11-12')); m24.ex.deadlift_mid = { n: 'Становая тяга — средний день', mode: 'light', of: 'deadlift', mid: true, pat: 'hinge', m: plain(m24.ex.deadlift.m) };
+    const m1 = Core.planLight(W1, Core.mergeCfg(m24), 'deadlift_mid', null);
     assert.deepEqual([m1.w, m1.sets, m1.reps], [115, 3, 6], 'средний день: 79% от 144.6 — 114.2, до шага штанги — 115 кг');
-    /* без подтягиваний в справочнике тяжёлый день становой — день 3, за ним по кругу лёгкий (день 1) и средний (день 2) */
-    assert.deepEqual([daysWith(dl, 'deadlift'), daysWith(dl, 'deadlift_light'), daysWith(dl, 'deadlift_mid')], [['fri'], ['mon'], ['wed']]);
-    assert.equal(Core.plan(W1, a1, 'mon', '2025-11-17').items.find(it => it.ex === 'deadlift_light')!.sets[0].w, 107.5, 'в плане дня — тот же вес');
-    assert.equal(Core.plan(W1, a1, 'wed', '2025-11-19').items.find(it => it.ex === 'deadlift_mid')!.sets[0].w, 115);
     const pu = Core.buildProgram(W, Core.mergeCfg(plain(raw)), Object.assign({ focus: 'pullup' }, STRONG80));
     const a2 = Core.mergeCfg(acceptAs(raw, pu, '2025-11-12')), W2 = Core.sortW(W.concat(heavy('pullup', 80, 'fri')));
-    const l2 = Core.planLight(W2, a2, 'pullup_light', null), m2 = Core.planLight(W2, a2, 'pullup_mid', null);
-    assert.deepEqual([Core.fmt(l2.tm!, 1), l2.w, m2.w], ['96.4', 80, 80], 'подтягивания: 75% — 72 кг и 79% — 76 кг, но в вес входит тело, и легче 80 их не записывали');
+    const l2 = Core.planLight(W2, a2, 'pullup_light', null);
+    assert.deepEqual([Core.fmt(l2.tm!, 1), l2.w], ['96.4', 80], 'подтягивания: 75% — 72 кг, но в вес входит тело, и легче 80 их не записывали');
   });
 });
 
-test('средний день — только у «Силы: <движение>»: в «Гибриде» он уходит с заметкой, а программа с двумя лёгкими днями, принятая до «Новой схемы», получает лёгкий и средний', () => {
+test('среднего дня сборка не ставит: в программе, принятой 24 ноября, он уходит с заметкой — и под «Силой», и в «Гибриде»; программа с двумя лёгкими днями получает один', () => {
   const raw = seedRaw(), W = seedW();
   withDays(3, () => {
     const dl = Core.buildProgram(W, Core.mergeCfg(plain(raw)), Object.assign({ focus: 'deadlift' }, STRONG80)), r = acceptAs(raw, dl, '2025-11-13');
-    /* «Гибрид» вокруг той же становой: лёгкий день остаётся, среднего нет */
-    const mix = Core.buildProgram(W, Core.mergeCfg(plain(r)), { focus: 'deadlift' });
-    sound(mix, 100);
-    assert.deepEqual([daysWith(mix, 'deadlift').length, daysWith(mix, 'deadlift_light').length, daysWith(mix, 'deadlift_mid')], [1, 1, []]);
-    const gone = mix.notes.find(n => n.t === 'Убрано: Становая тяга — средний день');
-    assert.equal(gone && gone.x, 'Средний день есть только у упражнения, выбранного целью «Силы».', titles(mix).join(' | '));
-    /* программа «Силы» с двумя лёгкими днями (так её собирали до 24 ноября 2026): лёгкий день, что идёт вторым после тяжёлого, становится средним */
-    const old = plain(r); delete old.ex.deadlift_mid;
+    /* так программу «Силы» собирали 24 ноября: тяжёлый день, лёгкий и средний */
+    const m24 = plain(r); m24.ex.deadlift_mid = { n: 'Становая тяга — средний день', mode: 'light', of: 'deadlift', mid: true, pat: 'hinge', m: plain(m24.ex.deadlift.m) };
+    (m24.program as { slots: ProgSlots }).slots.fri.unshift({ ex: 'deadlift_mid' });
+    for (const opts of [Object.assign({ focus: 'deadlift' }, STRONG80), { focus: 'deadlift' }] as BuildOpts[]) {
+      const pr = Core.buildProgram(W, Core.mergeCfg(plain(m24)), opts), what = JSON.stringify(opts);
+      sound(pr, +(opts.budget || 100));
+      assert.deepEqual([daysWith(pr, 'deadlift'), daysWith(pr, 'deadlift_light'), daysWith(pr, 'deadlift_mid')], [['wed'], ['mon'], []], what);
+      const gone = pr.notes.find(n => n.t === 'Убрано: Становая тяга — средний день');
+      assert.equal(gone && gone.x, 'Среднего дня больше нет: движение цели идёт два дня в неделю — тяжёлый и лёгкий.', what + ': ' + titles(pr).join(' | '));
+    }
+    /* программа «Силы» с двумя лёгкими днями (так её собирали до 24 ноября 2026): лёгкий день остаётся один, среднего нет */
+    const old = plain(m24); delete old.ex.deadlift_mid;
     const slots = (old.program as { slots: ProgSlots }).slots;
     for (const id of Object.keys(slots)) slots[id] = slots[id].map(e => e.ex === 'deadlift_mid' ? { ex: 'deadlift_light' } : e);
     const again = Core.buildProgram(W, Core.mergeCfg(old), Object.assign({ focus: 'deadlift' }, STRONG80));
     sound(again, 80);
-    assert.deepEqual([daysWith(again, 'deadlift'), daysWith(again, 'deadlift_light'), daysWith(again, 'deadlift_mid'), again.create.deadlift_mid && again.create.deadlift_mid.mid], [['wed'], ['fri'], ['mon'], true]);
-    assert.ok(again.slots.mon.find(e => e.ex === 'deadlift_mid')!.isNew, 'средний день помечен новым');
+    assert.deepEqual([daysWith(again, 'deadlift'), daysWith(again, 'deadlift_light'), daysWith(again, 'deadlift_mid'), 'deadlift_mid' in again.create], [['wed'], ['mon'], [], false]);
   });
 });
 
 test('«Гибрид» вокруг цели, которой нет в справочнике: приседания по запасу и лёгкий день, остальные базовые на поддержании, третье базовое уходит — в тренировке одно базовое', () => {
-  const cfg = Core.mergeCfg(seedRaw()), W = seedW();
+  const cfg = appCfg(seedRaw()), W = seedW();
   withDays(3, () => {
     const pr = Core.buildProgram(W, cfg, { focus: 'squat', budget: 100 });
     sound(pr, 100);
-    assert.deepEqual([loads(pr), total(pr), span(pr, tracked(cfg)), pr.name], [[30, 31, 30], 91, '10–13', 'Пауэрбилдинг: приседания со штангой']);
+    assert.deepEqual([loads(pr), total(pr), span(pr, tracked(cfg)), pr.name], [[29, 25, 24], 78, '10–13', 'Пауэрбилдинг: приседания со штангой']);
     assert.deepEqual([daysWith(pr, 'squat'), daysWith(pr, 'squat_light'), pr.dropped, pr.goals], [['fri'], ['mon'], ['pullup'], { bench: 'hold', leg_press: 'hold', squat: 'auto' }]);
     assert.deepEqual(['bench', 'leg_press'].map(id => pr.cfg.ex[id].mode), ['cycle', 'cycle'], 'под «Гибридом» остальные базовые — по проценту, как ставит переключатель');
     for (const t of ['Не в программе: Подтягивания', 'Приседания со штангой — в программу в день 3', 'Жим лежа и Жим ногами — поддержание']) assert.ok(titles(pr).includes(t), t + ' | ' + titles(pr).join(' | '));
@@ -262,7 +271,7 @@ test('принятая программа: роли читаются из неё
     const pull = Core.plan(W, cfg, 'fri', '2025-11-21').items.find(it => it.ex === 'pullup')!;
     assert.deepEqual([pull.cyc || null, pull.range, pull.sets.length], [null, [6, 10], 4], 'подтягивания под «Силой» — обычное многосуставное, четыре подхода');
     const again = Core.buildProgram(W, cfg, TRI);
-    assert.deepEqual([again.same, loads(again)], [true, [26, 24, 24]]);
+    assert.deepEqual([again.same, loads(again)], [true, [24, 20, 23]]);
     /* «Масса»: роли сняты, базовые справочника — снова базовые (по двойной прогрессии 6–10), приседания, добавленные тройкой, — обычное упражнение */
     const mass = Core.buildProgram(W, cfg, {});
     assert.deepEqual([mass.same, mass.cfg.ex.leg_press.mode, mass.cfg.ex.pullup.mode, mass.cfg.ex.squat.mode], [false, 'cycle', 'cycle', undefined]);
