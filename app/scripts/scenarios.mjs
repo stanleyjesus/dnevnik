@@ -109,6 +109,7 @@ const cfgMain = '(JSON.parse(' + stored + ').find(x => x[0] === "config/main") |
 const journal = n => expect('document.querySelectorAll(".wo").length === ' + n, 'записей в журнале: ' + n);
 /* онбординг (решение владельца, 25 ноября 2026): какой шаг на экране, видны ли вкладки, строка «что возьмёт дневник» у упражнения */
 const onbAt = (n, of) => '!!document.getElementById("onb") && document.getElementById("onb-n").textContent === "Шаг ' + n + ' из ' + of + '"';
+const DOT = '(i => [...document.querySelectorAll(".pdots button")].map(b => b.getAttribute("aria-current")).join() === [0, 1].map(j => String(j === i)).join())';   // в карусели дней онбординга открыт день i (два дня)
 const tabsOff = 'getComputedStyle(document.querySelector(".tabs")).display === "none"';
 const PASTED = 'День 1\nЖим штанги лёжа 4×6-8 80 кг\nТяга верхнего блока к груди 3x10\nПуловер с гантелью 3×12\n\nДень 2:\nПрисед 4×6 @100\nРумынская тяга 3 x (8–10)';
 const outIs = (id, text) => expect('document.getElementById("kw-out-' + id + '").textContent === ' + J(text), id + ': ' + text);
@@ -709,7 +710,13 @@ export const SCENARIOS = [
       + expect('[...document.querySelectorAll("#view .prow .pn")].filter(p => p.textContent.startsWith("Жим лежа")).every(p => [...p.querySelectorAll(".tag.crit")].map(t => t.textContent).join() === "Плечо")', 'у жима лежа — красная пилюля «Плечо»')
       + expect('!document.getElementById("prog-free") && !document.querySelector("#view .mtab")', 'таблицы мышц и счётчика подходов в онбординге нет')
       + expect('!document.querySelector("#view .pctl, #view [id^=pa-], #view [id^=pb-]") && ![...document.querySelectorAll("#view .prow .tag")].some(t => t.textContent === "новое")', 'программу собрал дневник: без «выше», «−», «+», «убрать», «новое» и «В день»')
-      + expect('[...document.querySelectorAll("#view .prow [id^=sw-]")].length > 0 && [...document.querySelectorAll("#view .prow [id^=sw-]")].every(b => b.textContent === "Заменить")', 'у упражнений — кнопка «Заменить»')],
+      + expect('[...document.querySelectorAll("#view .prow [id^=sw-]")].length > 0 && [...document.querySelectorAll("#view .prow [id^=sw-]")].every(b => b.textContent === "Заменить")', 'у упражнений — кнопка «Заменить»')
+      + expect('document.querySelectorAll("#onb-days > .pday").length === 2 && ' + DOT + '(0)', 'дни — карусель из двух карточек, открыт день 1')],
+    ['листать: точка дня 2', click('#onb-dot-wed') + settle + expect(DOT + '(1) && document.getElementById("onb-days").scrollLeft > 0', 'карусель на дне 2, его точка вытянута')],
+    ['заменить на дне 2: день не сбросился', click('#onb-days > .pday:nth-child(2) [id^="sw-"]') + settle
+      + expect('!!document.querySelector("#onb-days > .pday:nth-child(2) .prow.swapping") && document.querySelectorAll("#view .swaprow .ex-card").length > 0', 'под упражнением дня 2 — замены')
+      + expect(DOT + '(1) && document.getElementById("onb-days").scrollLeft > 0', 'после перерисовки карусель на том же дне 2')],
+    ['пролистать назад: день 1', 'document.getElementById("onb-days").scrollTo({ left: 0 });' + settle + expect(DOT + '(0)', 'точка следует за прокруткой: открыт день 1')],
     ['заменить упражнение: список', click('#view .prow [id^="sw-"]') + settle + expect('document.querySelectorAll("#view .swaprow .ex-card").length > 0 && document.querySelector("#view .prow.swapping [id^=sw-]").textContent === "Отмена"', 'под кнопкой — упражнения на замену, кнопка стала «Отмена»')],
     ['замены жима в тренажёре на грудь: пилюли', click('#view .prow.swapping [id^="sw-"]') + settle + 'const b = [...document.querySelectorAll("#view .prow")].find(p => p.querySelector(".pn").textContent.startsWith("Жим в тренажере на грудь"));' + '__t.click("#" + b.querySelector("[id^=sw-]").id, 0);' + settle
       + expect('[...document.querySelectorAll("#view .swaprow .ex-card .nm")].map(n => n.textContent).includes("Жим штанги под угломПлечо") && [...document.querySelectorAll("#view .swaprow .ex-card .nm")].some(n => !n.querySelector(".tag.crit"))', 'в списке замен — жим штанги под углом с пилюлей «Плечо», остальные без неё')],

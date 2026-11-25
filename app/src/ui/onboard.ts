@@ -30,7 +30,7 @@ import { appRules, withBody } from '../core/rules.ts';
 import { pasteDays, pasteMatch } from '../core/paste.ts';
 import type { PasteDay } from '../core/paste.ts';
 import type { ExDef, ProgSlots, Swap } from '../core/types.ts';
-import type { El, Kid, View } from './types.ts';
+import type { El, Kid, Timer, View } from './types.ts';
 
 type Step = 'start' | 'goal' | 'care' | 'paste' | 'prog' | 'weights' | 'done';
 /** Программа из текста: text — как вставлен, days — разбор, pick — что взять в строке «день-строка» (id, '' — не брать, NEW — новое упражнение),
@@ -38,8 +38,9 @@ type Step = 'start' | 'goal' | 'care' | 'paste' | 'prog' | 'weights' | 'done';
 interface Paste { text: string; days: PasteDay[] | null; pick: Record<string, string>; gear: Record<string, string>; fill: boolean }
 /** Мастер открытого профиля: gen — поколение профиля (storage.ts, openProfile), path — собрать, своя или текстом, focus — режим сборки,
     steps — снаряды, шаг которых атлет ввёл в мастере, took — программа принята в мастере;
-    reps — сколько раз подряд атлет делает упражнение с весом тела, away — такие упражнения, которые пока заменены: id → чем и дни программы до замены */
-interface Onb { gen: number; step: Step; path: 'build' | 'own' | 'paste'; focus: string; steps: Record<string, boolean>; took: boolean; done: boolean; paste: Paste; reps: Record<string, number>; away: Record<string, { to: string; slots: ProgSlots }> }
+    reps — сколько раз подряд атлет делает упражнение с весом тела, away — такие упражнения, которые пока заменены: id → чем и дни программы до замены,
+    day — какой день программы открыт в карусели шага «Программа» (с 0) */
+interface Onb { gen: number; step: Step; path: 'build' | 'own' | 'paste'; focus: string; steps: Record<string, boolean>; took: boolean; done: boolean; paste: Paste; reps: Record<string, number>; away: Record<string, { to: string; slots: ProgSlots }>; day: number }
 const NEW = '+new';
 let O: Onb | null = null;
 /* профили, где мастер пропустили: до перезагрузки страницы там прежний пустой «Обзор» */
@@ -71,7 +72,7 @@ export function startLine(id: string) {
 }
 
 const seq = (o: Onb): Step[] => o.path === 'own' ? ['start', 'prog', 'weights', 'done'] : o.path === 'paste' ? ['start', 'paste', 'prog', 'weights', 'done'] : ['start', 'goal', 'care', 'prog', 'weights', 'done'];
-const to = (step: Step) => { O!.step = step; render(); };
+const to = (step: Step) => { O!.step = step; O!.day = 0; render(); };   // на шаг «Программа» мастер приходит к первому дню
 function skip() { skipped.add(S.profile); O!.done = true; render(); }
 /* мастер закончен: дальше — обычные вкладки */
 function finish(view: string) { O!.done = true; S.ui.plan = null; go(view); }
@@ -209,6 +210,28 @@ function vCare(): View {
     () => to('goal'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('prog') }, 'Дальше'))];
 }
 
+/* дни программы — карусель (просьба владельца, 25 ноября 2026): день — карточка, дни листаются вбок, а не вниз; соседний день виден краем,
+   над днями — точки дней, нажатая открывает свой день. Страница перерисовывается целиком (замена упражнения, правка подходов), поэтому
+   открытый день хранится в мастере (O.day), и после перерисовки карусель сразу стоит на нём. Точки следуют за прокруткой, когда она закончилась; карусель, которую перерисовка уже убрала, открытый день не трогает */
+function dayCarousel(days: HTMLElement[]): Kid[] {
+  const o = O!, n = days.length;
+  o.day = Math.max(0, Math.min(o.day, n - 1));
+  const at = (i: number) => { const k = car.children as HTMLCollectionOf<HTMLElement>; return Math.min(k[i].offsetLeft - k[0].offsetLeft, car.scrollWidth - car.clientWidth); };
+  const mark = (i: number) => { o.day = i; dots.forEach((b, j) => b.setAttribute('aria-current', j === i ? 'true' : 'false')); };
+  let t: Timer = 0;
+  const near = () => {                                                       // день, к которому пришла прокрутка; в конце — последний, если открытый не там же
+    const x = car.scrollLeft;
+    if (!car.isConnected || Math.abs(at(o.day) - x) <= 2) return;
+    let b = 0; for (let i = 1; i < n; i++) if (Math.abs(at(i) - x) <= Math.abs(at(b) - x)) b = i;
+    mark(b);
+  };
+  const car = h('div', { class: 'pcar', id: 'onb-days', role: 'group', 'aria-label': 'Дни программы', onscroll: () => { clearTimeout(t); t = setTimeout(near, 120); } }, days);
+  const dots = C.SLOTS.slice(0, n).map((sl, i) => h('button', { type: 'button', id: 'onb-dot-' + sl.id, 'aria-label': sl.n, 'aria-current': i === o.day ? 'true' : 'false',
+    onclick: () => { mark(i); car.scrollTo({ left: at(i), behavior: 'smooth' }); } }));
+  queueMicrotask(() => { if (car.isConnected && o.day) car.scrollLeft = at(o.day); });   // render() уже вставил страницу: карусель — на открытом дне
+  return [n > 1 ? h('div', { class: 'pdots' }, dots) : null, car];   // точки — над днями: день бывает длиннее экрана
+}
+
 function vProg(): View {
   const cfg = D.cfg, d = draft(), pr = d.pr, P = cfg.program, own = O!.path !== 'build', text = O!.path === 'paste';
   const mins = C.SLOTS.filter(sl => pr.slots[sl.id].length).map(sl => C.estMinutes(pr.cfg, pr.slots[sl.id], cfg.rest));
@@ -227,7 +250,7 @@ function vProg(): View {
       : 'Так дневник раскладывает упражнения по дням: порядок и подходы он посчитал сам. Любое упражнение можно заменить на похожее.', [
     own ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, daysRow()) : null,
     h('p', { class: 'sub', id: 'onb-sum', style: 'margin-bottom:8px' }, loadText(total(pr.after.load)) + ' в неделю' + (mins.length ? ' · самая длинная тренировка ≈ ' + C.fmtDur(Math.max(...mins)) : '')),
-    h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3' }, C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit))),
+    dayCarousel(C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit))),
     h('p', { class: 'sub', style: 'margin-top:8px' }, 'Нагрузка по мышцам и подходы в неделю — на вкладке «Программа», когда закончишь.')],
     () => to(text ? 'paste' : own ? 'start' : 'care'), next)];
 }
@@ -351,7 +374,7 @@ function vDone(): View {
 
 /** Мастер вместо пустого «Обзора» */
 export function vOnboard(): View {
-  if (!O || O.gen !== S.gen) O = { gen: S.gen, step: 'start', path: 'build', focus: 'even', steps: {}, took: false, done: false, paste: { text: '', days: null, pick: {}, gear: {}, fill: false }, reps: {}, away: {} };
+  if (!O || O.gen !== S.gen) O = { gen: S.gen, step: 'start', path: 'build', focus: 'even', steps: {}, took: false, done: false, paste: { text: '', days: null, pick: {}, gear: {}, fill: false }, reps: {}, away: {}, day: 0 };
   const v = O.step === 'goal' ? vGoal() : O.step === 'care' ? vCare() : O.step === 'paste' ? vPaste() : O.step === 'prog' ? vProg() : O.step === 'weights' ? vWeights() : O.step === 'done' ? vDone() : vStart();
   return v;
 }
