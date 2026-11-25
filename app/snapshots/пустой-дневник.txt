@@ -22,7 +22,6 @@
   a(href="#journal") Журнал
   a(href="#progress") Прогресс
   a(href="#muscles") Мышцы
-  a(href="#coach") Советы
   a(href="#program") Программа
   a(href="#setup") Настройка
 поля: —
@@ -145,25 +144,13 @@
   div.wrap.stack
    div.card.empty Расчёт появится после первых тренировок.
 
-=== 9. coach: открывается
-адрес: "#coach"
+=== 9. program: открывается
+адрес: "#program"
 шапка: правки к шагу 8
 @@ 18 -2 +2
 - a(href="#muscles" aria-current="page") Мышцы
-- a(href="#coach") Советы
-+ a(href="#muscles") Мышцы
-+ a(href="#coach" aria-current="page") Советы
-экран: целиком
-  div.wrap.stack
-   div.card.empty Советы появятся после первых тренировок.
-
-=== 10. program: открывается
-адрес: "#program"
-шапка: правки к шагу 9
-@@ 19 -2 +2
-- a(href="#coach" aria-current="page") Советы
 - a(href="#program") Программа
-+ a(href="#coach") Советы
++ a(href="#muscles") Мышцы
 + a(href="#program" aria-current="page") Программа
 поля: целиком
   prog-name=Своя программа
@@ -668,10 +655,10 @@
      button#prog-accept.btn.primary(disabled="") Принять программу
      span.sub Пока ничего не изменено.
 
-=== 11. setup: открывается
+=== 10. setup: открывается
 адрес: "#setup"
-шапка: правки к шагу 10
-@@ 20 -2 +2
+шапка: правки к шагу 9
+@@ 19 -2 +2
 - a(href="#program" aria-current="page") Программа
 - a(href="#setup") Настройка
 + a(href="#program") Программа
@@ -881,7 +868,7 @@
   pr-n-me=Мой дневник
   pr-new=
   pr-copy=true
-экран: правки к шагу 10
+экран: правки к шагу 9
 @@ 4 -493 +1460
 +    h2 Упражнения
 +    button#ex-new.btn
@@ -2344,27 +2331,29 @@
 +    p.note(style="margin-top:8px") CSV — тренировки открытого профиля. Резервная копия — всё сразу: профили, настройка, программы, тренировки и вес тела. Это единственный способ перенести записи на другое устройство или вернуть их, если это сломается.
 +    p#device-note.note(style="margin-top:6px") Браузер не обещал хранить записи: при нехватке места он может их стереть. Держи свежую резервную копию. Сборка для разработки.
 
-=== 12. настройка: справочник заполнен и разложен по снарядам
+=== 11. настройка: справочник заполнен и разложен по снарядам
 
-=== 13. блока «Лимиты и методика» нет
-экран: правки к шагу 12
+=== 12. блока «Лимиты и методика» нет
+экран: правки к шагу 11
 @@ 984 -1 +1
 -  details#setup-more.morebox
 +  details#setup-more.morebox(open="")
 
-=== 14. программа: вручную, в списке дня — весь справочник
+=== 13. программа: вручную, в списке дня — весь справочник
 адрес: "#program"
-шапка: как в шаге 10
-поля: как в шаге 10
-экран: как в шаге 10
+шапка: как в шаге 9
+поля: как в шаге 9
+экран: как в шаге 9
 
-=== 15. цели: масса, сила, гибрид, вручную
+=== 14. цели: масса, сила, гибрид, вручную
 
-=== 16. равномерно: без базовых, упражнения по мышцам
-поля: целиком
-  pm=even
-  pt=0
-экран: правки к шагу 15
+=== 15. равномерно: без базовых, упражнения по мышцам
+поля: правки к шагу 14
+@@ 1 -1 +2
+- prog-name=Своя программа
++ pm=even
++ pt=0
+экран: правки к шагу 14
 @@ 12 -3 +3
 -     h2 Правка вручную
 -    span.sub 0 подходов в неделю
@@ -2404,143 +2393,505 @@
 +      option(value="120") до 2 ч
 +      option(value="135") до 2 ч 15 мин
 +      option(value="150") до 2 ч 30 мин
-@@ 36 -70 +41
+@@ 36 -2 +135
+-      span.sub 0 подходов
+-     p.sub(style="padding:10px 0") Пусто. Добавь упражнения из списка.
 +      span.sub 24 подхода · ≈ 1 ч 20 мин
-+     div.prow
++     div.prow.changed
 +      div.grow
-+       div.pn Горизонтальная тяга в тренажере
-+       div.sub 4 × 6–10
-+      button#sw-mon-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
-+     div.prow
++       div.pn
++        | Горизонтальная тяга в тренажере
++        span.tag.accent новое
++       div.sub
++        | "4 × 6–10 · "
++        button#sw-mon-0.linkbtn(type="button" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") заменить
++      div.pctl
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Горизонтальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Горизонтальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Горизонтальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Жим в тренажере на грудь
-+       div.sub 4 × 6–10
-+      button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим в тренажере на грудь") Заменить
-+     div.prow
++       div.pn
++        | Жим в тренажере на грудь
++        span.tag.accent новое
++       div.sub
++        | "4 × 6–10 · "
++        button#sw-mon-1.linkbtn(type="button" aria-label="Заменить упражнение: Жим в тренажере на грудь") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим в тренажере на грудь")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим в тренажере на грудь")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим в тренажере на грудь")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим в тренажере на грудь")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Жим гантелей сидя
-+       div.sub 2 × 6–10
-+      button#sw-mon-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей сидя") Заменить
-+     div.prow
++       div.pn
++        | Жим гантелей сидя
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-mon-2.linkbtn(type="button" aria-label="Заменить упражнение: Жим гантелей сидя") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим гантелей сидя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим гантелей сидя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим гантелей сидя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим гантелей сидя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Румынская тяга
-+       div.sub 2 × 6–10
-+      button#sw-mon-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
-+     div.prow
++       div.pn
++        | Румынская тяга
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-mon-3.linkbtn(type="button" aria-label="Заменить упражнение: Румынская тяга") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Румынская тяга")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Румынская тяга")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Румынская тяга")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Румынская тяга")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Жим лежа узким хватом
-+       div.sub 2 × 6–10
-+      button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим лежа узким хватом") Заменить
-+     div.prow
++       div.pn
++        | Жим лежа узким хватом
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-mon-4.linkbtn(type="button" aria-label="Заменить упражнение: Жим лежа узким хватом") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим лежа узким хватом")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим лежа узким хватом")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим лежа узким хватом")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим лежа узким хватом")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Вертикальная тяга в тренажере
-+       div.sub 2 × 6–10
-+      button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-+     div.prow
++       div.pn
++        | Вертикальная тяга в тренажере
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-mon-5.linkbtn(type="button" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Вертикальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Вертикальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Вертикальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Вертикальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Обратная бабочка
-+       div.sub 4 × 8–12
-+      button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Обратная бабочка") Заменить
-+     div.prow
++       div.pn
++        | Обратная бабочка
++        span.tag.accent новое
++       div.sub
++        | "4 × 8–12 · "
++        button#sw-mon-6.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Обратная бабочка")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Обратная бабочка")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Обратная бабочка")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Обратная бабочка")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Махи гантелями в стороны
-+       div.sub 4 × 10–20
-+      button#sw-mon-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
-@@ 109 -70 +46
++       div.pn
++        | Махи гантелями в стороны
++        span.tag.accent новое
++       div.sub
++        | "4 × 10–20 · "
++        button#sw-mon-7.linkbtn(type="button" aria-label="Заменить упражнение: Махи гантелями в стороны") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Махи гантелями в стороны")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Махи гантелями в стороны")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Махи гантелями в стороны")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Махи гантелями в стороны")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+@@ 45 -1 +0
+-       option(value="lat_pulldown") Вертикальная тяга в тренажере
+@@ 49 -1 +0
+-       option(value="row_machine") Горизонтальная тяга в тренажере
+@@ 51 -1 +0
+-       option(value="chest_press") Жим в тренажере на грудь
+@@ 55 -1 +0
+-       option(value="db_ohp") Жим гантелей сидя
+@@ 57 -1 +0
+-       option(value="close_grip_bench") Жим лежа узким хватом
+@@ 67 -1 +0
+-       option(value="lat_raise") Махи гантелями в стороны
+@@ 70 -1 +0
+-       option(value="x_rear") Обратная бабочка
+@@ 81 -1 +0
+-       option(value="rdl") Румынская тяга
+@@ 109 -2 +152
+-      span.sub 0 подходов
+-     p.sub(style="padding:10px 0") Пусто. Добавь упражнения из списка.
 +      span.sub 21 подход · ≈ 1 ч 10 мин
-+     div.prow
++     div.prow.changed
 +      div.grow
-+       div.pn Горизонтальная тяга в тренажере
-+       div.sub 2 × 6–10
-+      button#sw-wed-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
-+     div.prow
++       div.pn
++        | Горизонтальная тяга в тренажере
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-wed-0.linkbtn(type="button" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") заменить
++      div.pctl
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Горизонтальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Горизонтальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Горизонтальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Жим гантелей сидя
-+       div.sub 2 × 6–10
-+      button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей сидя") Заменить
-+     div.prow
++       div.pn
++        | Жим гантелей сидя
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-wed-1.linkbtn(type="button" aria-label="Заменить упражнение: Жим гантелей сидя") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим гантелей сидя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим гантелей сидя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим гантелей сидя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим гантелей сидя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Приседания со штангой
-+       div.sub 2 × 6–10
-+      button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Приседания со штангой") Заменить
-+     div.prow
++       div.pn
++        | Приседания со штангой
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-wed-2.linkbtn(type="button" aria-label="Заменить упражнение: Приседания со штангой") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Приседания со штангой")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Приседания со штангой")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Приседания со штангой")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Приседания со штангой")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Жим в тренажере на грудь
-+       div.sub 2 × 6–10
-+      button#sw-wed-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим в тренажере на грудь") Заменить
-+     div.prow
++       div.pn
++        | Жим в тренажере на грудь
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-wed-3.linkbtn(type="button" aria-label="Заменить упражнение: Жим в тренажере на грудь") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим в тренажере на грудь")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим в тренажере на грудь")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим в тренажере на грудь")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим в тренажере на грудь")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Румынская тяга
-+       div.sub 2 × 6–10
-+      button#sw-wed-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
-+     div.prow
++       div.pn
++        | Румынская тяга
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-wed-4.linkbtn(type="button" aria-label="Заменить упражнение: Румынская тяга") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Румынская тяга")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Румынская тяга")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Румынская тяга")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Румынская тяга")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Вертикальная тяга в тренажере
-+       div.sub 2 × 6–10
-+      button#sw-wed-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-+     div.prow
++       div.pn
++        | Вертикальная тяга в тренажере
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-wed-5.linkbtn(type="button" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Вертикальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Вертикальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Вертикальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Вертикальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Бицепс бедра сидя в тренажере
-+       div.sub 4 × 8–12
-+      button#sw-wed-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
-+     div.prow
++       div.pn
++        | Бицепс бедра сидя в тренажере
++        span.tag.accent новое
++       div.sub
++        | "4 × 8–12 · "
++        button#sw-wed-6.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс бедра сидя в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Бицепс бедра сидя в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Бицепс бедра сидя в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс бедра сидя в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Махи гантелями в стороны
-+       div.sub 3 × 10–20
-+      button#sw-wed-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
-+     div.prow
++       div.pn
++        | Махи гантелями в стороны
++        span.tag.accent новое
++       div.sub
++        | "3 × 10–20 · "
++        button#sw-wed-7.linkbtn(type="button" aria-label="Заменить упражнение: Махи гантелями в стороны") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Махи гантелями в стороны")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Махи гантелями в стороны")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Махи гантелями в стороны")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Махи гантелями в стороны")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Обратная бабочка
-+       div.sub 2 × 8–12
-+      button#sw-wed-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Обратная бабочка") Заменить
-@@ 182 -71 +47
++       div.pn
++        | Обратная бабочка
++        span.tag.accent новое
++       div.sub
++        | "2 × 8–12 · "
++        button#sw-wed-8.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Обратная бабочка")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Обратная бабочка")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Обратная бабочка")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Обратная бабочка")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+@@ 114 -1 +0
+-       option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
+@@ 118 -1 +0
+-       option(value="lat_pulldown") Вертикальная тяга в тренажере
+@@ 122 -1 +0
+-       option(value="row_machine") Горизонтальная тяга в тренажере
+@@ 124 -1 +0
+-       option(value="chest_press") Жим в тренажере на грудь
+@@ 128 -1 +0
+-       option(value="db_ohp") Жим гантелей сидя
+@@ 140 -1 +0
+-       option(value="lat_raise") Махи гантелями в стороны
+@@ 143 -1 +0
+-       option(value="x_rear") Обратная бабочка
+@@ 150 -1 +0
+-       option(value="squat") Приседания со штангой
+@@ 154 -1 +0
+-       option(value="rdl") Румынская тяга
+@@ 182 -2 +152
+-      span.sub 0 подходов
+-     p.sub(style="padding:10px 0") Пусто. Добавь упражнения из списка.
 +      span.sub 23 подхода · ≈ 1 ч 20 мин
-+     div.prow
++     div.prow.changed
 +      div.grow
-+       div.pn Горизонтальная тяга Т-бар
-+       div.sub 2 × 6–10
-+      button#sw-fri-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
-+     div.prow
++       div.pn
++        | Горизонтальная тяга Т-бар
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-fri-0.linkbtn(type="button" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") заменить
++      div.pctl
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Горизонтальная тяга Т-бар")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Горизонтальная тяга Т-бар")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Горизонтальная тяга Т-бар")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Приседания со штангой
-+       div.sub 4 × 6–10
-+      button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Приседания со штангой") Заменить
-+     div.prow
++       div.pn
++        | Приседания со штангой
++        span.tag.accent новое
++       div.sub
++        | "4 × 6–10 · "
++        button#sw-fri-1.linkbtn(type="button" aria-label="Заменить упражнение: Приседания со штангой") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Приседания со штангой")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Приседания со штангой")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Приседания со штангой")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Приседания со штангой")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Жим штанги стоя
-+       div.sub 2 × 6–10
-+      button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим штанги стоя") Заменить
-+     div.prow
++       div.pn
++        | Жим штанги стоя
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-fri-2.linkbtn(type="button" aria-label="Заменить упражнение: Жим штанги стоя") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим штанги стоя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим штанги стоя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим штанги стоя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим штанги стоя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Жим гантелей лежа
-+       div.sub 2 × 6–10
-+      button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей лежа") Заменить
-+     div.prow
++       div.pn
++        | Жим гантелей лежа
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-fri-3.linkbtn(type="button" aria-label="Заменить упражнение: Жим гантелей лежа") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим гантелей лежа")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим гантелей лежа")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим гантелей лежа")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим гантелей лежа")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Тяга верхнего блока
-+       div.sub 2 × 6–10
-+      button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Тяга верхнего блока") Заменить
-+     div.prow
++       div.pn
++        | Тяга верхнего блока
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-fri-4.linkbtn(type="button" aria-label="Заменить упражнение: Тяга верхнего блока") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Тяга верхнего блока")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Тяга верхнего блока")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Тяга верхнего блока")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Тяга верхнего блока")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Жим лежа узким хватом
-+       div.sub 2 × 6–10
-+      button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим лежа узким хватом") Заменить
-+     div.prow
++       div.pn
++        | Жим лежа узким хватом
++        span.tag.accent новое
++       div.sub
++        | "2 × 6–10 · "
++        button#sw-fri-5.linkbtn(type="button" aria-label="Заменить упражнение: Жим лежа узким хватом") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим лежа узким хватом")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим лежа узким хватом")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим лежа узким хватом")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим лежа узким хватом")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Бицепс бедра сидя в тренажере
-+       div.sub 2 × 8–12
-+      button#sw-fri-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
-+     div.prow
++       div.pn
++        | Бицепс бедра сидя в тренажере
++        span.tag.accent новое
++       div.sub
++        | "2 × 8–12 · "
++        button#sw-fri-6.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс бедра сидя в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Бицепс бедра сидя в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Бицепс бедра сидя в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс бедра сидя в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Бицепс со штангой стоя
-+       div.sub 3 × 8–12
-+      button#sw-fri-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
-+     div.prow
++       div.pn
++        | Бицепс со штангой стоя
++        span.tag.accent новое
++       div.sub
++        | "3 × 8–12 · "
++        button#sw-fri-7.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс со штангой стоя") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс со штангой стоя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Бицепс со штангой стоя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Бицепс со штангой стоя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс со штангой стоя")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
++     div.prow.changed
 +      div.grow
-+       div.pn Разгибания ног в тренажере
-+       div.sub 4 × 8–12
-+      button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Разгибания ног в тренажере") Заменить
-+   p.sub(style="margin-top:8px") Полоса слева — замена. Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
++       div.pn
++        | Разгибания ног в тренажере
++        span.tag.accent новое
++       div.sub
++        | "4 × 8–12 · "
++        button#sw-fri-8.linkbtn(type="button" aria-label="Заменить упражнение: Разгибания ног в тренажере") заменить
++      div.pctl
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Разгибания ног в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Разгибания ног в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Разгибания ног в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Разгибания ног в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+@@ 187 -2 +0
+-       option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
+-       option(value="barbell_curl") Бицепс со штангой стоя
+@@ 196 -1 +0
+-       option(value="tbar_row") Горизонтальная тяга Т-бар
+@@ 199 -1 +0
+-       option(value="db_bench") Жим гантелей лежа
+@@ 203 -1 +0
+-       option(value="close_grip_bench") Жим лежа узким хватом
+@@ 206 -1 +0
+-       option(value="ohp") Жим штанги стоя
+@@ 223 -1 +0
+-       option(value="squat") Приседания со штангой
+@@ 226 -1 +0
+-       option(value="leg_ext") Разгибания ног в тренажере
+@@ 240 -1 +0
+-       option(value="pulldown_cable") Тяга верхнего блока
 @@ 259 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#7e73d9c852
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#12a629c1b7
@@ -2842,11 +3193,12 @@
 +    button#prog-accept.btn.primary Принять программу
 +    span.sub Ближайшая тренировка каждого дня будет построена по ней.
 
-=== 17. пауэрбилдинг с нуля: жим лежа
-поля: целиком
-  pl=l:bench
-  pt=0
-экран: правки к шагу 16
+=== 16. пауэрбилдинг с нуля: жим лежа
+поля: правки к шагу 15
+@@ 1 -1 +1
+- pm=even
++ pl=l:bench
+экран: правки к шагу 15
 @@ 12 -3 +3
 -     h2 Равномерно на всё тело
 -    span.sub 68 подходов в неделю · тренировка ≈ 1 ч 15 мин
@@ -2879,301 +3231,615 @@
 @@ 55 -1 +1
 -      span.sub 24 подхода · ≈ 1 ч 20 мин
 +      span.sub 23 подхода · ≈ 1 ч 30 мин
-@@ 58 -0 +6
-+       div.pn
+@@ 59 -0 +8
 +        | Жим лежа
++        span.tag.accent новое
 +        span.tag.accent сила по запасу
 +       div.sub 3 × 4 одним весом, вес по запасу
-+     div.prow
++      div.pctl
++     div.prow.changed
 +      div.grow
-@@ 59 -2 +2
--       div.sub 4 × 6–10
--      button#sw-mon-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
-+       div.sub 2 × 6–10
-+      button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
-@@ 63 -3 +3
--       div.pn Жим в тренажере на грудь
--       div.sub 4 × 6–10
--      button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим в тренажере на грудь") Заменить
-+       div.pn Приседания со штангой
-+       div.sub 2 × 6–10
-+      button#sw-mon-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Приседания со штангой") Заменить
-@@ 70 -1 +1
--      button#sw-mon-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей сидя") Заменить
-+      button#sw-mon-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей сидя") Заменить
-@@ 75 -1 +1
--      button#sw-mon-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
-+      button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
-@@ 78 -3 +3
--       div.pn Жим лежа узким хватом
--       div.sub 2 × 6–10
--      button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим лежа узким хватом") Заменить
-+       div.pn Подтягивания
-+       div.sub 3 × 6–10
-+      button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Подтягивания") Заменить
-@@ 83 -3 +3
--       div.pn Вертикальная тяга в тренажере
--       div.sub 2 × 6–10
--      button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-+       div.pn Махи гантелями в стороны
-+       div.sub 2 × 10–20
-+      button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
-@@ 89 -2 +2
--       div.sub 4 × 8–12
--      button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Обратная бабочка") Заменить
-+       div.sub 3 × 8–12
-+      button#sw-mon-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Обратная бабочка") Заменить
-@@ 93 -3 +3
--       div.pn Махи гантелями в стороны
--       div.sub 4 × 10–20
--      button#sw-mon-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
-+       div.pn Бицепс бедра сидя в тренажере
-+       div.sub 4 × 8–12
-+      button#sw-mon-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
-@@ 99 -1 +1
++       div.pn
+@@ 62 -2 +2
+-        | "4 × 6–10 · "
+-        button#sw-mon-0.linkbtn(type="button" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") заменить
++        | "2 × 6–10 · "
++        button#sw-mon-1.linkbtn(type="button" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") заменить
+@@ 65 -0 +2
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Горизонтальная тяга в тренажере")
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
+@@ 74 -1 +1
+-        | Жим в тренажере на грудь
++        | Приседания со штангой
+@@ 77 -2 +2
+-        | "4 × 6–10 · "
+-        button#sw-mon-1.linkbtn(type="button" aria-label="Заменить упражнение: Жим в тренажере на грудь") заменить
++        | "2 × 6–10 · "
++        button#sw-mon-2.linkbtn(type="button" aria-label="Заменить упражнение: Приседания со штангой") заменить
+@@ 80 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим в тренажере на грудь")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Приседания со штангой")
+@@ 82 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим в тренажере на грудь")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Приседания со штангой")
+@@ 84 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим в тренажере на грудь")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Приседания со штангой")
+@@ 86 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим в тренажере на грудь")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Приседания со штангой")
+@@ 95 -1 +1
+-        button#sw-mon-2.linkbtn(type="button" aria-label="Заменить упражнение: Жим гантелей сидя") заменить
++        button#sw-mon-3.linkbtn(type="button" aria-label="Заменить упражнение: Жим гантелей сидя") заменить
+@@ 112 -1 +1
+-        button#sw-mon-3.linkbtn(type="button" aria-label="Заменить упражнение: Румынская тяга") заменить
++        button#sw-mon-4.linkbtn(type="button" aria-label="Заменить упражнение: Румынская тяга") заменить
+@@ 125 -1 +1
+-        | Жим лежа узким хватом
++        | Подтягивания
+@@ 128 -2 +2
+-        | "2 × 6–10 · "
+-        button#sw-mon-4.linkbtn(type="button" aria-label="Заменить упражнение: Жим лежа узким хватом") заменить
++        | "3 × 6–10 · "
++        button#sw-mon-5.linkbtn(type="button" aria-label="Заменить упражнение: Подтягивания") заменить
+@@ 131 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим лежа узким хватом")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Подтягивания")
+@@ 133 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим лежа узким хватом")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Подтягивания")
+@@ 135 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим лежа узким хватом")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Подтягивания")
+@@ 137 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим лежа узким хватом")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Подтягивания")
+@@ 142 -1 +1
+-        | Вертикальная тяга в тренажере
++        | Махи гантелями в стороны
+@@ 145 -2 +2
+-        | "2 × 6–10 · "
+-        button#sw-mon-5.linkbtn(type="button" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") заменить
++        | "2 × 10–20 · "
++        button#sw-mon-6.linkbtn(type="button" aria-label="Заменить упражнение: Махи гантелями в стороны") заменить
+@@ 148 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Вертикальная тяга в тренажере")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Махи гантелями в стороны")
+@@ 150 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Вертикальная тяга в тренажере")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Махи гантелями в стороны")
+@@ 152 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Вертикальная тяга в тренажере")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Махи гантелями в стороны")
+@@ 154 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Вертикальная тяга в тренажере")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Махи гантелями в стороны")
+@@ 162 -2 +2
+-        | "4 × 8–12 · "
+-        button#sw-mon-6.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
++        | "3 × 8–12 · "
++        button#sw-mon-7.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
+@@ 176 -1 +1
+-        | Махи гантелями в стороны
++        | Бицепс бедра сидя в тренажере
+@@ 179 -2 +2
+-        | "4 × 10–20 · "
+-        button#sw-mon-7.linkbtn(type="button" aria-label="Заменить упражнение: Махи гантелями в стороны") заменить
++        | "4 × 8–12 · "
++        button#sw-mon-8.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") заменить
+@@ 182 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Махи гантелями в стороны")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс бедра сидя в тренажере")
+@@ 184 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Махи гантелями в стороны")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Бицепс бедра сидя в тренажере")
+@@ 186 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Махи гантелями в стороны")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Бицепс бедра сидя в тренажере")
+@@ 188 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Махи гантелями в стороны")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс бедра сидя в тренажере")
+@@ 193 -1 +0
+-       option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
+@@ 197 -0 +1
++       option(value="lat_pulldown") Вертикальная тяга в тренажере
+@@ 201 -0 +1
++       option(value="chest_press") Жим в тренажере на грудь
+@@ 204 -1 +1
+-       option(value="bench") Жим лежа
++       option(value="close_grip_bench") Жим лежа узким хватом
+@@ 218 -1 +0
+-       option(value="pullup") Подтягивания
+@@ 222 -1 +0
+-       option(value="squat") Приседания со штангой
+@@ 253 -1 +1
 -      span.sub 21 подход · ≈ 1 ч 10 мин
 +      span.sub 24 подхода · ≈ 1 ч 20 мин
-@@ 102 -3 +3
--       div.pn Горизонтальная тяга в тренажере
--       div.sub 2 × 6–10
--      button#sw-wed-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
-+       div.pn Жим в тренажере на грудь
-+       div.sub 4 × 6–10
-+      button#sw-wed-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим в тренажере на грудь") Заменить
-@@ 107 -1 +1
--       div.pn Жим гантелей сидя
-+       div.pn Горизонтальная тяга в тренажере
-@@ 109 -1 +1
--      button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей сидя") Заменить
-+      button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
-@@ 113 -1 +1
--       div.sub 2 × 6–10
-+       div.sub 3 × 6–10
-@@ 117 -3 +3
--       div.pn Жим в тренажере на грудь
--       div.sub 2 × 6–10
--      button#sw-wed-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим в тренажере на грудь") Заменить
-+       div.pn Жим гантелей сидя
-+       div.sub 3 × 6–10
-+      button#sw-wed-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей сидя") Заменить
-@@ 122 -1 +1
--       div.pn Румынская тяга
-+       div.pn Подтягивания
-@@ 124 -1 +1
--      button#sw-wed-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
-+      button#sw-wed-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Подтягивания") Заменить
-@@ 127 -3 +3
--       div.pn Вертикальная тяга в тренажере
--       div.sub 2 × 6–10
--      button#sw-wed-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-+       div.pn Махи гантелями в стороны
-+       div.sub 2 × 10–20
-+      button#sw-wed-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
-@@ 132 -0 +5
-+       div.pn Обратная бабочка
-+       div.sub 2 × 8–12
-+      button#sw-wed-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Обратная бабочка") Заменить
-+     div.prow
-+      div.grow
-@@ 134 -1 +1
--      button#sw-wed-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
-+      button#sw-wed-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
-@@ 137 -6 +1
-+       div.pn Трицепс из за головы на блоке с косичкой
-@@ 144 -1 +1
--      button#sw-wed-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Обратная бабочка") Заменить
-+      button#sw-wed-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
-@@ 151 -3 +2
--       div.pn Горизонтальная тяга Т-бар
--       div.sub 2 × 6–10
--      button#sw-fri-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
-+       div.pn Жим лежа — лёгкий день
+@@ 257 -1 +1
+-        | Горизонтальная тяга в тренажере
++        | Жим в тренажере на грудь
+@@ 260 -2 +2
+-        | "2 × 6–10 · "
+-        button#sw-wed-0.linkbtn(type="button" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") заменить
++        | "4 × 6–10 · "
++        button#sw-wed-0.linkbtn(type="button" aria-label="Заменить упражнение: Жим в тренажере на грудь") заменить
+@@ 263 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Горизонтальная тяга в тренажере")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим в тренажере на грудь")
+@@ 265 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Горизонтальная тяга в тренажере")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим в тренажере на грудь")
+@@ 267 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Горизонтальная тяга в тренажере")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим в тренажере на грудь")
+@@ 272 -1 +1
+-        | Жим гантелей сидя
++        | Горизонтальная тяга в тренажере
+@@ 276 -1 +1
+-        button#sw-wed-1.linkbtn(type="button" aria-label="Заменить упражнение: Жим гантелей сидя") заменить
++        button#sw-wed-1.linkbtn(type="button" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") заменить
+@@ 278 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим гантелей сидя")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Горизонтальная тяга в тренажере")
+@@ 280 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим гантелей сидя")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Горизонтальная тяга в тренажере")
+@@ 282 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим гантелей сидя")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Горизонтальная тяга в тренажере")
+@@ 284 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим гантелей сидя")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Горизонтальная тяга в тренажере")
+@@ 292 -1 +1
+-        | "2 × 6–10 · "
++        | "3 × 6–10 · "
+@@ 306 -1 +1
+-        | Жим в тренажере на грудь
++        | Жим гантелей сидя
+@@ 309 -2 +2
+-        | "2 × 6–10 · "
+-        button#sw-wed-3.linkbtn(type="button" aria-label="Заменить упражнение: Жим в тренажере на грудь") заменить
++        | "3 × 6–10 · "
++        button#sw-wed-3.linkbtn(type="button" aria-label="Заменить упражнение: Жим гантелей сидя") заменить
+@@ 312 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим в тренажере на грудь")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим гантелей сидя")
+@@ 314 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим в тренажере на грудь")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим гантелей сидя")
+@@ 316 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим в тренажере на грудь")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим гантелей сидя")
+@@ 318 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим в тренажере на грудь")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим гантелей сидя")
+@@ 323 -1 +1
+-        | Румынская тяга
++        | Подтягивания
+@@ 327 -1 +1
+-        button#sw-wed-4.linkbtn(type="button" aria-label="Заменить упражнение: Румынская тяга") заменить
++        button#sw-wed-4.linkbtn(type="button" aria-label="Заменить упражнение: Подтягивания") заменить
+@@ 329 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Румынская тяга")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Подтягивания")
+@@ 331 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Румынская тяга")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Подтягивания")
+@@ 333 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Румынская тяга")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Подтягивания")
+@@ 335 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Румынская тяга")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Подтягивания")
+@@ 340 -1 +1
+-        | Вертикальная тяга в тренажере
++        | Махи гантелями в стороны
+@@ 343 -2 +2
+-        | "2 × 6–10 · "
+-        button#sw-wed-5.linkbtn(type="button" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") заменить
++        | "2 × 10–20 · "
++        button#sw-wed-5.linkbtn(type="button" aria-label="Заменить упражнение: Махи гантелями в стороны") заменить
+@@ 346 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Вертикальная тяга в тренажере")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Махи гантелями в стороны")
+@@ 348 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Вертикальная тяга в тренажере")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Махи гантелями в стороны")
+@@ 350 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Вертикальная тяга в тренажере")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Махи гантелями в стороны")
+@@ 352 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Вертикальная тяга в тренажере")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Махи гантелями в стороны")
+@@ 357 -1 +1
+-        | Бицепс бедра сидя в тренажере
++        | Обратная бабочка
+@@ 360 -2 +2
+-        | "4 × 8–12 · "
+-        button#sw-wed-6.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") заменить
++        | "2 × 8–12 · "
++        button#sw-wed-6.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
+@@ 363 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс бедра сидя в тренажере")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Обратная бабочка")
+@@ 365 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Бицепс бедра сидя в тренажере")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Обратная бабочка")
+@@ 367 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Бицепс бедра сидя в тренажере")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Обратная бабочка")
+@@ 369 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс бедра сидя в тренажере")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Обратная бабочка")
+@@ 374 -1 +1
+-        | Махи гантелями в стороны
++        | Бицепс бедра сидя в тренажере
+@@ 377 -2 +2
+-        | "3 × 10–20 · "
+-        button#sw-wed-7.linkbtn(type="button" aria-label="Заменить упражнение: Махи гантелями в стороны") заменить
++        | "4 × 8–12 · "
++        button#sw-wed-7.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") заменить
+@@ 380 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Махи гантелями в стороны")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс бедра сидя в тренажере")
+@@ 382 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Махи гантелями в стороны")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Бицепс бедра сидя в тренажере")
+@@ 384 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Махи гантелями в стороны")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Бицепс бедра сидя в тренажере")
+@@ 386 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Махи гантелями в стороны")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс бедра сидя в тренажере")
+@@ 391 -1 +1
+-        | Обратная бабочка
++        | Трицепс из за головы на блоке с косичкой
+@@ 395 -1 +1
+-        button#sw-wed-8.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
++        button#sw-wed-8.linkbtn(type="button" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") заменить
+@@ 397 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Обратная бабочка")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Трицепс из за головы на блоке с косичкой")
+@@ 399 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Обратная бабочка")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Трицепс из за головы на блоке с косичкой")
+@@ 401 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Обратная бабочка")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Трицепс из за головы на блоке с косичкой")
+@@ 403 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Обратная бабочка")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Трицепс из за головы на блоке с косичкой")
+@@ 411 -0 +1
++       option(value="lat_pulldown") Вертикальная тяга в тренажере
+@@ 433 -1 +0
+-       option(value="pullup") Подтягивания
+@@ 440 -0 +1
++       option(value="rdl") Румынская тяга
+@@ 450 -1 +0
+-       option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
+@@ 471 -1 +1
+-        | Горизонтальная тяга Т-бар
++        | Жим лежа — лёгкий день
+@@ 473 -3 +1
+-       div.sub
+-        | "2 × 6–10 · "
+-        button#sw-fri-0.linkbtn(type="button" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") заменить
 +       div.sub 3 × 8 на 75% от максимума
-@@ 156 -6 +1
-+       div.pn Горизонтальная тяга Т-бар
-@@ 163 -1 +1
--      button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим штанги стоя") Заменить
-+      button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
-@@ 166 -1 +1
--       div.pn Жим гантелей лежа
-+       div.pn Выпады с гантелями
-@@ 168 -1 +1
--      button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей лежа") Заменить
-+      button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Выпады с гантелями") Заменить
-@@ 171 -1 +1
--       div.pn Тяга верхнего блока
-+       div.pn Вертикальная тяга в тренажере
-@@ 173 -1 +1
--      button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Тяга верхнего блока") Заменить
-+      button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-@@ 176 -3 +3
--       div.pn Жим лежа узким хватом
--       div.sub 2 × 6–10
--      button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим лежа узким хватом") Заменить
-+       div.pn Жим штанги стоя
-+       div.sub 3 × 6–10
-+      button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим штанги стоя") Заменить
-@@ 181 -3 +3
--       div.pn Бицепс бедра сидя в тренажере
--       div.sub 2 × 8–12
--      button#sw-fri-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
-+       div.pn Жим ногами
-+       div.sub 3 × 6–10
-+      button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим ногами") Заменить
-@@ 187 -2 +2
--       div.sub 3 × 8–12
--      button#sw-fri-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
-+       div.sub 4 × 8–12
-+      button#sw-fri-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
-@@ 191 -3 +8
--       div.pn Разгибания ног в тренажере
--       div.sub 4 × 8–12
--      button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Разгибания ног в тренажере") Заменить
-+       div.pn Махи гантелями в стороны
-+       div.sub 2 × 10–20
-+      button#sw-fri-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Обратная бабочка
-+       div.sub 2 × 8–12
-+      button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Обратная бабочка") Заменить
-@@ 201 -1 +1
+@@ 477 -5 +1
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим лежа — лёгкий день")
+@@ 486 -1 +1
+-        | Приседания со штангой
++        | Горизонтальная тяга Т-бар
+@@ 489 -2 +2
+-        | "4 × 6–10 · "
+-        button#sw-fri-1.linkbtn(type="button" aria-label="Заменить упражнение: Приседания со штангой") заменить
++        | "2 × 6–10 · "
++        button#sw-fri-1.linkbtn(type="button" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") заменить
+@@ 492 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Приседания со штангой")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Горизонтальная тяга Т-бар")
+@@ 494 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Приседания со штангой")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Горизонтальная тяга Т-бар")
+@@ 496 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Приседания со штангой")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Горизонтальная тяга Т-бар")
+@@ 498 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Приседания со штангой")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Горизонтальная тяга Т-бар")
+@@ 503 -1 +1
+-        | Жим штанги стоя
++        | Выпады с гантелями
+@@ 507 -1 +1
+-        button#sw-fri-2.linkbtn(type="button" aria-label="Заменить упражнение: Жим штанги стоя") заменить
++        button#sw-fri-2.linkbtn(type="button" aria-label="Заменить упражнение: Выпады с гантелями") заменить
+@@ 509 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим штанги стоя")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Выпады с гантелями")
+@@ 511 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим штанги стоя")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Выпады с гантелями")
+@@ 513 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим штанги стоя")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Выпады с гантелями")
+@@ 515 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим штанги стоя")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Выпады с гантелями")
+@@ 520 -1 +1
+-        | Жим гантелей лежа
++        | Вертикальная тяга в тренажере
+@@ 524 -1 +1
+-        button#sw-fri-3.linkbtn(type="button" aria-label="Заменить упражнение: Жим гантелей лежа") заменить
++        button#sw-fri-3.linkbtn(type="button" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") заменить
+@@ 526 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим гантелей лежа")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Вертикальная тяга в тренажере")
+@@ 528 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим гантелей лежа")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Вертикальная тяга в тренажере")
+@@ 530 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим гантелей лежа")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Вертикальная тяга в тренажере")
+@@ 532 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим гантелей лежа")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Вертикальная тяга в тренажере")
+@@ 537 -1 +1
+-        | Тяга верхнего блока
++        | Жим штанги стоя
+@@ 540 -2 +2
+-        | "2 × 6–10 · "
+-        button#sw-fri-4.linkbtn(type="button" aria-label="Заменить упражнение: Тяга верхнего блока") заменить
++        | "3 × 6–10 · "
++        button#sw-fri-4.linkbtn(type="button" aria-label="Заменить упражнение: Жим штанги стоя") заменить
+@@ 543 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Тяга верхнего блока")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим штанги стоя")
+@@ 545 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Тяга верхнего блока")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим штанги стоя")
+@@ 547 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Тяга верхнего блока")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим штанги стоя")
+@@ 549 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Тяга верхнего блока")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим штанги стоя")
+@@ 554 -1 +1
+-        | Жим лежа узким хватом
++        | Жим ногами
+@@ 557 -2 +2
+-        | "2 × 6–10 · "
+-        button#sw-fri-5.linkbtn(type="button" aria-label="Заменить упражнение: Жим лежа узким хватом") заменить
++        | "3 × 6–10 · "
++        button#sw-fri-5.linkbtn(type="button" aria-label="Заменить упражнение: Жим ногами") заменить
+@@ 560 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим лежа узким хватом")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Жим ногами")
+@@ 562 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим лежа узким хватом")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Жим ногами")
+@@ 564 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим лежа узким хватом")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Жим ногами")
+@@ 566 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим лежа узким хватом")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Жим ногами")
+@@ 571 -1 +1
+-        | Бицепс бедра сидя в тренажере
++        | Бицепс со штангой стоя
+@@ 574 -2 +2
+-        | "2 × 8–12 · "
+-        button#sw-fri-6.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") заменить
++        | "4 × 8–12 · "
++        button#sw-fri-6.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс со штангой стоя") заменить
+@@ 577 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс бедра сидя в тренажере")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс со штангой стоя")
+@@ 579 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Бицепс бедра сидя в тренажере")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Бицепс со штангой стоя")
+@@ 581 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Бицепс бедра сидя в тренажере")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Бицепс со штангой стоя")
+@@ 583 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс бедра сидя в тренажере")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс со штангой стоя")
+@@ 588 -1 +1
+-        | Бицепс со штангой стоя
++        | Махи гантелями в стороны
+@@ 591 -2 +2
+-        | "3 × 8–12 · "
+-        button#sw-fri-7.linkbtn(type="button" aria-label="Заменить упражнение: Бицепс со штангой стоя") заменить
++        | "2 × 10–20 · "
++        button#sw-fri-7.linkbtn(type="button" aria-label="Заменить упражнение: Махи гантелями в стороны") заменить
+@@ 594 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Бицепс со штангой стоя")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Махи гантелями в стороны")
+@@ 596 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Бицепс со штангой стоя")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Махи гантелями в стороны")
+@@ 598 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Бицепс со штангой стоя")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Махи гантелями в стороны")
+@@ 600 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Бицепс со штангой стоя")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Махи гантелями в стороны")
+@@ 605 -1 +1
+-        | Разгибания ног в тренажере
++        | Обратная бабочка
+@@ 608 -2 +2
+-        | "4 × 8–12 · "
+-        button#sw-fri-8.linkbtn(type="button" aria-label="Заменить упражнение: Разгибания ног в тренажере") заменить
++        | "2 × 8–12 · "
++        button#sw-fri-8.linkbtn(type="button" aria-label="Заменить упражнение: Обратная бабочка") заменить
+@@ 611 -1 +1
+-       button.icon-btn(title="Выше" aria-label="Переместить выше: Разгибания ног в тренажере")
++       button.icon-btn(title="Выше" aria-label="Переместить выше: Обратная бабочка")
+@@ 613 -1 +1
+-       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Разгибания ног в тренажере")
++       button.icon-btn(title="Меньше подходов" aria-label="Меньше подходов: Обратная бабочка")
+@@ 615 -1 +1
+-       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Разгибания ног в тренажере")
++       button.icon-btn(title="Больше подходов" aria-label="Больше подходов: Обратная бабочка")
+@@ 617 -1 +1
+-       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Разгибания ног в тренажере")
++       button.icon-btn(title="Убрать из программы" aria-label="Убрать из программы: Обратная бабочка")
+@@ 622 -0 +1
++       option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
+@@ 624 -2 +0
+-       option(value="lat_pulldown") Вертикальная тяга в тренажере
+-       option(value="lunge") Выпады с гантелями
+@@ 631 -0 +1
++       option(value="db_bench") Жим гантелей лежа
+@@ 634 -1 +1
+-       option(value="leg_press") Жим ногами
++       option(value="close_grip_bench") Жим лежа узким хватом
+@@ 642 -1 +0
+-       option(value="lat_raise") Махи гантелями в стороны
+@@ 645 -1 +0
+-       option(value="x_rear") Обратная бабочка
+@@ 652 -0 +1
++       option(value="squat") Приседания со штангой
+@@ 654 -0 +1
++       option(value="leg_ext") Разгибания ног в тренажере
+@@ 667 -0 +1
++       option(value="pulldown_cable") Тяга верхнего блока
+@@ 685 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#12a629c1b7
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4521153b64
-@@ 204 -1 +1
+@@ 688 -1 +1
 -       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#0a2472de3f
 +       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#60c1d96a0b
-@@ 209 -2 +2
+@@ 693 -2 +2
 -       b Все мышцы в рабочей зоне, поровну
 -       div.sub Каждая мышца в цели получает от 10 до 14 подходов в неделю, ни одна не выделяется. Всего 68 подходов при лимите 100.
 +       b Базовые — первыми в своих днях: Жим лежа (день 1)
 +       div.sub Программа собрана с нуля, поэтому базовые встали по одному в день и первыми: сначала базовое на свежие силы, потом остальное.
-@@ 212 -2 +2
+@@ 696 -2 +2
 -       b Чуть выше своего уровня: верх спины
 -       div.sub Эти мышцы работают попутно почти во всех упражнениях на соседние или в базовых, где число подходов постоянное. Убрать у них ещё — значит недодать соседям.
 +       b Жим лежа — сила по запасу
 +       div.sub 3 × 4 одним весом, первый вес — 83% от расчётного максимума. Дальше решает запас в последнем подходе: 2–3 повтора — на следующей неделе плюс шаг; 4 и больше — сразу несколько шагов, но не больше 10% веса; 1 — вес тот же; 0 или подходы не закрыты — минус 5%. Если шаг больше 5% веса, сначала растут повторы: 3 × 5, 3 × 6, потом шаг. Запас отмечается в карточке упражнения.
-@@ 215 -2 +2
+@@ 699 -2 +2
 -       b Новое в день 1: Горизонтальная тяга в тренажере
 -       div.sub 4 × 6–10. Верх спины: было 0, станет 14 в неделю.
 +       b Второй раз в неделю — в день 3: Жим лежа — лёгкий день
 +       div.sub 3 × 8 на 75% от расчётного максимума, в запасе около 2 повторов. Второй раз в неделю движение идёт на других повторах: по исследованиям так силы прибавляется больше, чем от одинаковых тренировок. Вес идёт за основным днём сам. Стоит первым, пока ты свежий.
-@@ 218 -2 +2
+@@ 702 -2 +2
 -       b Новое в день 1: Жим в тренажере на грудь
 -       div.sub 4 × 6–10. Грудь: было 0, станет 10 в неделю.
 +       b День на массу — в день 2: Жим в тренажере на грудь
 +       div.sub 3 × 6–10 почти до отказа: упражнение на те же мышцы в режиме массы. Два дня движение идёт на силу, ещё один — на объём.
-@@ 221 -2 +2
+@@ 705 -2 +2
 -       b Новое в день 1: Жим гантелей сидя
 -       div.sub 2 × 6–10. Передние дельты: было 0, станет 12 в неделю.
 +       b Все мышцы в рабочей зоне, поровну
 +       div.sub Каждая мышца в цели получает от 10 до 13 подходов в неделю, ни одна не выделяется. Всего 70 подходов при лимите 100.
-@@ 224 -0 +6
+@@ 708 -0 +6
 +       b Новое в день 1: Горизонтальная тяга в тренажере
 +       div.sub 2 × 6–10. Верх спины: было 0, станет 13 в неделю.
 +      div.why
 +       b Новое в день 1: Приседания со штангой
 +       div.sub 2 × 6–10. Квадрицепс: было 0, станет 10 в неделю; Ягодицы: было 0, станет 10.5 в неделю.
 +      div.why
-@@ 225 -1 +1
+@@ 709 -1 +1
 -       div.sub 2 × 6–10. Бицепс бедра: было 0, станет 10 в неделю; Ягодицы: было 0, станет 10 в неделю.
 +       div.sub 2 × 6–10. Бицепс бедра: было 0, станет 10 в неделю; Ягодицы: было 0, станет 10.5 в неделю.
-@@ 227 -2 +2
+@@ 711 -2 +2
 -       b Новое в день 1: Жим лежа узким хватом
 -       div.sub 2 × 6–10. Трицепс: было 0, станет 11 в неделю.
 +       b Новое в день 1: Жим гантелей сидя
 +       div.sub 2 × 6–10. Передние дельты: было 0, станет 13 в неделю.
-@@ 230 -2 +2
+@@ 714 -2 +2
 -       b Новое в день 1: Вертикальная тяга в тренажере
 -       div.sub 2 × 6–10. Широчайшие: было 0, станет 10 в неделю.
 +       b Новое в день 1: Подтягивания
 +       div.sub 3 × 6–10. Широчайшие: было 0, станет 10 в неделю.
-@@ 233 -0 +3
+@@ 717 -0 +3
 +       b Новое в день 1: Махи гантелями в стороны
 +       div.sub 2 × 10–20. Средние дельты: было 0, станет 10 в неделю.
 +      div.why
-@@ 234 -1 +1
+@@ 718 -1 +1
 -       div.sub 4 × 8–12. Задние дельты: было 0, станет 10 в неделю.
 +       div.sub 3 × 8–12. Задние дельты: было 0, станет 10 в неделю.
-@@ 236 -2 +2
+@@ 720 -2 +2
 -       b Новое в день 1: Махи гантелями в стороны
 -       div.sub 4 × 10–20. Средние дельты: было 0, станет 10 в неделю.
 +       b Новое в день 1: Бицепс бедра сидя в тренажере
 +       div.sub 4 × 8–12. Бицепс бедра: было 0, станет 10 в неделю.
-@@ 239 -0 +3
+@@ 723 -0 +3
 +       b Новое в день 2: Жим в тренажере на грудь
 +       div.sub 4 × 6–10. Грудь: было 0, станет 10 в неделю.
 +      div.why
-@@ 240 -1 +1
+@@ 724 -1 +1
 -       div.sub 2 × 6–10. Верх спины: было 0, станет 14 в неделю.
 +       div.sub 2 × 6–10. Верх спины: было 0, станет 13 в неделю.
-@@ 242 -3 +0
+@@ 726 -3 +0
 -       b Новое в день 2: Жим гантелей сидя
 -       div.sub 2 × 6–10. Передние дельты: было 0, станет 12 в неделю.
 -      div.why
-@@ 246 -1 +1
+@@ 730 -1 +1
 -       div.sub 2 × 6–10. Квадрицепс: было 0, станет 10 в неделю; Ягодицы: было 0, станет 10 в неделю.
 +       div.sub 3 × 6–10. Квадрицепс: было 0, станет 10 в неделю; Ягодицы: было 0, станет 10.5 в неделю.
-@@ 248 -2 +2
+@@ 732 -2 +2
 -       b Новое в день 2: Жим в тренажере на грудь
 -       div.sub 2 × 6–10. Грудь: было 0, станет 10 в неделю.
 +       b Новое в день 2: Жим гантелей сидя
 +       div.sub 3 × 6–10. Передние дельты: было 0, станет 13 в неделю.
-@@ 251 -4 +1
+@@ 735 -4 +1
 -       b Новое в день 2: Румынская тяга
 -       div.sub 2 × 6–10. Бицепс бедра: было 0, станет 10 в неделю; Ягодицы: было 0, станет 10 в неделю.
 -      div.why
 -       b Новое в день 2: Вертикальная тяга в тренажере
 +       b Новое в день 2: Подтягивания
-@@ 257 -3 +0
+@@ 741 -3 +0
 -       b Новое в день 2: Бицепс бедра сидя в тренажере
 -       div.sub 4 × 8–12. Бицепс бедра: было 0, станет 10 в неделю.
 -      div.why
-@@ 261 -1 +1
+@@ 745 -1 +1
 -       div.sub 3 × 10–20. Средние дельты: было 0, станет 10 в неделю.
 +       div.sub 2 × 10–20. Средние дельты: было 0, станет 10 в неделю.
-@@ 266 -2 +2
+@@ 750 -2 +2
 -       b Новое в день 3: Горизонтальная тяга Т-бар
 -       div.sub 2 × 6–10. Верх спины: было 0, станет 14 в неделю.
 +       b Новое в день 2: Бицепс бедра сидя в тренажере
 +       div.sub 4 × 8–12. Бицепс бедра: было 0, станет 10 в неделю.
-@@ 269 -2 +2
+@@ 753 -2 +2
 -       b Новое в день 3: Приседания со штангой
 -       div.sub 4 × 6–10. Квадрицепс: было 0, станет 10 в неделю; Ягодицы: было 0, станет 10 в неделю.
 +       b Новое в день 2: Трицепс из за головы на блоке с косичкой
 +       div.sub 2 × 8–12. Трицепс: было 0, станет 11 в неделю.
-@@ 272 -2 +2
+@@ 756 -2 +2
 -       b Новое в день 3: Жим штанги стоя
 -       div.sub 2 × 6–10. Передние дельты: было 0, станет 12 в неделю.
 +       b Новое в день 3: Горизонтальная тяга Т-бар
 +       div.sub 2 × 6–10. Верх спины: было 0, станет 13 в неделю.
-@@ 275 -2 +2
+@@ 759 -2 +2
 -       b Новое в день 3: Жим гантелей лежа
 -       div.sub 2 × 6–10. Грудь: было 0, станет 10 в неделю.
 +       b Новое в день 3: Выпады с гантелями
 +       div.sub 2 × 6–10. Квадрицепс: было 0, станет 10 в неделю; Ягодицы: было 0, станет 10.5 в неделю.
-@@ 278 -1 +1
+@@ 762 -1 +1
 -       b Новое в день 3: Тяга верхнего блока
 +       b Новое в день 3: Вертикальная тяга в тренажере
-@@ 281 -2 +2
+@@ 765 -2 +2
 -       b Новое в день 3: Жим лежа узким хватом
 -       div.sub 2 × 6–10. Трицепс: было 0, станет 11 в неделю.
 +       b Новое в день 3: Жим штанги стоя
 +       div.sub 3 × 6–10. Передние дельты: было 0, станет 13 в неделю.
-@@ 284 -2 +2
+@@ 768 -2 +2
 -       b Новое в день 3: Бицепс бедра сидя в тренажере
 -       div.sub 2 × 8–12. Бицепс бедра: было 0, станет 10 в неделю.
 +       b Новое в день 3: Жим ногами
 +       div.sub 3 × 6–10. Квадрицепс: было 0, станет 10 в неделю.
-@@ 288 -1 +1
+@@ 772 -1 +1
 -       div.sub 3 × 8–12. Бицепс: было 0, станет 10 в неделю.
 +       div.sub 4 × 8–12. Бицепс: было 0, станет 10.5 в неделю.
-@@ 290 -2 +2
+@@ 774 -2 +2
 -       b Новое в день 3: Разгибания ног в тренажере
 -       div.sub 4 × 8–12. Квадрицепс: было 0, станет 10 в неделю.
 +       b Новое в день 3: Махи гантелями в стороны
 +       div.sub 2 × 10–20. Средние дельты: было 0, станет 10 в неделю.
-@@ 293 -2 +8
+@@ 777 -2 +8
 -       b Вес пока не задан: 16 упражнений
 -       div.sub Горизонтальная тяга в тренажере, Жим в тренажере на грудь, Жим гантелей сидя, Румынская тяга, Жим лежа узким хватом, Вертикальная тяга в тренажере, Обратная бабочка, Махи гантелями в стороны, Приседания со штангой, Бицепс бедра сидя в тренажере, Горизонтальная тяга Т-бар, Жим штанги стоя, Жим гантелей лежа, Тяга верхнего блока, Бицепс со штангой стоя и Разгибания ног в тренажере. Его можно подобрать на первой тренировке — или указать рабочий вес либо разовый максимум в «Настройке» → «Известные веса», тогда дневник поставит его сам.
 +       b Новое в день 3: Обратная бабочка
@@ -3184,91 +3850,91 @@
 +      div.why
 +       b Вес пока не задан: 17 упражнений
 +       div.sub Жим лежа, Горизонтальная тяга в тренажере, Приседания со штангой, Жим гантелей сидя, Румынская тяга, Подтягивания, Махи гантелями в стороны, Обратная бабочка, Бицепс бедра сидя в тренажере, Жим в тренажере на грудь, Трицепс из за головы на блоке с косичкой, Горизонтальная тяга Т-бар, Выпады с гантелями, Вертикальная тяга в тренажере, Жим штанги стоя, Жим ногами и Бицепс со штангой стоя. Его можно подобрать на первой тренировке — или указать рабочий вес либо разовый максимум в «Настройке» → «Известные веса», тогда дневник поставит его сам.
-@@ 298 -1 +1
+@@ 782 -1 +1
 -       b#prog-free-n.free-n 32
 +       b#prog-free-n.free-n 30
-@@ 300 -2 +2
+@@ 784 -2 +2
 -        div.free-t подхода свободны
 -        div.sub В программе 68 из 100
 +        div.free-t подходов свободно
 +        div.sub В программе 70 из 100
-@@ 303 -1 +1
+@@ 787 -1 +1
 -       i(style="width:68.0%")
 +       i(style="width:70.0%")
-@@ 315 -1 +4
+@@ 799 -1 +4
 -         td Грудь
 +         td
 +          | Грудь
 +          span.tag(style="margin-left:6px") приоритет
 +          span#msn-chest.msplit.under масса 4 · сила 6
-@@ 320 -0 +1
+@@ 804 -0 +1
 +          span#ms-chest.msplit (масса 4 · сила 6)
-@@ 350 -2 +2
+@@ 834 -2 +2
 -          span.tag.accent(style="margin-right:6px") +14
 -          b 14
 +          span.tag.accent(style="margin-right:6px") +13
 +          b 13
-@@ 363 -1 +4
+@@ 847 -1 +4
 -         td Передние дельты
 +         td
 +          | Передние дельты
 +          span.tag(style="margin-left:6px") помогает
 +          span#msn-delt_front.msplit.under масса 10 · сила 3
-@@ 366 -2 +3
+@@ 850 -2 +3
 -          span.tag.accent(style="margin-right:6px") +12
 -          b 12
 +          span.tag.accent(style="margin-right:6px") +13
 +          b 13
 +          span#ms-delt_front.msplit (масса 10 · сила 3)
-@@ 414 -2 +2
+@@ 898 -2 +2
 -          span.tag.accent(style="margin-right:6px") +10
 -          b 10
 +          span.tag.accent(style="margin-right:6px") +10.5
 +          b 10.5
-@@ 427 -1 +4
+@@ 911 -1 +4
 -         td Трицепс
 +         td
 +          | Трицепс
 +          span.tag(style="margin-left:6px") помогает
 +          span#msn-triceps.msplit.under масса 8 · сила 3
-@@ 432 -0 +1
+@@ 916 -0 +1
 +          span#ms-triceps.msplit (масса 8 · сила 3)
-@@ 446 -2 +2
+@@ 930 -2 +2
 -          span.tag.accent(style="margin-right:6px") +10.5
 -          b 10.5
 +          span.tag.accent(style="margin-right:6px") +9.5
 +          b 9.5
-@@ 449 -3 +3
+@@ 933 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
 +           | вне расчёта
-@@ 476 -2 +2
+@@ 960 -2 +2
 -          span.tag.accent(style="margin-right:6px") +2
 -          b 2
 +          span.tag.accent(style="margin-right:6px") +1
 +          b 1
-@@ 524 -2 +2
+@@ 1008 -2 +2
 -          span.tag.accent(style="margin-right:6px") +10
 -          b 10
 +          span.tag.accent(style="margin-right:6px") +10.5
 +          b 10.5
-@@ 550 -0 +1
+@@ 1034 -0 +1
 +     p#ms-note.sub(style="margin-top:8px") В скобках: масса — подсобка, сила — базовые по процентам. Силовой подход с запасом от 3 повторов идёт в объём мышцы за половину.
 
-=== 18. что изменилось и почему
-экран: правки к шагу 17
-@@ 216 -1 +1
+=== 17. что изменилось и почему
+экран: правки к шагу 16
+@@ 699 -1 +1
 -     details#prog-why.whybox
 +     details#prog-why.whybox(open="")
 
-=== 19. принять программу
+=== 18. принять программу
 сообщение: "Программа принята: следующие тренировки пойдут по ней"
 записи:
   + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine"},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1}},"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"row_machine","n":2},{"ex":"squat","n":2},{"ex":"db_ohp","n":2},{"ex":"rdl","n":2},{"ex":"pullup","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":3},{"ex":"leg_curl_seated","n":4}],"wed":[{"ex":"chest_press","n":4},{"ex":"row_machine","n":2},{"ex":"squat","n":3},{"ex":"db_ohp","n":3},{"ex":"pullup","n":2},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":4},{"ex":"tri_overhead","n":2}],"fri":[{"ex":"bench_light"},{"ex":"tbar_row","n":2},{"ex":"lunge","n":2},{"ex":"lat_pulldown","n":2},{"ex":"ohp","n":3},{"ex":"leg_press","n":3},{"ex":"barbell_curl","n":4},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2}]},"prev":{"goals":{"bench":""}},"budget":100}}
-экран: правки к шагу 17
+экран: правки к шагу 16
 @@ 6 -2 +128
 -     h2 Программы нет
 -   p.sub Программы пока нет. Собери её ниже: добавь упражнения в дни и нажми «Принять программу».
@@ -3403,115 +4069,328 @@
 @@ 13 -1 +1
 -    span.sub 70 подходов в неделю · тренировка ≈ 1 ч 25 мин
 +    span.sub 70 подходов в неделю · сейчас 70 · тренировка ≈ 1 ч 25 мин
-@@ 219 -9 +0
-@@ 229 -1 +1
+@@ 61 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 65 -1 +0
+-        span.tag.accent новое
+@@ 69 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 71 -3 +1
+-       div.pn
+-        | Горизонтальная тяга в тренажере
+-        span.tag.accent новое
++       div.pn Горизонтальная тяга в тренажере
+@@ 86 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 88 -3 +1
+-       div.pn
+-        | Приседания со штангой
+-        span.tag.accent новое
++       div.pn Приседания со штангой
+@@ 103 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 105 -3 +1
+-       div.pn
+-        | Жим гантелей сидя
+-        span.tag.accent новое
++       div.pn Жим гантелей сидя
+@@ 120 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 122 -3 +1
+-       div.pn
+-        | Румынская тяга
+-        span.tag.accent новое
++       div.pn Румынская тяга
+@@ 137 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 139 -3 +1
+-       div.pn
+-        | Подтягивания
+-        span.tag.accent новое
++       div.pn Подтягивания
+@@ 154 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 156 -3 +1
+-       div.pn
+-        | Махи гантелями в стороны
+-        span.tag.accent новое
++       div.pn Махи гантелями в стороны
+@@ 171 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 173 -3 +1
+-       div.pn
+-        | Обратная бабочка
+-        span.tag.accent новое
++       div.pn Обратная бабочка
+@@ 188 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 190 -3 +1
+-       div.pn
+-        | Бицепс бедра сидя в тренажере
+-        span.tag.accent новое
++       div.pn Бицепс бедра сидя в тренажере
+@@ 268 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 270 -3 +1
+-       div.pn
+-        | Жим в тренажере на грудь
+-        span.tag.accent новое
++       div.pn Жим в тренажере на грудь
+@@ 283 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 285 -3 +1
+-       div.pn
+-        | Горизонтальная тяга в тренажере
+-        span.tag.accent новое
++       div.pn Горизонтальная тяга в тренажере
+@@ 300 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 302 -3 +1
+-       div.pn
+-        | Приседания со штангой
+-        span.tag.accent новое
++       div.pn Приседания со штангой
+@@ 317 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 319 -3 +1
+-       div.pn
+-        | Жим гантелей сидя
+-        span.tag.accent новое
++       div.pn Жим гантелей сидя
+@@ 334 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 336 -3 +1
+-       div.pn
+-        | Подтягивания
+-        span.tag.accent новое
++       div.pn Подтягивания
+@@ 351 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 353 -3 +1
+-       div.pn
+-        | Махи гантелями в стороны
+-        span.tag.accent новое
++       div.pn Махи гантелями в стороны
+@@ 368 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 370 -3 +1
+-       div.pn
+-        | Обратная бабочка
+-        span.tag.accent новое
++       div.pn Обратная бабочка
+@@ 385 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 387 -3 +1
+-       div.pn
+-        | Бицепс бедра сидя в тренажере
+-        span.tag.accent новое
++       div.pn Бицепс бедра сидя в тренажере
+@@ 402 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 404 -3 +1
+-       div.pn
+-        | Трицепс из за головы на блоке с косичкой
+-        span.tag.accent новое
++       div.pn Трицепс из за головы на блоке с косичкой
+@@ 482 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 484 -3 +1
+-       div.pn
+-        | Жим лежа — лёгкий день
+-        span.tag.accent новое
++       div.pn Жим лежа — лёгкий день
+@@ 491 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 493 -3 +1
+-       div.pn
+-        | Горизонтальная тяга Т-бар
+-        span.tag.accent новое
++       div.pn Горизонтальная тяга Т-бар
+@@ 508 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 510 -3 +1
+-       div.pn
+-        | Выпады с гантелями
+-        span.tag.accent новое
++       div.pn Выпады с гантелями
+@@ 525 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 527 -3 +1
+-       div.pn
+-        | Вертикальная тяга в тренажере
+-        span.tag.accent новое
++       div.pn Вертикальная тяга в тренажере
+@@ 542 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 544 -3 +1
+-       div.pn
+-        | Жим штанги стоя
+-        span.tag.accent новое
++       div.pn Жим штанги стоя
+@@ 559 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 561 -3 +1
+-       div.pn
+-        | Жим ногами
+-        span.tag.accent новое
++       div.pn Жим ногами
+@@ 576 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 578 -3 +1
+-       div.pn
+-        | Бицепс со штангой стоя
+-        span.tag.accent новое
++       div.pn Бицепс со штангой стоя
+@@ 593 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 595 -3 +1
+-       div.pn
+-        | Махи гантелями в стороны
+-        span.tag.accent новое
++       div.pn Махи гантелями в стороны
+@@ 610 -1 +1
+-     div.prow.changed
++     div.prow
+@@ 612 -3 +1
+-       div.pn
+-        | Обратная бабочка
+-        span.tag.accent новое
++       div.pn Обратная бабочка
+@@ 702 -9 +0
+@@ 712 -1 +1
 -       div.sub 3 × 6–10 почти до отказа: упражнение на те же мышцы в режиме массы. Два дня движение идёт на силу, ещё один — на объём.
 +       div.sub Упражнение на те же мышцы в режиме массы: 6–10 повторов почти до отказа. Оно уже стоит в этом дне.
-@@ 234 -78 +0
-@@ 338 -1 +3
+@@ 717 -78 +0
+@@ 821 -1 +3
 -         td.c-now 0
 +         td.c-now
 +          | 10
 +          span#msa-chest.msplit (масса 4 · сила 6)
-@@ 340 -2 +1
+@@ 823 -2 +1
 -          span.tag.accent(style="margin-right:6px") +10
 -          b 10
 +          | 10
-@@ 355 -4 +2
+@@ 838 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +10
 -          b 10
 +         td.c-now 10
 +         td 10
-@@ 371 -4 +2
+@@ 854 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +13
 -          b 13
 +         td.c-now 13
 +         td 13
-@@ 390 -1 +3
+@@ 873 -1 +3
 -         td.c-now 0
 +         td.c-now
 +          | 13
 +          span#msa-delt_front.msplit (масса 10 · сила 3)
-@@ 392 -2 +1
+@@ 875 -2 +1
 -          span.tag.accent(style="margin-right:6px") +13
 -          b 13
 +          | 13
-@@ 407 -4 +2
+@@ 890 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +10
 -          b 10
 +         td.c-now 10
 +         td 10
-@@ 423 -4 +2
+@@ 906 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +10
 -          b 10
 +         td.c-now 10
 +         td 10
-@@ 439 -4 +2
+@@ 922 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +10.5
 -          b 10.5
 +         td.c-now 10.5
 +         td 10.5
-@@ 458 -1 +3
+@@ 941 -1 +3
 -         td.c-now 0
 +         td.c-now
 +          | 11
 +          span#msa-triceps.msplit (масса 8 · сила 3)
-@@ 460 -2 +1
+@@ 943 -2 +1
 -          span.tag.accent(style="margin-right:6px") +11
 -          b 11
 +          | 11
-@@ 475 -4 +2
+@@ 958 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +9.5
 -          b 9.5
 +         td.c-now 9.5
 +         td 9.5
-@@ 505 -4 +2
+@@ 988 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +1
 -          b 1
 +         td.c-now 1
 +         td 1
-@@ 521 -4 +2
+@@ 1004 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +10
 -          b 10
 +         td.c-now 10
 +         td 10
-@@ 537 -4 +2
+@@ 1020 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +10
 -          b 10
 +         td.c-now 10
 +         td 10
-@@ 553 -4 +2
+@@ 1036 -4 +2
 -         td.c-now 0
 -         td
 -          span.tag.accent(style="margin-right:6px") +10.5
 -          b 10.5
 +         td.c-now 10.5
 +         td 10.5
-@@ 584 -2 +2
+@@ 1067 -2 +2
 -    button#prog-accept.btn.primary Принять программу
 -    span.sub Ближайшая тренировка каждого дня будет построена по ней.
 +    button#prog-accept.btn.primary(disabled="") Принять программу
 +    span.sub Эта программа совпадает с текущей.
 
-=== 20. обзор: первая тренировка по программе
+=== 19. обзор: первая тренировка по программе
 адрес: "#overview"
 шапка: как в шаге 1
 поля: —
@@ -3587,10 +4466,10 @@
       b Программу можно править
       div.sub Состав дней, порядок и число подходов меняются во вкладке «Программа», упражнения и шаг веса — в «Настройке».
 
-=== 21. известный максимум жима ногами
+=== 20. известный максимум жима ногами
 адрес: "#setup"
-шапка: как в шаге 11
-поля: правки к шагу 11
+шапка: как в шаге 10
+поля: правки к шагу 10
 @@ 13 -3 +24
 - kw-work-pec_fly=
 - kw-workR-pec_fly=
@@ -3683,7 +4562,7 @@
 сообщение: "Жим ногами: сохранено"
 записи:
   + config/main {"ex":{"bench":{"n":"Жим лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","gear":"barbell","goal":"auto"},"leg_press":{"n":"Жим ногами","pat":"knee","m":{"quads":1,"glutes":0.5},"mode":"cycle","gear":"machine","max":200},"pullup":{"n":"Подтягивания","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"mode":"cycle","gear":"g_pullup"},"chest_press":{"n":"Жим в тренажере на грудь","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"machine"},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"machine"},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"machine"},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"gear":"dumbbell"},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"gear":"machine"},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"machine"},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"gear":"barbell"},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"gear":"cable"},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"gear":"dumbbell"},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"gear":"cable"},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"gear":"cable"},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"gear":"cable"},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"gear":"machine"},"leg_curl_lying":{"n":"Сгибания ног лежа","pat":"iso","m":{"hams":1},"lo":10,"hi":15,"gear":"machine"},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"gear":"machine"},"rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"machine"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_cable":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"cable"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5}}},"gear":{"g_pullup":{"n":"Подтягивания","step":1}},"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"plain","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"row_machine","n":2},{"ex":"squat","n":2},{"ex":"db_ohp","n":2},{"ex":"rdl","n":2},{"ex":"pullup","n":3},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":3},{"ex":"leg_curl_seated","n":4}],"wed":[{"ex":"chest_press","n":4},{"ex":"row_machine","n":2},{"ex":"squat","n":3},{"ex":"db_ohp","n":3},{"ex":"pullup","n":2},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2},{"ex":"leg_curl_seated","n":4},{"ex":"tri_overhead","n":2}],"fri":[{"ex":"bench_light"},{"ex":"tbar_row","n":2},{"ex":"lunge","n":2},{"ex":"lat_pulldown","n":2},{"ex":"ohp","n":3},{"ex":"leg_press","n":3},{"ex":"barbell_curl","n":4},{"ex":"lat_raise","n":2},{"ex":"x_rear","n":2}]},"prev":{"goals":{"bench":""}},"budget":100}}
-экран: правки к шагу 13
+экран: правки к шагу 12
 @@ 596 -1 +111
 -    p.sub В программе пока нет упражнений.
 +    div.kw
@@ -3915,7 +4794,7 @@
 @@ 1300 -7 +0
 @@ 1375 -7 +0
 
-=== 22. план
+=== 21. план
 адрес: "#workout"
 шапка: как в шаге 5
 поля: как в шаге 5
@@ -3990,8 +4869,8 @@
 @@ 22 -0 +1
 +    button.btn Начать с пустого листа
 
-=== 23. старт
-шапка: правки к шагу 22
+=== 22. старт
+шапка: правки к шагу 21
 @@ 15 -1 +3
 - a(href="#workout" aria-current="page") Тренировка
 + a(href="#workout" aria-current="page")
@@ -4794,7 +5673,7 @@
 +    button.btn.primary Завершить тренировку
 +    button.btn.ghost.danger(title="Удалить эту тренировку") Отменить
 
-=== 24. подходы
+=== 23. подходы
 поля: целиком
   wk-date=2025-11-12
   cw-bench=
@@ -4895,7 +5774,7 @@
   wk-note=
 черновик:
   + td-draft {"id":"2025-11-12","date":"2025-11-12","slot":"mon","note":"","open":true,"items":[{"ex":"bench","cyc":{"pct":83,"reps":4},"range":null,"sets":[{"w":null,"r":4},{"w":null,"r":4},{"w":null,"r":4}],"note":"","skip":false,"rir":null,"tm":null},{"ex":"row_machine","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"squat","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"db_ohp","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"rdl","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"pullup","cyc":null,"range":[6,10],"sets":[{"w":20,"r":10},{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"lat_raise","cyc":null,"range":[10,20],"sets":[{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":20,"r":10},{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null},{"ex":"leg_curl_seated","cyc":null,"range":[8,12],"sets":[{"w":20,"r":10},{"w":20,"r":10},{"w":20,"r":10},{"w":20,"r":10}],"note":"","skip":false,"rir":null}]}
-экран: правки к шагу 23
+экран: правки к шагу 22
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 30 мин · осталось ≈ 1 ч 25 мин
 +     span#eta по плану ≈ 1 ч 30 мин · все подходы записаны
@@ -5103,7 +5982,7 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 +        | в диапазоне: дальше цель 11+
 
-=== 25. завершить
+=== 24. завершить
 адрес: "#overview"
 шапка: как в шаге 1
 поля: —
@@ -5112,234 +5991,24 @@
   + workouts/2025-11-12 {"date":"2025-11-12","slot":"mon","items":[{"ex":"bench","cyc":"83/4","sets":"0x4 0x4 0x4"},{"ex":"row_machine","rng":"6-10","sets":"20x10 20x10"},{"ex":"squat","rng":"6-10","sets":"20x10 20x10"},{"ex":"db_ohp","rng":"6-10","sets":"20x10 20x10"},{"ex":"rdl","rng":"6-10","sets":"20x10 20x10"},{"ex":"pullup","rng":"6-10","sets":"20x10 20x10 20x10"},{"ex":"lat_raise","rng":"10-20","sets":"20x10 20x10"},{"ex":"x_rear","rng":"8-12","sets":"20x10 20x10 20x10"},{"ex":"leg_curl_seated","rng":"8-12","sets":"20x10 20x10 20x10 20x10"}]}
 черновик:
   - td-draft
-экран: целиком
-  div.wrap.stack
-   div.tiles
-    div.tile
-     span.l Тренировок записано
-     span.v 1
-     span.d с 12 ноября
-    div.tile
-     span.l Индекс силы
-     div.tile-top
-      span.v 100
-      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
-     span.d 0% к первой неделе
-    div.tile
-     span.l Рабочих подходов в неделю
-     span.v 0
-     span.d нет полных недель
-    div.tile
-     span.l Мышц в рабочей зоне
-     span.v
-      | –
-      small из 11
-     span.d считается после первой полной недели
-   div.grid2
-    div.card
-     div.sec-h
-      div
-       div.eyebrow Следующая тренировка
-       h2 Четверг, 13 ноября
-      a.btn.primary(href="#workout") Открыть план
-     p.sub(style="margin-bottom:6px") 24 подхода, ≈ 1 ч 20 мин с отдыхом по упражнению. Первый раз по программе «Пауэрбилдинг: жим лежа»: веса взяты из последних тренировок каждого упражнения.  Поправок дневник не предлагает.
-     div.plan-list
-      div.plan-row
-       span.n Жим в тренажере на грудь
-       div.chips
-        span.chip 4 × 6–10
-        span.tag вес подбирается
-      div.plan-row
-       span.n Горизонтальная тяга в тренажере
-       div.chips
-        span.chip.up 22.5 ↑
-        span.chip.up 22.5 ↑
-      div.plan-row
-       span.n Приседания со штангой
-       div.chips
-        span.chip.up 22.5 ↑
-        span.chip.up 22.5 ↑
-        span.chip 22.5
-      div.plan-row
-       span.n Жим гантелей сидя
-       div.chips
-        span.chip.up 22 ↑
-        span.chip.up 22 ↑
-        span.chip 22
-      div.plan-row
-       span.n Подтягивания
-       div.chips
-        span.chip.up 21 ↑
-        span.chip.up 21 ↑
-      div.plan-row
-       span.n Махи гантелями в стороны
-       div.chips
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-      div.plan-row
-       span.n Обратная бабочка
-       div.chips
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-      div.plan-row
-       span.n Бицепс бедра сидя в тренажере
-       div.chips
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-        span.chip
-         | 20
-         small 11+
-      div.plan-row
-       span.n Трицепс из за головы на блоке с косичкой
-       div.chips
-        span.chip 2 × 8–12
-        span.tag вес подбирается
-     div.legend-line
-      span
-       span.chip.up 40 ↑
-       | " прошлый раз взят верх диапазона, вес повышен"
-      span
-       span.chip
-        | 40
-        small 11+
-       | " тот же вес, цель по повторам"
-      span
-       span.chip.down 40 ↓
-       | " было ниже диапазона"
-    div.card
-     div.sec-h
-      h2 Требует внимания
-      a.btn.ghost.sm(href="#coach") Все советы: 2
-     p.sub Критичных замечаний нет.
-   section
-    div.sec-h
-     h2 Базовые
-     span.sub сила по запасу: 4 × 4, вес по запасу
-    div.grid3
-     button.ex-card
-      span.nm
-       | Жим лежа
-       span.tag.accent(style="margin-left:6px") сила по запасу
-      div.ln
-       div
-        div.big 0 × 4
-        div.sub 12 ноя · 83%
-       svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
-      div.sub
-       | "Расчётный максимум 0 кг · дальше "
-       b 2.5 × 4
-
-=== 26. журнал: одна запись
-адрес: "#journal"
-шапка: как в шаге 6
-сообщение: ""
-экран: целиком
-  div.wrap.stack
-   details.week(open="")
-    summary
-     h2 Неделя 1
-     span.sub 10 ноя – 16 ноя · 1 тренировка · 23 рабочих подходов
-    div.stack(style="gap:10px;padding-bottom:14px")
-     div.wo
-      div.wo-h
-       div.row
-        b Среда, 12 ноября
-        span.tag день 1
-       div.row
-        button.btn.ghost.sm Изменить
-        button.btn.ghost.sm.danger Удалить
-      div.wo-row
-       span.n Жим лежа
-       div.chips
-        span.chip 3 × 4 по 0
-        span.tag 83%
-      div.wo-row
-       span.n Горизонтальная тяга в тренажере
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Приседания со штангой
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Жим гантелей сидя
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Румынская тяга
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Подтягивания
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Махи гантелями в стороны
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Обратная бабочка
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-        span.chip 20 × 10
-      div.wo-row
-       span.n Бицепс бедра сидя в тренажере
-       div.chips
-        span.chip 20 × 10
-        span.chip 20 × 10
-        span.chip 20 × 10
-        span.chip 20 × 10
-
-=== 27. overview после первой тренировки: открывается
-адрес: "#overview"
-шапка: как в шаге 1
-экран: как в шаге 25
-
-=== 28. workout после первой тренировки: открывается
-адрес: "#workout"
-шапка: как в шаге 5
-поля: целиком
-  np-date=2025-11-13
-экран: правки к шагу 22
-@@ 6 -1 +1
--     h2 Среда, 12 ноября
+экран: правки к шагу 21
+@@ 2 -0 +11
++  div.tiles.two
++   div.tile
++    span.l Тренировок записано
++    span.v 1
++    span.d с 12 ноября
++   div.tile
++    span.l Индекс силы
++    div.tile-top
++     span.v 100
++     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
++    span.d 0% к первой неделе
+@@ 5 -16 +4
++     div.eyebrow Следующая тренировка
 +     h2 Четверг, 13 ноября
-@@ 14 -2 +2
--      button(type="button" aria-pressed="true") День 1
--      button(type="button" aria-pressed="false") День 2
-+      button(type="button" aria-pressed="false") День 1
-+      button(type="button" aria-pressed="true") День 2
-@@ 17 -1 +1
--   p.sub(style="margin-bottom:6px") Основа — программа «Пауэрбилдинг: жим лежа»: в этот день она идёт первый раз, вес в каждом упражнении подбирается на месте. В плане 23 подхода. Всё можно поправить по ходу. Поправок нет: дневник не видит причин отходить от правил.
-+   p.sub(style="margin-bottom:6px") Основа — программа «Пауэрбилдинг: жим лежа»: в этот день она идёт первый раз, веса взяты из последних тренировок каждого упражнения. В плане 24 подхода. Всё можно поправить по ходу. Поправок нет: дневник не видит причин отходить от правил.
-@@ 19 -2 +2
--    b Время: ≈ 1 ч 30 мин
--    | " — разминка, 23 подхода и отдых: у каждого упражнения свой, от 2 до 5 мин."
-+    b Время: ≈ 1 ч 20 мин
-+    | " — разминка, 24 подхода и отдых: у каждого упражнения свой, от 2 до 5 мин."
++    a.btn.primary(href="#workout") Открыть план
++   p.sub(style="margin-bottom:6px") 24 подхода, ≈ 1 ч 20 мин с отдыхом по упражнению. Первый раз по программе «Пауэрбилдинг: жим лежа»: веса взяты из последних тренировок каждого упражнения.  Поправок дневник не предлагает.
 @@ 23 -3 +1
 -     span.n
 -      | Жим лежа
@@ -5409,8 +6078,135 @@
 +     span.n Трицепс из за головы на блоке с косичкой
 +     div.chips
 +      span.chip 2 × 8–12
+@@ 81 -3 +17
+-   div.row(style="margin-top:14px")
+-    button.btn.primary Начать тренировку
+-    button.btn Начать с пустого листа
++  section
++   div.sec-h
++    h2 Базовые
++    span.sub сила по запасу: 4 × 4, вес по запасу
++   div.grid3
++    button.ex-card
++     span.nm
++      | Жим лежа
++      span.tag.accent(style="margin-left:6px") сила по запасу
++     div.ln
++      div
++       div.big 0 × 4
++       div.sub 12 ноя · 83%
++      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
++     div.sub
++      | "Расчётный максимум 0 кг · дальше "
++      b 2.5 × 4
 
-=== 29. progress после первой тренировки: открывается
+=== 25. журнал: одна запись
+адрес: "#journal"
+шапка: как в шаге 6
+сообщение: ""
+экран: целиком
+  div.wrap.stack
+   details.week(open="")
+    summary
+     h2 Неделя 1
+     span.sub 10 ноя – 16 ноя · 1 тренировка · 23 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 12 ноября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      div.wo-row
+       span.n Жим лежа
+       div.chips
+        span.chip 3 × 4 по 0
+        span.tag 83%
+      div.wo-row
+       span.n Горизонтальная тяга в тренажере
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Приседания со штангой
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Жим гантелей сидя
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Румынская тяга
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Подтягивания
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Махи гантелями в стороны
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Обратная бабочка
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+        span.chip 20 × 10
+      div.wo-row
+       span.n Бицепс бедра сидя в тренажере
+       div.chips
+        span.chip 20 × 10
+        span.chip 20 × 10
+        span.chip 20 × 10
+        span.chip 20 × 10
+
+=== 26. overview после первой тренировки: открывается
+адрес: "#overview"
+шапка: как в шаге 1
+экран: как в шаге 24
+
+=== 27. workout после первой тренировки: открывается
+адрес: "#workout"
+шапка: как в шаге 5
+поля: целиком
+  np-date=2025-11-13
+экран: правки к шагу 26
+@@ 2 -11 +0
+@@ 16 -1 +1
+-     div.eyebrow Следующая тренировка
++     div.eyebrow Новая тренировка
+@@ 18 -2 +14
+-    a.btn.primary(href="#workout") Открыть план
+-   p.sub(style="margin-bottom:6px") 24 подхода, ≈ 1 ч 20 мин с отдыхом по упражнению. Первый раз по программе «Пауэрбилдинг: жим лежа»: веса взяты из последних тренировок каждого упражнения.  Поправок дневник не предлагает.
++   div.row(style="margin-bottom:12px")
++    label.f
++     span Дата
++     input#np-date(type="date")
++    label.f
++     span День программы
++     div.seg(role="group" aria-label="День программы")
++      button(type="button" aria-pressed="false") День 1
++      button(type="button" aria-pressed="true") День 2
++      button(type="button" aria-pressed="false") День 3
++   p.sub(style="margin-bottom:6px") Основа — программа «Пауэрбилдинг: жим лежа»: в этот день она идёт первый раз, веса взяты из последних тренировок каждого упражнения. В плане 24 подхода. Всё можно поправить по ходу. Поправок нет: дневник не видит причин отходить от правил.
++   p.sub(style="margin-bottom:6px")
++    b Время: ≈ 1 ч 20 мин
++    | " — разминка, 24 подхода и отдых: у каждого упражнения свой, от 2 до 5 мин."
+@@ 98 -17 +3
++   div.row(style="margin-top:14px")
++    button.btn.primary Начать тренировку
++    button.btn Начать с пустого листа
+
+=== 28. progress после первой тренировки: открывается
 адрес: "#progress"
 шапка: как в шаге 7
 поля: целиком
@@ -5591,11 +6387,11 @@
       input#bw-kg.num(type="text" inputmode="decimal" placeholder="")
      button.btn(style="align-self:flex-end") Записать
 
-=== 30. muscles после первой тренировки: открывается
+=== 29. muscles после первой тренировки: открывается
 адрес: "#muscles"
 шапка: как в шаге 8
 поля: —
-экран: правки к шагу 19
+экран: правки к шагу 18
 @@ 5 -129 +29
 +     h2 Нагрузка на теле
 +     p.note Подходов в неделю, которые даёт текущая программа: полных недель по факту пока нет.
@@ -5626,7 +6422,7 @@
 +     i.hc.z-off
 +     | вне расчёта
 +   p.sub Нажми на мышцу или подпись, чтобы увидеть оценку и что с ней делать.
-@@ 137 -194 +184
+@@ 137 -624 +184
 +     h2 Подходы на мышцу по неделям
 +     p.note Подход, где мышца работает основной, считается за 1, где помогает — за 0.5. Подход, после которого в запасе осталось 3 повтора и больше, идёт за половину: у подходов по проценту от максимума запас считается по проценту, если ты не отметил его сам. Оценка стоит по среднему за три последние полные недели (–).
 +   div.scroll-x.to-end
@@ -5811,7 +6607,7 @@
 +    span.sw
 +     i.hc.z-cur
 +     | неделя ещё идёт или мышца вне расчёта
-@@ 332 -276 +7
+@@ 762 -276 +7
 +   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
 +  details.card
 +   summary(style="cursor:pointer;font-weight:600") На чём основаны оценки
@@ -5820,40 +6616,11 @@
 +    p Способ счёта (прямой подход = 1, косвенный = 0.5) взят из мета-регрессии Pelland и соавторов о дозе недельного объёма; там же показано, что сила выходит на плато при заметно меньшем объёме, чем гипертрофия. Близость к отказу (RIR 1 в твоей методике) важна именно для роста мышц — это вывод мета-регрессии Robinson и соавторов.
 +    p Коэффициенты упражнений и сами границы можно изменить в настройке.
 
-=== 31. coach после первой тренировки: открывается
-адрес: "#coach"
-шапка: как в шаге 9
-экран: правки к шагу 30
-@@ 5 -224 +23
-+     h2 Замечания дневника
-+     p.note Пересчитываются после каждой записи по твоим правилам прогрессии и недельному объёму.
-+    div.row(style="gap:12px")
-+     span.pill.info
-+      svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+      | заметки: 2
-+     span.pill.good
-+      svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+      | хорошо: 0
-+   div.ins.info
-+    svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+    div.grow
-+     div.k Заметка · Базовые
-+     div.t Сила по запасу: вес решает запас в последнем подходе
-+     div.x Жим лежа: расчётный максимум 0 → 0 кг (0% за 1 неделю), дальше 2.5 × 4 — сила по запасу: 3 × 4 одним весом, вес по запасу в последнем подходе. Отмечай запас (RIR) в последнем подходе: 2 и больше — на следующей неделе плюс шаг, 1 — вес тот же, 0 или подходы не закрыты — минус 5%.
-+     a.btn.ghost.sm(href="#progress" style="margin-left:-8px") Открыть раздел
-+   div.ins.info
-+    svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+    div.grow
-+     div.k Заметка · Вес тела
-+     div.t Вес тела пока не записан
-+     div.x Набор мышц проще всего проверить по весу: для набора без лишнего жира ориентир — плюс 0.25–0.5% веса тела в неделю. Записывай вес 2–3 раза в неделю утром во вкладке «Прогресс».
-+     a.btn.ghost.sm(href="#progress" style="margin-left:-8px") Открыть раздел
-
-=== 32. program после первой тренировки: открывается
+=== 30. program после первой тренировки: открывается
 адрес: "#program"
-шапка: как в шаге 10
-поля: как в шаге 17
-экран: правки к шагу 19
+шапка: как в шаге 9
+поля: как в шаге 16
+экран: правки к шагу 18
 @@ 8 -3 +1
 -   p.sub Принята 12 ноября. По ней ещё не было ни одной тренировки. Приоритет — «Жим лежа», остальные базовые идут как подсобка. Лимит недели — 100 подходов.
 -   div.row(style="margin-top:8px")
@@ -5877,25 +6644,25 @@
 @@ 133 -1 +1
 -       div.sub 2 × 8–12
 +       div.sub 2 × 8–13
-@@ 226 -1 +1
--       div.sub 3 × 8–12
-+       div.sub 3 × 8–13
-@@ 231 -1 +1
--       div.sub 4 × 8–12
-+       div.sub 4 × 8–13
-@@ 270 -1 +1
--       div.sub 2 × 8–12
-+       div.sub 2 × 8–13
-@@ 275 -1 +1
--       div.sub 4 × 8–12
-+       div.sub 4 × 8–13
-@@ 313 -1 +1
--       div.sub 3 × 6–10
-+       div.sub 3 × 6–10 · старт 152.5 кг
-@@ 328 -1 +1
--       div.sub 2 × 8–12
-+       div.sub 2 × 8–13
-@@ 351 -2 +5
+@@ 288 -1 +1
+-        | "3 × 8–12 · "
++        | "3 × 8–13 · "
+@@ 303 -1 +1
+-        | "4 × 8–12 · "
++        | "4 × 8–13 · "
+@@ 469 -1 +1
+-        | "2 × 8–12 · "
++        | "2 × 8–13 · "
+@@ 484 -1 +1
+-        | "4 × 8–12 · "
++        | "4 × 8–13 · "
+@@ 644 -1 +1
+-        | "3 × 6–10 · "
++        | "3 × 6–10 · старт 152.5 кг · "
+@@ 689 -1 +1
+-        | "2 × 8–12 · "
++        | "2 × 8–13 · "
+@@ 781 -2 +5
 -       b Вес пока не задан: 17 упражнений
 -       div.sub Жим лежа, Горизонтальная тяга в тренажере, Приседания со штангой, Жим гантелей сидя, Румынская тяга, Подтягивания, Махи гантелями в стороны, Обратная бабочка, Бицепс бедра сидя в тренажере, Жим в тренажере на грудь, Трицепс из за головы на блоке с косичкой, Горизонтальная тяга Т-бар, Выпады с гантелями, Вертикальная тяга в тренажере, Жим штанги стоя, Жим ногами и Бицепс со штангой стоя. Его можно подобрать на первой тренировке — или указать рабочий вес либо разовый максимум в «Настройке» → «Известные веса», тогда дневник поставит его сам.
 +       b Стартовые веса — из «Настройки»
@@ -5904,12 +6671,12 @@
 +       b Вес пока не задан: 7 упражнений
 +       div.sub Жим в тренажере на грудь, Трицепс из за головы на блоке с косичкой, Горизонтальная тяга Т-бар, Выпады с гантелями, Вертикальная тяга в тренажере, Жим штанги стоя и Бицепс со штангой стоя. Его можно подобрать на первой тренировке — или указать рабочий вес либо разовый максимум в «Настройке» → «Известные веса», тогда дневник поставит его сам.
 
-=== 33. setup после первой тренировки: открывается
+=== 31. setup после первой тренировки: открывается
 адрес: "#setup"
-шапка: как в шаге 11
-поля: правки к шагу 21
+шапка: как в шаге 10
+поля: правки к шагу 20
 @@ 13 -27 +0
-экран: правки к шагу 21
+экран: правки к шагу 20
 @@ 604 -56 +0
 @@ 986 -0 +32
 +    details(style="margin-top:10px")
@@ -5948,20 +6715,20 @@
 -      p.note Записей в дневнике: 0. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
 +      p.note Записей в дневнике: 1. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
 
-=== 34. после перезагрузки записи на месте
-экран: правки к шагу 33
+=== 32. после перезагрузки записи на месте
+экран: правки к шагу 31
 @@ 962 -1 +1
 -  details#setup-more.morebox(open="")
 +  details#setup-more.morebox
 
-=== 35. журнал после перезагрузки
+=== 33. журнал после перезагрузки
 адрес: "#journal"
 шапка: как в шаге 6
 поля: —
-экран: как в шаге 26
+экран: как в шаге 25
 
-=== 36. справочник после перезагрузки тот же
+=== 34. справочник после перезагрузки тот же
 адрес: "#setup"
-шапка: как в шаге 11
-поля: как в шаге 33
-экран: как в шаге 34
+шапка: как в шаге 10
+поля: как в шаге 31
+экран: как в шаге 32

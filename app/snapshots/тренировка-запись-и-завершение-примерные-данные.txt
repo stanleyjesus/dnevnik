@@ -26,7 +26,6 @@
   a(href="#journal") Журнал
   a(href="#progress") Прогресс
   a(href="#muscles") Мышцы
-  a(href="#coach") Советы
   a(href="#program") Программа
   a(href="#setup") Настройка
 поля: целиком
@@ -86,11 +85,6 @@
        button(type="button" aria-pressed="false") День 1
        button(type="button" aria-pressed="true") День 2
        button(type="button" aria-pressed="false") День 3
-     label.f
-      span Вариант плана
-      div.seg(role="group" aria-label="Вариант плана")
-       button(type="button" aria-pressed="true") С поправками дневника
-       button(type="button" aria-pressed="false") Только по моим правилам
     div.adj-box(style="margin-bottom:12px")
      div.eyebrow(style="margin-bottom:2px") Что дневник меняет в плане и почему
      p.sub Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.
@@ -373,7 +367,7 @@
 @@ 10 -1 +1
 -     input#np-date(type="date")
 +     input#wk-date(type="date")
-@@ 17 -147 +893
+@@ 17 -142 +893
 +  div.ex
 +   div.ex-h
 +    h3 Разгибания ног в тренажере
@@ -1343,193 +1337,162 @@
 + a(href="#overview" aria-current="page") Обзор
 + a(href="#workout")
 поля: —
-экран: целиком
-  div.wrap.stack
-   div.tiles
-    div.tile
-     span.l Тренировок записано
-     span.v 25
-     span.d с 8 сентября · пропущено недель: 1
-    div.tile
-     span.l Индекс силы
-     div.tile-top
-      span.v 117
-      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#8cf69a9099
-     span.d +17% к первой неделе
-    div.tile
-     span.l Рабочих подходов в неделю
-     span.v 63
-     span.d среднее за недели 7–9
-    div.tile
-     span.l Мышц в рабочей зоне
-     span.v
-      | 2
-      small из 11
-     span.d без нагрузки: 0 · мало: 9
-   div.grid2
-    div.card
-     div.sec-h
-      div
-       div.eyebrow Тренировка идёт
-       h2 Среда, 12 ноября
-      a.btn.primary(href="#workout") Продолжить
-     p.sub Заполнено 3 из 28 подходов.
-    div.card
-     div.sec-h
-      h2 Требует внимания
-      a.btn.ghost.sm(href="#coach") Все советы: 9
-     div.ins.warn
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-      div.grow
-       div.k Внимание · Объём
-       div.t Меньше 4 подходов в неделю: Задние дельты 2 и Ягодицы 1.3
-       div.x Это ниже минимальной дозы, при которой рост заметен. Что добавить: задние дельты — обратная бабочка или тяга каната к лицу, 3–4 подхода дважды в неделю; ягодицы — румынская тяга, ягодичный мост или выпады, 3–4 подхода.
-     div.ins.warn
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-      div.grow
-       div.k Внимание · Прогресс
-       div.t Застой: Трицепс с косичкой на блоке
-       div.x Лучший подход (22.5 × 11) был 5 тренировок назад, 19 сентября. Убедись, что подход идёт до RIR 1. Если да — сбрось вес на 10% на 1–2 недели и набери повторы заново, либо смени вариант упражнения.
-   section.card
-    div.sec-h
-     div
-      h2 Нагрузка по мышцам
-      p.sub Подходов в неделю, среднее за недели 7–9. Подсвеченный участок шкалы — рабочая зона 10–20, риска — минимум 4.
-     a.btn.ghost.sm(href="#muscles") По неделям
-    div.meters
-     div.grp.eyebrow Верх
-     span.mn Грудь
-     div.meter(role="img" aria-label="10.3 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-opt(style="width: 43.0556%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 10.3
-     span.pill.good
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-      | рабочая зона
-     span.mn Широчайшие
-     div.meter(role="img" aria-label="8.7 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-base(style="width: 36.1111%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 8.7
-     span.pill.warn
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-      | ниже рабочей зоны
-     span.mn Верх спины
-     div.meter(role="img" aria-label="7.3 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-base(style="width: 30.5556%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 7.3
-     span.pill.warn
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-      | ниже рабочей зоны
-     span.mn Передние дельты
-     div.meter(role="img" aria-label="5.2 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-base(style="width: 21.5278%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 5.2
-     span.pill.warn
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-      | ниже рабочей зоны
-     span.mn Средние дельты
-     div.meter(role="img" aria-label="4 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-base(style="width: 16.6667%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 4
-     span.pill.warn
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-      | ниже рабочей зоны
-     span.mn Задние дельты
-     div.meter(role="img" aria-label="2 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-low(style="width: 8.33333%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 2
-     span.pill.serious
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
-      | мало
-     div.grp.eyebrow Руки
-     span.mn Бицепс
-     div.meter(role="img" aria-label="13 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-opt(style="width: 54.1667%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 13
-     span.pill.good
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-      | рабочая зона
-     span.mn Трицепс
-     div.meter(role="img" aria-label="8.8 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-base(style="width: 36.8056%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 8.8
-     span.pill.warn
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-      | ниже рабочей зоны
-     span.mn Предплечья
-     div.meter(role="img" aria-label="14.2 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-opt(style="width: 59.0278%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 14.2
-     span.pill.good
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-      | рабочая зона
-     div.grp.eyebrow Корпус
-     span.mn Пресс
-     div.meter(role="img" aria-label="0 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-none(style="width: 0%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 0
-     span.pill вне расчёта
-     span.mn Разгибатели спины
-     div.meter(role="img" aria-label="0 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-none(style="width: 0%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 0
-     span.pill вне расчёта
-     div.grp.eyebrow Ноги
-     span.mn Квадрицепс
-     div.meter(role="img" aria-label="8.7 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-base(style="width: 36.1111%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 8.7
-     span.pill.warn
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-      | ниже рабочей зоны
-     span.mn Бицепс бедра
-     div.meter(role="img" aria-label="7 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-base(style="width: 29.1667%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 7
-     span.pill.warn
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-      | ниже рабочей зоны
-     span.mn Ягодицы
-     div.meter(role="img" aria-label="1.3 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-low(style="width: 5.55556%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 1.3
-     span.pill.serious
-      svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
-      | мало
-     span.mn Икры
-     div.meter(role="img" aria-label="0 подходов в неделю")
-      i.zone(style="left: 41.6667%; width: 41.6667%;")
-      i.fill.z-none(style="width: 0%;")
-      i.tick(style="left: 16.6667%;")
-     span.mv 0
-     span.pill вне расчёта
+экран: правки к шагу 5
+@@ 2 -0 +11
++  div.tiles.two
++   div.tile
++    span.l Тренировок записано
++    span.v 25
++    span.d с 8 сентября · пропущено недель: 1
++   div.tile
++    span.l Индекс силы
++    div.tile-top
++     span.v 117
++     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#8cf69a9099
++    span.d +17% к первой неделе
+@@ 7 -908 +142
++    a.btn.primary(href="#workout") Продолжить
++   p.sub Заполнено 3 из 28 подходов.
++  section.card
++   div.sec-h
++    div
++     h2 Нагрузка по мышцам
++     p.sub Подходов в неделю, среднее за недели 7–9. Подсвеченный участок шкалы — рабочая зона 10–20, риска — минимум 4.
++    a.btn.ghost.sm(href="#muscles") По неделям
++   div.meters
++    div.grp.eyebrow Верх
++    span.mn Грудь
++    div.meter(role="img" aria-label="10.3 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-opt(style="width: 43.0556%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 10.3
++    span.pill.good
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++     | рабочая зона
++    span.mn Широчайшие
++    div.meter(role="img" aria-label="8.7 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-base(style="width: 36.1111%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 8.7
++    span.pill.warn
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++     | ниже рабочей зоны
++    span.mn Верх спины
++    div.meter(role="img" aria-label="7.3 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-base(style="width: 30.5556%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 7.3
++    span.pill.warn
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++     | ниже рабочей зоны
++    span.mn Передние дельты
++    div.meter(role="img" aria-label="5.2 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-base(style="width: 21.5278%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 5.2
++    span.pill.warn
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++     | ниже рабочей зоны
++    span.mn Средние дельты
++    div.meter(role="img" aria-label="4 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-base(style="width: 16.6667%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 4
++    span.pill.warn
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++     | ниже рабочей зоны
++    span.mn Задние дельты
++    div.meter(role="img" aria-label="2 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-low(style="width: 8.33333%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 2
++    span.pill.serious
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
++     | мало
++    div.grp.eyebrow Руки
++    span.mn Бицепс
++    div.meter(role="img" aria-label="13 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-opt(style="width: 54.1667%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 13
++    span.pill.good
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++     | рабочая зона
++    span.mn Трицепс
++    div.meter(role="img" aria-label="8.8 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-base(style="width: 36.8056%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 8.8
++    span.pill.warn
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++     | ниже рабочей зоны
++    span.mn Предплечья
++    div.meter(role="img" aria-label="14.2 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-opt(style="width: 59.0278%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 14.2
++    span.pill.good
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++     | рабочая зона
++    div.grp.eyebrow Корпус
++    span.mn Пресс
++    div.meter(role="img" aria-label="0 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-none(style="width: 0%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 0
++    span.pill вне расчёта
++    span.mn Разгибатели спины
++    div.meter(role="img" aria-label="0 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-none(style="width: 0%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 0
++    span.pill вне расчёта
++    div.grp.eyebrow Ноги
++    span.mn Квадрицепс
++    div.meter(role="img" aria-label="8.7 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-base(style="width: 36.1111%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 8.7
++    span.pill.warn
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++     | ниже рабочей зоны
++    span.mn Бицепс бедра
++    div.meter(role="img" aria-label="7 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-base(style="width: 29.1667%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 7
++    span.pill.warn
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++     | ниже рабочей зоны
++    span.mn Ягодицы
++    div.meter(role="img" aria-label="1.3 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-low(style="width: 5.55556%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 1.3
++    span.pill.serious
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
++     | мало
++    span.mn Икры
++    div.meter(role="img" aria-label="0 подходов в неделю")
++     i.zone(style="left: 41.6667%; width: 41.6667%;")
++     i.fill.z-none(style="width: 0%;")
++     i.tick(style="left: 16.6667%;")
++    span.mv 0
++    span.pill вне расчёта
 
 === 7. продолжить с обзора
 адрес: "#workout"
@@ -3123,135 +3086,135 @@
 черновик:
   - td-draft
 экран: правки к шагу 6
-@@ 27 -4 +124
--      div.eyebrow Тренировка идёт
--      h2 Среда, 12 ноября
--     a.btn.primary(href="#workout") Продолжить
--    p.sub Заполнено 3 из 28 подходов.
-+      div.eyebrow Следующая тренировка
-+      h2 Четверг, 13 ноября
-+     a.btn.primary(href="#workout") Открыть план
-+    p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 25 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
-+    div.plan-list
-+     div.plan-row
-+      span.n
-+       | Подтягивания
-+       span.tag.accent(style="margin-left:6px") Отказ
-+      div.chips
-+       span.chip.adj
-+        | 90
-+        small 6+
-+       span.chip.adj
-+        | 90
-+        small 6+
-+       span.chip.adj
-+        | 90
-+        small 6+
-+       span.chip.adj
-+        | 90
-+        small 6+
-+     div.plan-row
-+      span.n Бабочка
-+      div.chips
-+       span.chip.up 47.5 ↑
-+       span.chip
-+        | 42.5
-+        small 11+
-+       span.chip.up 42.5 ↑
-+       span.chip
-+        | 40
-+        small 11+
-+     div.plan-row
-+      span.n
-+       | Бицепс бедра на тренажере лежа на животе
-+       span.tag.accent(style="margin-left:6px") Подход стоит · Мало объёма
-+      div.chips
-+       span.chip.adj
-+        | 30
-+        small 11+
-+       span.chip.adj
-+        | 27.5
-+        small 12+
-+       span.chip
-+        | 30
-+        small 11+
-+       span.chip.adj
-+        | 30
-+        small 8+
-+     div.plan-row
-+      span.n
-+       | Трицепс с косичкой на блоке
-+       span.tag.accent(style="margin-left:6px") Плато
-+      div.chips
-+       span.chip.adj
-+        | 20
-+        small 12+
-+       span.chip.adj
-+        | 20
-+        small 11+
-+       span.chip.adj
-+        | 20
-+        small 10+
-+       span.chip.down 20 ↓
-+     div.plan-row
-+      span.n
-+       | Бицепс Bayesian curl
-+       span.tag.accent(style="margin-left:6px") Диапазон по шагу веса
-+      div.chips
-+       span.chip.adj
-+        | 10
-+        small 17+
-+       span.chip
-+        | 10
-+        small 16+
-+       span.chip
-+        | 10
-+        small 15+
-+     div.plan-row
-+      span.n Разгибания ног в тренажере
-+      div.chips
-+       span.chip.up 52.5 ↑
-+       span.chip.up 50 ↑
-+       span.chip.up 47.5 ↑
-+     div.plan-row
-+      span.n Кисть с гантелью правая рука
-+      div.chips
-+       span.chip
-+        | 12
-+        small 11+
-+       span.chip.up 12 ↑
-+       span.chip
-+        | 10
-+        small 15+
-+     div.plan-row
-+      span.n Кисть с гантелью левая рука
-+      div.chips
-+       span.chip
-+        | 10
-+        small 16+
-+       span.chip
-+        | 10
-+        small 13+
-+       span.chip
-+        | 10
-+        small 12+
-+    div.legend-line
-+     span
-+      span.chip.up 40 ↑
-+      | " прошлый раз взят верх диапазона, вес повышен"
-+     span
+@@ 16 -4 +124
+-     div.eyebrow Тренировка идёт
+-     h2 Среда, 12 ноября
+-    a.btn.primary(href="#workout") Продолжить
+-   p.sub Заполнено 3 из 28 подходов.
++     div.eyebrow Следующая тренировка
++     h2 Четверг, 13 ноября
++    a.btn.primary(href="#workout") Открыть план
++   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 25 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
++   div.plan-list
++    div.plan-row
++     span.n
++      | Подтягивания
++      span.tag.accent(style="margin-left:6px") Отказ
++     div.chips
++      span.chip.adj
++       | 90
++       small 6+
++      span.chip.adj
++       | 90
++       small 6+
++      span.chip.adj
++       | 90
++       small 6+
++      span.chip.adj
++       | 90
++       small 6+
++    div.plan-row
++     span.n Бабочка
++     div.chips
++      span.chip.up 47.5 ↑
++      span.chip
++       | 42.5
++       small 11+
++      span.chip.up 42.5 ↑
 +      span.chip
 +       | 40
 +       small 11+
-+      | " тот же вес, цель по повторам"
-+     span
-+      span.chip.down 40 ↓
-+      | " было ниже диапазона"
-+     span
++    div.plan-row
++     span.n
++      | Бицепс бедра на тренажере лежа на животе
++      span.tag.accent(style="margin-left:6px") Подход стоит · Мало объёма
++     div.chips
 +      span.chip.adj
-+       | 40
++       | 30
 +       small 11+
-+      | " поправка дневника"
++      span.chip.adj
++       | 27.5
++       small 12+
++      span.chip
++       | 30
++       small 11+
++      span.chip.adj
++       | 30
++       small 8+
++    div.plan-row
++     span.n
++      | Трицепс с косичкой на блоке
++      span.tag.accent(style="margin-left:6px") Плато
++     div.chips
++      span.chip.adj
++       | 20
++       small 12+
++      span.chip.adj
++       | 20
++       small 11+
++      span.chip.adj
++       | 20
++       small 10+
++      span.chip.down 20 ↓
++    div.plan-row
++     span.n
++      | Бицепс Bayesian curl
++      span.tag.accent(style="margin-left:6px") Диапазон по шагу веса
++     div.chips
++      span.chip.adj
++       | 10
++       small 17+
++      span.chip
++       | 10
++       small 16+
++      span.chip
++       | 10
++       small 15+
++    div.plan-row
++     span.n Разгибания ног в тренажере
++     div.chips
++      span.chip.up 52.5 ↑
++      span.chip.up 50 ↑
++      span.chip.up 47.5 ↑
++    div.plan-row
++     span.n Кисть с гантелью правая рука
++     div.chips
++      span.chip
++       | 12
++       small 11+
++      span.chip.up 12 ↑
++      span.chip
++       | 10
++       small 15+
++    div.plan-row
++     span.n Кисть с гантелью левая рука
++     div.chips
++      span.chip
++       | 10
++       small 16+
++      span.chip
++       | 10
++       small 13+
++      span.chip
++       | 10
++       small 12+
++   div.legend-line
++    span
++     span.chip.up 40 ↑
++     | " прошлый раз взят верх диапазона, вес повышен"
++    span
++     span.chip
++      | 40
++      small 11+
++     | " тот же вес, цель по повторам"
++    span
++     span.chip.down 40 ↓
++     | " было ниже диапазона"
++    span
++     span.chip.adj
++      | 40
++      small 11+
++     | " поправка дневника"
 
 === 13. журнал после тренировки
 адрес: "#journal"
@@ -3313,192 +3276,69 @@
   pp-leg_curl_lying=true
   pp-tri_pushdown=true
   pp-bayesian_curl=true
-экран: целиком
-  div.wrap.stack
-   div.card
-    div.sec-h
-     div
-      div.eyebrow Новая тренировка
-      h2 Четверг, 13 ноября
-    div.row(style="margin-bottom:12px")
-     label.f
-      span Дата
-      input#np-date(type="date")
-     label.f
-      span День программы
-      div.seg(role="group" aria-label="День программы")
-       button(type="button" aria-pressed="false") День 1
-       button(type="button" aria-pressed="false") День 2
-       button(type="button" aria-pressed="true") День 3
-     label.f
-      span Вариант плана
-      div.seg(role="group" aria-label="Вариант плана")
-       button(type="button" aria-pressed="true") С поправками дневника
-       button(type="button" aria-pressed="false") Только по моим правилам
-    div.adj-box(style="margin-bottom:12px")
-     div.eyebrow(style="margin-bottom:2px") Что дневник меняет в плане и почему
-     p.sub Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.
-     div.props
-      label.prop
-       input#pp-pullup(type="checkbox" checked="")
-       div.grow
-        div
-         b Подтягивания
-         span.tag.accent(style="margin-left:6px") Отказ
-        div.sub подход 1: 92.5 → 90 кг — 4 повторов получились только в отказ
-        div.sub подход 2: 92.5 → 90 кг — 4 повторов получились только в отказ
-        div.sub подход 3: 92.5 → 90 кг — 4 повторов получились только в отказ
-        div.sub подход 4: 92.5 → 90 кг — 4 повторов получились только в отказ
-      label.prop
-       input#pp-leg_curl_lying(type="checkbox" checked="")
-       div.grow
-        div
-         b Бицепс бедра на тренажере лежа на животе
-         span.tag.accent(style="margin-left:6px") Подход стоит · Мало объёма
-        div.sub подход 1: 32.5 → 30 кг, цель 11+ — четыре тренировки подряд на 32.5 × 8
-        div.sub подход 2: 30 → 27.5 кг, цель 12+ — четыре тренировки подряд на 30 × 10, и подходы перед ним за это время не выросли
-        div.sub +1 подход: бицепс бедра по программе — 7 подходов в неделю, рабочая зона от 10
-      label.prop
-       input#pp-tri_pushdown(type="checkbox" checked="")
-       div.grow
-        div
-         b Трицепс с косичкой на блоке
-         span.tag.accent(style="margin-left:6px") Плато
-        div.sub 5 тренировок без рекорда (лучший — 22.5 × 11, 19 сентября): все подходы −10%, повторы набираются заново до верха диапазона
-      label.prop
-       input#pp-bayesian_curl(type="checkbox" checked="")
-       div.grow
-        div
-         b Бицепс Bayesian curl
-         span.tag.accent(style="margin-left:6px") Диапазон по шагу веса
-        div.sub диапазон 8–16 → 8–18: шаг 2.5 кг — это 25% от 10 кг, по твоей формуле на новом весе теряется около 10 повторов, и при верхней границе 16 подход после повышения падает ниже 8
-    p.sub(style="margin-bottom:6px") Основа — тренировка 7 ноября. В плане 25 подходов (по правилам было бы 24). Всё можно поправить по ходу.
-    p.sub(style="margin-bottom:6px")
-     b Время: ≈ 1 ч 25 мин
-     | " — разминка, 25 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин."
-    div.plan-list
-     div.plan-row
-      span.n
-       | Подтягивания
-       span.tag.accent(style="margin-left:6px") Отказ
-      div.chips
-       span.chip.adj
-        | 90
-        small 6+
-       span.chip.adj
-        | 90
-        small 6+
-       span.chip.adj
-        | 90
-        small 6+
-       span.chip.adj
-        | 90
-        small 6+
-     div.plan-row
-      span.n Бабочка
-      div.chips
-       span.chip.up 47.5 ↑
-       span.chip
-        | 42.5
-        small 11+
-       span.chip.up 42.5 ↑
-       span.chip
-        | 40
-        small 11+
-     div.plan-row
-      span.n
-       | Бицепс бедра на тренажере лежа на животе
-       span.tag.accent(style="margin-left:6px") Подход стоит · Мало объёма
-      div.chips
-       span.chip.adj
-        | 30
-        small 11+
-       span.chip.adj
-        | 27.5
-        small 12+
-       span.chip
-        | 30
-        small 11+
-       span.chip.adj
-        | 30
-        small 8+
-     div.plan-row
-      span.n
-       | Трицепс с косичкой на блоке
-       span.tag.accent(style="margin-left:6px") Плато
-      div.chips
-       span.chip.adj
-        | 20
-        small 12+
-       span.chip.adj
-        | 20
-        small 11+
-       span.chip.adj
-        | 20
-        small 10+
-       span.chip.down 20 ↓
-     div.plan-row
-      span.n
-       | Бицепс Bayesian curl
-       span.tag.accent(style="margin-left:6px") Диапазон по шагу веса
-      div.chips
-       span.chip.adj
-        | 10
-        small 17+
-       span.chip
-        | 10
-        small 16+
-       span.chip
-        | 10
-        small 15+
-     div.plan-row
-      span.n Разгибания ног в тренажере
-      div.chips
-       span.chip.up 52.5 ↑
-       span.chip.up 50 ↑
-       span.chip.up 47.5 ↑
-     div.plan-row
-      span.n Кисть с гантелью правая рука
-      div.chips
-       span.chip
-        | 12
-        small 11+
-       span.chip.up 12 ↑
-       span.chip
-        | 10
-        small 15+
-     div.plan-row
-      span.n Кисть с гантелью левая рука
-      div.chips
-       span.chip
-        | 10
-        small 16+
-       span.chip
-        | 10
-        small 13+
-       span.chip
-        | 10
-        small 12+
-    div.legend-line
-     span
-      span.chip.up 40 ↑
-      | " прошлый раз взят верх диапазона, вес повышен"
-     span
-      span.chip
-       | 40
-       small 11+
-      | " тот же вес, цель по повторам"
-     span
-      span.chip.down 40 ↓
-      | " было ниже диапазона"
-     span
-      span.chip.adj
-       | 40
-       small 11+
-      | " поправка дневника"
-    div.row(style="margin-top:14px")
-     button.btn.primary Начать тренировку
-     button.btn Начать с пустого листа
+экран: правки к шагу 12
+@@ 2 -11 +0
+@@ 16 -1 +1
+-     div.eyebrow Следующая тренировка
++     div.eyebrow Новая тренировка
+@@ 18 -2 +51
+-    a.btn.primary(href="#workout") Открыть план
+-   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 25 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
++   div.row(style="margin-bottom:12px")
++    label.f
++     span Дата
++     input#np-date(type="date")
++    label.f
++     span День программы
++     div.seg(role="group" aria-label="День программы")
++      button(type="button" aria-pressed="false") День 1
++      button(type="button" aria-pressed="false") День 2
++      button(type="button" aria-pressed="true") День 3
++   div.adj-box(style="margin-bottom:12px")
++    div.eyebrow(style="margin-bottom:2px") Что дневник меняет в плане и почему
++    p.sub Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.
++    div.props
++     label.prop
++      input#pp-pullup(type="checkbox" checked="")
++      div.grow
++       div
++        b Подтягивания
++        span.tag.accent(style="margin-left:6px") Отказ
++       div.sub подход 1: 92.5 → 90 кг — 4 повторов получились только в отказ
++       div.sub подход 2: 92.5 → 90 кг — 4 повторов получились только в отказ
++       div.sub подход 3: 92.5 → 90 кг — 4 повторов получились только в отказ
++       div.sub подход 4: 92.5 → 90 кг — 4 повторов получились только в отказ
++     label.prop
++      input#pp-leg_curl_lying(type="checkbox" checked="")
++      div.grow
++       div
++        b Бицепс бедра на тренажере лежа на животе
++        span.tag.accent(style="margin-left:6px") Подход стоит · Мало объёма
++       div.sub подход 1: 32.5 → 30 кг, цель 11+ — четыре тренировки подряд на 32.5 × 8
++       div.sub подход 2: 30 → 27.5 кг, цель 12+ — четыре тренировки подряд на 30 × 10, и подходы перед ним за это время не выросли
++       div.sub +1 подход: бицепс бедра по программе — 7 подходов в неделю, рабочая зона от 10
++     label.prop
++      input#pp-tri_pushdown(type="checkbox" checked="")
++      div.grow
++       div
++        b Трицепс с косичкой на блоке
++        span.tag.accent(style="margin-left:6px") Плато
++       div.sub 5 тренировок без рекорда (лучший — 22.5 × 11, 19 сентября): все подходы −10%, повторы набираются заново до верха диапазона
++     label.prop
++      input#pp-bayesian_curl(type="checkbox" checked="")
++      div.grow
++       div
++        b Бицепс Bayesian curl
++        span.tag.accent(style="margin-left:6px") Диапазон по шагу веса
++       div.sub диапазон 8–16 → 8–18: шаг 2.5 кг — это 25% от 10 кг, по твоей формуле на новом весе теряется около 10 повторов, и при верхней границе 16 подход после повышения падает ниже 8
++   p.sub(style="margin-bottom:6px") Основа — тренировка 7 ноября. В плане 25 подходов (по правилам было бы 24). Всё можно поправить по ходу.
++   p.sub(style="margin-bottom:6px")
++    b Время: ≈ 1 ч 25 мин
++    | " — разминка, 25 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин."
+@@ 140 -140 +3
++   div.row(style="margin-top:14px")
++    button.btn.primary Начать тренировку
++    button.btn Начать с пустого листа
 
 === 15. вторая тренировка в тот же день
 шапка: как в шаге 2
