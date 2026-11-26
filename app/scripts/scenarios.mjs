@@ -558,7 +558,7 @@ export const SCENARIOS = [
     ['программа после первой недели', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 'p'), 'цель по-прежнему «Сила», тройка')],
     ...week(2, 1, null, NEW_W + mark('запас 2 в последнем подходе: плюс шаг', 'up')),
     ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seen('up', 'на второй неделе карточка движения говорит «запас 2 в последнем подходе: плюс шаг»')],
-    ['мышцы: сила и масса', go('muscles') + settle + expect('[...document.querySelectorAll("[id^=mavg-]")].some(e => /масса [\\d.,]+ · сила [\\d.,]+/.test(e.textContent))', 'у среднего объёма мышцы видна разбивка «масса … · сила …»')],
+    ['мышцы: подходы силы', go('muscles') + settle + expect('[...document.querySelectorAll("[id^=mavg-]")].some(e => /^\\(сила [\\d.,]+\\)$/.test(e.textContent))', 'у среднего объёма мышцы в скобках — только подходы силы: «(сила …)»')],
     ['после перезагрузки то же', RELOAD],
     ['программа после перезагрузки', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 'p') + ' && document.querySelector("#view section.card").textContent.includes("Сила в тройке")', 'тройка на месте после перезагрузки')]
   ] },
@@ -597,7 +597,7 @@ export const SCENARIOS = [
     ['журнал: за неделю — тяжёлый и лёгкий день жима', go('journal') + settle + expect('[...document.querySelectorAll(".wo")].slice(0, 3).map(w => (w.textContent.includes("Жим лежа — лёгкий день") ? "л" : "") + (w.textContent.includes("Жим лежа — средний день") ? "с" : "")).sort().join() === ",,л"', 'в трёх последних тренировках — один лёгкий день жима, среднего нет (выводы аудита)')],
     ...week(2, 1, null, mark('запас 2 в последнем подходе: плюс шаг', 'up')),
     ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seen('up', 'на второй неделе карточка базового говорит «запас 2 в последнем подходе: плюс шаг»')],
-    ['мышцы: сила и масса', go('muscles') + settle + expect('[...document.querySelectorAll("[id^=mavg-]")].some(e => /масса [\\d.,]+ · сила [\\d.,]+/.test(e.textContent))', 'у среднего объёма мышцы видна разбивка «масса … · сила …»')],
+    ['мышцы: подходы силы', go('muscles') + settle + expect('[...document.querySelectorAll("[id^=mavg-]")].some(e => /^\\(сила [\\d.,]+\\)$/.test(e.textContent))', 'у среднего объёма мышцы в скобках — только подходы силы: «(сила …)»')],
     ['после перезагрузки то же', RELOAD],
     ['программа после перезагрузки', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && document.querySelector("#view section.card").textContent.includes("Сила: «Жим лежа»")', 'режим на месте после перезагрузки')]
   ] },

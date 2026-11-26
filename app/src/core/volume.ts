@@ -1,8 +1,9 @@
 /* Недельный объём по мышцам и зоны.
-   Перенесено из reference/src/core.js: тела функций без изменений. */
+   Перенесено из reference/src/core.js: тела функций без изменений, кроме подписи splitText с днями «День N» (решение владельца, 26 ноября 2026). */
 import { MUSCLES, PATTERNS } from './catalog.ts';
 import { weekNo } from './dates.ts';
 import { fmt } from './format.ts';
+import { appRules } from './rules.ts';
 import { setVol, work } from './sets.ts';
 import type { Cfg, Volume, WeekInfo, Workout, Zones } from './types.ts';
 
@@ -51,4 +52,6 @@ export function avgVolume(vol: Volume, ref: WeekInfo[]) {
   return { avg, avgS, pat };
 }
 /* how a total splits into work for mass and strength work, rounded so that the two add up to the shown total */
-export const splitText = (total: number, strong: number) => { const r1 = (x: number) => Math.round(x * 10) / 10; return strong >= 0.05 ? 'масса ' + fmt(Math.max(0, r1(r1(total) - r1(strong))), 1) + ' · сила ' + fmt(r1(strong), 1) : ''; };
+/* (в эталоне нет) с днями «День N» рядом с общим числом — только подходы силы: «11.5 (сила 5.5)» (решение владельца, 26 ноября 2026):
+   «масса» читалась как «только эти подходы растят мышцу», а растят все подходы с малым запасом (docs/03, раздел 3) */
+export const splitText = (total: number, strong: number) => { const r1 = (x: number) => Math.round(x * 10) / 10; return strong >= 0.05 ? (appRules() ? 'сила ' + fmt(r1(strong), 1) : 'масса ' + fmt(Math.max(0, r1(r1(total) - r1(strong))), 1) + ' · сила ' + fmt(r1(strong), 1)) : ''; };

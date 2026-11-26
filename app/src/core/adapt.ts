@@ -10,7 +10,7 @@ import { goalOf, goalRange, GOALS, waveOf } from './goals.ts';
 import { allStats, exStats, program, sessions, stalledSets } from './stats.ts';
 import { formulaRange, hints, lastSessionItem, plan, planCycle, roundTo, startWeight, suggestSet } from './plan.ts';
 import { planned } from './tally.ts';
-import { appRules, byPct, rdlDef, RIR_CHECK, rirOf, shown } from './rules.ts';
+import { appRules, byPct, plateauOf, rdlDef, RIR_CHECK, rirOf, shown } from './rules.ts';
 import { estMinutes } from './time.ts';
 import { SKIP, skipFixes } from './skips.ts';
 import type { Tally } from './tally.ts';
@@ -125,9 +125,13 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
       push('После перерыва', [q(gap) + ' без этого упражнения: веса прошлого раза, без повышения'], prev.map(p => ({ w: p.w, tg: [Math.max(lo, Math.min(hi, p.r == null ? lo : p.r)), hi] })));
       return;
     }
-    if (s && s.n >= 4 && (s.status === 'flat' || s.status === 'down')) {
-      const b = s.pr.best;
-      push(s.status === 'down' ? 'Откат' : 'Плато', [s.sincePR + ' ' + plural(s.sincePR, ['тренировка', 'тренировки', 'тренировок']) + ' без рекорда (лучший — ' + fmt(b.w) + ' × ' + b.r + ', ' + fmtDate(s.pr.date, true) + '): все подходы −10%, повторы набираются заново до верха диапазона'],
+    /* (в эталоне нет) с днями «День N» плато — по тренду четырёх недель и без каскада после сброса (plateauOf, решение владельца 26 ноября 2026) */
+    const pl = appRules() ? (s && s.status !== 'light' ? plateauOf(s.ss, date, rirOf(cfg, it.ex)) : null) : s && s.n >= 4 && (s.status === 'flat' || s.status === 'down') ? { tag: s.status === 'down' ? 'Откат' : 'Плато', best: s.pr } : null;
+    if (s && pl) {
+      const b = pl.best.best, at = fmt(b.w) + ' × ' + b.r + ', ' + fmtDate(pl.best.date, true);
+      const why = !appRules() ? s.sincePR + ' ' + plural(s.sincePR, ['тренировка', 'тренировки', 'тренировок']) + ' без рекорда (лучший — ' + at + ')'
+        : pl.tag === 'Откат' ? 'за 4 недели лучший подход слабее прежнего больше чем на 5% (было ' + at + ')' : '4 недели без прибавки ни в одном подходе (лучший — ' + at + ')';
+      push(pl.tag, [why + ': все подходы −10%, повторы набираются заново до верха диапазона'],
         prev.map(p => { const k = Math.max(1, Math.round(p.w! * 0.1 / step)); return { w: Math.max(0, +(p.w! - k * step).toFixed(3)), tg: [Math.min(hi, (p.r == null ? lo : p.r) + 2), hi] }; }));
       return;
     }

@@ -279,7 +279,7 @@ export function vProgram() {
                 h('button', { class: 'icon-btn', id: 'mn-' + r.m.id, title: 'Убавить подход', 'aria-label': 'Убавить подход: ' + r.m.n, disabled: r.b <= 0, onclick: () => nudge(r.m, -1) }, icon('minus')),
                 h('button', { class: 'icon-btn', id: 'mp-' + r.m.id, title: 'Прибавить подход', 'aria-label': 'Прибавить подход: ' + r.m.n, onclick: () => nudge(r.m, 1) }, icon('plus')))));
           })))),
-        vols.some(r => r.s >= 0.05 || r.sa >= 0.05) ? h('p', { class: 'sub', id: 'ms-note', style: 'margin-top:8px' }, 'В скобках: масса — подсобка, сила — базовые по процентам. Силовой подход с запасом от 3 повторов идёт в объём мышцы за половину.') : null,
+        vols.some(r => r.s >= 0.05 || r.sa >= 0.05) ? h('p', { class: 'sub', id: 'ms-note', style: 'margin-top:8px' }, appRules() ? 'Число — все подходы на мышцу, в скобках — сколько из них силовые (базовые по процентам). Подход с запасом от 3 повторов идёт в объём за половину.' : 'В скобках: масса — подсобка, сила — базовые по процентам. Силовой подход с запасом от 3 повторов идёт в объём мышцы за половину.') : null,
         h('p', { class: 'note', style: 'margin-top:6px' }, '«−» освобождает подход, «+» отдаёт его мышце: дневник сам выбирает упражнение.'))),
 
     h('div', { class: 'row', style: 'margin-top:14px' },
