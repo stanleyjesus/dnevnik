@@ -13,7 +13,7 @@ const app = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const src = path.join(app, 'src', 'ui');
 
 /* шрифты страницы: пакет, название в стилях, начертания; только кириллица и латиница */
-const FONTS = [['golos-text', 'Golos Text', [400, 500, 600, 700]], ['sofia-sans-extra-condensed', 'Sofia Sans Extra Condensed', [600, 800]]];
+const FONTS = [['inter', 'Inter', [400, 500, 600]]];   // шрифт нового дизайна (решение владельца, 26 ноября 2026; theme.css)
 const SUBSETS = [
   ['cyrillic', 'U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116'],
   ['latin', 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD']
@@ -32,7 +32,7 @@ export async function build({ dev = false, dir = outDir(dev) } = {}) {
     bundle: true, format: 'iife', target: 'es2020', minify: !dev, sourcemap: dev ? 'inline' : false, legalComments: 'none', logLevel: 'warning',
     define: { __DEV__: String(dev) }                                   // при разработке страница отдаёт проверкам несколько своих функций
   });
-  for (const f of ['index.html', 'style.css', 'manifest.webmanifest']) fs.copyFileSync(path.join(src, f), path.join(dist, f));
+  for (const f of ['index.html', 'style.css', 'theme.css', 'manifest.webmanifest']) fs.copyFileSync(path.join(src, f), path.join(dist, f));
   for (const f of fs.readdirSync(path.join(src, 'icons'))) if (f.endsWith('.png')) fs.copyFileSync(path.join(src, 'icons', f), path.join(dist, f));
   const css = [];
   for (const [pkg, family, weights] of FONTS) for (const w of weights) for (const [subset, range] of SUBSETS) {

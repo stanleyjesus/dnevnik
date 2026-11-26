@@ -84,13 +84,16 @@ let shown = '';   // шаг, который на экране: появлени�
 function frame(title: string, text: string | null, body: Kid[], back: (() => void) | null, next: Kid) {
   const o = O!, all = seq(o), n = all.indexOf(o.step) + 1, enter = shown !== o.step;
   shown = o.step;
+  const end = o.step === 'start' || o.step === 'goal' || o.step === 'care' || o.step === 'paste' || o.step === 'prog' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-skip', onclick: skip }, 'Пропустить')
+    : o.step === 'done' || o.step === 'memo' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-end', onclick: () => finish('overview') }, 'В дневник') : null;
+  /* полоса шагов и «Готово на N%» сверху, «Назад» и «Дальше» — внизу за чертой (новый дизайн, 26 ноября 2026) */
   return h('section', { class: 'card', id: 'onb', 'data-enter': enter ? '' : null, style: 'max-width:760px;margin:0 auto;width:100%' },
-    h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow', id: 'onb-n' }, 'Шаг ' + n + ' из ' + all.length), h('h2', null, title)),
-      o.step === 'start' || o.step === 'goal' || o.step === 'care' || o.step === 'paste' || o.step === 'prog' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-skip', onclick: skip }, 'Пропустить')
-        : o.step === 'done' || o.step === 'memo' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-end', onclick: () => finish('overview') }, 'В дневник') : null),
+    h('div', { class: 'onb-steps', 'aria-hidden': 'true' }, all.map((_, i) => h('i', { class: i < n - 1 ? 'on' : i === n - 1 ? 'on now' : null }))),
+    h('div', { class: 'onb-top' }, h('span', null, h('b', null, 'Готово на ' + Math.round(n / all.length * 100) + '%')), end),
+    h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow', id: 'onb-n' }, 'Шаг ' + n + ' из ' + all.length), h('h2', null, title))),
     text ? h('p', { class: 'note', style: 'margin-bottom:12px' }, text) : null,
     body,
-    h('div', { class: 'row', style: 'margin-top:16px;justify-content:space-between' },
+    h('div', { class: 'row onb-foot', style: 'margin-top:16px;justify-content:space-between' },
       back ? h('button', { type: 'button', class: 'btn', id: 'onb-back', onclick: back }, 'Назад') : h('span'), next));
 }
 /* черновик программы: тот же, что на «Программе»; режим берётся из мастера, пока на «Программе» его не выбрали */

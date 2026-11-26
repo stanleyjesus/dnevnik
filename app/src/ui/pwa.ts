@@ -4,6 +4,7 @@ import { readDevice } from './device.ts';
 import { softRender } from './render.ts';
 import { toast } from './toast.ts';
 import { smooth } from './smooth.ts';
+import { tabDrop } from './tabdrop.ts';
 
 declare const __DEV__: boolean;
 
@@ -19,4 +20,5 @@ if (!__DEV__ && 'serviceWorker' in navigator) {
   });
 }
 void readDevice(softRender);
+tabDrop();  // «капля» в нижнем меню (tabdrop.ts, новый дизайн 26 ноября 2026)
 smooth();   // нажатия и смена экрана — плавно, без моргания (smooth.ts, просьба владельца 25 ноября 2026)

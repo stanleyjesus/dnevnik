@@ -58,7 +58,7 @@ try {
     check(n === ws.length, 'записи на месте', 'в журнале ' + n + ' из ' + ws.length);
     const look = await page.run('await document.fonts.ready; const css = getComputedStyle(document.querySelector("header.top")); return { fonts: [...document.fonts].filter(f => f.status === "loaded").map(f => f.family.replace(/"/g, "") + " " + f.weight), styled: css.backgroundColor !== "rgba(0, 0, 0, 0)" || css.display === "flex" || document.styleSheets.length >= 2, sheets: document.styleSheets.length };');
     check(look.sheets >= 2, 'стили загружены из запаса', 'таблиц стилей: ' + look.sheets);
-    check(look.fonts.some(f => f.startsWith('Golos Text')) && look.fonts.some(f => f.startsWith('Sofia Sans Extra Condensed')), 'шрифты загружены из запаса', look.fonts.length ? [...new Set(look.fonts)].join(', ') : 'ни одного');
+    check(look.fonts.some(f => f.startsWith('Inter')), 'шрифты загружены из запаса', look.fonts.length ? [...new Set(look.fonts)].join(', ') : 'ни одного');
     const side = await page.run('const out = {}; for (const f of ["manifest.webmanifest", "icon-192.png", "icon-512.png", "app.js"]) { try { out[f] = (await fetch(f)).status; } catch (e) { out[f] = "нет"; } } return out;');
     check(Object.values(side).every(s => s === 200), 'значок, описание приложения и код отдаются из запаса', Object.entries(side).map(([f, s]) => f + ': ' + s).join(', '));
     /* запись без сети: вес тела сохраняется и переживает ещё одну перезагрузку */

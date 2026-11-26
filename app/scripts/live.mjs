@@ -97,7 +97,7 @@ if (same) {
     check(opened, 'без сети приложение открылось');
     if (opened) {
       const off = await look();
-      check(off.fonts.includes('Golos Text') && off.fonts.includes('Sofia Sans Extra Condensed'), 'без сети шрифты на месте', off.fonts.join(', ') || 'ни одного');
+      check(off.fonts.includes('Inter'), 'без сети шрифты на месте', off.fonts.join(', ') || 'ни одного');
       const side = await page.run('const out = {}; for (const f of ["manifest.webmanifest", "icon-192.png", "icon-512.png"]) { try { out[f] = (await fetch(f)).status; } catch (e) { out[f] = "нет"; } } return out;');
       check(Object.values(side).every(s => s === 200), 'без сети значок и описание приложения на месте', Object.entries(side).map(([f, s]) => f + ': ' + s).join(', '));
     }
