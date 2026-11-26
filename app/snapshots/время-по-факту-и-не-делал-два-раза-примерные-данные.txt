@@ -234,7 +234,7 @@
 - a(href="#workout" aria-current="page") Тренировка
 + a(href="#workout" aria-current="page")
 +  | Тренировка
-+  span.dot(title="тренировка идёт")
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
 поля: целиком
   wk-date=2025-11-12
   rng-0-0=8
@@ -347,11 +347,12 @@
   ex-note-7=
   add-ex=pec_fly
   wk-note=
+сообщение: "Время пошло: часы — наверху, на вкладке «Тренировка»"
 записи:
   + config/main {"start":"2025-09-08","zones":{"min":4,"opt":10,"high":20},"cycle":{"inc":2,"sets":4,"pct":{"3":87,"4":82,"5":77}},"method":"Примерный дневник: атлет выдуман, записи посчитаны генератором data/make.cjs. Занятий в неделе три. Три базовых упражнения - жим лежа, жим ногами, подтягивания - ведутся волной: четыре подхода на 5, 4 и 3 повтора при 77, 82 и 87 процентах от расчётного максимума; максимум за неделю прибавляет не больше 2 процентов. В остальных упражнениях сначала растут повторы, потом вес, у каждого подхода свой счёт; до отказа остаётся один повтор.","ex":{"bench":{"n":"Жим лежа","mode":"cycle","pat":"h_push","m":{"chest":1,"triceps":0.5,"delt_front":0.5},"round":5},"leg_press":{"n":"Жим ногами","mode":"cycle","pat":"knee","m":{"quads":1,"glutes":0.5},"round":5},"pullup":{"n":"Подтягивания","mode":"cycle","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"round":1},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"step":1},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"step":2.5},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"step":5},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"step":5},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"step":5},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"step":1},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"step":5},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"step":5},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"step":1},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"step":5},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"step":5},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"step":1.25},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"step":1},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"step":1},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"step":1.25},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"step":1.25},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"step":5},"leg_curl_lying":{"n":"Бицепс бедра на тренажере лежа на животе","pat":"iso","m":{"hams":1},"step":5},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"step":5},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"step":1},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5}}}}
-  + workouts/2025-11-12 {"date":"2025-11-12","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"50x? 50x? 42.5x?"},{"ex":"leg_press","rng":"6-10","sets":"192.5x? 192.5x? 192.5x? 192.5x?"},{"ex":"incline_db","rng":"6-10","sets":"24x? 24x? 22x? 22x?"},{"ex":"tbar_row","rng":"6-10","sets":"32.5x? 30x? 30x? 30x? 30x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 27.5x? 27.5x?","note":"Проверка запаса: последний подход — до отказа"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 15x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?"}],"open":true}
+  + workouts/2025-11-12 {"date":"2025-11-12","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"50x? 50x? 42.5x?"},{"ex":"leg_press","rng":"6-10","sets":"192.5x? 192.5x? 192.5x? 192.5x?"},{"ex":"incline_db","rng":"6-10","sets":"24x? 24x? 22x? 22x?"},{"ex":"tbar_row","rng":"6-10","sets":"32.5x? 30x? 30x? 30x? 30x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 27.5x? 27.5x?","note":"Проверка запаса: последний подход — до отказа"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 15x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?"}],"open":true,"began":1762941602000}
 черновик:
-  + td-draft {"id":"2025-11-12","date":"2025-11-12","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null},{"w":50,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":192.5,"r":null},{"w":192.5,"r":null},{"w":192.5,"r":null},{"w":192.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
+  + td-draft {"id":"2025-11-12","date":"2025-11-12","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null},{"w":50,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":192.5,"r":null},{"w":192.5,"r":null},{"w":192.5,"r":null},{"w":192.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}],"began":1762941602000}
 экран: правки к шагу 1
 @@ 5 -1 +1
 -     div.eyebrow Новая тренировка
@@ -1273,6 +1274,10 @@
 +    button.btn.ghost.danger(title="Удалить эту тренировку") Отменить
 
 === 3. день 2, неделя 1: разгибания ног — «не делал», остальное сделано
+шапка: правки к шагу 2
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:01
 поля: правки к шагу 2
 @@ 2 -12 +0
 @@ 17 -1 +1
@@ -1350,8 +1355,9 @@
 @@ 107 -1 +1
 - r-7-2=
 + r-7-2=10
+сообщение: ""
 черновик:
-  + td-draft {"id":"2025-11-12","date":"2025-11-12","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null,"skip":true},{"w":50,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":192.5,"r":10},{"w":192.5,"r":10},{"w":192.5,"r":10},{"w":192.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":24,"r":10},{"w":24,"r":10},{"w":22,"r":10},{"w":22,"r":10}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":10},{"w":30,"r":10},{"w":30,"r":10},{"w":30,"r":10},{"w":30,"r":10}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":10},{"w":27.5,"r":10},{"w":27.5,"r":10}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":10},{"w":15,"r":10},{"w":15,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":10},{"w":12.5,"r":10},{"w":12.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":10},{"w":null,"r":10},{"w":null,"r":10}],"note":"","skip":false,"rir":null}]}
+  + td-draft {"id":"2025-11-12","date":"2025-11-12","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null,"skip":true},{"w":50,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":192.5,"r":10},{"w":192.5,"r":10},{"w":192.5,"r":10},{"w":192.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":24,"r":10},{"w":24,"r":10},{"w":22,"r":10},{"w":22,"r":10}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":10},{"w":30,"r":10},{"w":30,"r":10},{"w":30,"r":10},{"w":30,"r":10}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":10},{"w":27.5,"r":10},{"w":27.5,"r":10}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":10},{"w":15,"r":10},{"w":15,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":10},{"w":12.5,"r":10},{"w":12.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":10},{"w":null,"r":10},{"w":null,"r":10}],"note":"","skip":false,"rir":null}],"began":1762941602000}
 экран: правки к шагу 2
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
@@ -1648,37 +1654,34 @@
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 +        | в диапазоне: дальше цель 11+
 
-=== 4. день 2, неделя 1: завершить — сколько шла
-поля: правки к шагу 3
-@@ 100 -0 +1
-+ wk-min=
+=== 4. день 2, неделя 1: завершить — одно упражнение «не делал»
+шапка: правки к шагу 3
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:01
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:02
 экран: правки к шагу 3
-@@ 854 -3 +9
+@@ 854 -3 +5
 -   div.row.between
 -    button.btn.primary Завершить тренировку
 -    button.btn.ghost.danger(title="Удалить эту тренировку") Отменить
 +   div.confirm
 +    p Упражнений без единого подхода: 1 — будут отмечены «не делал».
-+    label.f
-+     span Сколько длилась тренировка, мин
-+     input#wk-min.num(type="text" inputmode="numeric" aria-label="Сколько минут длилась тренировка" placeholder="83")
-+     span.sub по расчёту ≈ 1 ч 25 мин; по ответам дневник подстроит оценку под твой темп
 +    div.row(style="margin-top:8px")
 +     button.btn.primary Завершить
 +     button.btn Вернуться
 
-=== 5. день 2, неделя 1: время и завершить
+=== 5. день 2, неделя 1: через 100 мин после старта — завершить
 адрес: "#overview"
 шапка: правки к шагу 4
 @@ 18 -4 +2
 - a(href="#overview") Обзор
 - a(href="#workout" aria-current="page")
 -  | Тренировка
--  span.dot(title="тренировка идёт")
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:02
 + a(href="#overview" aria-current="page") Обзор
 + a(href="#workout") Тренировка
 поля: —
-сообщение: "Тренировка сохранена"
+сообщение: "Тренировка сохранена, шла 1 ч 40 мин"
 записи:
   + workouts/2025-11-12 {"date":"2025-11-12","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"50x- 50x- 42.5x-","skip":true},{"ex":"leg_press","rng":"6-10","sets":"192.5x10 192.5x10 192.5x10 192.5x10"},{"ex":"incline_db","rng":"6-10","sets":"24x10 24x10 22x10 22x10"},{"ex":"tbar_row","rng":"6-10","sets":"32.5x10 30x10 30x10 30x10 30x10"},{"ex":"barbell_curl","rng":"8-12","sets":"30x10 27.5x10 27.5x10","note":"Проверка запаса: последний подход — до отказа"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x10 15x10 15x10"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x10 12.5x10 12.5x10"},{"ex":"x_rear","rng":"8-12","sets":"0x10 0x10 0x10"}],"min":100}
 черновик:
@@ -1696,7 +1699,7 @@
 +     span.v 119
 +     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#b6ac794115
 +    span.d +19% к первой неделе
-@@ 5 -858 +266
+@@ 5 -854 +266
 +     div.eyebrow Следующая тренировка
 +     h2 Четверг, 13 ноября
 +    a.btn.primary(href="#workout") Открыть план
@@ -2124,10 +2127,11 @@
 @@ 109 -1 +1
 - ex-note-7=
 + ex-note-7=Проверка запаса: последний подход — до отказа
+сообщение: "Время пошло: часы — наверху, на вкладке «Тренировка»"
 записи:
-  + workouts/2025-11-19 {"date":"2025-11-19","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"50x? 50x? 42.5x?"},{"ex":"leg_press","rng":"6-10","sets":"195x? 195x? 195x? 195x?"},{"ex":"incline_db","rng":"6-10","sets":"26x? 26x? 24x? 24x?"},{"ex":"tbar_row","rng":"6-10","sets":"35x? 32.5x? 32.5x? 32.5x? 32.5x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 27.5x? 27.5x?"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 15x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?","note":"Проверка запаса: последний подход — до отказа"}],"open":true}
+  + workouts/2025-11-19 {"date":"2025-11-19","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"50x? 50x? 42.5x?"},{"ex":"leg_press","rng":"6-10","sets":"195x? 195x? 195x? 195x?"},{"ex":"incline_db","rng":"6-10","sets":"26x? 26x? 24x? 24x?"},{"ex":"tbar_row","rng":"6-10","sets":"35x? 32.5x? 32.5x? 32.5x? 32.5x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 27.5x? 27.5x?"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 15x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?","note":"Проверка запаса: последний подход — до отказа"}],"open":true,"began":1762941607000}
 черновик:
-  + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null},{"w":50,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":195,"r":null},{"w":195,"r":null},{"w":195,"r":null},{"w":195,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":35,"r":null},{"w":32.5,"r":null},{"w":32.5,"r":null},{"w":32.5,"r":null},{"w":32.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":null},{"w":0,"r":null},{"w":0,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}]}
+  + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null},{"w":50,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":195,"r":null},{"w":195,"r":null},{"w":195,"r":null},{"w":195,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":35,"r":null},{"w":32.5,"r":null},{"w":32.5,"r":null},{"w":32.5,"r":null},{"w":32.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":null},{"w":0,"r":null},{"w":0,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}],"began":1762941607000}
 экран: правки к шагу 2
 @@ 6 -1 +1
 -     h2 Среда, 12 ноября
@@ -2558,7 +2562,8 @@
 -      option(value="x_rear") Обратная бабочка
 
 === 8. день 2, неделя 2: разгибания ног — «не делал», остальное сделано
-поля: правки к шагу 4
+шапка: как в шаге 3
+поля: правки к шагу 3
 @@ 1 -1 +1
 - wk-date=2025-11-12
 + wk-date=2025-11-19
@@ -2616,10 +2621,9 @@
 @@ 97 -1 +1
 - ex-note-7=
 + ex-note-7=Проверка запаса: последний подход — до отказа
-@@ 100 -1 +0
-- wk-min=
+сообщение: ""
 черновик:
-  + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null,"skip":true},{"w":50,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":195,"r":10},{"w":195,"r":10},{"w":195,"r":10},{"w":195,"r":10}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":10},{"w":26,"r":10},{"w":24,"r":10},{"w":24,"r":10}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":35,"r":10},{"w":32.5,"r":10},{"w":32.5,"r":10},{"w":32.5,"r":10},{"w":32.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":10},{"w":27.5,"r":10},{"w":27.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":10},{"w":15,"r":10},{"w":15,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":10},{"w":12.5,"r":10},{"w":12.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":10},{"w":0,"r":10},{"w":0,"r":10}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}]}
+  + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null,"skip":true},{"w":50,"r":null,"skip":true},{"w":42.5,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":195,"r":10},{"w":195,"r":10},{"w":195,"r":10},{"w":195,"r":10}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":10},{"w":26,"r":10},{"w":24,"r":10},{"w":24,"r":10}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":35,"r":10},{"w":32.5,"r":10},{"w":32.5,"r":10},{"w":32.5,"r":10},{"w":32.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":10},{"w":27.5,"r":10},{"w":27.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":10},{"w":15,"r":10},{"w":15,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":10},{"w":12.5,"r":10},{"w":12.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":10},{"w":0,"r":10},{"w":0,"r":10}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}],"began":1762941607000}
 экран: правки к шагу 7
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
@@ -2913,30 +2917,34 @@
 -        | цель 11+
 +        | в диапазоне: дальше цель 11+
 
-=== 9. день 2, неделя 2: завершить — сколько шла
-поля: правки к шагу 8
-@@ 100 -0 +1
-+ wk-min=
+=== 9. перезагрузка посреди тренировки
+шапка: как в шаге 2
 экран: правки к шагу 8
-@@ 856 -3 +9
+@@ 11 -1 +1
+-     span#save-state есть несохранённые изменения
++     span#save-state сохранено
+
+=== 10. день 2, неделя 2: завершить — одно упражнение «не делал»
+шапка: правки к шагу 9
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:03
+экран: правки к шагу 9
+@@ 856 -3 +5
 -   div.row.between
 -    button.btn.primary Завершить тренировку
 -    button.btn.ghost.danger(title="Удалить эту тренировку") Отменить
 +   div.confirm
 +    p Упражнений без единого подхода: 1 — будут отмечены «не делал».
-+    label.f
-+     span Сколько длилась тренировка, мин
-+     input#wk-min.num(type="text" inputmode="numeric" aria-label="Сколько минут длилась тренировка" placeholder="83")
-+     span.sub по расчёту ≈ 1 ч 25 мин; по ответам дневник подстроит оценку под твой темп
 +    div.row(style="margin-top:8px")
 +     button.btn.primary Завершить
 +     button.btn Вернуться
 
-=== 10. день 2, неделя 2: время и завершить
+=== 11. день 2, неделя 2: через 105 мин после старта — завершить
 адрес: "#overview"
 шапка: как в шаге 5
 поля: —
-сообщение: "Тренировка сохранена"
+сообщение: "Тренировка сохранена, шла 1 ч 45 мин"
 записи:
   + workouts/2025-11-19 {"date":"2025-11-19","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"50x- 50x- 42.5x-","skip":true},{"ex":"leg_press","rng":"6-10","sets":"195x10 195x10 195x10 195x10"},{"ex":"incline_db","rng":"6-10","sets":"26x10 26x10 24x10 24x10"},{"ex":"tbar_row","rng":"6-10","sets":"35x10 32.5x10 32.5x10 32.5x10 32.5x10"},{"ex":"barbell_curl","rng":"8-12","sets":"30x10 27.5x10 27.5x10"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x10 15x10 15x10"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x10 12.5x10 12.5x10"},{"ex":"x_rear","rng":"8-12","sets":"0x10 0x10 0x10","note":"Проверка запаса: последний подход — до отказа"}],"min":105}
 черновик:
@@ -2956,7 +2964,7 @@
 -   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 30 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 5. Перед стартом можно снять любую.
 +   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 55 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 5. Перед стартом можно снять любую.
 
-=== 11. день 2, неделя 3: в плане поправка
+=== 12. день 2, неделя 3: в плане поправка
 адрес: "#workout"
 шапка: как в шаге 1
 поля: целиком
@@ -3020,12 +3028,12 @@
 +      span.chip.up 35 ↑
 +      span.chip.up 35 ↑
 
-=== 12. снять поправку галочкой
+=== 13. снять поправку галочкой
 поля: целиком
   np-date=2025-11-26
   pp-leg_ext=false
   pp-x_rear=true
-экран: правки к шагу 11
+экран: правки к шагу 12
 @@ 22 -1 +1
 -      input#pp-leg_ext(type="checkbox" checked="")
 +      input#pp-leg_ext(type="checkbox")
@@ -3048,11 +3056,11 @@
 +      span.chip 50
 +      span.chip 42.5
 
-=== 13. вернуть поправку
-поля: как в шаге 11
-экран: как в шаге 11
+=== 14. вернуть поправку
+поля: как в шаге 12
+экран: как в шаге 12
 
-=== 14. старт: убранное — отдельным блоком
+=== 15. старт: убранное — отдельным блоком
 шапка: как в шаге 2
 поля: целиком
   wk-date=2025-11-26
@@ -3154,10 +3162,11 @@
   ex-note-6=Проверка запаса: последний подход — до отказа
   add-ex=pec_fly
   wk-note=
+сообщение: "Время пошло: часы — наверху, на вкладке «Тренировка»"
 записи:
-  + workouts/2025-11-26 {"date":"2025-11-26","slot":"wed","items":[{"ex":"leg_press","rng":"6-10","sets":"197.5x? 197.5x? 197.5x? 197.5x?"},{"ex":"incline_db","rng":"6-10","sets":"28x? 28x? 26x? 26x?"},{"ex":"tbar_row","rng":"6-10","sets":"37.5x? 35x? 35x? 35x? 35x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 27.5x? 27.5x?"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 15x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?","note":"Проверка запаса: последний подход — до отказа"}],"open":true}
+  + workouts/2025-11-26 {"date":"2025-11-26","slot":"wed","items":[{"ex":"leg_press","rng":"6-10","sets":"197.5x? 197.5x? 197.5x? 197.5x?"},{"ex":"incline_db","rng":"6-10","sets":"28x? 28x? 26x? 26x?"},{"ex":"tbar_row","rng":"6-10","sets":"37.5x? 35x? 35x? 35x? 35x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 27.5x? 27.5x?"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 15x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?","note":"Проверка запаса: последний подход — до отказа"}],"open":true,"began":1762941615000}
 черновик:
-  + td-draft {"id":"2025-11-26","date":"2025-11-26","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":28,"r":null},{"w":28,"r":null},{"w":26,"r":null},{"w":26,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":37.5,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":null},{"w":0,"r":null},{"w":0,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}]}
+  + td-draft {"id":"2025-11-26","date":"2025-11-26","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":28,"r":null},{"w":28,"r":null},{"w":26,"r":null},{"w":26,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":37.5,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":null},{"w":0,"r":null},{"w":0,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}],"began":1762941615000}
 экран: правки к шагу 7
 @@ 6 -1 +1
 -     h2 Среда, 19 ноября
@@ -3496,7 +3505,8 @@
 +      div.sub Два раза подряд не сделано (12 ноя и 19 ноя): переезжает в День 1 — с ним там ≈ 1 ч 50 мин, не дольше тренировок, которые ты успеваешь целиком.
 +     button#back-leg_ext.btn.sm Вернуть
 
-=== 15. вернуть упражнение
+=== 16. вернуть упражнение
+шапка: как в шаге 3
 поля: правки к шагу 7
 @@ 1 -1 +1
 - wk-date=2025-11-19
@@ -3540,8 +3550,9 @@
 @@ 58 -1 +1
 - w-3-4=32.5
 + w-3-4=35
+сообщение: ""
 черновик:
-  + td-draft {"id":"2025-11-26","date":"2025-11-26","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null},{"w":50,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":28,"r":null},{"w":28,"r":null},{"w":26,"r":null},{"w":26,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":37.5,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":null},{"w":0,"r":null},{"w":0,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}]}
+  + td-draft {"id":"2025-11-26","date":"2025-11-26","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null},{"w":50,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":28,"r":null},{"w":28,"r":null},{"w":26,"r":null},{"w":26,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":37.5,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":null},{"w":0,"r":null},{"w":0,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}],"began":1762941615000}
 экран: правки к шагу 7
 @@ 6 -1 +1
 -     h2 Среда, 19 ноября
@@ -3624,17 +3635,18 @@
 -    span прошлый раз 12 ноя
 +    span прошлый раз 19 ноя
 
-=== 16. и убрать крестиком
-поля: как в шаге 14
+=== 17. и убрать крестиком
+шапка: как в шаге 4
+поля: как в шаге 15
 черновик:
-  + td-draft {"id":"2025-11-26","date":"2025-11-26","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":28,"r":null},{"w":28,"r":null},{"w":26,"r":null},{"w":26,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":37.5,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":null},{"w":0,"r":null},{"w":0,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}]}
-экран: правки к шагу 14
+  + td-draft {"id":"2025-11-26","date":"2025-11-26","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null},{"w":197.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":28,"r":null},{"w":28,"r":null},{"w":26,"r":null},{"w":26,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":37.5,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null},{"w":35,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":null},{"w":0,"r":null},{"w":0,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}],"began":1762941615000}
+экран: правки к шагу 15
 @@ 11 -1 +1
 -     span#save-state сохранено
 +     span#save-state есть несохранённые изменения
 
-=== 17. подходы
-поля: правки к шагу 16
+=== 18. подходы
+поля: правки к шагу 17
 @@ 5 -1 +1
 - r-0-0=
 + r-0-0=10
@@ -3711,8 +3723,8 @@
 - r-6-2=
 + r-6-2=10
 черновик:
-  + td-draft {"id":"2025-11-26","date":"2025-11-26","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":197.5,"r":10},{"w":197.5,"r":10},{"w":197.5,"r":10},{"w":197.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":28,"r":10},{"w":28,"r":10},{"w":26,"r":10},{"w":26,"r":10}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":37.5,"r":10},{"w":35,"r":10},{"w":35,"r":10},{"w":35,"r":10},{"w":35,"r":10}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":10},{"w":27.5,"r":10},{"w":27.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":10},{"w":15,"r":10},{"w":15,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":10},{"w":12.5,"r":10},{"w":12.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":10},{"w":0,"r":10},{"w":0,"r":10}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}]}
-экран: правки к шагу 16
+  + td-draft {"id":"2025-11-26","date":"2025-11-26","slot":"wed","note":"","open":true,"items":[{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":197.5,"r":10},{"w":197.5,"r":10},{"w":197.5,"r":10},{"w":197.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":28,"r":10},{"w":28,"r":10},{"w":26,"r":10},{"w":26,"r":10}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":37.5,"r":10},{"w":35,"r":10},{"w":35,"r":10},{"w":35,"r":10},{"w":35,"r":10}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":10},{"w":27.5,"r":10},{"w":27.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":10},{"w":15,"r":10},{"w":15,"r":10}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":10},{"w":12.5,"r":10},{"w":12.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":0,"r":10},{"w":0,"r":10},{"w":0,"r":10}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null}],"began":1762941615000}
+экран: правки к шагу 17
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 45 мин · осталось ≈ 1 ч 35 мин
 +     span#eta по плану ≈ 1 ч 45 мин · все подходы записаны
@@ -3994,7 +4006,7 @@
 -        | цель 11+
 +        | в диапазоне: дальше цель 11+
 
-=== 18. завершить без него
+=== 19. завершить без него
 адрес: "#overview"
 шапка: как в шаге 5
 поля: —
@@ -4004,7 +4016,7 @@
   + workouts/2025-11-26 {"date":"2025-11-26","slot":"wed","items":[{"ex":"leg_press","rng":"6-10","sets":"197.5x10 197.5x10 197.5x10 197.5x10"},{"ex":"incline_db","rng":"6-10","sets":"28x10 28x10 26x10 26x10"},{"ex":"tbar_row","rng":"6-10","sets":"37.5x10 35x10 35x10 35x10 35x10"},{"ex":"barbell_curl","rng":"8-12","sets":"30x10 27.5x10 27.5x10"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x10 15x10 15x10"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x10 12.5x10 12.5x10"},{"ex":"x_rear","rng":"8-12","sets":"0x10 0x10 0x10","note":"Проверка запаса: последний подход — до отказа"}]}
 черновик:
   - td-draft
-экран: правки к шагу 10
+экран: правки к шагу 11
 @@ 5 -1 +1
 -    span.v 26
 +    span.v 27
@@ -4038,9 +4050,9 @@
 -       | 30
 -       small 8+
 
-=== 19. программа: разгибания ног в дне 1
+=== 20. программа: разгибания ног в дне 1
 адрес: "#program"
-шапка: правки к шагу 18
+шапка: правки к шагу 19
 @@ 18 -1 +1
 - a(href="#overview" aria-current="page") Обзор
 + a(href="#overview") Обзор
@@ -4051,7 +4063,7 @@
   pm=even
   pt=0
 сообщение: ""
-экран: правки к шагу 18
+экран: правки к шагу 19
 @@ 2 -12 +1
 +  section.card
 @@ 16 -121 +105
@@ -4640,7 +4652,7 @@
 +    button#prog-accept.btn.primary Принять программу
 +    span.sub Ближайшая тренировка каждого дня будет построена по ней, веса возьмутся из последних тренировок.
 
-=== 20. день 1: в плане разгибания ног
+=== 21. день 1: в плане разгибания ног
 адрес: "#workout"
 шапка: как в шаге 1
 поля: целиком
@@ -4831,11 +4843,11 @@
      button.btn.primary Начать тренировку
      button.btn Начать с пустого листа
 
-=== 21. журнал: время в законченной записи
-поля: правки к шагу 17
+=== 22. журнал: время в законченной записи
+поля: правки к шагу 18
 @@ 2 -0 +1
 + wk-min=
-экран: правки к шагу 17
+экран: правки к шагу 18
 @@ 5 -1 +1
 -     div.eyebrow Тренировка идёт
 +     div.eyebrow Правка записи
@@ -4863,9 +4875,9 @@
 +    button.btn.primary Сохранить изменения
 +    button.btn Отмена
 
-=== 22. время записи
+=== 23. время записи
 адрес: "#journal"
-шапка: правки к шагу 21
+шапка: правки к шагу 22
 @@ 19 -2 +2
 - a(href="#workout" aria-current="page") Тренировка
 - a(href="#journal") Журнал
@@ -4875,7 +4887,7 @@
 сообщение: "Запись обновлена"
 записи:
   + workouts/2025-11-26 {"date":"2025-11-26","slot":"wed","items":[{"ex":"leg_press","rng":"6-10","sets":"197.5x10 197.5x10 197.5x10 197.5x10"},{"ex":"incline_db","rng":"6-10","sets":"28x10 28x10 26x10 26x10"},{"ex":"tbar_row","rng":"6-10","sets":"37.5x10 35x10 35x10 35x10 35x10"},{"ex":"barbell_curl","rng":"8-12","sets":"30x10 27.5x10 27.5x10"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x10 15x10 15x10"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x10 12.5x10 12.5x10"},{"ex":"x_rear","rng":"8-12","sets":"0x10 0x10 0x10","note":"Проверка запаса: последний подход — до отказа"}],"min":70}
-экран: правки к шагу 21
+экран: правки к шагу 22
 @@ 2 -68 +20
 +  details.week(open="")
 +   summary

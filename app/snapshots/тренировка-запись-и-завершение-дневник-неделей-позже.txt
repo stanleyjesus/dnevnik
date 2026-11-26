@@ -257,7 +257,7 @@
 - a(href="#workout" aria-current="page") Тренировка
 + a(href="#workout" aria-current="page")
 +  | Тренировка
-+  span.dot(title="тренировка идёт")
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
 поля: целиком
   wk-date=2025-11-19
   rng-0-0=8
@@ -370,11 +370,12 @@
   ex-note-7=
   add-ex=pec_fly
   wk-note=
+сообщение: "Время пошло: часы — наверху, на вкладке «Тренировка»"
 записи:
   + config/main {"cycle":{"inc":2,"pct":{"3":87,"4":82,"5":77},"sets":4},"ex":{"abduction":{"hi":15,"lo":10,"m":{"glutes":1},"n":"Отведение ног в тренажере","pat":"iso","step":5},"abs":{"m":{"abs":1},"n":"Пресс","pat":"iso","step":1},"back_ext":{"hi":15,"lo":10,"m":{"erectors":1,"glutes":0.5,"hams":0.5},"n":"Гиперэкстензия","pat":"hinge","step":5},"barbell_curl":{"m":{"biceps":1},"n":"Бицепс со штангой стоя","pat":"iso","step":5},"bayesian_curl":{"m":{"biceps":1},"n":"Бицепс Bayesian curl","pat":"iso","step":5},"bench":{"m":{"chest":1,"delt_front":0.5,"triceps":0.5},"mode":"cycle","n":"Жим лежа","pat":"h_push","round":5},"chest_press":{"m":{"chest":1,"delt_front":0.5,"triceps":0.5},"n":"Жим в тренажере на грудь","pat":"h_push","step":2.5},"db_bench":{"m":{"chest":1,"delt_front":0.5,"triceps":0.5},"n":"Жим гантелей лежа","pat":"h_push","step":2},"db_ohp":{"m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"n":"Жим гантелей сидя","pat":"v_push","step":2},"hammer":{"m":{"biceps":1,"forearms":0.5},"n":"Молотки с гантелями","pat":"iso","step":1},"hip_thrust":{"m":{"glutes":1,"hams":0.5},"n":"Ягодичный мост со штангой","pat":"hinge","step":2.5},"incline_db":{"m":{"chest":1,"delt_front":0.5,"triceps":0.5},"n":"Жим гантелей под углом 45","pat":"h_push","step":1},"lat_pulldown":{"m":{"biceps":0.5,"lats":1,"upper_back":0.5},"n":"Вертикальная тяга в тренажере","pat":"v_pull","step":5},"lat_raise":{"hi":20,"lo":10,"m":{"delt_mid":1},"n":"Махи гантелями в стороны","pat":"iso","step":2},"lat_raise_db":{"m":{"delt_mid":1},"n":"Махи с гантелями на плечи","pat":"iso","step":1},"lat_raise_machine":{"m":{"delt_mid":1},"n":"Средние дельты в тренажере","pat":"iso","step":5},"leg_curl_lying":{"m":{"hams":1},"n":"Бицепс бедра на тренажере лежа на животе","pat":"iso","step":5},"leg_curl_seated":{"m":{"hams":1},"n":"Бицепс бедра сидя в тренажере","pat":"iso","step":5},"leg_ext":{"m":{"quads":1},"n":"Разгибания ног в тренажере","pat":"iso","step":5},"leg_press":{"m":{"glutes":0.5,"quads":1},"mode":"cycle","n":"Жим ногами","pat":"knee","round":5},"lunge":{"m":{"glutes":1,"quads":1},"n":"Выпады с гантелями","pat":"knee","step":2},"pec_fly":{"m":{"chest":1,"delt_front":0.5},"n":"Бабочка","pat":"iso","step":2.5},"pullup":{"gear":"belt","m":{"biceps":0.5,"lats":1,"upper_back":0.5},"mode":"cycle","n":"Подтягивания","pat":"v_pull","round":1},"rdl":{"m":{"erectors":1,"glutes":1,"hams":1},"n":"Румынская тяга","pat":"hinge","step":5},"row_machine":{"m":{"biceps":0.5,"delt_rear":0.5,"lats":0.5,"upper_back":1},"n":"Горизонтальная тяга в тренажере","pat":"h_pull","step":5},"squat":{"m":{"glutes":0.5,"quads":1},"n":"Приседания со штангой","pat":"knee","step":5},"tbar_row":{"m":{"biceps":0.5,"delt_rear":0.5,"lats":0.5,"upper_back":1},"n":"Горизонтальная тяга Т-бар","pat":"h_pull","step":5},"tri_overhead":{"m":{"triceps":1},"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","step":1.25},"tri_pushdown":{"m":{"triceps":1},"n":"Трицепс с косичкой на блоке","pat":"iso","step":5},"wrist_cable_l":{"m":{"forearms":1},"n":"Кисть на блоке левая","pat":"iso","step":1.25,"uni":true},"wrist_cable_r":{"m":{"forearms":1},"n":"Кисть на блоке правая","pat":"iso","step":1.25,"uni":true},"wrist_db_l":{"m":{"forearms":1},"n":"Кисть с гантелью левая рука","pat":"iso","step":1,"uni":true},"wrist_db_r":{"m":{"forearms":1},"n":"Кисть с гантелью правая рука","pat":"iso","step":1,"uni":true},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5}}},"gear":{"belt":{"n":"Пояс с отягощением","step":1}},"method":"Примерный дневник: атлет выдуман, записи посчитаны генератором data/make.cjs. Занятий в неделе три. Три базовых упражнения - жим лежа, жим ногами, подтягивания - ведутся волной: четыре подхода на 5, 4 и 3 повтора при 77, 82 и 87 процентах от расчётного максимума; максимум за неделю прибавляет не больше 2 процентов. В остальных упражнениях сначала растут повторы, потом вес, у каждого подхода свой счёт; до отказа остаётся один повтор.","start":"2025-09-08","zones":{"high":20,"min":4,"opt":10}}
-  + workouts/2025-11-19 {"date":"2025-11-19","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"52.5x? 52.5x? 42.5x?"},{"ex":"leg_press","rng":"6-10","sets":"175x? 175x? 172.5x? 172.5x?"},{"ex":"incline_db","rng":"6-10","sets":"26x? 24x? 24x? 22x?"},{"ex":"tbar_row","rng":"6-10","sets":"32.5x? 30x? 32.5x? 30x? 30x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 30x? 27.5x?"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 12.5x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?"}],"open":true}
+  + workouts/2025-11-19 {"date":"2025-11-19","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"52.5x? 52.5x? 42.5x?"},{"ex":"leg_press","rng":"6-10","sets":"175x? 175x? 172.5x? 172.5x?"},{"ex":"incline_db","rng":"6-10","sets":"26x? 24x? 24x? 22x?"},{"ex":"tbar_row","rng":"6-10","sets":"32.5x? 30x? 32.5x? 30x? 30x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 30x? 27.5x?"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 12.5x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?"}],"open":true,"began":1763546402000}
 черновик:
-  + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":52.5,"r":null},{"w":52.5,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":175,"r":null},{"w":175,"r":null},{"w":172.5,"r":null},{"w":172.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
+  + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":52.5,"r":null},{"w":52.5,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":175,"r":null},{"w":175,"r":null},{"w":172.5,"r":null},{"w":172.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}],"began":1763546402000}
 экран: правки к шагу 1
 @@ 5 -1 +1
 -     div.eyebrow Новая тренировка
@@ -1336,8 +1337,9 @@
 - q-0-2=
 + r-0-2=7
 + q-0-2=0
+сообщение: ""
 черновик:
-  + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":52.5,"r":9,"q":1},{"w":52.5,"r":12},{"w":42.5,"r":7,"q":0}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":175,"r":null},{"w":175,"r":null},{"w":172.5,"r":null},{"w":172.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
+  + td-draft {"id":"2025-11-19","date":"2025-11-19","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":52.5,"r":9,"q":1},{"w":52.5,"r":12},{"w":42.5,"r":7,"q":0}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":175,"r":null},{"w":175,"r":null},{"w":172.5,"r":null},{"w":172.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":26,"r":null},{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":30,"r":null},{"w":27.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}],"began":1763546402000}
 экран: правки к шагу 2
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
@@ -1388,8 +1390,12 @@
 +     span#save-state сохранено
 
 === 5. автосохранение
+шапка: правки к шагу 4
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:03
 записи:
-  + workouts/2025-11-19 {"date":"2025-11-19","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"52.5x9@1 52.5x12 42.5x7@0"},{"ex":"leg_press","rng":"6-10","sets":"175x? 175x? 172.5x? 172.5x?"},{"ex":"incline_db","rng":"6-10","sets":"26x? 24x? 24x? 22x?"},{"ex":"tbar_row","rng":"6-10","sets":"32.5x? 30x? 32.5x? 30x? 30x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 30x? 27.5x?"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 12.5x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?"}],"open":true}
+  + workouts/2025-11-19 {"date":"2025-11-19","slot":"wed","items":[{"ex":"leg_ext","rng":"8-12","sets":"52.5x9@1 52.5x12 42.5x7@0"},{"ex":"leg_press","rng":"6-10","sets":"175x? 175x? 172.5x? 172.5x?"},{"ex":"incline_db","rng":"6-10","sets":"26x? 24x? 24x? 22x?"},{"ex":"tbar_row","rng":"6-10","sets":"32.5x? 30x? 32.5x? 30x? 30x?"},{"ex":"barbell_curl","rng":"8-12","sets":"30x? 30x? 27.5x?"},{"ex":"wrist_cable_r","rng":"8-15","sets":"15x? 15x? 12.5x?"},{"ex":"wrist_cable_l","rng":"8-16","sets":"12.5x? 12.5x? 12.5x?"},{"ex":"x_rear","rng":"8-12","sets":"0x? 0x? 0x?"}],"open":true,"began":1763546402000}
 
 === 6. обзор: тренировка идёт
 адрес: "#overview"
@@ -1399,6 +1405,9 @@
 - a(href="#workout" aria-current="page")
 + a(href="#overview" aria-current="page") Обзор
 + a(href="#workout")
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:03
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:04
 поля: —
 экран: правки к шагу 5
 @@ 2 -0 +11
@@ -1559,7 +1568,15 @@
 
 === 7. продолжить с обзора
 адрес: "#workout"
-шапка: как в шаге 2
+шапка: правки к шагу 6
+@@ 18 -2 +2
+- a(href="#overview" aria-current="page") Обзор
+- a(href="#workout")
++ a(href="#overview") Обзор
++ a(href="#workout" aria-current="page")
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:04
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:05
 поля: как в шаге 3
 экран: как в шаге 4
 
@@ -1569,8 +1586,10 @@
 @@ 19 -1 +1
 - a(href="#workout" aria-current="page")
 + a(href="#workout")
-@@ 22 -1 +1
+@@ 21 -2 +2
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:05
 - a(href="#journal") Журнал
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:06
 + a(href="#journal" aria-current="page") Журнал
 поля: —
 экран: правки к шагу 7
@@ -3453,31 +3472,39 @@
 
 === 9. продолжить из журнала
 адрес: "#workout"
-шапка: как в шаге 2
+шапка: правки к шагу 8
+@@ 19 -1 +1
+- a(href="#workout")
++ a(href="#workout" aria-current="page")
+@@ 21 -2 +2
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:06
+- a(href="#journal" aria-current="page") Журнал
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:07
++ a(href="#journal") Журнал
 поля: как в шаге 3
 экран: как в шаге 4
 
 === 10. вопрос перед завершением
-поля: правки к шагу 9
-@@ 112 -0 +1
-+ wk-min=
+шапка: правки к шагу 9
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:07
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:08
 экран: правки к шагу 9
-@@ 948 -3 +9
+@@ 948 -3 +5
 -   div.row.between
 -    button.btn.primary Завершить тренировку
 -    button.btn.ghost.danger(title="Удалить эту тренировку") Отменить
 +   div.confirm
 +    p Упражнений без единого подхода: 7 — будут отмечены «не делал».
-+    label.f
-+     span Сколько длилась тренировка, мин
-+     input#wk-min.num(type="text" inputmode="numeric" aria-label="Сколько минут длилась тренировка" placeholder="16")
-+     span.sub по расчёту ≈ 15 мин; по ответам дневник подстроит оценку под твой темп
 +    div.row(style="margin-top:8px")
 +     button.btn.primary Завершить
 +     button.btn Вернуться
 
 === 11. вернуться
-поля: как в шаге 3
+шапка: правки к шагу 10
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:08
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:09
 экран: как в шаге 4
 
 === 12. завершить
@@ -3487,7 +3514,7 @@
 - a(href="#overview") Обзор
 - a(href="#workout" aria-current="page")
 -  | Тренировка
--  span.dot(title="тренировка идёт")
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:09
 + a(href="#overview" aria-current="page") Обзор
 + a(href="#workout") Тренировка
 поля: —
@@ -3909,12 +3936,13 @@
 
 === 15. вторая тренировка в тот же день
 шапка: как в шаге 2
-поля: правки к шагу 11
+поля: правки к шагу 9
 @@ 2 -108 +0
+сообщение: "Время пошло: часы — наверху, на вкладке «Тренировка»"
 записи:
-  + workouts/2025-11-19-2 {"date":"2025-11-19","slot":"fri","items":[],"open":true}
+  + workouts/2025-11-19-2 {"date":"2025-11-19","slot":"fri","items":[],"open":true,"began":1763546415000}
 черновик:
-  + td-draft {"id":"2025-11-19-2","date":"2025-11-19","slot":"fri","note":"","open":true,"items":[]}
+  + td-draft {"id":"2025-11-19-2","date":"2025-11-19","slot":"fri","note":"","open":true,"items":[],"began":1763546415000}
 экран: правки к шагу 11
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 20 мин
@@ -3928,16 +3956,25 @@
 -      option(value="x_rear") Обратная бабочка
 
 === 16. автосохранение второй
+шапка: правки к шагу 15
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:01
 поля: правки к шагу 15
 @@ 3 -1 +1
 - wk-note=
 + wk-note=вторая за день
+сообщение: ""
 записи:
-  + workouts/2025-11-19-2 {"date":"2025-11-19","slot":"fri","items":[],"note":"вторая за день","open":true}
+  + workouts/2025-11-19-2 {"date":"2025-11-19","slot":"fri","items":[],"note":"вторая за день","open":true,"began":1763546415000}
 черновик:
-  + td-draft {"id":"2025-11-19-2","date":"2025-11-19","slot":"fri","note":"вторая за день","open":true,"items":[]}
+  + td-draft {"id":"2025-11-19-2","date":"2025-11-19","slot":"fri","note":"вторая за день","open":true,"items":[],"began":1763546415000}
 
 === 17. отменить вторую: вопрос
+шапка: правки к шагу 16
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:01
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:02
 экран: правки к шагу 16
 @@ 67 -1 +1
 -   textarea#wk-note(placeholder="Самочувствие, сон, что мешало")

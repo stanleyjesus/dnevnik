@@ -188,6 +188,8 @@ function inPage(base, isRef, seed, known, pack) {
         mo.observe(document.body, { subtree: true, childList: true, attributes: true, characterData: true });
       });
     },
+    /* часы страницы уходят вперёд на min минут до конца шага: столько шла тренировка между «Начать» и «Завершить» */
+    ahead(min) { now += min * 60000; },
     async go(view) { location.hash = view; await pause(120); },
     el,
     count: sel => all(sel).length,
