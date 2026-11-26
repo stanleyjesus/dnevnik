@@ -38,11 +38,11 @@ const ITEMS: [() => SvgEl, string, string, string][] = [
 export const memoCards = () => h('div', { class: 'memo' }, ITEMS.map(([art, t, p, src]) => h('div', { class: 'memo-i' }, art(), h('div', null, h('b', null, t), h('p', null, p), h('p', { class: 'src' }, src)))));
 
 /* экран поверх тренировки: он вне #view, поэтому перерисовка страницы его не трогает */
-export function showMemo() {
+export function showMemo(after?: () => void) {
   if (document.getElementById('memo-sheet')) return;
   const was = document.activeElement as HTMLElement | null;
   const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
-  const close = () => { sheet.remove(); document.removeEventListener('keydown', esc); if (was && was.isConnected) was.focus(); };
+  const close = () => { sheet.remove(); document.removeEventListener('keydown', esc); if (was && was.isConnected) was.focus(); if (after) after(); };
   const ok = h('button', { type: 'button', class: 'btn primary', id: 'memo-ok', onclick: close }, 'Понятно, начинаем');
   const sheet = h('div', { class: 'memo-sheet', id: 'memo-sheet', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'memo-h' },
     h('div', { class: 'memo-in' }, h('div', { class: 'eyebrow' }, 'Перед тренировкой'), h('h2', { id: 'memo-h' }, 'Памятка'), memoCards(), ok));

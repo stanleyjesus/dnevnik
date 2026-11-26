@@ -1,4 +1,4 @@
-/* Поправка «Не делал два раза» и время по факту (просьба владельца, 25 ноября 2026; docs/03, раздел 20): core/skips.ts, core/pace.ts, records.ts.
+/* Поправка «Не делал два раза» и время по факту (просьбы владельца 25 и 26 ноября 2026; docs/03, раздел 20): core/skips.ts, core/pace.ts, records.ts.
    Всё — с днями «День 1…3» на примерных данных из data/; с таблицей дней эталона поправки нет, а оценка времени — по формуле, как в эталоне. */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -7,7 +7,7 @@ import { Core } from '../src/core/index.ts';
 import { useDays } from '../src/core/days.ts';
 import { SKIP, applySkips } from '../src/core/skips.ts';
 import { tally } from '../src/core/tally.ts';
-import { PACE_RULE, okMin, paceOf, paceOne, setPace } from '../src/core/pace.ts';
+import { PACE_RULE, byButtons, okMin, paceOf, paceOne, setPace } from '../src/core/pace.ts';
 import { MAX_SETS } from '../src/core/rules.ts';
 import type { Cfg, Item, ProgSlots, SkipFix, Workout } from '../src/core/types.ts';
 import type { Adapted } from '../src/core/index.ts';
@@ -158,6 +158,30 @@ test('время по факту: с таблицей дней эталона о
   const old = { date: '2025-11-12', slot: 'wed', items: [{ ex: 'leg_ext', sets: '40x10 40x9' }] };
   assert.deepEqual(Core.toDoc(Core.fromDoc('2025-11-12', old)), old, 'запись без времени — та же');
   assert.deepEqual([okMin(4), okMin(5), okMin(62.4), okMin(300), okMin(301), okMin(null), okMin(NaN)], [null, 5, 62, 300, null, null, null]);
+});
+
+test('время по кнопкам: от «Начать тренировку» до «Завершить», целые минуты; без отметки старта, задним числом и вне 5 мин – 5 ч — не записано', () => {
+  /* местное время: дата тренировки сравнивается с днём, когда нажато «Начать» */
+  const t0 = new Date(2025, 10, 12, 18, 30).getTime(), min = (m: number) => t0 + m * 60000;
+  const w = { date: '2025-11-12', began: t0 };
+  assert.equal(byButtons(w, min(72.4)), 72);
+  assert.equal(byButtons(w, min(72.6)), 73);
+  assert.equal(byButtons(w, min(4)), null, 'меньше 5 минут — не тренировка');
+  assert.equal(byButtons(w, min(5)), 5);
+  assert.equal(byButtons(w, min(300)), 300);
+  assert.equal(byButtons(w, min(301)), null, '«Завершить» нажато на следующий день');
+  assert.equal(byButtons(w, min(-1)), null, 'часы ушли назад');
+  assert.equal(byButtons({ date: '2025-11-12' }, min(60)), null, 'тренировка начата без отметки старта');
+  assert.equal(byButtons({ date: '2025-11-10', began: t0 }, min(60)), null, 'тренировка записана задним числом');
+  assert.equal(byButtons({ date: '2025-11-13', began: t0 }, min(60)), 60, 'дата вперёд — как есть');
+  assert.equal(byButtons({ date: '2025-11-12', began: new Date(2025, 10, 12, 23, 30).getTime() }, new Date(2025, 10, 13, 0, 40).getTime()), 70, 'за полночь — та же тренировка');
+  /* отметка старта живёт только у идущей тренировки */
+  const open = { date: '2025-11-12', slot: 'wed', open: true, began: t0, items: [{ ex: 'leg_ext', sets: '40x10 40x?' }] };
+  const back = Core.fromDoc('2025-11-12', open);
+  assert.equal(back.began, t0);
+  assert.deepEqual(Core.toDoc(back), open, 'черновик с отметкой старта — туда и обратно');
+  assert.equal(Core.fromDoc('2025-11-12', Object.assign({}, open, { open: false })).began, undefined, 'у законченной записи отметки нет');
+  assert.equal(Core.toDoc(Object.assign({}, back, { open: false })).began, undefined);
 });
 
 test('программа под выбранное время: прибавки плана включены, только пока тренировка с ними укладывается; остальные — галочкой', () => withDays(3, () => {

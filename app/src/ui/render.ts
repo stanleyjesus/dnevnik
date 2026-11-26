@@ -8,6 +8,8 @@ import { drawCharts } from './charts.ts';
 import { VIEW_FN } from './views.ts';
 import { onbOn } from './onboard.ts';
 import { weekDays } from './platform.ts';
+import { workoutClock } from './clock.ts';
+import { appRules } from '../core/rules.ts';
 import type { Derived } from './types.ts';
 
 export let D = null as unknown as Derived;
@@ -53,6 +55,6 @@ export function paintTop() {
   const tabs = $('tabs');
   tabs!.textContent = '';
   const crit = d.ins.some(i => i.sev === 'crit');
-  for (const [id, name] of VIEWS.filter(x => x[0] !== 'coach' || weekDays())) tabs!.appendChild(h('a', { href: '#' + id, 'aria-current': S.view === id ? 'page' : null }, name, id === 'workout' && S.draft && S.draft.open ? h('span', { class: 'dot', title: 'тренировка идёт' }) : null, id === 'coach' && crit ? h('span', { class: 'dot', title: 'есть важные замечания' }) : null));
+  for (const [id, name] of VIEWS.filter(x => x[0] !== 'coach' || weekDays())) tabs!.appendChild(h('a', { href: '#' + id, 'aria-current': S.view === id ? 'page' : null }, name, id === 'workout' && S.draft && S.draft.open ? (S.draft.began && appRules() ? workoutClock(S.draft.began) : h('span', { class: 'dot', title: 'тренировка идёт' })) : null, id === 'coach' && crit ? h('span', { class: 'dot', title: 'есть важные замечания' }) : null));
 }
 export function go(v: string) { if (location.hash === '#' + v) { route(); render(); } else location.hash = v; }

@@ -9,9 +9,9 @@ import { D, go, render } from './render.ts';
 import { dayTitle, durText, paintEta, planLegend, planRows, planSets, propList, restSelect, setWord, startWorkout } from './overview.ts';
 import { exForm } from './setup.ts';
 import { appRules, cutAsk, HEAVY, heavyOf, LIGHT_RIR, lightWhy, restTag, rirOf } from '../core/rules.ts';
-import { okMin } from '../core/pace.ts';
+import { byButtons, okMin } from '../core/pace.ts';
 import { goneOf, movesOf, skipProgram } from './skipfix.ts';
-import { minField, paceText } from './pace.ts';
+import { factDur, minField, paceText } from './pace.ts';
 import { warmLine } from './warmup.ts';
 import { trimLine, trimProgram } from './trim.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
@@ -122,7 +122,7 @@ export function workoutEditor() {
   for (const it of d.items) { const f = it.sets.filter(s => s.r != null).length; if (!f || it.skip) skipEx += it.skip || it.sets.length ? 1 : 0; else empty += it.sets.length - f; }
   const bar = h('div', { class: 'wk-bar' });
   const loose = (empty ? 'Без повторов осталось ' + empty + ' ' + C.plural(empty, ['подход', 'подхода', 'подходов']) + ' — в журнал они не попадут. ' : '') + (skipEx ? 'Упражнений без единого подхода: ' + skipEx + ' — будут отмечены «не делал».' : '');
-  if (S.ui.confirm === 'finish') bar.appendChild(h('div', { class: 'confirm' }, !appRules() || loose ? h('p', null, loose) : null, appRules() ? minField(d, 'Сколько длилась тренировка, мин') : null,   // (в эталоне нет) с днями «День N» дневник спрашивает время по факту (pace.ts)
+  if (S.ui.confirm === 'finish') bar.appendChild(h('div', { class: 'confirm' }, h('p', null, loose),
     h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn primary', onclick: () => finishWorkout(true) }, 'Завершить'), h('button', { class: 'btn', onclick: () => { S.ui.confirm = null; render(true); } }, 'Вернуться'))));
   else if (S.ui.confirm === 'cancel') bar.appendChild(h('div', { class: 'confirm' }, h('p', null, 'Удалить эту тренировку целиком? Введённые подходы пропадут.'),
     h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn danger', onclick: cancelWorkout }, 'Удалить тренировку'), h('button', { class: 'btn', onclick: () => { S.ui.confirm = null; render(true); } }, 'Вернуться'))));
@@ -284,9 +284,10 @@ export async function finishWorkout(confirmed: boolean) {
   const d = S.draft as Workout;
   let loose = 0;
   for (const it of d.items) { const f = it.sets.filter(s => s.r != null).length; if (!f || it.skip) loose += it.sets.length ? 1 : 0; else loose += it.sets.length - f; }
-  if ((loose || appRules()) && !confirmed) { S.ui.confirm = 'finish'; render(true); return; }   // (в эталоне нет) с днями «День N» — всегда: сколько шла тренировка
+  if (loose && !confirmed) { S.ui.confirm = 'finish'; render(true); return; }
   const fx = appRules() ? movesOf(d) : [];                           // (в эталоне нет) поправки «Не делал два раза», которые остались в тренировке
-  if (appRules()) { const m = okMin(d.min); if (m) d.min = m; else delete d.min; }
+  const fact = appRules() && d.began ? byButtons(d, Date.now()) : null;   // (в эталоне нет) время по факту — от «Начать тренировку» до этого нажатия (pace.ts)
+  if (appRules()) { const m = d.began ? fact : okMin(d.min); if (m) d.min = m; else delete d.min; }
   for (const it of d.items) {
     const f = it.sets.filter(s => s.r != null).length;
     if (!f || it.skip) { it.skip = true; it.sets.forEach(s => { s.r = null; s.skip = true; }); }
@@ -297,12 +298,12 @@ export async function finishWorkout(confirmed: boolean) {
   d.open = false;
   const ok = await flushSave();
   if (!ok) { d.open = true; render(true); return; }
-  S.draft = null; S.dirty = false; S.ui.confirm = null; backupDraft();
+  S.draft = null; S.dirty = false; S.ui.confirm = null; backupDraft(); delete d.began;
   const moved = fx.length ? await skipProgram(d, fx) : false;
   /* (в эталоне нет) запись уже в хранилище, а список журнала догонит её сам; программа, которая с темпом атлета не влезает во время, сокращается (trim.ts) */
   let cut: string | null = null;
   if (appRules()) { S.workouts = C.sortW(S.workouts.filter(w => w.id !== d.id).concat([C.clone(d)])); cut = await trimProgram(); }
-  toast('Тренировка сохранена' + (moved ? '. Программа поправлена: ' + fx.map(f => C.exName(D.cfg, f.ex) + (f.kind === 'move' ? ' — в ' + C.SLOT[f.to!].n : ' — подходы другим упражнениям')).join(', ') : '') + (cut ? '. ' + cut : ''));
+  toast('Тренировка сохранена' + (fact ? ', шла ' + factDur(fact) : '') + (moved ? '. Программа поправлена: ' + fx.map(f => C.exName(D.cfg, f.ex) + (f.kind === 'move' ? ' — в ' + C.SLOT[f.to!].n : ' — подходы другим упражнениям')).join(', ') : '') + (cut ? '. ' + cut : ''));
   go('overview');
 }
 export async function saveEdit() {

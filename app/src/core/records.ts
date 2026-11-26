@@ -1,5 +1,5 @@
 /* Запись подходов текстом; тренировка <-> документ хранилища.
-   Перенесено из reference/src/core.js: тела функций без изменений, кроме времени тренировки по словам атлета (min, pace.ts; просьба владельца, 25 ноября 2026). */
+   Перенесено из reference/src/core.js: тела функций без изменений, кроме времени тренировки (min и began, pace.ts; просьбы владельца 25 и 26 ноября 2026). */
 import { fmt } from './format.ts';
 import type { ItemDoc, SetRec, Workout, WorkoutDoc } from './types.ts';
 
@@ -35,7 +35,8 @@ export function fromDoc(id: string, d?: Partial<WorkoutDoc> | null): Workout {
       return o;
     }).filter(it => it.ex)
   };
-  if (+d.min! > 0) w.min = Math.round(+d.min!);                   // (в эталоне нет) сколько минут шла тренировка по словам атлета (pace.ts)
+  if (+d.min! > 0) w.min = Math.round(+d.min!);                   // (в эталоне нет) сколько минут шла тренировка (pace.ts)
+  if (w.open && +d.began! > 0) w.began = +d.began!;                // (в эталоне нет) когда нажато «Начать тренировку»: только у идущей
   return w;
 }
 export function toDoc(w: Workout): WorkoutDoc {
@@ -50,6 +51,7 @@ export function toDoc(w: Workout): WorkoutDoc {
   if (w.note) d.note = w.note;
   if (w.open) d.open = true;
   if (w.min) d.min = w.min;                                         // (в эталоне нет) время по факту
+  if (w.open && w.began) d.began = w.began;                         // (в эталоне нет) старт идущей тренировки
   return d;
 }
 export const clone = <T,>(o: T): T => JSON.parse(JSON.stringify(o));

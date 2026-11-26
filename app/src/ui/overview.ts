@@ -14,6 +14,7 @@ import { appRules, byPct, isoLift } from '../core/rules.ts';
 import { zoneKey, zoneMark } from './marks.ts';
 import { showMemo } from './memo.ts';
 import { DAY_H, ISO } from '../core/strength.ts';
+import { toast } from './toast.ts';
 import type { Adapted, Cfg, Insight, Item } from '../core/index.ts';
 import type { Kid } from './types.ts';
 
@@ -89,10 +90,14 @@ export function paintEta() {
 }
 export function startWorkout(p: { slot: string, date: string, items: Item[] }) {
   S.draft = { id: uniqueId(p.date), date: p.date, slot: p.slot, note: '', open: true, items: C.clone(p.items) };
+  if (appRules()) S.draft.began = Date.now();                        // (в эталоне нет) время по факту — от этого нажатия до «Завершить» (core/pace.ts)
   S.draftSaved = null; S.dirty = true; S.ui.plan = null; S.ui.confirm = null;
   backupDraft(); saveDraft();
   if (S.view === 'workout') render(); else go('workout');
-  if (appRules()) showMemo();   // (в эталоне нет) с днями «День N» — памятка поверх начатой тренировки (просьба владельца, 26 ноября 2026)
+  /* (в эталоне нет) с днями «День N» — памятка поверх начатой тренировки (просьба владельца, 26 ноября 2026), а когда её закрыли — сообщение,
+     что часы пошли (таймер идущей тренировки, clock.ts): в новом дизайне вкладки внизу экрана, и памятка их закрывает */
+  const went = () => { if (S.draft && S.draft.open && S.draft.began) toast('Время пошло: часы — внизу, на вкладке «Тренировка»'); };
+  if (appRules()) showMemo(went); else went();
 }
 export function vOverview() {
   const out: Kid[] = [];
