@@ -200,15 +200,25 @@ export function logMax(it: Item, rir: number) {
    1. Остановка каскада: считаются только тренировки после последнего снижения веса в этом дне — сброс «Плато», свой сброс атлета, шаг вниз.
       Пока после него не набралось двух тренировок в каждом окне, нового сброса нет.
    2. Тренд по неделям: последние 4 недели против 4 недель до них. Плато — ни лучший подход, ни один подход этого дня не вырос больше чем на 0.5%
-      и вес в диапазоне не стал больше, чем был в этом дне раньше; откат — лучший подход последних недель ниже прежнего больше чем на 5%. */
-export const PLATEAU = { days: 28, min: 2, grow: 0.005, fall: 0.05, drop: 0.05 };
-/** Плато или откат упражнения двойной прогрессии перед тренировкой date: ss — его тренировки до неё по порядку, rir — запас по методике */
-export function plateauOf(ss: Session[], date: string, rir: number): { tag: 'Плато' | 'Откат', best: Session } | null {
+      и вес в диапазоне не стал больше, чем был в этом дне раньше; откат — лучший подход последних недель ниже прежнего больше чем на 5%.
+   Что делать (решение владельца тем же днём, пункты 3–5 разбора; adapt.ts). При плато вес не снижается, шаги по порядку:
+   3. Сначала проверка запаса — последний подход до отказа (если за 8 недель её не было): оценка запаса ошибается, особенно далеко от отказа
+      (исследование). Запас проверен — +1 подход, когда основной мышце по программе меньше 12 в неделю (vol; зависимость объёма и роста —
+      исследование, порог — правило дневника) и в этом дне подходов не прибавлялось; 8 недель без прибавки (swap) — замена на упражнение на те же
+      мышцы, если она есть (варианты упражнений — исследование, срок — тренерское правило). −10% — только при откате и разгрузке.
+   4. «Мало объёма» прибавляет подход и упражнению, которое стоит, а не только растущему.
+   5. После снижения веса карточка просит отметить запас (cutAsk): по нему вес возвращается за одну-две тренировки, а не шагом за тренировку. */
+export const PLATEAU = { days: 28, min: 2, grow: 0.005, fall: 0.05, drop: 0.05, vol: 12, swap: 56 };
+/** Пункт 5: в каком-то подходе вес ниже, чем в том же подходе прошлый раз, а запас в нём не отмечен */
+export const cutAsk = (sets: SetRec[], prev: SetRec[]) => sets.some((k, i) => !k.skip && k.w != null && k.q == null && !!prev[i] && prev[i].w != null && k.w < prev[i].w! - 1e-6);
+/** Плато или откат упражнения двойной прогрессии перед тренировкой date: ss — его тренировки до неё по порядку, rir — запас по методике;
+    days — сколько последних дней сравнивается с 4 неделями до них (8 недель — для замены, PLATEAU.swap) */
+export function plateauOf(ss: Session[], date: string, rir: number, days = PLATEAU.days): { tag: 'Плато' | 'Откат', best: Session } | null {
   const top = (x: Session) => x.sets.reduce((m, k) => Math.max(m, k.w || 0), 0), day = (x: Session) => x.slot || '', was: Record<string, number> = {};
   let from = 0;
   ss.forEach((x, i) => { const t = top(x); if (!x.item.cyc && was[day(x)] > 0 && t < was[day(x)] * (1 - PLATEAU.drop) + 1e-6) from = i; was[day(x)] = t; });
   const D = dnum(date), age = (x: Session) => D - dnum(x.date), rest = ss.slice(from);
-  const now = rest.filter(x => age(x) <= PLATEAU.days), before = rest.filter(x => age(x) > PLATEAU.days && age(x) <= 2 * PLATEAU.days);
+  const now = rest.filter(x => age(x) <= days), before = rest.filter(x => age(x) > days && age(x) <= days + PLATEAU.days);
   if (now.length < PLATEAU.min || before.length < PLATEAU.min) return null;
   const best = (xs: Session[]) => xs.reduce((t, x) => x.metric > t.metric ? x : t, xs[0]), b0 = best(before), b1 = best(now);
   if (b1.metric > b0.metric * (1 + PLATEAU.grow)) return null;
@@ -218,7 +228,7 @@ export function plateauOf(ss: Session[], date: string, rir: number): { tag: 'П�
   for (const x of now) if (x.sets.some((k, i) => per[key(x, i)] > 0 && setMax(k, x.item, rir) > per[key(x, i)] * (1 + PLATEAU.grow))) return null;
   /* новый вес в диапазоне — тоже прибавка: после шага веса повторов меньше, и по Эпли рост в одно-два процента не виден */
   const heavy: Record<string, number> = {}, inRange = (x: Session) => x.sets.filter(k => !x.item.cyc && k.r! >= (x.item.range ? x.item.range[0] : 1)).reduce((m, k) => Math.max(m, k.w || 0), 0);
-  for (const x of ss) if (age(x) > PLATEAU.days) heavy[day(x)] = Math.max(heavy[day(x)] || 0, inRange(x));
+  for (const x of ss) if (age(x) > days) heavy[day(x)] = Math.max(heavy[day(x)] || 0, inRange(x));
   if (now.some(x => heavy[day(x)] > 0 && inRange(x) > heavy[day(x)] + 1e-6)) return null;
   return { tag: b1.metric < b0.metric * (1 - PLATEAU.fall) ? 'Откат' : 'Плато', best: b0.metric >= b1.metric ? b0 : b1 };
 }

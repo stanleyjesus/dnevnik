@@ -8,9 +8,9 @@ import { exName, isLight, kindOf } from './config.ts';
 import { effReps, estRir, TARGET, work } from './sets.ts';
 import { goalOf, goalRange, GOALS, waveOf } from './goals.ts';
 import { allStats, exStats, program, sessions, stalledSets } from './stats.ts';
-import { formulaRange, hints, lastSessionItem, plan, planCycle, roundTo, startWeight, suggestSet } from './plan.ts';
+import { formulaRange, hints, lastSessionItem, makeItem, plan, planCycle, roundTo, startWeight, suggestSet } from './plan.ts';
 import { planned } from './tally.ts';
-import { appRules, byPct, plateauOf, rdlDef, RIR_CHECK, rirOf, shown } from './rules.ts';
+import { appRules, byPct, PLATEAU, plateauOf, rdlDef, RIR_CHECK, rirOf, shown, stopOf } from './rules.ts';
 import { estMinutes } from './time.ts';
 import { SKIP, skipFixes } from './skips.ts';
 import type { Tally } from './tally.ts';
@@ -59,6 +59,18 @@ export function additions(workouts: Workout[], cfg: Cfg, pl: Tally) {
 export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string) {
   const past = workouts.filter(w => !w.open && w.date < date);
   const base = plan(workouts, cfg, slot, date), z = cfg.zones, prog = program(past, cfg), pl = planned(past, cfg), props: Prop[] = [];
+  /* (в эталоне нет) замена при долгом плато (решение владельца 26 ноября 2026, docs/03, раздел 21): своё упражнение двойной прогрессии на те же основные
+     мышцы, как «Заменить» на «Программе» (program.ts, swapsFor), не из этого дня и не стоп-упражнение; сначала то, что есть в журнале, и то, чего нет
+     в программе, затем по названию. null — замены нет */
+  const swapPick = (id: string, inDay: string[]) => {
+    const e = cfg.ex[id] || { m: {} } as ExDef, main = (m?: MuscleMap) => Object.keys(m || {}).filter(k => m![k] >= 1).sort().join(), stop = stopOf(cfg);
+    const side = (n?: string) => /(^|\s)лев/i.test(n || '') ? 'l' : /(^|\s)прав/i.test(n || '') ? 'r' : '', dp = (x: string) => { const k = kindOf(cfg, x); return k === 'compound' || k === 'iso'; };
+    if (!main(e.m)) return null;
+    const c = Object.keys(cfg.ex).filter(x => x !== id && !inDay.includes(x) && dp(x) && !isLight(cfg, x) && !!cfg.ex[x].uni === !!e.uni && side(cfg.ex[x].n) === side(e.n) && !stop(x) && main(cfg.ex[x].m) === main(e.m));
+    const seen = (x: string) => lastSessionItem(past, x, null, null) ? 0 : 1;
+    c.sort((a, b) => (seen(a) - seen(b)) || (+prog.has(a) - +prog.has(b)) || exName(cfg, a).localeCompare(exName(cfg, b), 'ru'));
+    return c[0] || null;
+  };
   const dps = allStats(past, cfg).filter(s => s.active && !byPct(cfg, s.id) && !isLight(cfg, s.id) && s.n >= 2);   // (в эталоне нет) с днями «День N» базовое на двойной прогрессии — среди упражнений двойной прогрессии
   const worse = dps.filter(s => s.last.metric < s.ss[s.n - 2].metric * 0.98);
   const deload = dps.length >= 6 && worse.length >= dps.length / 2;
@@ -126,14 +138,35 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
       return;
     }
     /* (в эталоне нет) с днями «День N» плато — по тренду четырёх недель и без каскада после сброса (plateauOf, решение владельца 26 ноября 2026) */
-    const pl = appRules() ? (s && s.status !== 'light' ? plateauOf(s.ss, date, rirOf(cfg, it.ex)) : null) : s && s.n >= 4 && (s.status === 'flat' || s.status === 'down') ? { tag: s.status === 'down' ? 'Откат' : 'Плато', best: s.pr } : null;
-    if (s && pl) {
-      const b = pl.best.best, at = fmt(b.w) + ' × ' + b.r + ', ' + fmtDate(pl.best.date, true);
+    let stuck: { kind: 'check' | 'add'; why: string; m?: string } | null = null;   // (в эталоне нет) что делать при плато — вместе с обычными поправками подходов
+    const plat = appRules() ? (s && s.status !== 'light' ? plateauOf(s.ss, date, rirOf(cfg, it.ex)) : null) : s && s.n >= 4 && (s.status === 'flat' || s.status === 'down') ? { tag: s.status === 'down' ? 'Откат' : 'Плато', best: s.pr } : null;
+    if (s && plat) {
+      const b = plat.best.best, at = fmt(b.w) + ' × ' + b.r + ', ' + fmtDate(plat.best.date, true);
       const why = !appRules() ? s.sincePR + ' ' + plural(s.sincePR, ['тренировка', 'тренировки', 'тренировок']) + ' без рекорда (лучший — ' + at + ')'
-        : pl.tag === 'Откат' ? 'за 4 недели лучший подход слабее прежнего больше чем на 5% (было ' + at + ')' : '4 недели без прибавки ни в одном подходе (лучший — ' + at + ')';
-      push(pl.tag, [why + ': все подходы −10%, повторы набираются заново до верха диапазона'],
-        prev.map(p => { const k = Math.max(1, Math.round(p.w! * 0.1 / step)); return { w: Math.max(0, +(p.w! - k * step).toFixed(3)), tg: [Math.min(hi, (p.r == null ? lo : p.r) + 2), hi] }; }));
-      return;
+        : plat.tag === 'Откат' ? 'за 4 недели лучший подход слабее прежнего больше чем на 5% (было ' + at + ')' : '4 недели без прибавки ни в одном подходе (лучший — ' + at + ')';
+      /* (в эталоне нет) с днями «День N» при плато вес не снижается — шаги по порядку (решение владельца 26 ноября 2026, docs/03, раздел 21):
+         проверка запаса, +1 подход мышце ниже 12 в неделю, через 8 недель — замена упражнения; −10% — только при откате */
+      if (appRules() && plat.tag === 'Плато') {
+        const recent = s.ss.filter(x => dnum(date) - dnum(x.date) <= PLATEAU.days), mine = recent.filter(x => x.slot === slot);
+        /* проверка запаса за последние 8 недель — та, что дневник просил, или свой подход до отказа */
+        if (!s.ss.some(x => dnum(date) - dnum(x.date) <= PLATEAU.swap && (x.item.note === RIR_CHECK.note || x.sets.some(k => k.q === 0)))) stuck = { kind: 'check', why: why + ': сначала проверь запас — последний подход до отказа и запас 0. Выйдет больше повторов, чем обычно, — это не плато, и вес пойдёт вверх' };
+        else {
+          const long = plateauOf(s.ss, date, rirOf(cfg, it.ex), PLATEAU.swap), sw = long ? swapPick(it.ex, base.items.map(x => x.ex)) : null;
+          if (long && sw) {
+            const mk = makeItem(workouts, cfg, sw, slot, date, it.sets.length), h2 = hints(workouts, cfg, sw, slot, date), known = mk.sets.some(x => x.w != null);
+            props.push({ key: it.ex, ex: it.ex, idx, tag: 'Плато: замена', swap: sw, cyc: null, range: mk.range!.slice(), sets: mk.sets.map((x, i) => ({ w: x.w, tg: h2.sets[i] ? h2.sets[i].target.slice() : mk.range!.slice() })),
+              notes: ['8 недель без прибавки, хотя запас проверен: замена на «' + exName(cfg, sw) + '» — те же мышцы, другой стимул' + (known ? '' : '; вес подбери сам')] });
+            return;
+          }
+          const low = Object.entries(ex.m || {}).filter(([m, c]) => c >= 1 && !cfg.ignore[m] && (pl.pv[m] || 0) < PLATEAU.vol).map(([m]) => m).sort((a, c) => (pl.pv[a] || 0) - (pl.pv[c] || 0))[0];
+          const grew = mine.length > 1 && mine[mine.length - 1].sets.length > mine[0].sets.length;
+          if (low && !grew) stuck = { kind: 'add', m: low, why: why + ', а запас проверен: +1 подход — ' + MUSCLE[low].n.toLowerCase() + ' по программе ' + nSets(+(pl.pv[low] || 0).toFixed(1)) + ' в неделю, меньше ' + PLATEAU.vol };
+        }
+      } else {
+        push(plat.tag, [why + ': все подходы −10%, повторы набираются заново до верха диапазона'],
+          prev.map(p => { const k = Math.max(1, Math.round(p.w! * 0.1 / step)); return { w: Math.max(0, +(p.w! - k * step).toFixed(3)), tg: [Math.min(hi, (p.r == null ? lo : p.r) + 2), hi] }; }));
+        return;
+      }
     }
 
     const goal = goalOf(cfg, it.ex);
@@ -157,6 +190,7 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
     }
     const sets = it.sets.map((x, i) => ({ w: x.w, tg: h.sets[i] ? h.sets[i].target.slice() : [lo, hi] })), notes: string[] = [], tags: string[] = [];
     const tag = (t: string) => { if (!tags.includes(t)) tags.push(t); }, stalled: Record<number, boolean> = {};
+    if (stuck) { notes.push(stuck.why); tag('Плато'); }
     /* a set that has not moved for four sessions of this day while the sets before it did not grow either: one step down, rebuild the reps */
     const hist = s ? s.ss.filter(x => x.slot === slot).slice(-4) : [];
     if (hist.length === 4 && s!.status === 'up' && hist[3].date === h.prevDate) {
@@ -192,6 +226,11 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
         tag(kept ? 'Перегруз' : 'Отказ');
       }
     });
+    /* (в эталоне нет) плато, запас проверен: +1 подход мышце ниже 12 в неделю — в пределах лимитов дня и недели; «Мало объёма» ей в этот раз уже не прибавляет */
+    if (stuck && stuck.kind === 'add') {
+      if (sets.length < 5 && room >= (ex.uni ? 0.5 : 1) - 0.01 && fitsDay(ex, 1)) { room -= ex.uni ? 0.5 : 1; sets.push({ w: sets[sets.length - 1].w, tg: [lo, hi] }); used[stuck.m!] = true; }
+      else { notes.shift(); if (!notes.length) tags.length = 0; else tags.splice(tags.indexOf('Плато'), 1); }
+    }
     /* weekly volume of the main muscle: one more set below the working zone, one less above it */
     for (const [m, c] of Object.entries(ex.m || {})) {
       if (c < 1) continue;
@@ -201,7 +240,9 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
         used['day-' + m] = true; tag('Лимит на день');
         break;
       }
-      if (short[m] != null && sets.length < 5 && s && s.status === 'up' && (!used[m] || ex.uni) && room >= (ex.uni ? 0.5 : 1) - 0.01 && fitsDay(ex, 1)) {
+      /* (в эталоне нет) с днями «День N» подход прибавляется и упражнению, которое стоит («застой», «откат» по трём тренировкам), а не только растущему:
+         общей усталости нет — при ней разгрузка (решение владельца 26 ноября 2026, пункт 4 разбора «Сила, масса и плато») */
+      if (short[m] != null && sets.length < 5 && s && (s.status === 'up' || (appRules() && (s.status === 'flat' || s.status === 'down'))) && (!used[m] || ex.uni) && room >= (ex.uni ? 0.5 : 1) - 0.01 && fitsDay(ex, 1)) {
         room -= ex.uni ? 0.5 : 1;
         const l = sets[sets.length - 1];
         sets.push({ w: l.w, tg: [lo, hi] });
@@ -216,7 +257,7 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
         break;
       }
     }
-    if (notes.length) push(tags.join(' · '), notes, sets);
+    if (notes.length) { push(tags.join(' · '), notes, sets); if (stuck && stuck.kind === 'check') props[props.length - 1].note = RIR_CHECK.note; }
   });
   /* (в эталоне нет) с днями «День N» — проверка запаса: последний подход одного изолирующего упражнения до отказа (вывод 11 аудита, rules.ts, RIR_CHECK) */
   if (appRules() && !deload && past.length && dnum(date) - Math.min(...past.map(w => dnum(w.date))) >= RIR_CHECK.days
@@ -244,6 +285,7 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
     if (d > 0) { if (lean || extra + d > 2) off0[p.key] = true; else extra += d; }
   }
   adds.slice().sort((a, b) => a.a.prio - b.a.prio).forEach((d, i) => { if (i > 0 || lean) off0[d.key] = true; });
+  for (const p of props) if (p.swap) off0[p.key] = true;          // (в эталоне нет) замену при долгом плато дневник предлагает, а не включает
   /* (в эталоне нет) программа собрана под выбранное время (просьба владельца, 25 ноября 2026; docs/03, раздел 20): прибавки плана — подход сверх плана
      и новое упражнение — включены, только пока тренировка с ними укладывается в это время по оценке с темпом атлета; остальные предлагаются галочкой.
      Иначе план добавлял бы обратно то, что сборка или дневник убрали, чтобы тренировка влезла */
@@ -266,6 +308,7 @@ export function applyAdapt(a: Adapted, off?: Record<string, boolean> | null) {
     if (p.cyc) { items[p.idx].cyc = { pct: p.cyc.pct, reps: p.cyc.reps }; items[p.idx].tm = null; }
     if (p.range) items[p.idx].range = p.range.slice();
     if (p.note && !items[p.idx].note) items[p.idx].note = p.note;   // (в эталоне нет) проверка запаса
+    if (p.swap) items[p.idx].ex = p.swap;                            // (в эталоне нет) замена при долгом плато
     used.push(p.key);
   }
   for (const d of a.adds) {
