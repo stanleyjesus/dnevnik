@@ -37,7 +37,7 @@ export function vMuscles() {
   /* a cell is coloured by its zone; a week that is still going on and muscles outside the goal are not judged */
   const cellZ = (m: Muscle, w: WeekInfo, v: number) => !w.count ? 'z-off' : w.current && !w.complete ? 'z-cur' : D.cfg.ignore[m.id] && v < z.opt ? 'z-off' : 'z-' + C.zone(v, z);
   /* (в эталоне нет) с днями «День N» группы мышц — карточки карусели (просьба владельца, 26 ноября 2026): в карточке — последние четыре недели,
-     три полные, по которым стоит оценка, и текущая; строка мышцы — название, под ним недели, среднее и оценка */
+     три полные, по которым стоит оценка, и текущая; строка мышцы — название, справа значок оценки, под ними недели и среднее */
   const wk = appRules() ? weeks.slice(-4) : weeks;
   const head = () => h('tr', null, h('th', null, 'Мышца'), wk.map(w => h('th', { style: 'text-align:center', title: C.fmtDate(w.from) + ' – ' + C.fmtDate(w.to) }, 'н' + w.no)), h('th', null, 'Среднее'), h('th', { style: 'text-align:left' }, 'Оценка'));
   const row = (m: Muscle) => h('tr', null, h('td', null, m.n),

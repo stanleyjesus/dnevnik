@@ -501,12 +501,15 @@ summary.wo-sum { cursor: pointer; }
 .wo-more::before { content: ""; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateY(-2px) rotate(45deg); transition: transform .2s; }
 .wo-fold[open] .wo-more::before { transform: translateY(2px) rotate(225deg); }
 .wo-fold > .chips { margin: 2px 0 4px; justify-content: flex-start; }
-table.heat.card-heat, .card-heat thead, .card-heat tbody { display: block; }   /* «Мышцы» с днями «День N»: группа мышц — карточка карусели, строка мышцы — название, под ним недели, среднее и оценка (просьба владельца, 26 ноября 2026) */
-.card-heat tr { display: grid; grid-template-columns: repeat(var(--wk), minmax(0, 1fr)) 64px 52px; align-items: center; }
+table.heat.card-heat, .card-heat thead, .card-heat tbody { display: block; }   /* «Мышцы» с днями «День N»: группа мышц — карточка карусели, строка мышцы — название, справа значок оценки, под ними недели и среднее (просьба владельца, 26 ноября 2026) */
+.card-heat tr { display: grid; grid-template-columns: repeat(var(--wk), minmax(0, 1fr)) 68px; align-items: center; }
 .card-heat th { font-size: 12px; font-weight: 500; color: var(--muted); }
 .card-heat th:first-child { display: none; }
-table.heat.card-heat td:first-child { grid-column: 1 / -1; position: static; padding: 10px 0 2px; white-space: normal; background: none; }
-.card-heat .hc { min-width: 0; }
+.card-heat th:last-child { display: none; }   /* оценка — значком в строке названия мышцы, справа: неделям остаётся вся ширина (просьба владельца, 26 ноября 2026: цифры не влезали) */
+.card-heat td:last-child { grid-row: 1; grid-column: 1 / -1; justify-self: end; padding: 10px 0 2px; }
+table.heat.card-heat td:first-child { grid-column: 1 / -1; grid-row: 1; position: static; padding: 10px 28px 2px 0; white-space: normal; background: none; }
+.card-heat .hc { min-width: 0; padding: 0; overflow: hidden; font-size: 11.5px; letter-spacing: -.2px; }
+table.heat.card-heat td { padding: 3px 2px; }
 .memo { display: grid; gap: 10px; }   /* памятка перед тренировкой: три карточки, у каждой своя анимация на SVG (memo.ts, просьба владельца, 26 ноября 2026) */
 .memo-i { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); }
 .memo-i svg { width: 100%; height: 84px; display: block; border-radius: 6px; background: var(--sunken); }
