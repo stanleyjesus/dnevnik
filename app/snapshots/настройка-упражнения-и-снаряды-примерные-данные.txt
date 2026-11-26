@@ -1343,109 +1343,126 @@
   pm=even
   pt=0
 экран: правки к шагу 25
-@@ 4 -593 +604
+@@ 4 -593 +638
 +    div
 +     div.eyebrow Действует сейчас
 +     h2 Своя программа
 +    span.sub 67 подходов в неделю
 +   p.sub Она ведётся по тренировкам: дневник берёт за основу последнюю тренировку каждого дня и строит по ней следующую.
-+   div.grid3(style="margin-top:12px")
-+    div.pday
-+     div.pday-h
-+      b День 1
-+      span.sub 22 подхода · ≈ 1 ч 15 мин
-+     div.prow
-+      div.grow
-+       div.pn Жим лежа
-+       div.sub 4 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Вертикальная тяга в тренажере
-+       div.sub 4 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Бицепс бедра сидя в тренажере
-+       div.sub 4 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Средние дельты в тренажере
-+       div.sub 4 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Трицепс из за головы на блоке с косичкой
-+       div.sub 3 × 8–16
-+     div.prow
-+      div.grow
-+       div.pn Молотки с гантелями
-+       div.sub 3 × 8–13
-+    div.pday
-+     div.pday-h
-+      b День 2
-+      span.sub 21 подход · ≈ 1 ч 20 мин
-+     div.prow
-+      div.grow
-+       div.pn Разгибания ног в тренажере
-+       div.sub 3 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Жим ногами
-+       div.sub 4 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Жим гантелей под углом 45
-+       div.sub 4 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Горизонтальная тяга Т-бар
-+       div.sub 4 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Бицепс со штангой стоя
-+       div.sub 3 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Кисть на блоке правая
-+       div.sub 3 × 8–16
-+     div.prow
-+      div.grow
-+       div.pn Кисть на блоке левая
-+       div.sub 3 × 8–16
-+    div.pday
-+     div.pday-h
-+      b День 3
-+      span.sub 24 подхода · ≈ 1 ч 30 мин
-+     div.prow
-+      div.grow
-+       div.pn Подтягивания
-+       div.sub 4 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Бабочка
-+       div.sub 4 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Бицепс бедра на тренажере лежа на животе
-+       div.sub 3 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Трицепс с косичкой на блоке
-+       div.sub 4 × 8–15
-+     div.prow
-+      div.grow
-+       div.pn Бицепс Bayesian curl
-+       div.sub 3 × 8–16
-+     div.prow
-+      div.grow
-+       div.pn Разгибания ног в тренажере
-+       div.sub 3 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Кисть с гантелью правая рука
-+       div.sub 3 × 8–15
-+     div.prow
-+      div.grow
-+       div.pn Кисть с гантелью левая рука
-+       div.sub 3 × 8–16
++   div(style="margin-top:12px")
++    div.pdots
++     button#pc-dot-mon(type="button" aria-label="День 1" aria-current="true")
++     button#pc-dot-wed(type="button" aria-label="День 2" aria-current="false")
++     button#pc-dot-fri(type="button" aria-label="День 3" aria-current="false")
++    div#pc-days.pcar(role="group" aria-roledescription="карусель" aria-label="Дни программы" tabindex="0")
++     div.pslot(data-off="0")
++      div.pclip
++       div.pday
++        div.pday-h
++         b День 1
++         span.sub 22 подхода · ≈ 1 ч 15 мин
++        div.prow
++         div.grow
++          div.pn Жим лежа
++          div.sub 4 × 6–10
++        div.prow
++         div.grow
++          div.pn Вертикальная тяга в тренажере
++          div.sub 4 × 6–10
++        div.prow
++         div.grow
++          div.pn Бицепс бедра сидя в тренажере
++          div.sub 4 × 8–12
++        div.prow
++         div.grow
++          div.pn Средние дельты в тренажере
++          div.sub 4 × 8–12
++        div.prow
++         div.grow
++          div.pn Трицепс из за головы на блоке с косичкой
++          div.sub 3 × 8–16
++        div.prow
++         div.grow
++          div.pn Молотки с гантелями
++          div.sub 3 × 8–13
++      span.plab(aria-hidden="true") День 1
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="1")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b День 2
++         span.sub 21 подход · ≈ 1 ч 20 мин
++        div.prow
++         div.grow
++          div.pn Разгибания ног в тренажере
++          div.sub 3 × 8–12
++        div.prow
++         div.grow
++          div.pn Жим ногами
++          div.sub 4 × 6–10
++        div.prow
++         div.grow
++          div.pn Жим гантелей под углом 45
++          div.sub 4 × 6–10
++        div.prow
++         div.grow
++          div.pn Горизонтальная тяга Т-бар
++          div.sub 4 × 6–10
++        div.prow
++         div.grow
++          div.pn Бицепс со штангой стоя
++          div.sub 3 × 8–12
++        div.prow
++         div.grow
++          div.pn Кисть на блоке правая
++          div.sub 3 × 8–16
++        div.prow
++         div.grow
++          div.pn Кисть на блоке левая
++          div.sub 3 × 8–16
++      span.plab(aria-hidden="true") День 2
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="2")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b День 3
++         span.sub 24 подхода · ≈ 1 ч 30 мин
++        div.prow
++         div.grow
++          div.pn Подтягивания
++          div.sub 4 × 6–10
++        div.prow
++         div.grow
++          div.pn Бабочка
++          div.sub 4 × 8–12
++        div.prow
++         div.grow
++          div.pn Бицепс бедра на тренажере лежа на животе
++          div.sub 3 × 8–12
++        div.prow
++         div.grow
++          div.pn Трицепс с косичкой на блоке
++          div.sub 4 × 8–15
++        div.prow
++         div.grow
++          div.pn Бицепс Bayesian curl
++          div.sub 3 × 8–16
++        div.prow
++         div.grow
++          div.pn Разгибания ног в тренажере
++          div.sub 3 × 8–12
++        div.prow
++         div.grow
++          div.pn Кисть с гантелью правая рука
++          div.sub 3 × 8–15
++        div.prow
++         div.grow
++          div.pn Кисть с гантелью левая рука
++          div.sub 3 × 8–16
++      span.plab(aria-hidden="true") День 3
++      span.pnotch(aria-hidden="true")
 +  section.card
 +   div.sec-h
 +    div
@@ -1495,139 +1512,156 @@
 +      option(value="120") до 2 ч
 +      option(value="135") до 2 ч 15 мин
 +      option(value="150") до 2 ч 30 мин
-+   div.grid3
-+    div.pday
-+     div.pday-h
-+      b День 1
-+      span.sub 27 подходов · ≈ 1 ч 35 мин
-+     div.prow
-+      div.grow
-+       div.pn Жим лежа
-+       div.sub 4 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Вертикальная тяга в тренажере
-+       div.sub 4 × 6–10
-+      button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Румынская тяга
-+       div.sub 2 × 6–10
-+      button#sw-mon-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Жим над головой
-+       div.sub 2 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Бицепс бедра сидя в тренажере
-+       div.sub 4 × 8–12
-+      button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Средние дельты в тренажере
-+       div.sub 4 × 8–12
-+      button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Средние дельты в тренажере") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Трицепс из за головы на блоке с косичкой
-+       div.sub 3 × 8–16
-+      button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Тяга к лицу на блоке
-+       div.sub 4 × 8–12 · старт 44 кг
-+    div.pday
-+     div.pday-h
-+      b День 2
-+      span.sub 28 подходов · ≈ 1 ч 40 мин
-+     div.prow
-+      div.grow
-+       div.pn Жим ногами
-+       div.sub 4 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Жим гантелей под углом 45
-+       div.sub 4 × 6–10
-+      button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей под углом 45") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Горизонтальная тяга Т-бар
-+       div.sub 4 × 6–10
-+      button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Ягодичный мост
-+       div.sub 4 × 6–10
-+      button#sw-wed-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Жим над головой
-+       div.sub 2 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Разгибания ног в тренажере
-+       div.sub 3 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Бицепс со штангой стоя
-+       div.sub 3 × 8–12
-+      button#sw-wed-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Тяга к лицу на блоке
-+       div.sub 2 × 8–12 · старт 44 кг
-+     div.prow
-+      div.grow
-+       div.pn Махи с гантелями на плечи
-+       div.sub 2 × 8–16
-+      button#sw-wed-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
-+    div.pday
-+     div.pday-h
-+      b День 3
-+      span.sub 25 подходов · ≈ 1 ч 35 мин
-+     div.prow
-+      div.grow
-+       div.pn Подтягивания
-+       div.sub 4 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Ягодичный мост
-+       div.sub 2 × 6–10
-+      button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Бабочка
-+       div.sub 4 × 8–12
-+      button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бабочка") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Бицепс бедра на тренажере лежа на животе
-+       div.sub 3 × 8–12
-+      button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра на тренажере лежа на животе") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Трицепс с косичкой на блоке
-+       div.sub 2 × 8–15
-+      button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс с косичкой на блоке") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Бицепс Bayesian curl
-+       div.sub 3 × 8–16
-+      button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс Bayesian curl") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Разгибания ног в тренажере
-+       div.sub 3 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Тяга к лицу на блоке
-+       div.sub 2 × 8–12 · старт 44 кг
-+     div.prow
-+      div.grow
-+       div.pn Махи с гантелями на плечи
-+       div.sub 2 × 8–16
-+      button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
++   div
++    div.pdots
++     button#pn-dot-mon(type="button" aria-label="День 1" aria-current="true")
++     button#pn-dot-wed(type="button" aria-label="День 2" aria-current="false")
++     button#pn-dot-fri(type="button" aria-label="День 3" aria-current="false")
++    div#pn-days.pcar(role="group" aria-roledescription="карусель" aria-label="Дни новой программы" tabindex="0")
++     div.pslot(data-off="0")
++      div.pclip
++       div.pday
++        div.pday-h
++         b День 1
++         span.sub 27 подходов · ≈ 1 ч 35 мин
++        div.prow
++         div.grow
++          div.pn Жим лежа
++          div.sub 4 × 6–10
++        div.prow
++         div.grow
++          div.pn Вертикальная тяга в тренажере
++          div.sub 4 × 6–10
++         button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
++        div.prow
++         div.grow
++          div.pn Румынская тяга
++          div.sub 2 × 6–10
++         button#sw-mon-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
++        div.prow
++         div.grow
++          div.pn Жим над головой
++          div.sub 2 × 6–10
++        div.prow
++         div.grow
++          div.pn Бицепс бедра сидя в тренажере
++          div.sub 4 × 8–12
++         button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
++        div.prow
++         div.grow
++          div.pn Средние дельты в тренажере
++          div.sub 4 × 8–12
++         button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Средние дельты в тренажере") Заменить
++        div.prow
++         div.grow
++          div.pn Трицепс из за головы на блоке с косичкой
++          div.sub 3 × 8–16
++         button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
++        div.prow
++         div.grow
++          div.pn Тяга к лицу на блоке
++          div.sub 4 × 8–12 · старт 44 кг
++      span.plab(aria-hidden="true") День 1
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="1")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b День 2
++         span.sub 28 подходов · ≈ 1 ч 40 мин
++        div.prow
++         div.grow
++          div.pn Жим ногами
++          div.sub 4 × 6–10
++        div.prow
++         div.grow
++          div.pn Жим гантелей под углом 45
++          div.sub 4 × 6–10
++         button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей под углом 45") Заменить
++        div.prow
++         div.grow
++          div.pn Горизонтальная тяга Т-бар
++          div.sub 4 × 6–10
++         button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
++        div.prow
++         div.grow
++          div.pn Ягодичный мост
++          div.sub 4 × 6–10
++         button#sw-wed-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост") Заменить
++        div.prow
++         div.grow
++          div.pn Жим над головой
++          div.sub 2 × 6–10
++        div.prow
++         div.grow
++          div.pn Разгибания ног в тренажере
++          div.sub 3 × 8–12
++        div.prow
++         div.grow
++          div.pn Бицепс со штангой стоя
++          div.sub 3 × 8–12
++         button#sw-wed-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
++        div.prow
++         div.grow
++          div.pn Тяга к лицу на блоке
++          div.sub 2 × 8–12 · старт 44 кг
++        div.prow
++         div.grow
++          div.pn Махи с гантелями на плечи
++          div.sub 2 × 8–16
++         button#sw-wed-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
++      span.plab(aria-hidden="true") День 2
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="2")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b День 3
++         span.sub 25 подходов · ≈ 1 ч 35 мин
++        div.prow
++         div.grow
++          div.pn Подтягивания
++          div.sub 4 × 6–10
++        div.prow
++         div.grow
++          div.pn Ягодичный мост
++          div.sub 2 × 6–10
++         button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост") Заменить
++        div.prow
++         div.grow
++          div.pn Бабочка
++          div.sub 4 × 8–12
++         button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бабочка") Заменить
++        div.prow
++         div.grow
++          div.pn Бицепс бедра на тренажере лежа на животе
++          div.sub 3 × 8–12
++         button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра на тренажере лежа на животе") Заменить
++        div.prow
++         div.grow
++          div.pn Трицепс с косичкой на блоке
++          div.sub 2 × 8–15
++         button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс с косичкой на блоке") Заменить
++        div.prow
++         div.grow
++          div.pn Бицепс Bayesian curl
++          div.sub 3 × 8–16
++         button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс Bayesian curl") Заменить
++        div.prow
++         div.grow
++          div.pn Разгибания ног в тренажере
++          div.sub 3 × 8–12
++        div.prow
++         div.grow
++          div.pn Тяга к лицу на блоке
++          div.sub 2 × 8–12 · старт 44 кг
++        div.prow
++         div.grow
++          div.pn Махи с гантелями на плечи
++          div.sub 2 × 8–16
++         button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
++      span.plab(aria-hidden="true") День 3
++      span.pnotch(aria-hidden="true")
 +   p.sub(style="margin-top:8px") Полоса слева — замена. Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
 +   hr.rule
 +   div.grid2.even

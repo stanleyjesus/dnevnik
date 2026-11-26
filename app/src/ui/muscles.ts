@@ -7,6 +7,7 @@ import { D, render } from './render.ts';
 import { zonePill } from './charts.ts';
 import { keyMark, zoneMark } from './marks.ts';
 import { bodyMap } from './bodymap.ts';
+import { carousel, kept } from './carousel.ts';   // (в эталоне нет) группы мышц каруселью с днями «День N»
 import { appRules } from '../core/rules.ts';
 import type { Muscle, WeekInfo } from '../core/index.ts';
 
@@ -35,17 +36,21 @@ export function vMuscles() {
   const refTxt = D.wi.ref.length ? 'недели ' + D.wi.ref.map(w => w.no).join(', ') : '–';
   /* a cell is coloured by its zone; a week that is still going on and muscles outside the goal are not judged */
   const cellZ = (m: Muscle, w: WeekInfo, v: number) => !w.count ? 'z-off' : w.current && !w.complete ? 'z-cur' : D.cfg.ignore[m.id] && v < z.opt ? 'z-off' : 'z-' + C.zone(v, z);
-  const head = h('tr', null, h('th', null, 'Мышца'), weeks.map(w => h('th', { style: 'text-align:center', title: C.fmtDate(w.from) + ' – ' + C.fmtDate(w.to) }, 'н' + w.no)), h('th', null, 'Среднее'), h('th', { style: 'text-align:left' }, 'Оценка'));
-  const body = [];
-  let g = null;
-  for (const m of C.MUSCLES) {
-    if (m.g !== g) { g = m.g; body.push(h('tr', { class: 'g' }, h('td', { colspan: weeks.length + 3 }, h('span', { class: 'eyebrow' }, g)))); }
-    body.push(h('tr', null, h('td', null, m.n),
-      weeks.map(w => {
+  /* (в эталоне нет) с днями «День N» группы мышц — карточки карусели (просьба владельца, 26 ноября 2026): в карточке — последние четыре недели,
+     три полные, по которым стоит оценка, и текущая; строка мышцы — название, под ним недели, среднее и оценка */
+  const wk = appRules() ? weeks.slice(-4) : weeks;
+  const head = () => h('tr', null, h('th', null, 'Мышца'), wk.map(w => h('th', { style: 'text-align:center', title: C.fmtDate(w.from) + ' – ' + C.fmtDate(w.to) }, 'н' + w.no)), h('th', null, 'Среднее'), h('th', { style: 'text-align:left' }, 'Оценка'));
+  const row = (m: Muscle) => h('tr', null, h('td', null, m.n),
+      wk.map(w => {
         const v = (D.vol[w.no] && D.vol[w.no].m[m.id]) || 0, sel = ui.cell && ui.cell.m === m.id && ui.cell.w === w.no;
         return h('td', null, h('button', { class: 'hc ' + cellZ(m, w, v) + (w.current && !w.complete ? ' cur' : '') + (sel ? ' sel' : ''), 'aria-pressed': String(!!sel), 'aria-label': m.n + ', неделя ' + w.no + ': ' + C.fmt(v, 1), onclick: () => { ui.cell = { m: m.id, w: w.no }; render(true); } }, w.count ? C.fmt(v, 1) : '–'));
       }),
-      h('td', null, h('b', null, C.fmt(D.avg[m.id], 1)), C.splitText(D.avg[m.id], D.avgS[m.id] || 0) ? h('span', { class: 'msplit', id: 'mavg-' + m.id, text: '(' + C.splitText(D.avg[m.id], D.avgS[m.id] || 0) + ')' }) : null), h('td', { style: 'text-align:left' }, appRules() ? zoneMark(D.avg[m.id], z, !!D.cfg.ignore[m.id] && D.avg[m.id] < z.opt) : D.cfg.ignore[m.id] && D.avg[m.id] < z.opt ? h('span', { class: 'pill' }, 'вне расчёта') : zonePill(D.avg[m.id], z))));   // (в эталоне нет) с днями «День N» — значок зоны без подписи, что он значит — в легенде под таблицей (marks.ts)
+      h('td', null, h('b', null, C.fmt(D.avg[m.id], 1)), C.splitText(D.avg[m.id], D.avgS[m.id] || 0) ? h('span', { class: 'msplit', id: 'mavg-' + m.id, text: '(' + C.splitText(D.avg[m.id], D.avgS[m.id] || 0) + ')' }) : null), h('td', { style: 'text-align:left' }, appRules() ? zoneMark(D.avg[m.id], z, !!D.cfg.ignore[m.id] && D.avg[m.id] < z.opt) : D.cfg.ignore[m.id] && D.avg[m.id] < z.opt ? h('span', { class: 'pill' }, 'вне расчёта') : zonePill(D.avg[m.id], z)));   // (в эталоне нет) с днями «День N» — значок зоны без подписи, что он значит — в легенде под таблицей (marks.ts)
+  const body = [];
+  let g = null;
+  for (const m of C.MUSCLES) {
+    if (m.g !== g) { g = m.g; body.push(h('tr', { class: 'g' }, h('td', { colspan: wk.length + 3 }, h('span', { class: 'eyebrow' }, g)))); }
+    body.push(row(m));
   }
   let detail;
   if (ui.cell && C.MUSCLE[ui.cell.m]) {
@@ -57,15 +62,20 @@ export function vMuscles() {
   } else detail = h('p', { class: 'sub' }, 'Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.');
 
   const sw = (k: string, t: string) => h('span', { class: 'sw' }, h('i', { class: 'hc z-' + k }), appRules() ? keyMark(k === 'cur' ? 'off' : k) : null, t);   // (в эталоне нет) с днями «День N» у цвета — значок зоны, как в столбце «Оценка»
+  const groups = [...new Set(C.MUSCLES.map(m => m.g))];
   out.push(h('section', { class: 'card' },
+    appRules() ? h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Подходы на мышцу по неделям'))) :   // (в эталоне нет) с днями «День N» без пояснения над таблицей (просьба владельца, 26 ноября 2026)
     h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Подходы на мышцу по неделям'), h('p', { class: 'note' }, 'Подход, где мышца работает основной, считается за 1, где помогает — за 0.5. Подход, после которого в запасе осталось 3 повтора и больше, идёт за половину: ' + (appRules() ? 'у подходов по проценту от максимума' : 'у базовых по волне') + ' запас считается по проценту, если ты не отметил его сам. Оценка стоит по среднему за три последние полные недели (' + refTxt + ').'))),
-    h('div', { class: 'scroll-x to-end' }, h('table', { class: 'heat' }, h('thead', null, head), h('tbody', null, body))),
+    appRules() ? h('div', null, carousel(groups.map(gr => h('div', { class: 'pday' }, h('div', { class: 'pday-h' }, h('b', null, gr)),
+      h('div', { class: 'scroll-x' }, h('table', { class: 'heat card-heat', style: '--wk:' + wk.length }, h('thead', null, head()), h('tbody', null, C.MUSCLES.filter(m => m.g === gr).map(row)))))),
+      kept('mg'), { id: 'mg-days', dot: i => 'mg-dot-' + i, lab: i => groups[i], aria: 'Группы мышц' }))
+    : h('div', { class: 'scroll-x to-end' }, h('table', { class: 'heat' }, h('thead', null, head()), h('tbody', null, body))),
     h('div', { class: 'scale', style: 'margin-top:12px' }, sw('none', 'нет нагрузки'), sw('low', 'мало: до ' + z.min), sw('base', 'ниже рабочей: ' + z.min + '–' + z.opt), sw('opt', 'рабочая зона: ' + z.opt + '–' + z.high), sw('high', 'выше зоны: больше ' + z.high), sw('cur', 'неделя ещё идёт или мышца вне расчёта')),
     h('hr', { class: 'rule' }), detail));
 
   /* карточки «Баланс движений» нет: баланс движений дневник не считает (решение владельца, 23 ноября 2026) */
 
-  out.push(h('details', { class: 'card' }, h('summary', { style: 'cursor:pointer;font-weight:600' }, 'На чём основаны оценки'),
+  if (!appRules()) out.push(h('details', { class: 'card' }, h('summary', { style: 'cursor:pointer;font-weight:600' }, 'На чём основаны оценки'),   // (в эталоне нет) с днями «День N» этого блока нет (просьба владельца, 26 ноября 2026)
     h('div', { class: 'note stack', style: 'gap:8px;margin-top:10px' },
       h('p', null, 'Границы ' + z.min + ' / ' + z.opt + ' / ' + z.high + ' подходов в неделю — практический ориентир, а не закон: рост мышц увеличивается вместе с недельным числом подходов, но каждый следующий подход добавляет всё меньше. Около 4 подходов в неделю — нижний порог, при котором рост заметен; 10–20 — зона, где обычно лежит разумный баланс между результатом, временем и восстановлением.'),
       h('p', null, 'Способ счёта (прямой подход = 1, косвенный = 0.5) взят из мета-регрессии Pelland и соавторов о дозе недельного объёма; там же показано, что сила выходит на плато при заметно меньшем объёме, чем гипертрофия. Близость к отказу (RIR 1 в твоей методике) важна именно для роста мышц — это вывод мета-регрессии Robinson и соавторов.'),

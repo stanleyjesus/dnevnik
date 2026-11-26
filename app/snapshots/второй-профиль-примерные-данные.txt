@@ -543,96 +543,113 @@
   pm=even
   pt=0
 экран: правки к шагу 7
-@@ 5 -45 +592
+@@ 5 -45 +626
 +     div.eyebrow Действует сейчас
 +     h2 Пример: всё тело три раза в неделю
 +    span.sub 55 подходов в неделю
 +   p.sub Принята 11 ноября. По ней ещё не было ни одной тренировки.
-+   div.grid3(style="margin-top:12px")
-+    div.pday
-+     div.pday-h
-+      b День 1
-+      span.sub 19 подходов · ≈ 1 ч 10 мин
-+     div.prow
-+      div.grow
-+       div.pn Ягодичный мост со штангой
-+       div.sub 3 × 6–10 · старт 60 кг
-+     div.prow
-+      div.grow
-+       div.pn Жим ногами
-+       div.sub 4 × 6–10 · старт 80 кг
-+     div.prow
-+      div.grow
-+       div.pn Жим гантелей сидя
-+       div.sub 3 × 6–10 · старт 6 кг
-+     div.prow
-+      div.grow
-+       div.pn Гиперэкстензия
-+       div.sub 3 × 10–15
-+     div.prow
-+      div.grow
-+       div.pn Сгибания ног лежа
-+       div.sub 3 × 10–15 · старт 20 кг
-+     div.prow
-+      div.grow
-+       div.pn Пресс
-+       div.sub 3 × 10–15
-+    div.pday
-+     div.pday-h
-+      b День 2
-+      span.sub 18 подходов · ≈ 1 ч 10 мин
-+     div.prow
-+      div.grow
-+       div.pn Приседания со штангой
-+       div.sub 3 × 6–10 · старт 40 кг
-+     div.prow
-+      div.grow
-+       div.pn Вертикальная тяга в тренажере
-+       div.sub 3 × 6–10 · старт 30 кг
-+     div.prow
-+      div.grow
-+       div.pn Жим в тренажере на грудь
-+       div.sub 3 × 6–10 · старт 22.5 кг
-+     div.prow
-+      div.grow
-+       div.pn Горизонтальная тяга в тренажере
-+       div.sub 4 × 6–10 · старт 25 кг
-+     div.prow
-+      div.grow
-+       div.pn Отведение ног в тренажере
-+       div.sub 3 × 10–15 · старт 40 кг
-+     div.prow
-+      div.grow
-+       div.pn Махи гантелями в стороны
-+       div.sub 2 × 10–20 · старт 4 кг
-+    div.pday
-+     div.pday-h
-+      b День 3
-+      span.sub 18 подходов · ≈ 1 ч 10 мин
-+     div.prow
-+      div.grow
-+       div.pn Румынская тяга
-+       div.sub 3 × 6–10 · старт 35 кг
-+     div.prow
-+      div.grow
-+       div.pn Выпады с гантелями
-+       div.sub 4 × 6–10 · старт 10 кг
-+     div.prow
-+      div.grow
-+       div.pn Жим гантелей лежа
-+       div.sub 3 × 6–10
-+     div.prow
-+      div.grow
-+       div.pn Вертикальная тяга в тренажере
-+       div.sub 3 × 6–10 · старт 30 кг
-+     div.prow
-+      div.grow
-+       div.pn Махи гантелями в стороны
-+       div.sub 3 × 10–20 · старт 4 кг
-+     div.prow
-+      div.grow
-+       div.pn Отведение ног в тренажере
-+       div.sub 2 × 10–15 · старт 40 кг
++   div(style="margin-top:12px")
++    div.pdots
++     button#pc-dot-mon(type="button" aria-label="День 1" aria-current="true")
++     button#pc-dot-wed(type="button" aria-label="День 2" aria-current="false")
++     button#pc-dot-fri(type="button" aria-label="День 3" aria-current="false")
++    div#pc-days.pcar(role="group" aria-roledescription="карусель" aria-label="Дни программы" tabindex="0")
++     div.pslot(data-off="0")
++      div.pclip
++       div.pday
++        div.pday-h
++         b День 1
++         span.sub 19 подходов · ≈ 1 ч 10 мин
++        div.prow
++         div.grow
++          div.pn Ягодичный мост со штангой
++          div.sub 3 × 6–10 · старт 60 кг
++        div.prow
++         div.grow
++          div.pn Жим ногами
++          div.sub 4 × 6–10 · старт 80 кг
++        div.prow
++         div.grow
++          div.pn Жим гантелей сидя
++          div.sub 3 × 6–10 · старт 6 кг
++        div.prow
++         div.grow
++          div.pn Гиперэкстензия
++          div.sub 3 × 10–15
++        div.prow
++         div.grow
++          div.pn Сгибания ног лежа
++          div.sub 3 × 10–15 · старт 20 кг
++        div.prow
++         div.grow
++          div.pn Пресс
++          div.sub 3 × 10–15
++      span.plab(aria-hidden="true") День 1
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="1")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b День 2
++         span.sub 18 подходов · ≈ 1 ч 10 мин
++        div.prow
++         div.grow
++          div.pn Приседания со штангой
++          div.sub 3 × 6–10 · старт 40 кг
++        div.prow
++         div.grow
++          div.pn Вертикальная тяга в тренажере
++          div.sub 3 × 6–10 · старт 30 кг
++        div.prow
++         div.grow
++          div.pn Жим в тренажере на грудь
++          div.sub 3 × 6–10 · старт 22.5 кг
++        div.prow
++         div.grow
++          div.pn Горизонтальная тяга в тренажере
++          div.sub 4 × 6–10 · старт 25 кг
++        div.prow
++         div.grow
++          div.pn Отведение ног в тренажере
++          div.sub 3 × 10–15 · старт 40 кг
++        div.prow
++         div.grow
++          div.pn Махи гантелями в стороны
++          div.sub 2 × 10–20 · старт 4 кг
++      span.plab(aria-hidden="true") День 2
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="2")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b День 3
++         span.sub 18 подходов · ≈ 1 ч 10 мин
++        div.prow
++         div.grow
++          div.pn Румынская тяга
++          div.sub 3 × 6–10 · старт 35 кг
++        div.prow
++         div.grow
++          div.pn Выпады с гантелями
++          div.sub 4 × 6–10 · старт 10 кг
++        div.prow
++         div.grow
++          div.pn Жим гантелей лежа
++          div.sub 3 × 6–10
++        div.prow
++         div.grow
++          div.pn Вертикальная тяга в тренажере
++          div.sub 3 × 6–10 · старт 30 кг
++        div.prow
++         div.grow
++          div.pn Махи гантелями в стороны
++          div.sub 3 × 10–20 · старт 4 кг
++        div.prow
++         div.grow
++          div.pn Отведение ног в тренажере
++          div.sub 2 × 10–15 · старт 40 кг
++      span.plab(aria-hidden="true") День 3
++      span.pnotch(aria-hidden="true")
 +  section.card
 +   div.sec-h
 +    div
@@ -682,124 +699,141 @@
 +      option(value="120") до 2 ч
 +      option(value="135") до 2 ч 15 мин
 +      option(value="150") до 2 ч 30 мин
-+   div.grid3
-+    div.pday
-+     div.pday-h
-+      b День 1
-+      span.sub 22 подхода · ≈ 1 ч 15 мин
-+     div.prow
-+      div.grow
-+       div.pn Ягодичный мост со штангой
-+       div.sub 2 × 6–10 · старт 60 кг
-+      button#sw-mon-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост со штангой") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Жим ногами
-+       div.sub 4 × 6–10 · старт 80 кг
-+      button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим ногами") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Жим гантелей сидя
-+       div.sub 5 × 6–10 · старт 6 кг
-+     div.prow
-+      div.grow
-+       div.pn Горизонтальная тяга в тренажере
-+       div.sub 2 × 6–10 · старт 25 кг
-+      button#sw-mon-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Сгибания ног лежа
-+       div.sub 4 × 10–15 · старт 20 кг
-+      button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Сгибания ног лежа") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Обратная бабочка
-+       div.sub 2 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Бицепс со штангой стоя
-+       div.sub 3 × 8–12
-+      button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
-+    div.pday
-+     div.pday-h
-+      b День 2
-+      span.sub 22 подхода · ≈ 1 ч 20 мин
-+     div.prow
-+      div.grow
-+       div.pn Приседания со штангой
-+       div.sub 2 × 6–10 · старт 40 кг
-+      button#sw-wed-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Приседания со штангой") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Вертикальная тяга в тренажере
-+       div.sub 3 × 6–10 · старт 30 кг
-+      button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Горизонтальная тяга в тренажере
-+       div.sub 4 × 6–10 · старт 25 кг
-+      button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Жим гантелей сидя
-+       div.sub 5 × 6–10 · старт 6 кг
-+     div.prow
-+      div.grow
-+       div.pn Махи гантелями в стороны
-+       div.sub 2 × 10–20 · старт 4 кг
-+      button#sw-wed-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Трицепс из за головы на блоке с косичкой
-+       div.sub 2 × 8–12
-+      button#sw-wed-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Обратная бабочка
-+       div.sub 2 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Бицепс бедра сидя в тренажере
-+       div.sub 2 × 8–12
-+      button#sw-wed-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
-+    div.pday
-+     div.pday-h
-+      b День 3
-+      span.sub 20 подходов · ≈ 1 ч 15 мин
-+     div.prow
-+      div.grow
-+       div.pn Румынская тяга
-+       div.sub 3 × 6–10 · старт 35 кг
-+      button#sw-fri-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Вертикальная тяга в тренажере
-+       div.sub 3 × 6–10 · старт 30 кг
-+      button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Выпады с гантелями
-+       div.sub 4 × 6–10 · старт 10 кг
-+      button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Выпады с гантелями") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Горизонтальная тяга Т-бар
-+       div.sub 2 × 6–10
-+      button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Махи гантелями в стороны
-+       div.sub 3 × 10–20 · старт 4 кг
-+      button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
-+     div.prow
-+      div.grow
-+       div.pn Обратная бабочка
-+       div.sub 2 × 8–12
-+     div.prow
-+      div.grow
-+       div.pn Трицепс из за головы на блоке с косичкой
-+       div.sub 3 × 8–12
-+      button#sw-fri-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
++   div
++    div.pdots
++     button#pn-dot-mon(type="button" aria-label="День 1" aria-current="true")
++     button#pn-dot-wed(type="button" aria-label="День 2" aria-current="false")
++     button#pn-dot-fri(type="button" aria-label="День 3" aria-current="false")
++    div#pn-days.pcar(role="group" aria-roledescription="карусель" aria-label="Дни новой программы" tabindex="0")
++     div.pslot(data-off="0")
++      div.pclip
++       div.pday
++        div.pday-h
++         b День 1
++         span.sub 22 подхода · ≈ 1 ч 15 мин
++        div.prow
++         div.grow
++          div.pn Ягодичный мост со штангой
++          div.sub 2 × 6–10 · старт 60 кг
++         button#sw-mon-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост со штангой") Заменить
++        div.prow
++         div.grow
++          div.pn Жим ногами
++          div.sub 4 × 6–10 · старт 80 кг
++         button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим ногами") Заменить
++        div.prow
++         div.grow
++          div.pn Жим гантелей сидя
++          div.sub 5 × 6–10 · старт 6 кг
++        div.prow
++         div.grow
++          div.pn Горизонтальная тяга в тренажере
++          div.sub 2 × 6–10 · старт 25 кг
++         button#sw-mon-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
++        div.prow
++         div.grow
++          div.pn Сгибания ног лежа
++          div.sub 4 × 10–15 · старт 20 кг
++         button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Сгибания ног лежа") Заменить
++        div.prow
++         div.grow
++          div.pn Обратная бабочка
++          div.sub 2 × 8–12
++        div.prow
++         div.grow
++          div.pn Бицепс со штангой стоя
++          div.sub 3 × 8–12
++         button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
++      span.plab(aria-hidden="true") День 1
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="1")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b День 2
++         span.sub 22 подхода · ≈ 1 ч 20 мин
++        div.prow
++         div.grow
++          div.pn Приседания со штангой
++          div.sub 2 × 6–10 · старт 40 кг
++         button#sw-wed-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Приседания со штангой") Заменить
++        div.prow
++         div.grow
++          div.pn Вертикальная тяга в тренажере
++          div.sub 3 × 6–10 · старт 30 кг
++         button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
++        div.prow
++         div.grow
++          div.pn Горизонтальная тяга в тренажере
++          div.sub 4 × 6–10 · старт 25 кг
++         button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга в тренажере") Заменить
++        div.prow
++         div.grow
++          div.pn Жим гантелей сидя
++          div.sub 5 × 6–10 · старт 6 кг
++        div.prow
++         div.grow
++          div.pn Махи гантелями в стороны
++          div.sub 2 × 10–20 · старт 4 кг
++         button#sw-wed-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
++        div.prow
++         div.grow
++          div.pn Трицепс из за головы на блоке с косичкой
++          div.sub 2 × 8–12
++         button#sw-wed-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
++        div.prow
++         div.grow
++          div.pn Обратная бабочка
++          div.sub 2 × 8–12
++        div.prow
++         div.grow
++          div.pn Бицепс бедра сидя в тренажере
++          div.sub 2 × 8–12
++         button#sw-wed-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
++      span.plab(aria-hidden="true") День 2
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="2")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b День 3
++         span.sub 20 подходов · ≈ 1 ч 15 мин
++        div.prow
++         div.grow
++          div.pn Румынская тяга
++          div.sub 3 × 6–10 · старт 35 кг
++         button#sw-fri-0.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
++        div.prow
++         div.grow
++          div.pn Вертикальная тяга в тренажере
++          div.sub 3 × 6–10 · старт 30 кг
++         button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
++        div.prow
++         div.grow
++          div.pn Выпады с гантелями
++          div.sub 4 × 6–10 · старт 10 кг
++         button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Выпады с гантелями") Заменить
++        div.prow
++         div.grow
++          div.pn Горизонтальная тяга Т-бар
++          div.sub 2 × 6–10
++         button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
++        div.prow
++         div.grow
++          div.pn Махи гантелями в стороны
++          div.sub 3 × 10–20 · старт 4 кг
++         button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
++        div.prow
++         div.grow
++          div.pn Обратная бабочка
++          div.sub 2 × 8–12
++        div.prow
++         div.grow
++          div.pn Трицепс из за головы на блоке с косичкой
++          div.sub 3 × 8–12
++         button#sw-fri-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
++      span.plab(aria-hidden="true") День 3
++      span.pnotch(aria-hidden="true")
 +   p.sub(style="margin-top:8px") Полоса слева — замена. Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
 +   hr.rule
 +   div.grid2.even
@@ -1265,7 +1299,7 @@
   pr-new=
   pr-copy=true
 экран: правки к шагу 8
-@@ 4 -593 +820
+@@ 4 -627 +820
 +    h2 Упражнения
 +    button#ex-new.btn
 +     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
@@ -2167,6 +2201,7 @@
   ex-note-5=
   add-ex=lat_pulldown
   wk-note=
+курсор: "memo-ok"
 записи:
   + workouts_p2/2025-11-12 {"date":"2025-11-12","slot":"mon","items":[{"ex":"hip_thrust","rng":"6-10","sets":"60x? 60x? 60x?"},{"ex":"leg_press","rng":"6-10","sets":"80x? 80x? 80x? 80x?"},{"ex":"db_ohp","rng":"6-10","sets":"6x? 6x? 6x?"},{"ex":"back_ext","rng":"10-15","sets":"0x? 0x? 0x?"},{"ex":"leg_curl_lying","rng":"10-15","sets":"20x? 20x? 20x?"},{"ex":"abs","rng":"10-15","sets":"0x? 0x? 0x?"}],"open":true}
 черновик:
@@ -2546,6 +2581,7 @@
 + q-0-0=2
 + w-0-1=40
 + r-0-1=11
+курсор: ""
 черновик:
   + td-draft-p2 {"id":"2025-11-12","date":"2025-11-12","slot":"mon","note":"","open":true,"items":[{"ex":"hip_thrust","cyc":null,"range":[6,10],"sets":[{"w":40,"r":12,"q":2},{"w":40,"r":11},{"w":60,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":80,"r":null},{"w":80,"r":null},{"w":80,"r":null},{"w":80,"r":null}],"note":"","skip":false,"rir":null},{"ex":"db_ohp","cyc":null,"range":[6,10],"sets":[{"w":6,"r":null},{"w":6,"r":null},{"w":6,"r":null}],"note":"","skip":false,"rir":null},{"ex":"back_ext","cyc":null,"range":[10,15],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_curl_lying","cyc":null,"range":[10,15],"sets":[{"w":20,"r":null},{"w":20,"r":null},{"w":20,"r":null}],"note":"","skip":false,"rir":null},{"ex":"abs","cyc":null,"range":[10,15],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}]}
 экран: правки к шагу 11
@@ -4869,168 +4905,217 @@
 @@ 13 -1 +1
 -      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#192f1535fc
 +      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#0b1ce29da8
-@@ 50 -0 +200
+@@ 50 -0 +243
 +  section.card
 +   div.sec-h
 +    div
 +     h2 Подходы на мышцу по неделям
-+     p.note Подход, где мышца работает основной, считается за 1, где помогает — за 0.5. Подход, после которого в запасе осталось 3 повтора и больше, идёт за половину: у подходов по проценту от максимума запас считается по проценту, если ты не отметил его сам. Оценка стоит по среднему за три последние полные недели (–).
-+   div.scroll-x.to-end
-+    table.heat
-+     thead
-+      tr
-+       th Мышца
-+       th(style="text-align:center" title="10 ноя – 16 ноя") н1
-+       th Среднее
-+       th(style="text-align:left") Оценка
-+     tbody
-+      tr.g
-+       td(colspan="4")
-+        span.eyebrow Верх
-+      tr
-+       td Грудь
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Грудь, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
-+      tr
-+       td Широчайшие
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Широчайшие, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr
-+       td Верх спины
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Верх спины, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr
-+       td Передние дельты
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Передние дельты, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr
-+       td Средние дельты
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Средние дельты, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr
-+       td Задние дельты
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Задние дельты, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr.g
-+       td(colspan="4")
-+        span.eyebrow Руки
-+      tr
-+       td Бицепс
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Бицепс, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr
-+       td Трицепс
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Трицепс, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr
-+       td Предплечья
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Предплечья, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
-+      tr.g
-+       td(colspan="4")
-+        span.eyebrow Корпус
-+      tr
-+       td Пресс
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Пресс, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
-+      tr
-+       td Разгибатели спины
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Разгибатели спины, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
-+      tr.g
-+       td(colspan="4")
-+        span.eyebrow Ноги
-+      tr
-+       td Квадрицепс
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Квадрицепс, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr
-+       td Бицепс бедра
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Бицепс бедра, неделя 1: 1") 1
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr
-+       td Ягодицы
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Ягодицы, неделя 1: 2") 2
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
-+      tr
-+       td Икры
-+       td
-+        button.hc.z-cur.cur(aria-pressed="false" aria-label="Икры, неделя 1: 0") 0
-+       td
-+        b 0
-+       td(style="text-align:left")
-+        span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
-+         svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
++   div
++    div.pdots
++     button#mg-dot-0(type="button" aria-label="Верх" aria-current="true")
++     button#mg-dot-1(type="button" aria-label="Руки" aria-current="false")
++     button#mg-dot-2(type="button" aria-label="Корпус" aria-current="false")
++     button#mg-dot-3(type="button" aria-label="Ноги" aria-current="false")
++    div#mg-days.pcar(role="group" aria-roledescription="карусель" aria-label="Группы мышц" tabindex="0")
++     div.pslot(data-off="0")
++      div.pclip
++       div.pday
++        div.pday-h
++         b Верх
++        div.scroll-x
++         table.heat.card-heat(style="--wk:1")
++          thead
++           tr
++            th Мышца
++            th(style="text-align:center" title="10 ноя – 16 ноя") н1
++            th Среднее
++            th(style="text-align:left") Оценка
++          tbody
++           tr
++            td Грудь
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Грудь, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
++           tr
++            td Широчайшие
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Широчайшие, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++           tr
++            td Верх спины
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Верх спины, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++           tr
++            td Передние дельты
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Передние дельты, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++           tr
++            td Средние дельты
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Средние дельты, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++           tr
++            td Задние дельты
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Задние дельты, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++      span.plab(aria-hidden="true") Верх
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="1")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b Руки
++        div.scroll-x
++         table.heat.card-heat(style="--wk:1")
++          thead
++           tr
++            th Мышца
++            th(style="text-align:center" title="10 ноя – 16 ноя") н1
++            th Среднее
++            th(style="text-align:left") Оценка
++          tbody
++           tr
++            td Бицепс
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Бицепс, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++           tr
++            td Трицепс
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Трицепс, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++           tr
++            td Предплечья
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Предплечья, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
++      span.plab(aria-hidden="true") Руки
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="2")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b Корпус
++        div.scroll-x
++         table.heat.card-heat(style="--wk:1")
++          thead
++           tr
++            th Мышца
++            th(style="text-align:center" title="10 ноя – 16 ноя") н1
++            th Среднее
++            th(style="text-align:left") Оценка
++          tbody
++           tr
++            td Пресс
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Пресс, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
++           tr
++            td Разгибатели спины
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Разгибатели спины, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
++      span.plab(aria-hidden="true") Корпус
++      span.pnotch(aria-hidden="true")
++     div.pslot(data-off="2")
++      div.pclip(inert="")
++       div.pday
++        div.pday-h
++         b Ноги
++        div.scroll-x
++         table.heat.card-heat(style="--wk:1")
++          thead
++           tr
++            th Мышца
++            th(style="text-align:center" title="10 ноя – 16 ноя") н1
++            th Среднее
++            th(style="text-align:left") Оценка
++          tbody
++           tr
++            td Квадрицепс
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Квадрицепс, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++           tr
++            td Бицепс бедра
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Бицепс бедра, неделя 1: 1") 1
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++           tr
++            td Ягодицы
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Ягодицы, неделя 1: 2") 2
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.crit(role="img" title="нет нагрузки" aria-label="нет нагрузки")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
++           tr
++            td Икры
++            td
++             button.hc.z-cur.cur(aria-pressed="false" aria-label="Икры, неделя 1: 0") 0
++            td
++             b 0
++            td(style="text-align:left")
++             span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
++              svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
++      span.plab(aria-hidden="true") Ноги
++      span.pnotch(aria-hidden="true")
 +   div.scale(style="margin-top:12px")
 +    span.sw
 +     i.hc.z-none
@@ -5064,12 +5149,6 @@
 +     | неделя ещё идёт или мышца вне расчёта
 +   hr.rule
 +   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
-+  details.card
-+   summary(style="cursor:pointer;font-weight:600") На чём основаны оценки
-+   div.note.stack(style="gap:8px;margin-top:10px")
-+    p Границы 4 / 10 / 20 подходов в неделю — практический ориентир, а не закон: рост мышц увеличивается вместе с недельным числом подходов, но каждый следующий подход добавляет всё меньше. Около 4 подходов в неделю — нижний порог, при котором рост заметен; 10–20 — зона, где обычно лежит разумный баланс между результатом, временем и восстановлением.
-+    p Способ счёта (прямой подход = 1, косвенный = 0.5) взят из мета-регрессии Pelland и соавторов о дозе недельного объёма; там же показано, что сила выходит на плато при заметно меньшем объёме, чем гипертрофия. Близость к отказу (RIR 1 в твоей методике) важна именно для роста мышц — это вывод мета-регрессии Robinson и соавторов.
-+    p Коэффициенты упражнений и сами границы можно изменить в настройке.
 
 === 23. coach у второго профиля после первой тренировки
 пропущен: кнопки шага на этих записях нет
@@ -5084,61 +5163,61 @@
 -   p.sub Принята 11 ноября. По ней ещё не было ни одной тренировки.
 +    span.sub 54 подхода в неделю
 +   p.sub Принята 11 ноября. Ещё не было по ней: день 2 и день 3.
-@@ 13 -1 +1
--      span.sub 19 подходов · ≈ 1 ч 10 мин
-+      span.sub 18 подходов · ≈ 1 ч 5 мин
-@@ 17 -1 +1
--       div.sub 3 × 6–10 · старт 60 кг
-+       div.sub 2 × 6–10
-@@ 21 -1 +1
--       div.sub 4 × 6–10 · старт 80 кг
-+       div.sub 4 × 6–10
-@@ 25 -1 +1
--       div.sub 3 × 6–10 · старт 6 кг
-+       div.sub 3 × 6–10
-@@ 33 -1 +1
--       div.sub 3 × 10–15 · старт 20 кг
-+       div.sub 3 × 10–15
-@@ 99 -1 +1
+@@ 20 -1 +1
+-         span.sub 19 подходов · ≈ 1 ч 10 мин
++         span.sub 18 подходов · ≈ 1 ч 5 мин
+@@ 24 -1 +1
+-          div.sub 3 × 6–10 · старт 60 кг
++          div.sub 2 × 6–10
+@@ 28 -1 +1
+-          div.sub 4 × 6–10 · старт 80 кг
++          div.sub 4 × 6–10
+@@ 32 -1 +1
+-          div.sub 3 × 6–10 · старт 6 кг
++          div.sub 3 × 6–10
+@@ 40 -1 +1
+-          div.sub 3 × 10–15 · старт 20 кг
++          div.sub 3 × 10–15
+@@ 116 -1 +1
 -    span.sub 64 подхода в неделю · сейчас 55 · тренировка ≈ 1 ч 20 мин
 +    span.sub 64 подхода в неделю · сейчас 54 · тренировка ≈ 1 ч 20 мин
-@@ 151 -1 +1
--       div.sub 2 × 6–10 · старт 60 кг
-+       div.sub 2 × 6–10
-@@ 156 -1 +1
--       div.sub 4 × 6–10 · старт 80 кг
-+       div.sub 4 × 6–10
-@@ 161 -1 +1
--       div.sub 5 × 6–10 · старт 6 кг
-+       div.sub 5 × 6–10
-@@ 170 -1 +1
--       div.sub 4 × 10–15 · старт 20 кг
-+       div.sub 4 × 10–15
-@@ 203 -1 +1
--       div.sub 5 × 6–10 · старт 6 кг
-+       div.sub 5 × 6–10
-@@ 305 -1 +1
+@@ 175 -1 +1
+-          div.sub 2 × 6–10 · старт 60 кг
++          div.sub 2 × 6–10
+@@ 180 -1 +1
+-          div.sub 4 × 6–10 · старт 80 кг
++          div.sub 4 × 6–10
+@@ 185 -1 +1
+-          div.sub 5 × 6–10 · старт 6 кг
++          div.sub 5 × 6–10
+@@ 194 -1 +1
+-          div.sub 4 × 10–15 · старт 20 кг
++          div.sub 4 × 10–15
+@@ 231 -1 +1
+-          div.sub 5 × 6–10 · старт 6 кг
++          div.sub 5 × 6–10
+@@ 339 -1 +1
 -       div.sub 2 × 8–12. Бицепс бедра: было 9, станет 10 в неделю.
 +       div.sub 2 × 8–12. Бицепс бедра: было 8.5, станет 10 в неделю.
-@@ 320 -1 +1
+@@ 354 -1 +1
 -       div.sub Ягодичный мост со штангой (день 1) −1, Приседания со штангой (день 2) −1. Эти мышцы получали заметно больше, чем им отведено.
 +       div.sub Приседания со штангой (день 2) −1. Эти мышцы получали заметно больше, чем им отведено.
-@@ 332 -1 +1
+@@ 366 -1 +1
 -       div.sub Ягодичный мост со штангой — 60 кг; Жим ногами — 80 кг; Жим гантелей сидя — 6 кг; Горизонтальная тяга в тренажере — 25 кг; Сгибания ног лежа — 20 кг; Приседания со штангой — 40 кг (от разового максимума); Вертикальная тяга в тренажере — 30 кг; Махи гантелями в стороны — 4 кг; Румынская тяга — 35 кг; Выпады с гантелями — 10 кг. Первая тренировка начнётся с них, дальше веса ведёт журнал.
 +       div.sub Горизонтальная тяга в тренажере — 25 кг; Приседания со штангой — 40 кг (от разового максимума); Вертикальная тяга в тренажере — 30 кг; Махи гантелями в стороны — 4 кг; Румынская тяга — 35 кг; Выпады с гантелями — 10 кг. Первая тренировка начнётся с них, дальше веса ведёт журнал.
-@@ 549 -1 +1
+@@ 583 -1 +1
 -         td.c-now 9
 +         td.c-now 8.5
-@@ 551 -1 +1
+@@ 585 -1 +1
 -          span.tag.accent(style="margin-right:6px") +1
 +          span.tag.accent(style="margin-right:6px") +1.5
-@@ 565 -1 +1
+@@ 599 -1 +1
 -         td.c-now 21.5
 +         td.c-now 20.5
-@@ 567 -1 +1
+@@ 601 -1 +1
 -          span.tag.accent(style="margin-right:6px") −8.5
 +          span.tag.accent(style="margin-right:6px") −7.5
-@@ 596 -1 +1
+@@ 630 -1 +1
 -    span.sub Ближайшая тренировка каждого дня будет построена по ней.
 +    span.sub Ближайшая тренировка каждого дня будет построена по ней, веса возьмутся из последних тренировок.
 

@@ -12,6 +12,7 @@ import { onbAgain, onbOn, vOnboard } from './onboard.ts';
 import { weekDays } from './platform.ts';
 import { appRules, byPct, isoLift } from '../core/rules.ts';
 import { zoneKey, zoneMark } from './marks.ts';
+import { showMemo } from './memo.ts';
 import type { Adapted, Cfg, Insight, Item } from '../core/index.ts';
 import type { Kid } from './types.ts';
 
@@ -90,6 +91,7 @@ export function startWorkout(p: { slot: string, date: string, items: Item[] }) {
   S.draftSaved = null; S.dirty = true; S.ui.plan = null; S.ui.confirm = null;
   backupDraft(); saveDraft();
   if (S.view === 'workout') render(); else go('workout');
+  if (appRules()) showMemo();   // (в эталоне нет) с днями «День N» — памятка поверх начатой тренировки (просьба владельца, 26 ноября 2026)
 }
 export function vOverview() {
   const out: Kid[] = [];

@@ -20,7 +20,9 @@ import { D, go, render } from './render.ts';
 import { acceptProgram, loadText, progDay } from './program.ts';
 import { builtDay } from './builtday.ts';
 import { bodyMap } from './bodymap.ts';   // фигура с нагрузкой мышц на последнем шаге (просьба владельца, 25 ноября 2026)   // у программы, которую собрал дневник, только «Заменить» (решение владельца, 25 ноября 2026)
-import { careBox, pairsRow } from './care.ts';   // что беречь и дни подряд (решение владельца, 25 ноября 2026)
+import { careBox, pairsRow } from './care.ts';
+import { memoCards } from './memo.ts';
+import { carousel } from './carousel.ts';   // дни программы каруселью   // что беречь и дни подряд (решение владельца, 25 ноября 2026)
 import { progDraft, progLifts } from './draft.ts';
 import { goalPicker, modeBudget } from './goal.ts';
 import { TIMES, timeOf } from './fit.ts';
@@ -33,7 +35,7 @@ import type { PasteDay } from '../core/paste.ts';
 import type { ExDef, ProgSlots, Swap } from '../core/types.ts';
 import type { El, Kid, View } from './types.ts';
 
-type Step = 'start' | 'goal' | 'care' | 'paste' | 'prog' | 'weights' | 'done';
+type Step = 'start' | 'goal' | 'care' | 'paste' | 'prog' | 'weights' | 'done' | 'memo';
 /** Программа из текста: text — как вставлен, days — разбор, pick — что взять в строке «день-строка» (id, '' — не брать, NEW — новое упражнение),
     gear — снаряд нового упражнения, fill — разбор ещё не разложен в черновик */
 interface Paste { text: string; days: PasteDay[] | null; pick: Record<string, string>; gear: Record<string, string>; fill: boolean }
@@ -72,7 +74,7 @@ export function startLine(id: string) {
   return 'старт: ' + w + ' на ' + C.rangeOf(D.W, c, id).join('–') + ' повторов' + (by ? ' — ' + by : s.src === 'work' ? '' : ' (от максимума ' + C.fmt(C.knownMax(c, id), 1) + ')');
 }
 
-const seq = (o: Onb): Step[] => o.path === 'own' ? ['start', 'care', 'prog', 'weights', 'done'] : o.path === 'paste' ? ['start', 'paste', 'care', 'prog', 'weights', 'done'] : ['start', 'goal', 'care', 'prog', 'weights', 'done'];
+const seq = (o: Onb): Step[] => o.path === 'own' ? ['start', 'care', 'prog', 'weights', 'done', 'memo'] : o.path === 'paste' ? ['start', 'paste', 'care', 'prog', 'weights', 'done', 'memo'] : ['start', 'goal', 'care', 'prog', 'weights', 'done', 'memo'];
 const to = (step: Step) => { O!.step = step; O!.day = 0; render(); };   // на шаг «Программа» мастер приходит к первому дню
 function skip() { skipped.add(S.profile); O!.done = true; render(); }
 /* мастер закончен: дальше — обычные вкладки */
@@ -85,7 +87,7 @@ function frame(title: string, text: string | null, body: Kid[], back: (() => voi
   return h('section', { class: 'card', id: 'onb', 'data-enter': enter ? '' : null, style: 'max-width:760px;margin:0 auto;width:100%' },
     h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow', id: 'onb-n' }, 'Шаг ' + n + ' из ' + all.length), h('h2', null, title)),
       o.step === 'start' || o.step === 'goal' || o.step === 'care' || o.step === 'paste' || o.step === 'prog' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-skip', onclick: skip }, 'Пропустить')
-        : o.step === 'done' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-end', onclick: () => finish('overview') }, 'В дневник') : null),
+        : o.step === 'done' || o.step === 'memo' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-end', onclick: () => finish('overview') }, 'В дневник') : null),
     text ? h('p', { class: 'note', style: 'margin-bottom:12px' }, text) : null,
     body,
     h('div', { class: 'row', style: 'margin-top:16px;justify-content:space-between' },
@@ -208,71 +210,9 @@ function vCare(): View {
     () => to(path === 'own' ? 'start' : path === 'paste' ? 'paste' : 'goal'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('prog') }, 'Дальше'))];
 }
 
-/* дни программы — карусель (просьба владельца, 25 ноября 2026, по присланному образцу): открытый день — карточка по центру, соседние —
-   узкие края по бокам, связанные с ней перемычкой, дальние спрятаны. Листать — пальцем вбок, нажатием на край, точками над днями,
-   стрелками на клавиатуре; дни не идут по кругу: у первого дня слева пусто. Открытый день стоит в потоке и задаёт высоту карусели,
-   края — 84% её высоты; смену дня ведут переходы стилей, высоту — анимация (Web Animations), и в разметке от анимации ничего не остаётся.
-   Страница перерисовывается целиком (замена упражнения, правка подходов), поэтому открытый день хранится в мастере (O.day),
-   и после перерисовки карусель сразу стоит на нём */
-const SPRING = 'linear(0, 0.055, 0.17, 0.3, 0.43, 0.545, 0.643, 0.723, 0.787, 0.836, 0.876, 0.906, 0.929, 0.947, 0.96, 0.97, 0.978, 0.984, 0.988, 0.991, 0.993, 0.995, 0.996, 0.997, 1)';   // пружина образца (жёсткость 220, затухание 26, масса 0.75) — 0.5 с; та же в style.css
+/* дни программы — карусель (carousel.ts); открытый день хранится в мастере (O.day) */
 function dayCarousel(days: HTMLElement[]): Kid[] {
-  const o = O!, n = days.length;
-  o.day = Math.max(0, Math.min(o.day, n - 1));
-  const slots = days.map((d, i) => h('div', { class: 'pslot', onclick: () => open(i) },
-    h('div', { class: 'pclip' }, d), h('span', { class: 'plab', 'aria-hidden': 'true' }, C.SLOTS[i].n), h('span', { class: 'pnotch', 'aria-hidden': 'true' })));
-  const dots = C.SLOTS.slice(0, n).map((sl, i) => h('button', { type: 'button', id: 'onb-dot-' + sl.id, 'aria-label': sl.n, onclick: () => open(i) }));
-  const place = () => {                                                      // где какой день: −2 и 2 — дальше краёв, спрятаны
-    slots.forEach((s, i) => { s.setAttribute('data-off', String(Math.max(-2, Math.min(2, i - o.day)))); (s.firstChild as HTMLElement).inert = i !== o.day; });
-    dots.forEach((b, i) => b.setAttribute('aria-current', i === o.day ? 'true' : 'false'));
-  };
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches, ease = CSS.supports('transition-timing-function', SPRING) ? SPRING : 'cubic-bezier(.25, .8, .25, 1)';
-  const open = (i: number) => {
-    if (i < 0 || i >= n || i === o.day) return;
-    const was = slots.map(s => s.offsetHeight);
-    o.day = i; place();
-    if (!still) slots.forEach((s, j) => { const now = s.offsetHeight; if (now !== was[j]) s.animate([{ height: was[j] + 'px' }, { height: now + 'px' }], { duration: 500, easing: ease }); });
-    const top = (bar || car).getBoundingClientRect().top;                    // день бывает длиннее экрана: начало карусели — снова на виду
-    if (top < 0) window.scrollBy({ top: top - 12, behavior: still ? 'auto' : 'smooth' });
-  };
-  /* палец вбок: карусель идёт за ним, у первого и последнего дня — с сопротивлением; отпустил дальше порога — соседний день.
-     Палец вниз — обычная прокрутка страницы (touch-action: pan-y); с полей ввода карусель не листается */
-  let id = -1, x0 = 0, y0 = 0, dx = 0, drag = false, moved = -1e9;
-  const down = (e: PointerEvent) => {
-    if (!e.isPrimary || e.button > 0 || (e.target as Element).closest('input, select, textarea')) return;
-    id = e.pointerId; x0 = e.clientX; y0 = e.clientY; dx = 0; drag = false;
-  };
-  const move = (e: PointerEvent) => {
-    if (e.pointerId !== id) return;
-    const mx = e.clientX - x0, my = e.clientY - y0;
-    if (!drag) {
-      if (Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)) { id = -1; return; }
-      if (Math.abs(mx) < 8) return;
-      drag = true; car.classList.add('drag'); getSelection()?.removeAllRanges();
-      try { car.setPointerCapture(id); } catch { /* указатель уже отпущен */ }
-    }
-    dx = (o.day === 0 && mx > 0) || (o.day === n - 1 && mx < 0) ? mx / 3 : mx;
-    car.style.setProperty('--dx', dx + 'px');
-  };
-  const up = (e: PointerEvent, go: boolean) => {
-    if (e.pointerId !== id) return;
-    id = -1;
-    if (!drag) return;
-    drag = false; moved = performance.now(); car.classList.remove('drag'); car.style.removeProperty('--dx'); if (!car.style.length) car.removeAttribute('style');
-    const far = Math.min(70, car.clientWidth * .18);
-    if (go && dx < -far) open(o.day + 1); else if (go && dx > far) open(o.day - 1);
-  };
-  const key = (e: KeyboardEvent) => {
-    const t = e.target as Element;
-    if ((e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') || (t !== car && !t.closest('.pdots'))) return;
-    e.preventDefault(); open(o.day + (e.key === 'ArrowRight' ? 1 : -1));
-    if (t !== car) dots[o.day].focus();
-  };
-  const car = h('div', { class: 'pcar', id: 'onb-days', role: 'group', 'aria-roledescription': 'карусель', 'aria-label': 'Дни программы', tabindex: '0',
-    onpointerdown: down, onpointermove: move, onpointerup: (e: PointerEvent) => up(e, true), onpointercancel: (e: PointerEvent) => up(e, false), onkeydown: key }, slots);
-  car.addEventListener('click', e => { if (performance.now() - moved < 350) { moved = -1e9; e.stopPropagation(); e.preventDefault(); } }, true);   // палец листал, а не нажимал: нажатие сразу после — не нажатие
-  const bar = n > 1 ? h('div', { class: 'pdots', onkeydown: key }, dots) : null;
-  place();
-  return [bar, car];   // точки — над днями: день бывает длиннее экрана
+  return carousel(days, O!, { id: 'onb-days', dot: i => 'onb-dot-' + C.SLOTS[i].id, lab: i => C.SLOTS[i].n, aria: 'Дни программы' });
 }
 
 function vProg(): View {
@@ -407,12 +347,17 @@ function vDone(): View {
       'У тебя пока ' + O!.reps[id] + ' повторов, нужно от ' + C.rangeOf(D.W, cfg, id)[0] + '. Вернёшь кнопкой «Заменить» на «Программе».')),
     h('div', { id: 'onb-body-map', style: 'margin-top:14px' }, h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Нагрузка мышц за неделю: ' + loadText(total(t.load))),
       bodyMap(t.pv, { z: cfg.zones, ignore: cfg.ignore, sel: null, pick: null }))],
-    () => to('weights'), h('button', { type: 'button', class: 'btn primary', id: 'onb-go', onclick: () => finish('workout') }, 'Открыть первую тренировку'))];
+    () => to('weights'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('memo') }, 'Дальше'))];
+}
+/* последний шаг — памятка: на чём держать внимание в подходе (просьба владельца, 26 ноября 2026); та же встречает каждую тренировку */
+function vMemo(): View {
+  return [frame('Памятка', null, [memoCards()], () => to('done'),
+    h('button', { type: 'button', class: 'btn primary', id: 'onb-go', onclick: () => finish('workout') }, 'Открыть первую тренировку'))];
 }
 
 /** Мастер вместо пустого «Обзора» */
 export function vOnboard(): View {
   if (!O || O.gen !== S.gen) { shown = ''; O = { gen: S.gen, step: 'start', path: 'build', focus: 'even', steps: {}, took: false, done: false, paste: { text: '', days: null, pick: {}, gear: {}, fill: false }, reps: {}, away: {}, day: 0 }; }
-  const v = O.step === 'goal' ? vGoal() : O.step === 'care' ? vCare() : O.step === 'paste' ? vPaste() : O.step === 'prog' ? vProg() : O.step === 'weights' ? vWeights() : O.step === 'done' ? vDone() : vStart();
+  const v = O.step === 'goal' ? vGoal() : O.step === 'care' ? vCare() : O.step === 'paste' ? vPaste() : O.step === 'prog' ? vProg() : O.step === 'weights' ? vWeights() : O.step === 'done' ? vDone() : O.step === 'memo' ? vMemo() : vStart();
   return v;
 }
