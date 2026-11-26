@@ -28,11 +28,11 @@ export interface Cyc { pct: number; reps: number }
 /** Упражнение в тренировке: либо диапазон (двойная прогрессия), либо cyc (по процентам); tm — расчётный максимум */
 export interface Item { ex: string; range: Range | null; cyc: Cyc | null; sets: SetRec[]; note: string; skip: boolean; rir: null; tm?: number | null }
 /** Тренировка. slot — день программы; open — ещё идёт */
-export interface Workout { id: string; date: string; slot: string | null; note: string; open: boolean; items: Item[]; min?: number }   // min — (в эталоне нет) сколько минут тренировка шла по словам атлета (pace.ts)
+export interface Workout { id: string; date: string; slot: string | null; note: string; open: boolean; items: Item[]; min?: number; began?: number }   // (в эталоне нет) min — сколько минут шла тренировка: от «Начать тренировку» до «Завершить» или как поправил атлет; began — когда нажато «Начать тренировку», мс, только у идущей (pace.ts)
 /** Упражнение тренировки в том виде, в каком оно лежит в хранилище: подходы и диапазон записаны текстом */
 export interface ItemDoc { ex: string; cyc?: string; tm?: number; rng?: string; sets?: string; note?: string; skip?: boolean; rir?: number }
 /** Тренировка в том виде, в каком она лежит в хранилище */
-export interface WorkoutDoc { date: string; slot: string; items: ItemDoc[]; note?: string; open?: boolean; min?: number }
+export interface WorkoutDoc { date: string; slot: string; items: ItemDoc[]; note?: string; open?: boolean; min?: number; began?: number }
 /** Запись веса тела */
 export interface BodyRec { id?: string; date: string; kg: number }
 

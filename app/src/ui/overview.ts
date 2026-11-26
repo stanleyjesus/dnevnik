@@ -85,6 +85,7 @@ export function paintEta() {
 }
 export function startWorkout(p: { slot: string, date: string, items: Item[] }) {
   S.draft = { id: uniqueId(p.date), date: p.date, slot: p.slot, note: '', open: true, items: C.clone(p.items) };
+  if (appRules()) S.draft.began = Date.now();                        // (в эталоне нет) время по факту — от этого нажатия до «Завершить» (core/pace.ts)
   S.draftSaved = null; S.dirty = true; S.ui.plan = null; S.ui.confirm = null;
   backupDraft(); saveDraft();
   if (S.view === 'workout') render(); else go('workout');
