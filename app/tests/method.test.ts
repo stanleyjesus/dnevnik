@@ -159,13 +159,14 @@ test('максимум в истории — по подходам: лучший
   }));
   /* поправки ищут рекорд по тому же максимуму. «Неделей позже»: жим ногами 175 × 5 на 77% с запасом 2, 2, 1, 0 — по подходам 175 × (1 + 7/30) ≈ 215.8,
      а рекорд 222 (180 × 4 на 82%, запас по проценту — 3) был три тренировки назад; по «вес / процент» это был бы рекорд 227.3. Плато — по тренду
-     четырёх недель (решение владельца, 26 ноября 2026, plateau.test.ts): через неделю после среды десятой недели план предлагает «Плато»: −10% */
+     четырёх недель (решение владельца, 26 ноября 2026, plateau.test.ts): через неделю после среды десятой недели план предлагает «Плато» — вес не
+     снижается, запас проверен, квадрицепсу +1 подход */
   const later = readJson('data/later.json').profiles[0], LW: Workout[] = Core.sortW(later.workouts.map((d: Record<string, unknown>) => Core.fromDoc(String(d.id), d)));
   withDays(3, () => {
     const cfg = Core.mergeCfg(later.config), s = Core.exStats(LW, cfg, 'leg_press', Core.program(LW, cfg))!;
     assert.deepEqual([s.status, s.sincePR, s.pr.date, +s.pr.metric.toFixed(1), +s.last.metric.toFixed(1), +s.last.tm!.toFixed(1)], ['flat', 3, '2025-10-22', 222, 215.8, 227.3]);
     const p = Core.adapt(LW, cfg, 'wed', '2025-11-26').props.find(x => x.ex === 'leg_press')!;
-    assert.deepEqual([p.tag, p.sets.map(x => x.w)], ['Плато', [157.5, 157.5, 157.5, 157.5]]);
+    assert.deepEqual([p.tag, p.sets.map(x => x.w)], ['Плато · Недогруз · Перегруз · Отказ', [175, 175, 172.5, 172.5, 172.5]]);
   });
 });
 

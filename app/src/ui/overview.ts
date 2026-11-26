@@ -32,7 +32,7 @@ export function planRows(items: Item[], slot: string, date: string, A: Adapted |
   const rows: HTMLElement[] = [], on = (k: string) => !!used && used.includes(k);
   const gone = A ? A.props.filter(p => p.drop && on(p.key)) : [];   // (в эталоне нет) убранные поправкой «Не делал два раза» (core/skips.ts)
   items.forEach((it, idx) => {
-    const prop = A && on(it.ex) ? A.props.find(p => p.ex === it.ex) : null;
+    const prop = A && on(it.ex) ? A.props.find(p => p.ex === it.ex) : A ? A.props.find(p => p.swap === it.ex && on(p.key)) || null : null;   // (в эталоне нет) замена при долгом плато — строка нового упражнения со своей поправкой
     const add = A && idx >= A.base.items.length - gone.length ? A.adds.find(a => a.exId === it.ex && on(a.key)) : null;
     const baseIt = prop ? A!.base.items[prop.idx] : null;
     let right;

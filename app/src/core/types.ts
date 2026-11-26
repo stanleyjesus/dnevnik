@@ -138,7 +138,7 @@ export interface Addition { key: string; a: Add; exId: string; def: ExDef | null
 /** Подход в поправке: вес и цель по повторам */
 export interface PropSet { w: number | null; tg: Range }
 /** Поправка к упражнению плана: тег, причины, новые подходы */
-export interface Prop { key: string; ex: string; idx: number; tag: string; notes: string[]; sets: PropSet[]; cyc: Cyc | null; range: Range | null; note?: string; drop?: boolean; fix?: SkipFix }   // note — (в эталоне нет) заметка к упражнению, которую ставит поправка; drop и fix — (в эталоне нет) упражнение уходит из дня после двух пропусков подряд (skips.ts)
+export interface Prop { key: string; ex: string; idx: number; tag: string; notes: string[]; sets: PropSet[]; cyc: Cyc | null; range: Range | null; note?: string; drop?: boolean; fix?: SkipFix; swap?: string }   // note — (в эталоне нет) заметка к упражнению, которую ставит поправка; drop и fix — (в эталоне нет) упражнение уходит из дня после двух пропусков подряд (skips.ts); swap — (в эталоне нет) замена упражнения при долгом плато (adapt.ts)
 /** (в эталоне нет) Что делать с упражнением, которое два раза подряд не сделано (skips.ts): перенести в другой день (to), раздать подходы другим упражнениям (adds) или убрать; n — его подходы, left — сколько не поместилось */
 export interface SkipFix { ex: string; kind: 'move' | 'spread' | 'drop'; n: number; to?: string; adds?: { sl: string; ex: string; k: number }[]; left?: number; notes: string[] }
 

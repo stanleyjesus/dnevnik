@@ -8,7 +8,7 @@ import { backupDraft, flushSave, saveCfg, saveT, setSaveState, touch, uniqueId }
 import { D, go, render } from './render.ts';
 import { dayTitle, durText, paintEta, planLegend, planRows, planSets, propList, restSelect, setWord, startWorkout } from './overview.ts';
 import { exForm } from './setup.ts';
-import { appRules, HEAVY, heavyOf, LIGHT_RIR, lightWhy, restTag, rirOf } from '../core/rules.ts';
+import { appRules, cutAsk, HEAVY, heavyOf, LIGHT_RIR, lightWhy, restTag, rirOf } from '../core/rules.ts';
 import { okMin } from '../core/pace.ts';
 import { goneOf, movesOf, skipProgram } from './skipfix.ts';
 import { minField, paceText } from './pace.ts';
@@ -132,7 +132,7 @@ export function workoutEditor() {
   setTimeout(() => { setSaveState(); paintEta(); }, 0);
   return out;
 }
-export const propApplied = (it: Item, prop: Prop) => it.sets.length === prop.sets.length && prop.sets.every((x, i) => it.sets[i].w === x.w) && (!prop.cyc || (!!it.cyc && it.cyc.reps === prop.cyc.reps)) && (!prop.range || (!!it.range && it.range[0] === prop.range[0] && it.range[1] === prop.range[1])) && (!prop.note || it.note === prop.note);   // (в эталоне нет) проверка запаса — заметкой
+export const propApplied = (it: Item, prop: Prop) => it.sets.length === prop.sets.length && prop.sets.every((x, i) => it.sets[i].w === x.w) && (!prop.cyc || (!!it.cyc && it.cyc.reps === prop.cyc.reps)) && (!prop.range || (!!it.range && it.range[0] === prop.range[0] && it.range[1] === prop.range[1])) && (!prop.note || it.note === prop.note) && (!prop.swap || it.ex === prop.swap);   // (в эталоне нет) проверка запаса — заметкой, замена при долгом плато — упражнением
 /* the mark of one exercise, changeable right in the workout card: the mode of a percentage lift, 8–12 or 6–10 for a multi-joint accessory.
    Isolation has no mark: its range follows the weight step */
 export function goalSelect(it: Item) {
@@ -152,7 +152,7 @@ export function goalSelect(it: Item) {
 }
 export function adjBox(it: Item, prop: Prop, A: Adapted) {
   const baseIt = A.base.items[prop.idx], applied = propApplied(it, prop);
-  const setTo = (src: SetsSource) => { it.sets = src.sets.map((x, i) => { const o = it.sets[i] && it.sets[i].w === x.w ? it.sets[i] : null, n: SetRec = { w: x.w, r: o ? o.r : null }; if (o && o.q != null) n.q = o.q; return n; }); if (src.cyc) { it.cyc = { pct: src.cyc.pct, reps: src.cyc.reps }; it.tm = src.tm || null; } if (src.range) it.range = src.range.slice(); if (prop.note) it.note = src === prop ? prop.note : it.note === prop.note ? '' : it.note; touch(); render(true); };   // (в эталоне нет) проверка запаса
+  const setTo = (src: SetsSource) => { it.sets = src.sets.map((x, i) => { const o = it.sets[i] && it.sets[i].w === x.w ? it.sets[i] : null, n: SetRec = { w: x.w, r: o ? o.r : null }; if (o && o.q != null) n.q = o.q; return n; }); if (src.cyc) { it.cyc = { pct: src.cyc.pct, reps: src.cyc.reps }; it.tm = src.tm || null; } if (src.range) it.range = src.range.slice(); if (prop.note) it.note = src === prop ? prop.note : it.note === prop.note ? '' : it.note; if (prop.swap) it.ex = src === prop ? prop.swap : baseIt.ex; touch(); render(true); };   // (в эталоне нет) проверка запаса, замена при долгом плато
   return h('div', { class: 'adj-box' }, h('div', { class: 'row between' }, h('b', null, 'Поправка дневника · ' + prop.tag),
     applied ? h('button', { class: 'btn sm', onclick: () => setTo(baseIt) }, 'Вернуть по правилу') : h('button', { class: 'btn sm primary', onclick: () => setTo(prop) }, 'Применить')),
     prop.notes.map(t => h('div', { text: t.charAt(0).toUpperCase() + t.slice(1) + '.' })), h('div', { class: 'muted', text: applied ? 'Уже внесено в подходы ниже.' : 'Не внесено: подходы ниже идут по правилу или с твоими правками.' }));
@@ -177,7 +177,7 @@ export function exerciseCard(d: Workout, it: Item, idx: number, A: Adapted | nul
       h('button', { class: 'icon-btn', title: it.skip ? 'Вернуть в тренировку' : 'Не делал', 'aria-label': it.skip ? 'Вернуть в тренировку' : 'Отметить «не делал»', 'aria-pressed': String(!!it.skip), onclick: () => { it.skip = !it.skip; if (it.skip) it.sets.forEach(s => { s.r = null; s.skip = true; }); else it.sets.forEach(s => { delete s.skip; }); touch(); render(true); } }, icon('skip')),
       bare ? null : h('button', { class: 'icon-btn', title: 'Убрать из тренировки', 'aria-label': 'Убрать упражнение', onclick: () => { d.items.splice(idx, 1); touch(); render(true); } }, icon('x')))));
   if (it.skip) { card.appendChild(h('p', { class: 'sub' }, 'Отмечено «не делал». План: ' + it.sets.map(s => C.fmt(s.w)).join(' · ') + ' кг.')); return card; }
-  const prop = A ? A.props.find(p => p.ex === it.ex && !p.drop) : null;   // (в эталоне нет) возвращённое упражнение, которое убрала поправка «Не делал два раза», идёт по правилу
+  const prop = A ? A.props.find(p => (p.ex === it.ex || (p.swap === it.ex && !d.items.some(x => x.ex === p.ex))) && !p.drop) : null;   // (в эталоне нет) возвращённое упражнение, которое убрала поправка «Не делал два раза», идёт по правилу; замена при долгом плато — по своей поправке
   if (prop && !bare) card.appendChild(adjBox(it, prop, A!));
   const warm = appRules() && d.open ? warmLine(d, it, idx) : null;   // (в эталоне нет) раскладка разминки (просьба владельца, 25 ноября 2026; warmup.ts)
   if (warm) card.appendChild(warm);
@@ -202,7 +202,8 @@ export function dpBlock(card: HTMLElement, d: Workout, it: Item, prim: string[],
     (fr[1] !== it.range[1]) && topW > 0 ? h('button', { class: 'btn ghost sm', title: 'Шаг ' + C.fmt(hh.step) + ' кг от ' + C.fmt(topW) + ' кг, делённый на 2.5', onclick: () => { it.range = fr.slice(); touch(); render(true); } }, 'по формуле шага: ' + fr[0] + '–' + fr[1]) : null,
     S.canWrite ? goalSelect(it) : null,
     rirOf(D.cfg, it.ex) > D.cfg.rir ? h('span', null, 'запас ' + rirOf(D.cfg, it.ex) + ': со свободным весом отказ опасен') : null,   // (в эталоне нет) вывод 10 аудита
-    hh.prevDate ? h('span', null, 'прошлый раз ' + C.fmtDate(hh.prevDate) + (hh.prevSkipped ? ' (не делал)' : '')) : h('span', null, 'первая запись: подбери вес, чтобы в первом подходе вышло ' + it.range[0] + '–' + it.range[1] + ' повторов и в запасе ' + (rirOf(D.cfg, it.ex) === 1 ? 'остался один' : 'осталось ' + rirOf(D.cfg, it.ex)))));   // (в эталоне нет) запас по упражнению (вывод 10 аудита)
+    hh.prevDate ? h('span', null, 'прошлый раз ' + C.fmtDate(hh.prevDate) + (hh.prevSkipped ? ' (не делал)' : '')) : h('span', null, 'первая запись: подбери вес, чтобы в первом подходе вышло ' + it.range[0] + '–' + it.range[1] + ' повторов и в запасе ' + (rirOf(D.cfg, it.ex) === 1 ? 'остался один' : 'осталось ' + rirOf(D.cfg, it.ex))),   // (в эталоне нет) запас по упражнению (вывод 10 аудита)
+    appRules() && d.open && cutAsk(it.sets, hh.prevSets) ? pill('info', 'вес ниже прошлого раза: отметь запас — по нему дневник решит, как быстро вернуть вес') : null));   // (в эталоне нет) пункт 5 разбора «Сила, масса и плато» (26 ноября 2026)
   const sets = h('div', { class: 'sets' });
   sets.appendChild(h('div', { class: bare ? 'set head bare' : 'set head' }, h('span'), h('span', null, 'Вес, кг'), h('span'), h('span', null, 'Повторы'), h('span', { title: 'Сколько повторов оставалось до отказа. Пусто — как по методике: ' + rirOf(D.cfg, it.ex) }, 'Запас'), h('span')));
   it.sets.forEach((st, i) => {
