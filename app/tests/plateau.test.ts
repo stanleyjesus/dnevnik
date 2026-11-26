@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { plain, readJson } from './helpers.ts';
 import { Core } from '../src/core/index.ts';
 import { useDays } from '../src/core/days.ts';
-import { cutAsk, PLATEAU, plateauOf, RIR_CHECK } from '../src/core/rules.ts';
+import { cutAsk, PLATEAU, plateauOf, RIR_CHECK, statusOf } from '../src/core/rules.ts';
 import type { Cfg, Item, Session, SetRec, Workout } from '../src/core/types.ts';
 
 function withDays<T>(n: number | null, fn: () => T): T { useDays(n, false); try { return fn(); } finally { useDays(null, true); } }
@@ -166,3 +166,18 @@ test('замена при долгом плато: дневник предлаг
   assert.equal(cutAsk([{ w: 30, r: null }, { w: 32.5, r: null }, { w: 20, r: null }] as SetRec[], prev), false);
   assert.equal(cutAsk([{ w: 27.5, r: null, skip: true }] as SetRec[], prev), false);
 }));
+
+test('статус на «Прогрессе» — по тому же тренду: «застой» только при плато, где тренда не видно — как раньше', () => {
+  const later = readJson('data/later.json').profiles[0], LW: Workout[] = Core.sortW(later.workouts.map((d: Record<string, unknown>) => Core.fromDoc(String(d.id), d)));
+  const raw = readJson('data/config.json'), W: Workout[] = Core.sortW(readJson('data/workouts.json').map((d: Record<string, unknown>) => Core.fromDoc(String(d.id), d)));
+  const look = (ws: Workout[], cfg: Cfg) => Object.fromEntries(Core.allStats(ws, cfg).filter(s => s.active && s.status !== statusOf(cfg, s)).map(s => [s.id, s.status + ' → ' + statusOf(cfg, s)]));
+  withDays(3, () => {
+    /* «неделей позже»: три упражнения без рекорда три тренировки, но по тренду четырёх недель растут — как в плане, где у них нет «Плато» */
+    assert.deepEqual(look(LW, Core.mergeCfg(later.config)), { lat_raise_machine: 'flat → up', leg_press: 'flat → up', leg_curl_lying: 'flat → up' });
+    /* основные данные: трицепс на блоке стоит и по тренду — «застой» остаётся; бицепс сидя после разового тяжёлого подхода — тренда не видно, статус прежний */
+    const cfg = Core.mergeCfg(raw), st = Object.fromEntries(Core.allStats(W, cfg).map(s => [s.id, [s.status, statusOf(cfg, s)]]));
+    assert.deepEqual([st.tri_pushdown, st.bayesian_curl, look(W, cfg)], [['flat', 'flat'], ['up', 'up'], {}]);
+  });
+  /* с таблицей дней эталона — три тренировки без рекорда, как у эталона */
+  assert.deepEqual(look(LW, Core.mergeCfg(later.config)), {});
+});

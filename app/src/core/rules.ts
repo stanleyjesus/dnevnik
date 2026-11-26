@@ -209,16 +209,33 @@ export function logMax(it: Item, rir: number) {
    4. «Мало объёма» прибавляет подход и упражнению, которое стоит, а не только растущему.
    5. После снижения веса карточка просит отметить запас (cutAsk): по нему вес возвращается за одну-две тренировки, а не шагом за тренировку. */
 export const PLATEAU = { days: 28, min: 2, grow: 0.005, fall: 0.05, drop: 0.05, vol: 12, swap: 56 };
+/** Статус упражнения на «Прогрессе» с днями «День N» (решение владельца, 26 ноября 2026): тот же тренд, что у «Плато» и «Откат» плана, на дату
+    последней тренировки — «застой» (flat) и «откат» (down) по plateauOf, «растёт» (up), когда тренд есть и он не плато. null — тренда не видно:
+    в одном из окон меньше двух тренировок после последнего снижения веса */
+export function trendStatus(ss: Session[], rir: number): 'up' | 'flat' | 'down' | null {
+  if (!ss.length) return null;
+  const date = ss[ss.length - 1].date, p = plateauOf(ss, date, rir);
+  if (p) return p.tag === 'Откат' ? 'down' : 'flat';
+  const { now, before } = windowsOf(ss, date, PLATEAU.days);
+  return now.length >= PLATEAU.min && before.length >= PLATEAU.min ? 'up' : null;
+}
+/** Статус, который показывает «Прогресс»: с днями «День N» — по тренду (trendStatus), а где тренда не видно — как раньше, три тренировки без
+    рекорда (exStats); у лёгкого дня — «лёгкий день»; с таблицей дней эталона — как раньше */
+export const statusOf = (cfg: Cfg, s: { id: string, ss: Session[], status: string }) => appRules() && s.status !== 'light' ? trendStatus(s.ss, rirOf(cfg, s.id)) || s.status : s.status;
 /** Пункт 5: в каком-то подходе вес ниже, чем в том же подходе прошлый раз, а запас в нём не отмечен */
 export const cutAsk = (sets: SetRec[], prev: SetRec[]) => sets.some((k, i) => !k.skip && k.w != null && k.q == null && !!prev[i] && prev[i].w != null && k.w < prev[i].w! - 1e-6);
 /** Плато или откат упражнения двойной прогрессии перед тренировкой date: ss — его тренировки до неё по порядку, rir — запас по методике;
     days — сколько последних дней сравнивается с 4 неделями до них (8 недель — для замены, PLATEAU.swap) */
-export function plateauOf(ss: Session[], date: string, rir: number, days = PLATEAU.days): { tag: 'Плато' | 'Откат', best: Session } | null {
+/** Окна тренда: тренировки после последнего снижения веса в дне (rest), последние days дней (now) и 4 недели до них (before) */
+function windowsOf(ss: Session[], date: string, days: number) {
   const top = (x: Session) => x.sets.reduce((m, k) => Math.max(m, k.w || 0), 0), day = (x: Session) => x.slot || '', was: Record<string, number> = {};
   let from = 0;
   ss.forEach((x, i) => { const t = top(x); if (!x.item.cyc && was[day(x)] > 0 && t < was[day(x)] * (1 - PLATEAU.drop) + 1e-6) from = i; was[day(x)] = t; });
   const D = dnum(date), age = (x: Session) => D - dnum(x.date), rest = ss.slice(from);
-  const now = rest.filter(x => age(x) <= days), before = rest.filter(x => age(x) > days && age(x) <= days + PLATEAU.days);
+  return { rest, age, now: rest.filter(x => age(x) <= days), before: rest.filter(x => age(x) > days && age(x) <= days + PLATEAU.days) };
+}
+export function plateauOf(ss: Session[], date: string, rir: number, days = PLATEAU.days): { tag: 'Плато' | 'Откат', best: Session } | null {
+  const day = (x: Session) => x.slot || '', { age, now, before } = windowsOf(ss, date, days);
   if (now.length < PLATEAU.min || before.length < PLATEAU.min) return null;
   const best = (xs: Session[]) => xs.reduce((t, x) => x.metric > t.metric ? x : t, xs[0]), b0 = best(before), b1 = best(now);
   if (b1.metric > b0.metric * (1 + PLATEAU.grow)) return null;

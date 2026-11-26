@@ -13,6 +13,7 @@ import { weekDays } from './platform.ts';
 import { appRules, byPct, isoLift } from '../core/rules.ts';
 import { zoneKey, zoneMark } from './marks.ts';
 import { showMemo } from './memo.ts';
+import { DAY_H, ISO } from '../core/strength.ts';
 import type { Adapted, Cfg, Insight, Item } from '../core/index.ts';
 import type { Kid } from './types.ts';
 
@@ -152,7 +153,7 @@ export function vOverview() {
   /* wave lifts (в приложении — базовые в силовой роли: сила по запасу и поддержание, решение владельца 24 ноября 2026) */
   const cyc = D.stats.filter(s => byPct(D.cfg, s.id) && s.active), app = appRules();
   if (cyc.length) {
-    out.push(h('section', null, h('div', { class: 'sec-h' }, h('h2', null, 'Базовые'), h('span', { class: 'sub' }, app ? [cyc.some(s => C.goalOf(D.cfg, s.id) === 'auto' && !isoLift(D.cfg, s.id)) ? 'сила по запасу: 4 × 4, вес по запасу' : '', cyc.some(s => C.goalOf(D.cfg, s.id) === 'auto' && isoLift(D.cfg, s.id)) ? 'изоляция: 4 × 6, вес по запасу' : '', cyc.some(s => C.goalOf(D.cfg, s.id) === 'hold') ? 'поддержание: 3 × 4, вес прежний' : ''].filter(Boolean).join(' · ') : 'волна ' + Object.entries(D.cfg.cycle.pct).sort((a: any, b: any) => b[0] - a[0]).map(e => e[1] + '% × ' + e[0]).join(' → ') + ', максимум +' + C.fmt(D.cfg.cycle.inc, 1) + '% в неделю' + (cyc.some(s => C.goalOf(D.cfg, s.id) === 'auto') ? ' · сила по запасу: 4 × 4, вес по запасу' : ''))),
+    out.push(h('section', null, h('div', { class: 'sec-h' }, h('h2', null, 'Базовые'), h('span', { class: 'sub' }, app ? [cyc.some(s => C.goalOf(D.cfg, s.id) === 'auto' && !isoLift(D.cfg, s.id)) ? 'сила по запасу: ' + DAY_H.sets + ' × ' + DAY_H.reps + ', вес по запасу' : '', cyc.some(s => C.goalOf(D.cfg, s.id) === 'auto' && isoLift(D.cfg, s.id)) ? 'изоляция: ' + ISO.sets + ' × ' + ISO.reps + ', вес по запасу' : '', cyc.some(s => C.goalOf(D.cfg, s.id) === 'hold') ? 'поддержание: 3 × 4, вес прежний' : ''].filter(Boolean).join(' · ') : 'волна ' + Object.entries(D.cfg.cycle.pct).sort((a: any, b: any) => b[0] - a[0]).map(e => e[1] + '% × ' + e[0]).join(' → ') + ', максимум +' + C.fmt(D.cfg.cycle.inc, 1) + '% в неделю' + (cyc.some(s => C.goalOf(D.cfg, s.id) === 'auto') ? ' · сила по запасу: 4 × 4, вес по запасу' : ''))),
       h('div', { class: 'grid3' }, cyc.map(s => {
         const p = C.planCycle(D.W, D.cfg, s.id, null);
         return h('button', { class: 'ex-card', onclick: () => { S.ui.exSel = s.id; go('progress'); } },

@@ -7,7 +7,7 @@ import { dbErr, toast } from './toast.ts';
 import { D, render } from './render.ts';
 import { barChart, chartHost, lineChart, setChip, spark } from './charts.ts';
 import { goalTag, STATUS } from './overview.ts';
-import { appRules } from '../core/rules.ts';
+import { appRules, statusOf } from '../core/rules.ts';
 import type { ExStat, Slot } from '../core/index.ts';
 import type { Point } from './types.ts';
 
@@ -34,7 +34,7 @@ export function vProgress() {
       h('div', { class: 'seg', role: 'group', 'aria-label': 'Какие упражнения показать' }, h('button', { 'aria-pressed': String(!ui.exAll), onclick: () => { ui.exAll = false; render(true); } }, 'В программе'), h('button', { 'aria-pressed': String(ui.exAll), onclick: () => { ui.exAll = true; render(true); } }, 'Все'))),
     exerciseDetail(sel, start),
     h('div', { class: 'ex-grid' }, shown.map(s => {
-      const st = s.active ? STATUS[s.status] : null;
+      const st = s.active ? STATUS[statusOf(D.cfg, s)] : null;
       return h('button', { class: 'ex-card', 'aria-pressed': String(s.id === ui.exSel), onclick: () => { ui.exSel = s.id; ui.hist = false; render(true); const el = $('ex-detail'); if (el) el.scrollIntoView({ block: 'nearest' }); } },
         h('span', { class: 'nm', text: C.exName(D.cfg, s.id) }),
         h('div', { class: 'ln' }, h('span', { class: 'big' }, C.fmt(s.last.best.w) + ' × ' + s.last.best.r), spark(s.ss.map(x => x.metric), s.active ? null : 'var(--deemph)')),
@@ -45,7 +45,7 @@ export function vProgress() {
   return out;
 }
 export function exerciseDetail(s: ExStat, start: number) {
-  const ui = S.ui, cyc = C.isCycle(D.cfg, s.id) && (!appRules() || s.ss.every(x => x.item.cyc)), st = s.active ? STATUS[s.status] : null;   // (в эталоне нет) с днями «День N» у базового бывают записи и по двойной прогрессии: тогда график — как у подсобки
+  const ui = S.ui, cyc = C.isCycle(D.cfg, s.id) && (!appRules() || s.ss.every(x => x.item.cyc)), st = s.active ? STATUS[statusOf(D.cfg, s)] : null;   // (в эталоне нет) с днями «День N» у базового бывают записи и по двойной прогрессии: тогда график — как у подсобки; статус — по тренду (rules.ts, statusOf)
   const wave = cyc && !appRules();   // (в эталоне нет) с днями «День N» максимум у всех упражнений — по подходам: подписи как у подсобки
   const ex = D.cfg.ex[s.id] || { m: {} };
   const mus = Object.entries(ex.m || {}).sort((a, b) => b[1] - a[1]).map(e => (C.MUSCLE[e[0]] || {}).n + (e[1] < 1 ? ' ½' : '')).join(', ');
