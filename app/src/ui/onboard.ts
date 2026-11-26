@@ -370,12 +370,13 @@ function vWeights(): View {
       h('input', { class: 'num sm', type: 'text', inputmode: 'numeric', id: 'bw-reps-' + id, placeholder: 'раз', 'aria-label': 'Сколько раз подряд: ' + C.exName(cfg, id), value: n != null ? String(n) : '', onchange: e => setReps(id, e.target) }),
       h('div', { class: 'kw-out sub', id: 'bw-out-' + id, text: line }));
   };
-  const bodyBox = bodyIds.length ? [
+  /* каждый блок шага — отдельной карточкой: шаг веса, упражнения с весом тела, веса упражнений (просьба владельца, 26 ноября 2026) */
+  const bodyBox = bodyIds.length ? h('div', { class: 'onb-box' },
     h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Упражнения с весом тела'),
     h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Вес тела и сколько раз подряд получается.'),
     h('div', { class: 'row', id: 'onb-bw', style: 'flex-wrap:nowrap;gap:8px;margin-bottom:8px' }, h('span', { class: 'grow', style: 'min-width:0' }, 'Вес тела'),
       h('input', { class: 'num sm', type: 'text', inputmode: 'decimal', id: 'onb-bw-kg', placeholder: 'кг', 'aria-label': 'Вес тела, кг', value: bw ? C.fmt(bw, 1) : '', onchange: e => setBw(e.target) }), h('span', { class: 'sub', style: 'min-width:96px' }, 'кг')),
-    h('div', { class: 'kw', id: 'onb-body', style: 'margin-bottom:16px' }, bodyIds.map(bodyRow))] : null;
+    h('div', { class: 'kw', id: 'onb-body' }, bodyIds.map(bodyRow))) : null;
   const head = h('div', { class: 'kw-row kw-head' }, h('span', null, 'Упражнение'), h('span', null, 'Рабочий вес, кг'), h('span', null, 'Повторов'), h('span', null, 'Разовый максимум, кг'), h('span', null, 'Что возьмёт дневник'));
   const next = () => {
     const miss = gears.filter(g => !o.steps[g]);
@@ -383,16 +384,16 @@ function vWeights(): View {
     to('done');
   };
   return [frame('Веса', null, [
-    h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Шаг веса'),
+    h('div', { class: 'onb-box' }, h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Шаг веса'),
     h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Прибавка веса на снаряде в твоём зале.'),
-    h('div', { class: 'stack', id: 'onb-gear', style: 'gap:6px;margin-bottom:16px' }, gears.map(g => h('div', { class: 'row', style: 'flex-wrap:nowrap;gap:8px' },
+    h('div', { class: 'stack', id: 'onb-gear', style: 'gap:6px' }, gears.map(g => h('div', { class: 'row', style: 'flex-wrap:nowrap;gap:8px' },
       h('span', { class: 'grow', style: 'min-width:0' }, cfg.gear[g].n),
       h('input', { class: 'num sm', type: 'text', inputmode: 'decimal', id: 'onb-step-' + g, placeholder: 'кг', 'aria-label': 'Шаг веса, кг: ' + cfg.gear[g].n, value: o.steps[g] ? C.fmt(cfg.gear[g].step, 3) : '', onchange: e => setStep(g, e.target.value) }),
-      o.steps[g] ? h('span', { class: 'sub', style: 'min-width:96px' }, 'кг') : h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-step-usual-' + g, style: 'min-width:96px', onclick: () => setStep(g, String(usual(g))) }, 'обычно ' + C.fmt(usual(g)))))),
+      o.steps[g] ? h('span', { class: 'sub', style: 'min-width:96px' }, 'кг') : h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-step-usual-' + g, style: 'min-width:96px', onclick: () => setStep(g, String(usual(g))) }, 'обычно ' + C.fmt(usual(g))))))),
     bodyBox,
-    h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Веса упражнений'),
+    h('div', { class: 'onb-box' }, h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Веса упражнений'),
     h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Что знаешь: рабочий вес с повторами или разовый максимум.'),
-    h('div', { class: 'kw', id: 'known' }, head, ids.filter(id => !bodyIds.includes(id)).map(row))],
+    h('div', { class: 'kw', id: 'known' }, head, ids.filter(id => !bodyIds.includes(id)).map(row)))],
     () => { S.ui.prog = null; to('prog'); }, h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: next }, 'Дальше'))];
 }
 

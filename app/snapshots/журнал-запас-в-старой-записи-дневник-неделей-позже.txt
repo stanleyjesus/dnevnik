@@ -3321,13 +3321,17 @@
      div.seg(role="group" aria-label="Что показать на теле")
       button#bm-fact(aria-pressed="true") По факту
       button#bm-plan(aria-pressed="false") По программе
-    div.bodymap
-     figure.bm-fig
-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
-      figcaption Вид спереди
-     figure.bm-fig
-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
-      figcaption Вид сзади
+    div.bodymap.flip
+     div.flip-in
+      figure.bm-fig
+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
+       figcaption Вид спереди
+      figure.bm-fig(inert="")
+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
+       figcaption Вид сзади
+     button.bm-flip(type="button" aria-label="Вид спереди: перевернуть на вид сзади")
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#f2a2c05d8a
+      span Вид спереди
     div.scale(style="margin:10px 0")
      span.sw
       i.hc.z-none
@@ -3867,10 +3871,10 @@
 
 === 10. ячейка последней недели
 экран: правки к шагу 9
-@@ 87 -1 +1
+@@ 91 -1 +1
 -        button.hc.z-cur.cur(aria-pressed="false" aria-label="Грудь, неделя 11: 2") 2
 +        button.hc.z-cur.cur.sel(aria-pressed="true" aria-label="Грудь, неделя 11: 2") 2
-@@ 546 -1 +7
+@@ 550 -1 +7
 -   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
 +   div
 +    h3#cell-h Грудь, неделя 11: 2 подхода (масса 0 · сила 2)
@@ -3882,10 +3886,10 @@
 
 === 11. ячейка предпоследней недели
 экран: правки к шагу 9
-@@ 85 -1 +1
+@@ 89 -1 +1
 -        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 10: 11") 11
 +        button.hc.z-opt.sel(aria-pressed="true" aria-label="Грудь, неделя 10: 11") 11
-@@ 546 -1 +15
+@@ 550 -1 +15
 -   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
 +   div
 +    h3#cell-h Грудь, неделя 10: 11 подходов (масса 7 · сила 4)

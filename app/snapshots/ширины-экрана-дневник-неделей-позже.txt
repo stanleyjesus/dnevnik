@@ -2637,19 +2637,23 @@
 экран: правки к шагу 1
 @@ 2 -12 +1
 +  section.card
-@@ 16 -116 +32
+@@ 16 -116 +36
 +     h2 Нагрузка на теле
 +     p.note Подходов в неделю по факту: среднее за недели 8, 9, 10.
 +    div.seg(role="group" aria-label="Что показать на теле")
 +     button#bm-fact(aria-pressed="true") По факту
 +     button#bm-plan(aria-pressed="false") По программе
-+   div.bodymap
-+    figure.bm-fig
-+     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
-+     figcaption Вид спереди
-+    figure.bm-fig
-+     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
-+     figcaption Вид сзади
++   div.bodymap.flip
++    div.flip-in
++     figure.bm-fig
++      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
++      figcaption Вид спереди
++     figure.bm-fig(inert="")
++      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
++      figcaption Вид сзади
++    button.bm-flip(type="button" aria-label="Вид спереди: перевернуть на вид сзади")
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#f2a2c05d8a
++     span Вид спереди
 +   div.scale(style="margin:10px 0")
 +    span.sw
 +     i.hc.z-none
@@ -3200,7 +3204,7 @@
   pm=even
   pt=0
 экран: правки к шагу 7
-@@ 5 -32 +101
+@@ 5 -36 +101
 +     div.eyebrow Действует сейчас
 +     h2 Своя программа
 +    span.sub 67 подходов в неделю
@@ -3302,7 +3306,7 @@
 +      div.grow
 +       div.pn Кисть с гантелью левая рука
 +       div.sub 3 × 8–16
-@@ 40 -505 +177
+@@ 44 -505 +177
 +     div.eyebrow Новая программа
 +     h2 Равномерно на всё тело
 +    span.sub 80 подходов в неделю · сейчас 67 · тренировка ≈ 1 ч 35 мин
@@ -3480,17 +3484,21 @@
 +       div.sub 2 × 10–15
 +      button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Отведение ног в тренажере") Заменить
 +   p.sub(style="margin-top:8px") Полоса слева — замена. Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
-@@ 546 -7 +305
+@@ 550 -7 +309
 +   div.grid2.even
 +    div(style="min-width:0")
 +     div.eyebrow(style="margin-bottom:4px") Недельный объём по мышцам
-+     div.bodymap
-+      figure.bm-fig
-+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f189a436e7
-+       figcaption Вид спереди
-+      figure.bm-fig
-+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
-+       figcaption Вид сзади
++     div.bodymap.flip
++      div.flip-in
++       figure.bm-fig
++        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f189a436e7
++        figcaption Вид спереди
++       figure.bm-fig(inert="")
++        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
++        figcaption Вид сзади
++      button.bm-flip(type="button" aria-label="Вид спереди: перевернуть на вид сзади")
++       svg(viewBox="0 0 24 24" aria-hidden="true") …#f2a2c05d8a
++       span Вид спереди
 +     details#prog-why.whybox
 +      summary Что изменилось и почему
 +      div.why

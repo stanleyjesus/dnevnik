@@ -224,6 +224,7 @@ label.f > span { font-weight: 500; }
   .set .prev { grid-column: 1 / -1; grid-row: 3; padding-left: 26px; margin-top: -4px; }
   .set > .icon-btn { grid-column: 6; grid-row: 1; }
 }
+.set.bare { grid-template-columns: 22px minmax(56px, 120px) 14px minmax(48px, 96px) 52px 34px; }   /* идущая тренировка с днями «День N»: без шкалы диапазона и прошлого раза — вес, повторы, запас */
 .cyc { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin: 6px 0 10px; }
 .cyc-sets { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .cyc-sets input.num { width: 52px; }
@@ -410,6 +411,14 @@ td.mctl { padding: 2px 0 2px 4px; white-space: nowrap; text-align: right; }
 :root[data-theme="dark"] .bm-body { fill: #2b2f33; stroke: #50565c; }
 :root[data-theme="dark"] .bm-x { fill: #3a3f44; opacity: .9; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bm-body { fill: #2b2f33; stroke: #50565c; } :root:not([data-theme="light"]) .bm-x { fill: #3a3f44; opacity: .9; } }
+.bodymap.flip { display: block; position: relative; max-width: 360px; margin: 0 auto; perspective: 1400px; cursor: pointer; -webkit-tap-highlight-color: transparent; }   /* с днями «День N»: одна фигура, нажатие переворачивает (flipmap.ts) */
+.flip-in { display: grid; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.3, .7, .2, 1); }
+.flip-in > .bm-fig { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.flip-in > .bm-fig + .bm-fig, .bodymap.flip.back .flip-in { transform: rotateY(180deg); }
+.bodymap.flip figcaption { visibility: hidden; }   /* какой вид открыт, говорит кнопка под фигурой */
+.bm-flip { display: flex; align-items: center; gap: 6px; margin: -14px auto 0; padding: 6px 12px; min-height: 34px; border: 1px solid var(--line-2); border-radius: 999px; background: var(--surface); color: var(--ink-2); font: inherit; font-size: 13px; cursor: pointer; }
+.bm-flip svg { width: 16px; height: 16px; }
+@media (prefers-reduced-motion: reduce) { .flip-in { transition: none; } }
 .gear-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 820px) { .gear-grid { grid-template-columns: minmax(0, 1fr); } }
 
@@ -431,6 +440,9 @@ input.gear-n { flex: 1 1 110px; min-width: 0; min-height: 32px; padding: 2px 8px
 .swaprow select { min-height: 34px; padding: 2px 8px; font-size: 13px; }
 @supports (-webkit-touch-callout: none) { input:not(.gear-n), select, textarea { font-size: 16px !important; } }   /* отличие от артефакта, только iPhone и iPad: поле с шрифтом мельче 16px приближает экран при каждом нажатии */
 .onb-on .top, .onb-on .tabs { display: none; }
+.top .brand, .sync:not(.bad) { display: none; }   /* шапка без названия приложения и «записи на устройстве»: остаются профиль и неделя, статус — только когда хранилище недоступно */
+.onb-box { padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); min-width: 0; }   /* шаг «Веса» онбординга: каждый блок — своей карточкой */
+.onb-box + .onb-box { margin-top: 12px; }
 .tag.crit { background: var(--crit); color: #ffffff; }
 .ex-card .nm .tag { margin-left: 6px; vertical-align: 1px; }
 .picks { display: flex; flex-wrap: wrap; gap: 6px; }

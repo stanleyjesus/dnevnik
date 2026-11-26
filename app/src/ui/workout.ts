@@ -168,15 +168,16 @@ export function exerciseCard(d: Workout, it: Item, idx: number, A: Adapted | nul
   const prim = Object.entries(ex.m || {}).filter(e => e[1] >= 1).map(e => (C.MUSCLE[e[0]] || {}).n).filter(Boolean);
   const move = (k: number) => { const j = idx + k; if (j < 0 || j >= d.items.length) return; d.items.splice(j, 0, d.items.splice(idx, 1)[0]); touch(); render(true); };
   const card = h('div', { class: 'ex' + (it.skip ? ' skipped' : '') });
+  const bare = appRules() && !!d.open;   // (в эталоне нет) идущая тренировка с днями «День N» (просьба владельца, 26 ноября 2026): каждая тренировка сама по себе — из инструментов упражнения только «не делал», поправки под упражнением нет; вес и подходы ставит алгоритм. Правка законченной записи — как была
   card.appendChild(h('div', { class: 'ex-h' }, h('h3', { text: ex.n }),
     h('div', { class: 'ex-tools' },
-      h('button', { class: 'icon-btn', title: 'Выше', 'aria-label': 'Переместить выше', onclick: () => move(-1) }, icon('arrowU')),
-      h('button', { class: 'icon-btn', title: 'Ниже', 'aria-label': 'Переместить ниже', onclick: () => move(1) }, icon('arrowD')),
+      bare ? null : h('button', { class: 'icon-btn', title: 'Выше', 'aria-label': 'Переместить выше', onclick: () => move(-1) }, icon('arrowU')),
+      bare ? null : h('button', { class: 'icon-btn', title: 'Ниже', 'aria-label': 'Переместить ниже', onclick: () => move(1) }, icon('arrowD')),
       h('button', { class: 'icon-btn', title: it.skip ? 'Вернуть в тренировку' : 'Не делал', 'aria-label': it.skip ? 'Вернуть в тренировку' : 'Отметить «не делал»', 'aria-pressed': String(!!it.skip), onclick: () => { it.skip = !it.skip; if (it.skip) it.sets.forEach(s => { s.r = null; s.skip = true; }); else it.sets.forEach(s => { delete s.skip; }); touch(); render(true); } }, icon('skip')),
-      h('button', { class: 'icon-btn', title: 'Убрать из тренировки', 'aria-label': 'Убрать упражнение', onclick: () => { d.items.splice(idx, 1); touch(); render(true); } }, icon('x')))));
+      bare ? null : h('button', { class: 'icon-btn', title: 'Убрать из тренировки', 'aria-label': 'Убрать упражнение', onclick: () => { d.items.splice(idx, 1); touch(); render(true); } }, icon('x')))));
   if (it.skip) { card.appendChild(h('p', { class: 'sub' }, 'Отмечено «не делал». План: ' + it.sets.map(s => C.fmt(s.w)).join(' · ') + ' кг.')); return card; }
   const prop = A ? A.props.find(p => p.ex === it.ex && !p.drop) : null;   // (в эталоне нет) возвращённое упражнение, которое убрала поправка «Не делал два раза», идёт по правилу
-  if (prop) card.appendChild(adjBox(it, prop, A!));
+  if (prop && !bare) card.appendChild(adjBox(it, prop, A!));
   const warm = appRules() && d.open ? warmLine(d, it, idx) : null;   // (в эталоне нет) раскладка разминки (просьба владельца, 25 ноября 2026; warmup.ts)
   if (warm) card.appendChild(warm);
   if (it.cyc) cycleBlock(card, d, it, prim); else dpBlock(card, d, it, prim, idx, prop, A);
@@ -189,7 +190,12 @@ export function dpBlock(card: HTMLElement, d: Workout, it: Item, prim: string[],
   if (!it.range) it.range = hh.range.slice();
   const topW = it.sets.reduce((m, s) => Math.max(m, s.w || 0), 0), fr = C.formulaRange(topW, hh.step, it.range[0]);
   const rIn = (k: number, lab: string) => h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'rng-' + idx + '-' + k, 'aria-label': lab, value: it.range![k], onchange: e => { const v = toInt(e.target.value); if (v != null && v > 0) { it.range![k] = v; if (it.range![1] <= it.range![0]) it.range![1] = it.range![0] + 1; touch(); } render(true); } });
-  card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
+  const bare = appRules() && !!d.open, rq = rirOf(D.cfg, it.ex);   // (в эталоне нет) идущая тренировка с днями «День N»: без диапазона, прошлых результатов и ориентиров — каждая тренировка сама по себе (просьба владельца, 26 ноября 2026)
+  if (bare) card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
+    h('span', { class: 'tag', title: 'Отдых между подходами: его ставит дневник по типу упражнения' }, restTag(D.cfg, it.ex)),
+    h('span', null, 'запас ' + rq + (rq > D.cfg.rir ? ': со свободным весом отказ опасен' : '')),
+    hh.prevDate ? null : h('span', null, 'первая запись: подбери вес, с которым в запасе ' + (rq === 1 ? 'останется один повтор' : 'останется ' + rq))));
+  else card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
     appRules() ? h('span', { class: 'tag', title: 'Отдых между подходами: его ставит дневник по типу упражнения' }, restTag(D.cfg, it.ex)) : null,   // (в эталоне нет) просьба владельца, 25 ноября 2026
     h('span', null, 'Диапазон'), rIn(0, 'Нижняя граница повторов'), '–', rIn(1, 'Верхняя граница повторов'),
     (fr[1] !== it.range[1]) && topW > 0 ? h('button', { class: 'btn ghost sm', title: 'Шаг ' + C.fmt(hh.step) + ' кг от ' + C.fmt(topW) + ' кг, делённый на 2.5', onclick: () => { it.range = fr.slice(); touch(); render(true); } }, 'по формуле шага: ' + fr[0] + '–' + fr[1]) : null,
@@ -197,20 +203,20 @@ export function dpBlock(card: HTMLElement, d: Workout, it: Item, prim: string[],
     rirOf(D.cfg, it.ex) > D.cfg.rir ? h('span', null, 'запас ' + rirOf(D.cfg, it.ex) + ': со свободным весом отказ опасен') : null,   // (в эталоне нет) вывод 10 аудита
     hh.prevDate ? h('span', null, 'прошлый раз ' + C.fmtDate(hh.prevDate) + (hh.prevSkipped ? ' (не делал)' : '')) : h('span', null, 'первая запись: подбери вес, чтобы в первом подходе вышло ' + it.range[0] + '–' + it.range[1] + ' повторов и в запасе ' + (rirOf(D.cfg, it.ex) === 1 ? 'остался один' : 'осталось ' + rirOf(D.cfg, it.ex)))));   // (в эталоне нет) запас по упражнению (вывод 10 аудита)
   const sets = h('div', { class: 'sets' });
-  sets.appendChild(h('div', { class: 'set head' }, h('span'), h('span', null, 'Вес, кг'), h('span'), h('span', null, 'Повторы'), h('span', { title: 'Сколько повторов оставалось до отказа. Пусто — как по методике: ' + rirOf(D.cfg, it.ex) }, 'Запас'), h('span')));
+  sets.appendChild(h('div', { class: bare ? 'set head bare' : 'set head' }, h('span'), h('span', null, 'Вес, кг'), h('span'), h('span', null, 'Повторы'), h('span', { title: 'Сколько повторов оставалось до отказа. Пусто — как по методике: ' + rirOf(D.cfg, it.ex) }, 'Запас'), h('span')));
   it.sets.forEach((st, i) => {
     const prev = hh.prevSets[i], g = appl && (!baseIt!.sets[i] || baseIt!.sets[i].w !== prop.sets[i].w) ? { rule: 'adj', target: prop.sets[i].tg } : hh.sets[i];
     const track = rangeTrack(it.range!, prev && prev.r != null ? prev.r : null);
     const fbEl = h('span', { class: 'fb' });
-    const paint = () => { track.setCur(st.r); fbEl.textContent = ''; const f = setFeedback(st, g, it.range!, hh.step); if (f) fbEl.appendChild(pill(f[0], f[1])); };
-    sets.appendChild(h('div', { class: 'set' },
+    const paint = () => { if (bare) return; track.setCur(st.r); fbEl.textContent = ''; const f = setFeedback(st, g, it.range!, hh.step); if (f) fbEl.appendChild(pill(f[0], f[1])); };
+    sets.appendChild(h('div', { class: bare ? 'set bare' : 'set' },
       h('span', { class: 'i' }, i + 1),
       h('input', { class: 'num', type: 'text', inputmode: 'decimal', id: 'w-' + idx + '-' + i, 'aria-label': 'Вес, подход ' + (i + 1), value: st.w == null ? '' : C.fmt(st.w, 3), oninput: e => { st.w = toNum(e.target.value); touch(); } }),
       h('span', { class: 'x' }, '×'),
-      h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'r-' + idx + '-' + i, 'aria-label': 'Повторы, подход ' + (i + 1), placeholder: g && g.rule !== 'repeat' ? g.target[0] + '+' : '', value: st.r == null ? '' : st.r, oninput: e => { st.r = toInt(e.target.value); delete st.skip; paint(); touch(); } }),
+      h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'r-' + idx + '-' + i, 'aria-label': 'Повторы, подход ' + (i + 1), placeholder: !bare && g && g.rule !== 'repeat' ? g.target[0] + '+' : '', value: st.r == null ? '' : st.r, oninput: e => { st.r = toInt(e.target.value); delete st.skip; paint(); touch(); } }),
       h('input', { class: 'num rir', type: 'text', inputmode: 'numeric', id: 'q-' + idx + '-' + i, 'aria-label': 'Запас повторов до отказа (RIR), подход ' + (i + 1), placeholder: '–', value: st.q == null ? '' : st.q, oninput: e => { const v = toInt(e.target.value); if (v == null) delete st.q; else st.q = Math.max(0, Math.min(5, v)); paint(); touch(); } }),
-      track,
-      h('span', { class: 'prev' }, prev ? ['было ', h('b', null, C.fmt(prev.w) + ' × ' + (prev.r == null ? '?' : prev.r)), prev.q != null ? ', запас ' + prev.q + ' ' : ' '] : null, fbEl),
+      bare ? null : track,
+      bare ? null : h('span', { class: 'prev' }, prev ? ['было ', h('b', null, C.fmt(prev.w) + ' × ' + (prev.r == null ? '?' : prev.r)), prev.q != null ? ', запас ' + prev.q + ' ' : ' '] : null, fbEl),
       h('button', { class: 'icon-btn', title: 'Убрать подход', 'aria-label': 'Убрать подход ' + (i + 1), onclick: () => { it.sets.splice(i, 1); touch(); render(true); } }, icon('x'))));
     paint();
   });
@@ -242,8 +248,8 @@ export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string
       : h('span', null, it.cyc!.pct + '% от расчётного максимума ' + (light && par ? 'в упражнении «' + C.exName(D.cfg, par) + '» ' : ''), tmEl),
     light ? h('span', null, !appRules() ? 'лёгкий день: техника и скорость, до отказа далеко' : (D.cfg.ex[it.ex] || {}).mid ? 'средний день: между тяжёлым и лёгким' : 'лёгкий день: вес меньше, повторов больше, чем в тяжёлом') : null,   // (в эталоне нет) «Новая схема»: запас и в лёгком дне около 2
     S.canWrite ? goalSelect(it) : null,
-    pc.prev ? h('span', null, 'прошлый раз ' + C.fmtDate(pc.prev.date) + ': ' + C.fmt(pc.prev.top.w) + ' × ' + pc.prev.item.cyc!.reps) : null,
-    said || (lm ? pill(lm > 0 ? 'good' : 'warn', lightWhy(lm)) : null) || (pc.repeat ? pill('warn', 'в прошлый раз подходы не закрыты: неделя повторяется') : pc.hard ? pill('warn', 'в прошлый раз был подход в отказ: максимум не повышен') : null)));
+    (appRules() && !!d.open) ? null : pc.prev ? h('span', null, 'прошлый раз ' + C.fmtDate(pc.prev.date) + ': ' + C.fmt(pc.prev.top.w) + ' × ' + pc.prev.item.cyc!.reps) : null,   // (в эталоне нет) в идущей тренировке с днями «День N» — без прошлого раза (просьба владельца, 26 ноября 2026)
+    (appRules() && !!d.open) ? null : said || (lm ? pill(lm > 0 ? 'good' : 'warn', lightWhy(lm)) : null) || (pc.repeat ? pill('warn', 'в прошлый раз подходы не закрыты: неделя повторяется') : pc.hard ? pill('warn', 'в прошлый раз был подход в отказ: максимум не повышен') : null)));
   const repsRow = h('div', { class: 'cyc-sets' });
   const paintSets = () => {
     repsRow.textContent = '';

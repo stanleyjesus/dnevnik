@@ -2899,13 +2899,17 @@
      div.seg(role="group" aria-label="Что показать на теле")
       button#bm-fact(aria-pressed="true") По факту
       button#bm-plan(aria-pressed="false") По программе
-    div.bodymap
-     figure.bm-fig
-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#bc6a1a19b8
-      figcaption Вид спереди
-     figure.bm-fig
-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#51aa4ea6f0
-      figcaption Вид сзади
+    div.bodymap.flip
+     div.flip-in
+      figure.bm-fig
+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#bc6a1a19b8
+       figcaption Вид спереди
+      figure.bm-fig(inert="")
+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#51aa4ea6f0
+       figcaption Вид сзади
+     button.bm-flip(type="button" aria-label="Вид спереди: перевернуть на вид сзади")
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#f2a2c05d8a
+      span Вид спереди
     div.scale(style="margin:10px 0")
      span.sw
       i.hc.z-none
@@ -3414,10 +3418,10 @@
 
 === 10. ячейка последней недели
 экран: правки к шагу 9
-@@ 84 -1 +1
+@@ 88 -1 +1
 -        button.hc.z-cur.cur(aria-pressed="false" aria-label="Грудь, неделя 10: 2") 2
 +        button.hc.z-cur.cur.sel(aria-pressed="true" aria-label="Грудь, неделя 10: 2") 2
-@@ 515 -1 +7
+@@ 519 -1 +7
 -   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
 +   div
 +    h3#cell-h Грудь, неделя 10: 2 подхода (масса 0 · сила 2)
@@ -3429,16 +3433,16 @@
 
 === 11. ячейка предпоследней недели
 экран: правки к шагу 10
-@@ 82 -1 +1
+@@ 86 -1 +1
 -        button.hc.z-base(aria-pressed="false" aria-label="Грудь, неделя 9: 9") 9
 +        button.hc.z-base.sel(aria-pressed="true" aria-label="Грудь, неделя 9: 9") 9
-@@ 84 -1 +1
+@@ 88 -1 +1
 -        button.hc.z-cur.cur.sel(aria-pressed="true" aria-label="Грудь, неделя 10: 2") 2
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Грудь, неделя 10: 2") 2
-@@ 516 -1 +1
+@@ 520 -1 +1
 -    h3#cell-h Грудь, неделя 10: 2 подхода (масса 0 · сила 2)
 +    h3#cell-h Грудь, неделя 9: 9 подходов (масса 7 · сила 2)
-@@ 518 -0 +8
+@@ 522 -0 +8
 +     div.plan-row
 +      span.n Бабочка
 +      span.sub "4 подхода, основная мышца = "

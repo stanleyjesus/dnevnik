@@ -800,9 +800,7 @@
 
 === 14. упражнение в пустой лист
 поля: правки к шагу 13
-@@ 2 -0 +15
-+ rng-0-0=8
-+ rng-0-1=12
+@@ 2 -0 +13
 + w-0-0=47.5
 + r-0-0=
 + q-0-0=
@@ -825,129 +823,56 @@
 @@ 11 -1 +1
 -     span#save-state сохранено
 +     span#save-state есть несохранённые изменения
-@@ 22 -0 +128
+@@ 22 -0 +55
 +  div.ex
 +   div.ex-h
 +    h3 Бабочка
 +    div.ex-tools
-+     button.icon-btn(title="Выше" aria-label="Переместить выше")
-+      svg(viewBox="0 0 24 24" aria-hidden="true") …#80e6a5957f
-+     button.icon-btn(title="Ниже" aria-label="Переместить ниже")
-+      svg(viewBox="0 0 24 24" aria-hidden="true") …#d3bef6aece
 +     button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
-+     button.icon-btn(title="Убрать из тренировки" aria-label="Убрать упражнение")
-+      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-+   div.adj-box
-+    div.row.between
-+     b Поправка дневника · Недогруз
-+     button.btn.sm.primary Применить
-+    div Подход 2: 45 кг вместо 42.5 — в прошлый раз 10 повторов с запасом 3.
-+    div Подход 4: 42.5 кг вместо 40 — в прошлый раз 11 повторов с запасом 2.
-+    div.muted Не внесено: подходы ниже идут по правилу или с твоими правками.
 +   p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 32.5 × 5
 +   div.ex-meta
 +    span.tag Грудь
 +    span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
-+    span Диапазон
-+    input#rng-0-0.num(type="text" inputmode="numeric" aria-label="Нижняя граница повторов")
-+    | –
-+    input#rng-0-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
-+    span прошлый раз 15 ноя
++    span запас 1
 +   div.sets
-+    div.set.head
++    div.set.head.bare
 +     span
 +     span Вес, кг
 +     span
 +     span Повторы
 +     span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
 +     span
-+    div.set
++    div.set.bare
 +     span.i 1
 +     input#w-0-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +     span.x ×
-+     input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="9+")
++     input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +     input#q-0-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-+     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 8")
-+      i.track
-+      span.lo 8
-+      span.hi 12
-+      i.p(title="прошлый раз: 8" style="left: calc(0% + 6px);")
-+      i.c(style="display: none;")
-+     span.prev
-+      | "было "
-+      b 47.5 × 8
-+      | ", запас 1 "
-+      span.fb
-+       span.pill.info
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+        | цель 9+
 +     button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-+    div.set
++    div.set.bare
 +     span.i 2
 +     input#w-0-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +     span.x ×
-+     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="11+")
++     input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +     input#q-0-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-+     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10")
-+      i.track
-+      span.lo 8
-+      span.hi 12
-+      i.p(title="прошлый раз: 10" style="left: calc(50% + 0px);")
-+      i.c(style="display: none;")
-+     span.prev
-+      | "было "
-+      b 42.5 × 10
-+      | ", запас 3 "
-+      span.fb
-+       span.pill.info
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+        | цель 11+
 +     button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-+    div.set
++    div.set.bare
 +     span.i 3
 +     input#w-0-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +     span.x ×
-+     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="11+")
++     input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 +     input#q-0-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-+     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10")
-+      i.track
-+      span.lo 8
-+      span.hi 12
-+      i.p(title="прошлый раз: 10" style="left: calc(50% + 0px);")
-+      i.c(style="display: none;")
-+     span.prev
-+      | "было "
-+      b 42.5 × 10
-+      | ", запас 0 "
-+      span.fb
-+       span.pill.info
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+        | цель 11+
 +     button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-+    div.set
++    div.set.bare
 +     span.i 4
 +     input#w-0-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
 +     span.x ×
-+     input#r-0-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="12+")
++     input#r-0-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 +     input#q-0-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
-+     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 11")
-+      i.track
-+      span.lo 8
-+      span.hi 12
-+      i.p(title="прошлый раз: 11" style="left: calc(75% - 3px);")
-+      i.c(style="display: none;")
-+     span.prev
-+      | "было "
-+      b 40 × 11
-+      | ", запас 2 "
-+      span.fb
-+       span.pill.info
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+        | цель 12+
 +     button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
 +   button.btn.ghost.sm(style="margin-top:6px")
@@ -957,7 +882,7 @@
 
 === 15. отменить: вопрос
 экран: правки к шагу 14
-@@ 196 -3 +5
+@@ 123 -3 +5
 -   div.row.between
 -    button.btn.primary Завершить тренировку
 -    button.btn.ghost.danger(title="Удалить эту тренировку") Отменить

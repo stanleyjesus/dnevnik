@@ -3,6 +3,8 @@
    Всё, чем экраны отличаются от эталона, перечислено в scripts/tokens.mjs. */
 import { C, h, sv } from './dom.ts';
 import type { BodyOpts, SvgEl } from './types.ts';
+import { appRules } from '../core/rules.ts';
+import { flipCard } from './flipmap.ts';
 
 /* ---------- UI: weekly load drawn on a body, front and back ---------- */
 /* Shapes are given for the right half of a schematic figure as [offset from the centre line, y]; the left half is their mirror. */
@@ -78,5 +80,6 @@ export function bodyMap(vals: Record<string, number>, o: BodyOpts) {
     }
     return h('figure', { class: 'bm-fig' }, sv('svg', { viewBox: '0 0 300 416', role: 'group', 'aria-label': 'Нагрузка по мышцам, вид ' + caption }, g, seams, labels), h('figcaption', null, 'Вид ' + caption));
   };
+  if (appRules()) return flipCard(figure('front', 226, true, 'спереди'), figure('back', 74, false, 'сзади'), !!o.pick);   // (в эталоне нет) с днями «День N» — одна карточка, которая переворачивается (flipmap.ts, просьба владельца 26 ноября 2026)
   return h('div', { class: 'bodymap' }, figure('front', 226, true, 'спереди'), figure('back', 74, false, 'сзади'));
 }

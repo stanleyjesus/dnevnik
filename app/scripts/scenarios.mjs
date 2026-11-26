@@ -66,7 +66,6 @@ const session = (label, slot, offset, reserve, reps, after = '') => [
 const week = (n, reserve, reps, after) => [...session('неделя ' + n + ', пн', 'Понедельник', 7 * n - 2, reserve, reps, after), ...session('неделя ' + n + ', ср', 'Среда', 7 * n, reserve, reps, after), ...session('неделя ' + n + ', пт', 'Пятница', 7 * n + 2, reserve, reps, after)];
 /* заметить на экране текст и потом убедиться, что он встречался: так сценарий сам показывает, что дошёл до нужного правила */
 const mark = (text, key) => 'if (document.getElementById("view").innerText.includes(' + J(text) + ')) sessionStorage.setItem(' + J(key) + ', "1");';
-const seen = (key, what) => expect('sessionStorage.getItem(' + J(key) + ') === "1"', what);
 const WIDTHS = [[360, 740], [414, 896], [600, 900], [768, 1024], [1024, 768], [1440, 900]];
 /* «Сила: пауэрлифтерская тройка» в черновике (r — строки дней): у каждого движения один тяжёлый день по запасу и один лёгкий; день начинается тяжёлым днём
    одного движения, за ним — лёгкий день другого */
@@ -110,6 +109,11 @@ const journal = n => expect('document.querySelectorAll(".wo").length === ' + n, 
 /* карточка упражнения в идущей тренировке по началу названия; тренировки из хранилища; строка плана «Разгибания ног» (поправка «Не делал два раза») */
 const exCard = name => '[...document.querySelectorAll("#view .ex")].find(c => c.querySelector("h3").textContent.startsWith(' + J(name) + '))';
 const savedW = 'JSON.parse(' + stored + ').filter(x => x[0].startsWith("workouts/")).map(x => x[1])';
+/* «сила по запасу»: вес тяжёлого дня движения (83%) по записям тренировок, по датам. Правило проверяется по пояснению в карточке идущей тренировки,
+   а с днями «День N» пояснения о прошлом разе там нет (просьба владельца, 26 ноября 2026) — тогда по весу: последняя неделя против предыдущей */
+const heavyW = id => savedW + '.filter(w => w.items.some(i => i.ex === ' + J(id) + ' && String(i.cyc).startsWith("83/"))).sort((a, b) => a.date < b.date ? -1 : 1).map(w => Math.max(...String(w.items.find(i => i.ex === ' + J(id) + ' && String(i.cyc).startsWith("83/")).sets).split(" ").map(s => parseFloat(s) || 0)))';   // в записи: cyc "83/4", подходы "90x4@2 90x4@2 …"
+const WAS = { up: 'a > b', hold: 'a === b', fail: 'a < b', short: 'a < b' };
+const seenW = (key, id, what) => expect('sessionStorage.getItem(' + J(key) + ') === "1" || (t => t.length > 1 && ((a, b) => ' + WAS[key] + ')(t[t.length - 1], t[t.length - 2]))(' + heavyW(id) + ')', what);
 const skipRow = '([...document.querySelectorAll("#view .plan-row")].find(r => r.textContent.startsWith("Разгибания ног")) || { textContent: "" })';
 /* онбординг (решение владельца, 25 ноября 2026): какой шаг на экране, видны ли вкладки, строка «что возьмёт дневник» у упражнения */
 const onbAt = (n, of) => '!!document.getElementById("onb") && document.getElementById("onb-n").textContent === "Шаг ' + n + ' из ' + of + '"';
@@ -185,19 +189,20 @@ export const SCENARIOS = [
     ['запас в последнем подходе', maybe(type('input[id^="cq-"]', 1, 4))],
     ['поправка: вернуть по правилу', maybe(press('Вернуть по правилу'))],
     ['поправка: применить', maybe(press('Применить'))],
-    ['диапазон: нижняя граница', type('input[id^="rng-"]', 6)],
-    ['диапазон: верхняя граница', type('input[id^="rng-"]', 10, 1)],
+    /* с днями «День N» в идущей тренировке нет диапазона, стрелок и «убрать» (просьба владельца, 26 ноября 2026): эти шаги там пропускаются */
+    ['диапазон: нижняя граница', maybe(type('input[id^="rng-"]', 6))],
+    ['диапазон: верхняя граница', maybe(type('input[id^="rng-"]', 10, 1))],
     ['диапазон по формуле шага', maybe(click('button[title^="Шаг "]'))],
     ['цель подсобки: 6–10', maybe(pick('select[aria-label="Диапазон по цели"]', 'both'))],
     ['цель подсобки: 8–12', maybe(pick('select[aria-label="Диапазон по цели"]', 'mass'))],
     ['добавить подход', press('Подход')],
     ['убрать второй подход', click('button[aria-label="Убрать подход 2"]')],
-    ['упражнение ниже', click('button[aria-label="Переместить ниже"]')],
-    ['упражнение выше', click('button[aria-label="Переместить выше"]', 2)],
+    ['упражнение ниже', maybe(click('button[aria-label="Переместить ниже"]'))],
+    ['упражнение выше', maybe(click('button[aria-label="Переместить выше"]', 2))],
     ['не делал', click('button[aria-label="Отметить «не делал»"]', 3)],
     ['вернуть в тренировку', click('button[aria-label="Вернуть в тренировку"]')],
     ['не делал: оставить', click('button[aria-label="Отметить «не делал»"]', 2)],
-    ['убрать упражнение', click('button[aria-label="Убрать упражнение"]', 4)],
+    ['убрать упражнение', maybe(click('button[aria-label="Убрать упражнение"]', 4))],
     ['упражнение из списка', pick('#add-ex', 'pec_fly') + press('Добавить упражнение')],
     ['базовое из списка', pick('#add-ex', 'bench') + press('Добавить упражнение')],
     ['новое упражнение: форма', pick('#add-ex', '__new') + press('Добавить упражнение')],
@@ -334,11 +339,14 @@ export const SCENARIOS = [
     ['мышцы', go('muscles')],
     ['на теле: по программе', click('#bm-plan')],
     ['на теле: по факту', click('#bm-fact')],
+    /* с днями «День N» фигура — одна карточка, которая переворачивается (просьба владельца, 26 ноября 2026); у эталона двух фигур кнопки нет */
+    ['фигура: вид сзади', maybe(click('.bm-flip'))],
     ['мышца на фигуре', click('path.bm', 6)],
     ['та же мышца: выбор снят', click('path.bm', 6)],
     ['мышца по подписи', click('text.bm-t', 3)],
     ['мышца с клавиатуры', key('path.bm[tabindex="0"]', 'Enter', 9)],
     ['мышца вне расчёта', click('text.bm-t', 4)],
+    ['фигура: снова вид спереди', maybe(click('.bodymap.flip'))],
     ['ячейка недели', click('table.heat button.hc', 7)],
     ['другая ячейка', click('table.heat button.hc', 60)],
     ['ячейка первой недели', click('table.heat button.hc', 0)],
@@ -516,13 +524,13 @@ export const SCENARIOS = [
     ...week(1, 2),
     ['программа после первой недели', go('program')],
     ...week(2, 1, null, mark('запас 2 в последнем подходе: плюс шаг', 'up')),
-    ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seen('up', 'на второй неделе карточка базового говорит «запас 2 в последнем подходе: плюс шаг»')],
+    ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seenW('up', 'bench', 'на второй неделе карточка базового говорит «запас 2 в последнем подходе: плюс шаг»')],
     ...week(3, 0, null, mark('запас 1 в последнем подходе: вес тот же', 'hold')),
-    ['неделя 3: вес тот же после запаса 1', go('progress') + settle + seen('hold', 'на третьей неделе карточка базового говорит «запас 1 в последнем подходе: вес тот же»')],
+    ['неделя 3: вес тот же после запаса 1', go('progress') + settle + seenW('hold', 'bench', 'на третьей неделе карточка базового говорит «запас 1 в последнем подходе: вес тот же»')],
     ...week(4, null, 2, mark('подход шёл в отказ: вес −', 'fail')),
-    ['неделя 4: вес снижен после запаса 0', go('overview') + settle + seen('fail', 'на четвёртой неделе карточка базового говорит «подход шёл в отказ: вес −5%»')],
+    ['неделя 4: вес снижен после запаса 0', go('overview') + settle + seenW('fail', 'bench', 'на четвёртой неделе карточка базового говорит «подход шёл в отказ: вес −5%»')],
     ...week(5, 2, null, mark('подходы не закрыты: вес −', 'short')),
-    ['неделя 5: вес снижен после недобора', go('overview') + settle + seen('short', 'на пятой неделе карточка базового говорит «подходы не закрыты: вес −5%»')],
+    ['неделя 5: вес снижен после недобора', go('overview') + settle + seenW('short', 'bench', 'на пятой неделе карточка базового говорит «подходы не закрыты: вес −5%»')],
     ['прогресс жима', click('button.ex-card')],
     ['мышцы', go('muscles')],
     ['советы', maybe(tab('coach'))],
@@ -560,7 +568,7 @@ export const SCENARIOS = [
     ...week(1, 2, null, NEW_W),
     ['программа после первой недели', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 'p'), 'цель по-прежнему «Сила», тройка')],
     ...week(2, 1, null, NEW_W + mark('запас 2 в последнем подходе: плюс шаг', 'up')),
-    ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seen('up', 'на второй неделе карточка движения говорит «запас 2 в последнем подходе: плюс шаг»')],
+    ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seenW('up', 'bench', 'на второй неделе карточка движения говорит «запас 2 в последнем подходе: плюс шаг»')],
     ['мышцы: сила и масса', go('muscles') + settle + expect('[...document.querySelectorAll("[id^=mavg-]")].some(e => /масса [\\d.,]+ · сила [\\d.,]+/.test(e.textContent))', 'у среднего объёма мышцы видна разбивка «масса … · сила …»')],
     ['после перезагрузки то же', RELOAD],
     ['программа после перезагрузки', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 'p') + ' && document.querySelector("#view section.card").textContent.includes("Сила в тройке")', 'тройка на месте после перезагрузки')]
@@ -599,7 +607,7 @@ export const SCENARIOS = [
     ['программа после первой недели', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench'), 'цель по-прежнему «Сила», жим лежа')],
     ['журнал: за неделю — тяжёлый и лёгкий день жима', go('journal') + settle + expect('[...document.querySelectorAll(".wo")].slice(0, 3).map(w => (w.textContent.includes("Жим лежа — лёгкий день") ? "л" : "") + (w.textContent.includes("Жим лежа — средний день") ? "с" : "")).sort().join() === ",,л"', 'в трёх последних тренировках — один лёгкий день жима, среднего нет (выводы аудита)')],
     ...week(2, 1, null, mark('запас 2 в последнем подходе: плюс шаг', 'up')),
-    ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seen('up', 'на второй неделе карточка базового говорит «запас 2 в последнем подходе: плюс шаг»')],
+    ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seenW('up', 'bench', 'на второй неделе карточка базового говорит «запас 2 в последнем подходе: плюс шаг»')],
     ['мышцы: сила и масса', go('muscles') + settle + expect('[...document.querySelectorAll("[id^=mavg-]")].some(e => /масса [\\d.,]+ · сила [\\d.,]+/.test(e.textContent))', 'у среднего объёма мышцы видна разбивка «масса … · сила …»')],
     ['после перезагрузки то же', RELOAD],
     ['программа после перезагрузки', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && document.querySelector("#view section.card").textContent.includes("Сила: «Жим лежа»")', 'режим на месте после перезагрузки')]
@@ -639,7 +647,8 @@ export const SCENARIOS = [
     ['день 1: лёгкий день становой — от её максимума', press('Понедельник') + settle + typeDay('#np-date', 5) + settle
       + expect('document.querySelector("#view").innerText.includes("Становая тяга — лёгкий день") && document.querySelector("#view").innerText.includes("3 × 6 по 115 кг")', 'лёгкий день становой — 3 × 6 на 79% от 144.6 кг: 115 кг, легче тяжёлого дня, хотя легче 120 кг становую ещё не записывали')],
     ['неделя 2, день 2: вес решает запас', press('Среда') + settle + typeDay('#np-date', 7) + settle + press('Начать тренировку') + settle
-      + expect('document.querySelector("#view").innerText.includes("запас 2 в последнем подходе: плюс шаг") && document.getElementById("cw-deadlift").value === "122.5"', 'после запаса 2 — плюс шаг штанги: 122.5 кг')]
+      /* пояснения о прошлом разе в идущей тренировке нет (просьба владельца, 26 ноября 2026): правило видно по весу */
+      + expect('document.getElementById("cw-deadlift").value === "122.5" && !document.querySelector("#view").innerText.includes("прошлый раз")', 'после запаса 2 — плюс шаг штанги: 122.5 кг, без пояснения о прошлом разе')]
   ] },
 
   /* только в приложении: выбор сценария сборки — кнопки цели и один уточняющий список, который зависит от цели.
@@ -1027,7 +1036,10 @@ export const SCENARIOS = [
     ['вернуть поправку', click('#pp-leg_ext') + settle + expect(skipRow + '.textContent.includes("в День 1")', 'поправка снова в плане')],
     ['старт: убранное — отдельным блоком', press('Начать тренировку') + settle + expect('!!document.getElementById("back-leg_ext") && !' + exCard('Разгибания ног'), 'карточки нет, в блоке «Дневник убрал из плана» — «Вернуть»')],
     ['вернуть упражнение', click('#back-leg_ext') + settle + expect('!document.getElementById("back-leg_ext") && !!' + exCard('Разгибания ног'), 'карточка на месте')],
-    ['и убрать крестиком', exCard('Разгибания ног') + '.querySelector("button[aria-label=\'Убрать упражнение\']").click();' + settle + expect('!!document.getElementById("back-leg_ext")', 'снова в блоке')],
+    /* в идущей тренировке у упражнения только «не делал», крестика «убрать» нет (просьба владельца, 26 ноября 2026): передумал — тренировка начинается заново */
+    ['крестика «убрать» нет', expect('!' + exCard('Разгибания ног') + '.querySelector("button[aria-label=\'Убрать упражнение\']") && !!' + exCard('Разгибания ног') + '.querySelector("button[aria-label=\'Отметить «не делал»\']")', 'у вернувшегося упражнения — только «не делал»')],
+    ['передумал: отменить и начать снова', press('Отменить') + settle + press('Удалить тренировку') + settle + go('workout') + settle + press('День 2') + settle + typeDay('#np-date', 14) + settle + press('Начать тренировку') + settle
+      + expect('!!document.getElementById("back-leg_ext") && !' + exCard('Разгибания ног'), 'упражнение снова в блоке «Дневник убрал из плана»')],
     ['подходы', typeAll('input[id^="r-"]', 10)],
     ['завершить без него', FINISH + settle + expect('document.getElementById("toast").textContent === "Тренировка сохранена. Программа поправлена: Разгибания ног в тренажере — в День 1"', 'сообщение называет перенос')],
     ['программа: разгибания ног в дне 1', go('program') + settle + 'const P = ' + cfgMain + '.program;'
@@ -1162,7 +1174,10 @@ export const SCENARIOS = [
     ['план: с поправками, выбора варианта нет', go('workout') + settle + expect('!document.querySelector("#view [aria-label=\\"Вариант плана\\"]") && !document.getElementById("view").innerText.includes("Только по моим правилам") && document.querySelectorAll("#view input[id^=\\"pp-\\"]").length > 1 && [...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].every(e => e.checked) && document.querySelectorAll("#view .plan-row .tag.accent").length > 0', 'план с поправками дневника, все включены, переключателя варианта нет')],
     ['снять поправку галочкой', click('input[id^="pp-"]') + settle + expect('!document.querySelector("#view input[id^=\\"pp-\\"]").checked && [...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].slice(1).every(e => e.checked) && !document.querySelector("#view [aria-label=\\"Вариант плана\\"]")', 'первая поправка снята, остальные на месте')],
     ['после перезагрузки', RELOAD],
-    ['план после перезагрузки снова со всеми поправками', go('workout') + settle + expect('[...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].every(e => e.checked) && !document.querySelector("#view [aria-label=\\"Вариант плана\\"]")', 'после перезагрузки все поправки снова включены')]
+    ['план после перезагрузки снова со всеми поправками', go('workout') + settle + expect('[...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].every(e => e.checked) && !document.querySelector("#view [aria-label=\\"Вариант плана\\"]")', 'после перезагрузки все поправки снова включены')],
+    /* просьбы владельца 26 ноября 2026: в шапке нет названия и «записи на устройстве»; идущая тренировка без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок */
+    ['шапка без названия и «записи на устройстве»', expect('getComputedStyle(document.querySelector(".top .brand")).display === "none" && getComputedStyle(document.getElementById("sync")).display === "none"', 'названия приложения и статуса «записи на устройстве» не видно')],
+    ['идущая тренировка: без ориентиров', press('Начать тренировку') + settle + expect('document.querySelectorAll("#view input[id^=\\"w-\\"]").length > 0 && document.querySelectorAll("#view button[aria-label=\\"Отметить «не делал»\\"]").length > 0 && !document.querySelector("#view input[id^=\\"rng-\\"], #view .set .track, #view .set .prev, #view .adj-box, #view button[aria-label=\\"Переместить выше\\"], #view button[aria-label=\\"Переместить ниже\\"], #view button[aria-label=\\"Убрать упражнение\\"]") && !document.getElementById("view").innerText.includes("прошлый раз") && [...document.querySelectorAll("#view input[id^=\\"r-\\"]")].every(e => !e.placeholder)', 'у подходов только вес, повторы и запас, у упражнения — «не делал»: без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок')]
   ] },
 
   /* только в приложении: загрузка резервной копии с экрана */

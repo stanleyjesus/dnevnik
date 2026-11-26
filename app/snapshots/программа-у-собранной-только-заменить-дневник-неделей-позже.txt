@@ -363,13 +363,17 @@
     div.grid2.even
      div(style="min-width:0")
       div.eyebrow(style="margin-bottom:4px") Недельный объём по мышцам
-      div.bodymap
-       figure.bm-fig
-        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f189a436e7
-        figcaption Вид спереди
-       figure.bm-fig
-        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
-        figcaption Вид сзади
+      div.bodymap.flip
+       div.flip-in
+        figure.bm-fig
+         svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f189a436e7
+         figcaption Вид спереди
+        figure.bm-fig(inert="")
+         svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
+         figcaption Вид сзади
+       button.bm-flip(type="button" aria-label="Вид спереди: перевернуть на вид сзади")
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#f2a2c05d8a
+        span Вид спереди
       details#prog-why.whybox
        summary Что изменилось и почему
        div.why
@@ -678,30 +682,30 @@
 @@ 254 -1 +1
 -       div.sub 4 × 8–12
 +       div.sub 5 × 8–12
-@@ 292 -1 +1
--       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f189a436e7
-+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4af7945a19
-@@ 299 -0 +4
+@@ 293 -1 +1
+-        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f189a436e7
++        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4af7945a19
+@@ 303 -0 +4
 +      div#prog-hand.why.hand
 +       b Поправлено вручную
 +       div.sub
 +        div Грудь: +1 подход: Бабочка (день 3)
-@@ 344 -1 +1
+@@ 348 -1 +1
 -       b#prog-free-n.free-n 20
 +       b#prog-free-n.free-n 19
-@@ 347 -1 +2
+@@ 351 -1 +2
 -        div.sub В программе 80 из 100
 +        div.sub В программе 81 из 100
 +      button#prog-reset.btn.sm Сбросить правки
-@@ 349 -1 +1
+@@ 353 -1 +1
 -       i(style="width:80.0%")
 +       i(style="width:81.0%")
-@@ 363 -1 +3
+@@ 367 -1 +3
 -         td 12
 +         td
 +          span.tag.accent(style="margin-right:6px") +1
 +          b 13
-@@ 408 -2 +2
+@@ 412 -2 +2
 -          span.tag.accent(style="margin-right:6px") +4
 -          b 10
 +          span.tag.accent(style="margin-right:6px") +4.5
@@ -733,30 +737,30 @@
 +       div.pn Пуловер на верхнем блоке
 +       div.sub 4 × 10–15 · вместо «Вертикальная тяга в тренажере»
 +      button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Пуловер на верхнем блоке") Заменить
-@@ 296 -1 +1
--       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4af7945a19
-+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#ef8cb162f4
-@@ 299 -1 +1
--       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
-+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6df4c19c66
-@@ 307 -0 +1
+@@ 297 -1 +1
+-        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4af7945a19
++        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#ef8cb162f4
+@@ 300 -1 +1
+-        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
++        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6df4c19c66
+@@ 311 -0 +1
 +        div День 1: замена: Вертикальная тяга в тренажере → Пуловер на верхнем блоке
-@@ 403 -2 +2
+@@ 407 -2 +2
 -          span.tag.accent(style="margin-right:6px") +4
 -          b 12
 +          span.tag.accent(style="margin-right:6px") +2
 +          b 10
-@@ 467 -2 +2
+@@ 471 -2 +2
 -          span.tag.accent(style="margin-right:6px") −3
 -          b 12
 +          span.tag.accent(style="margin-right:6px") −5
 +          b 10
-@@ 497 -2 +2
+@@ 501 -2 +2
 -          span.tag.accent(style="margin-right:6px") −6.5
 -          b 10
 +          span.tag.accent(style="margin-right:6px") −8.5
 +          b 8
-@@ 500 -3 +3
+@@ 504 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
@@ -1189,121 +1193,121 @@
 +       svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       | В день
 +   p.sub(style="margin-top:8px") Полоса слева — то, что меняется. Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
-@@ 296 -1 +1
--       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4af7945a19
-+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#0ab86cf155
-@@ 299 -1 +1
--       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
-+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#2abb9fc376
-@@ 301 -48 +0
-@@ 352 -1 +1
+@@ 297 -1 +1
+-        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#4af7945a19
++        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#0ab86cf155
+@@ 300 -1 +1
+-        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#6a0beb90a9
++        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#2abb9fc376
+@@ 305 -48 +0
+@@ 356 -1 +1
 -       b#prog-free-n.free-n 19
 +       b#prog-free-n.free-n 33
-@@ 354 -3 +2
+@@ 358 -3 +2
 -        div.free-t подходов свободно
 -        div.sub В программе 81 из 100
 -      button#prog-reset.btn.sm Сбросить правки
 +        div.free-t подхода свободны
 +        div.sub В программе 67 из 100 — твой лимит недели
-@@ 358 -1 +1
+@@ 362 -1 +1
 -       i(style="width:81.0%")
 +       i(style="width:67.0%")
-@@ 372 -3 +1
+@@ 376 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +1
 -          b 13
 +         td 12
-@@ 402 -3 +1
+@@ 406 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +4
 -          b 12
 +         td 8
-@@ 406 -3 +3
+@@ 410 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.warn
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +           | ниже рабочей зоны
-@@ 418 -3 +1
+@@ 422 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +4.5
 -          b 10.5
 +         td 6
-@@ 422 -3 +3
+@@ 426 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.warn
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +           | ниже рабочей зоны
-@@ 434 -3 +1
+@@ 438 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +6
 -          b 10
 +         td 4
-@@ 438 -3 +3
+@@ 442 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.warn
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +           | ниже рабочей зоны
-@@ 450 -3 +1
+@@ 454 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +8
 -          b 10
 +         td 2
-@@ 454 -3 +3
+@@ 458 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.serious
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
 +           | мало
-@@ 466 -3 +1
+@@ 470 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") −3
 -          b 12
 +         td 15
-@@ 496 -3 +1
+@@ 500 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") −6.5
 -          b 10
 +         td 16.5
-@@ 526 -3 +1
+@@ 530 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +1
 -          b 1
 +         td 0
-@@ 535 -1 +1
+@@ 539 -1 +1
 -           button#mn-erectors.icon-btn(title="Убавить подход" aria-label="Убавить подход: Разгибатели спины")
 +           button#mn-erectors.icon-btn(title="Убавить подход" aria-label="Убавить подход: Разгибатели спины" disabled="")
-@@ 556 -3 +1
+@@ 560 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +4
 -          b 11
 +         td 7
-@@ 560 -3 +3
+@@ 564 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.warn
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +           | ниже рабочей зоны
-@@ 572 -3 +1
+@@ 576 -3 +1
 -         td
 -          span.tag.accent(style="margin-right:6px") +8
 -          b 10
 +         td 2
-@@ 576 -3 +3
+@@ 580 -3 +3
 -          span.pill.good
 -           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 -           | рабочая зона
 +          span.pill.serious
 +           svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
 +           | мало
-@@ 601 -2 +2
+@@ 605 -2 +2
 -    button#prog-accept.btn.primary Принять программу
 -    span.sub Ближайшая тренировка каждого дня будет построена по ней, веса возьмутся из последних тренировок.
 +    button#prog-accept.btn.primary(disabled="") Принять программу
