@@ -2764,7 +2764,6 @@
   pp-bench=true
   pp-lat_pulldown=true
   pp-leg_curl_seated=true
-  pp-lat_raise_machine=true
   pp-add-rear=true
 сообщение: ""
 экран: правки к шагу 4
@@ -2775,7 +2774,7 @@
 @@ 15 -1 +1
 -     input#wk-date(type="date")
 +     input#np-date(type="date")
-@@ 22 -18 +138
+@@ 22 -18 +127
 +   div.adj-box(style="margin-bottom:12px")
 +    div.eyebrow(style="margin-bottom:2px") Что дневник меняет в плане и почему
 +    p.sub Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.
@@ -2805,13 +2804,6 @@
 +        span.tag.accent(style="margin-left:6px") Недогруз · Мало объёма
 +       div.sub подход 2: 40 кг вместо 37.5 — в прошлый раз 10 повторов с запасом 4
 +       div.sub +1 подход: бицепс бедра по программе — 7 подходов в неделю, рабочая зона от 10
-+     label.prop
-+      input#pp-lat_raise_machine(type="checkbox" checked="")
-+      div.grow
-+       div
-+        b Средние дельты в тренажере
-+        span.tag.accent(style="margin-left:6px") Плато
-+       div.sub 3 тренировки без рекорда (лучший — 22.5 × 11, 27 октября): все подходы −10%, повторы набираются заново до верха диапазона
 +     label.prop
 +      input#pp-add-rear(type="checkbox" checked="")
 +      div.grow
@@ -2871,22 +2863,18 @@
 +       | 35
 +       small 8+
 +    div.plan-row
-+     span.n
-+      | Средние дельты в тренажере
-+      span.tag.accent(style="margin-left:6px") Плато
++     span.n Средние дельты в тренажере
 +     div.chips
-+      span.chip.adj
-+       | 20
-+       small 12+
-+      span.chip.adj
-+       | 20
-+       small 12+
-+      span.chip.adj
-+       | 20
-+       small 10+
-+      span.chip.adj
-+       | 17.5
-+       small 12+
++      span.chip
++       | 22.5
++       small 11+
++      span.chip
++       | 22.5
++       small 11+
++      span.chip
++       | 22.5
++       small 9+
++      span.chip.up 22.5 ↑
 +    div.plan-row
 +     span.n Трицепс из за головы на блоке с косичкой
 +     div.chips
@@ -2958,13 +2946,16 @@
 @@ 32 -1 +1
 -      input#pp-lat_pulldown(type="checkbox" checked="")
 +      input#pp-leg_press(type="checkbox" checked="")
-@@ 35 -3 +3
+@@ 35 -3 +6
 -        b Вертикальная тяга в тренажере
 -        span.tag.accent(style="margin-left:6px") Недогруз
 -       div.sub подход 1: сразу 62.5 кг вместо 60 — в прошлый раз 11 повторов с запасом 3
 +        b Жим ногами
-+        span.tag.accent(style="margin-left:6px") Плато
-+       div.sub 3 тренировки без рекорда (лучший — 180 × 4, 22 октября): все подходы −10%, повторы набираются заново до верха диапазона
++        span.tag.accent(style="margin-left:6px") Недогруз · Перегруз · Отказ
++       div.sub подход 1: остаётся 175 кг вместо 165 — в прошлый раз 5 повторов с запасом 2, до нижней границы хватало
++       div.sub подход 2: остаётся 175 кг вместо 165 — в прошлый раз 5 повторов с запасом 2, до нижней границы хватало
++       div.sub подход 3: 175 → 172.5 кг — в прошлый раз 5 повторов с запасом 1, а с запасом 1 это меньше 6
++       div.sub подход 4: 175 → 172.5 кг — 5 повторов получились только в отказ
 @@ 39 -1 +1
 -      input#pp-leg_curl_seated(type="checkbox" checked="")
 +      input#pp-tbar_row(type="checkbox" checked="")
@@ -2978,108 +2969,117 @@
 +       div.sub подход 2: остаётся 30 кг вместо 32.5 — 10 повторов получились только в отказ
 +       div.sub подход 3: 32.5 кг вместо 30 — в прошлый раз 9 повторов с запасом 3
 +       div.sub +1 подход: верх спины по программе — 8 подходов в неделю, рабочая зона от 10
-@@ 47 -7 +0
-@@ 60 -1 +1
+@@ 53 -1 +1
 -   p.sub(style="margin-bottom:6px") Основа — тренировка 17 ноября. В плане 26 подходов (по правилам было бы 22). Всё можно поправить по ходу.
 +   p.sub(style="margin-bottom:6px") Основа — тренировка 12 ноября. В плане 25 подходов (по правилам было бы 21). Всё можно поправить по ходу.
-@@ 62 -2 +2
+@@ 55 -2 +2
 -    b Время: ≈ 1 ч 30 мин
 -    | " — разминка, 26 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин."
 +    b Время: ≈ 1 ч 35 мин
 +    | " — разминка, 25 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин."
-@@ 67 -2 +2
+@@ 60 -2 +2
 -      | Жим лежа
 -      span.tag.accent(style="margin-left:6px") Недогруз
 +      | Разгибания ног в тренажере
 +      span.tag.accent(style="margin-left:6px") Недогруз · Отказ
-@@ 70 -0 +1
+@@ 63 -0 +1
 +      span.chip.up 52.5 ↑
-@@ 71 -1 +1
+@@ 64 -1 +1
 -       | 85
 +       | 52.5
-@@ 74 -8 +2
+@@ 67 -8 +2
 +       | 42.5
 +       small 12+
-@@ 84 -2 +2
+@@ 77 -2 +2
 -      | Вертикальная тяга в тренажере
 -      span.tag.accent(style="margin-left:6px") Недогруз
 +      | Жим ногами
-+      span.tag.accent(style="margin-left:6px") Плато
-@@ 88 -5 +11
-+       | 157.5
++      span.tag.accent(style="margin-left:6px") Недогруз · Перегруз · Отказ
+@@ 81 -1 +7
+-       | 62.5
++       | 175
 +       small 7+
 +      span.chip.adj
-+       | 157.5
++       | 175
 +       small 7+
 +      span.chip.adj
-+       | 157.5
-+       small 7+
++       | 172.5
+@@ 83 -3 +3
+-      span.chip.up 57.5 ↑
+-      span.chip.up 55 ↑
+-      span.chip.up 55 ↑
 +      span.chip.adj
-+       | 157.5
-+       small 7+
-@@ 94 -3 +1
++       | 172.5
++       small 6+
+@@ 87 -3 +1
 -     span.n
 -      | Бицепс бедра сидя в тренажере
 -      span.tag.accent(style="margin-left:6px") Недогруз · Мало объёма
 +     span.n Жим гантелей под углом 45
-@@ 98 -0 +1
+@@ 91 -0 +1
 +      span.chip.up 26 ↑
-@@ 99 -6 +3
+@@ 92 -6 +3
 +       | 24
 +       small 9+
 +      span.chip.up 24 ↑
-@@ 106 -5 +2
+@@ 99 -2 +8
+-       | 35
+-       small 11+
 +       | 22
 +       small 10+
-@@ 113 -2 +2
--      | Средние дельты в тренажере
--      span.tag.accent(style="margin-left:6px") Плато
++    div.plan-row
++     span.n
 +      | Горизонтальная тяга Т-бар
 +      span.tag.accent(style="margin-left:6px") Отказ · Недогруз · Мало объёма
-@@ 116 -0 +1
++     div.chips
 +      span.chip.up 32.5 ↑
-@@ 117 -2 +2
--       | 20
--       small 12+
+@@ 102 -2 +9
+-       | 35
+-       small 8+
 +       | 30
 +       small 9+
-@@ 120 -2 +3
--       | 20
--       small 12+
++      span.chip.adj
 +       | 32.5
 +       small 6+
 +      span.chip.up 30 ↑
-@@ 123 -5 +2
++      span.chip.adj
 +       | 30
 +       small 6+
-@@ 129 -1 +1
--     span.n Трицепс из за головы на блоке с косичкой
+@@ 105 -1 +1
+-     span.n Средние дельты в тренажере
 +     span.n Бицепс со штангой стоя
-@@ 132 -1 +1
--       | 20
+@@ 108 -1 +1
+-       | 22.5
 +       | 30
-@@ 134 -0 +1
+@@ 110 -0 +1
 +      span.chip.up 30 ↑
-@@ 135 -5 +2
+@@ 111 -1 +1
+-       | 22.5
 +       | 27.5
-+       small 11+
-@@ 141 -1 +1
--     span.n Молотки с гантелями
+@@ 113 -4 +0
+-      span.chip
+-       | 22.5
+-       small 9+
+-      span.chip.up 22.5 ↑
+@@ 118 -1 +1
+-     span.n Трицепс из за головы на блоке с косичкой
 +     span.n Кисть на блоке правая
-@@ 144 -1 +1
--       | 16
+@@ 121 -1 +1
+-       | 20
 +       | 15
-@@ 146 -2 +16
--      span.chip.up 16 ↑
--      span.chip.up 16 ↑
+@@ 123 -0 +1
 +      span.chip.up 15 ↑
-+      span.chip
+@@ 124 -5 +2
 +       | 12.5
 +       small 15+
-+    div.plan-row
+@@ 130 -1 +1
+-     span.n Молотки с гантелями
 +     span.n Кисть на блоке левая
-+     div.chips
-+      span.chip
+@@ 133 -4 +8
+-       | 16
+-       small 11+
+-      span.chip.up 16 ↑
+-      span.chip.up 16 ↑
 +       | 12.5
 +       small 15+
 +      span.chip
@@ -3090,14 +3090,14 @@
 +       small 13+
 
 === 8. план пятницы
-поля: правки к шагу 6
-@@ 2 -5 +6
-+ pp-pullup=true
-+ pp-pec_fly=true
-+ pp-leg_curl_lying=true
-+ pp-tri_pushdown=true
-+ pp-bayesian_curl=true
-+ pp-wrist_db_l=true
+поля: целиком
+  np-date=2025-11-19
+  pp-pullup=true
+  pp-pec_fly=true
+  pp-leg_curl_lying=true
+  pp-tri_pushdown=true
+  pp-bayesian_curl=true
+  pp-wrist_db_l=true
 экран: целиком
   div.wrap.stack
    div.card
@@ -3142,8 +3142,9 @@
        div.grow
         div
          b Бицепс бедра на тренажере лежа на животе
-         span.tag.accent(style="margin-left:6px") Плато
-        div.sub 3 тренировки без рекорда (лучший — 32.5 × 9, 24 октября): все подходы −10%, повторы набираются заново до верха диапазона
+         span.tag.accent(style="margin-left:6px") Отказ · Недогруз
+        div.sub подход 1: 32.5 → 30 кг — 8 повторов получились только в отказ
+        div.sub подход 2: 32.5 кг вместо 30 — в прошлый раз 10 повторов с запасом 3
       label.prop
        input#pp-tri_pushdown(type="checkbox" checked="")
        div.grow
@@ -3208,17 +3209,17 @@
      div.plan-row
       span.n
        | Бицепс бедра на тренажере лежа на животе
-       span.tag.accent(style="margin-left:6px") Плато
+       span.tag.accent(style="margin-left:6px") Отказ · Недогруз
       div.chips
        span.chip.adj
         | 30
-        small 10+
+        small 8+
        span.chip.adj
-        | 27.5
-        small 12+
-       span.chip.adj
-        | 27.5
-        small 10+
+        | 32.5
+        small 8+
+       span.chip
+        | 30
+        small 9+
      div.plan-row
       span.n
        | Трицепс с косичкой на блоке
@@ -3405,7 +3406,7 @@
          button.hc.z-cur.cur(aria-pressed="false" aria-label="Грудь, неделя 11: 2") 2
         td
          b 10
-         span#mavg-chest.msplit (масса 7.3 · сила 2.7)
+         span#mavg-chest.msplit (сила 2.7)
         td(style="text-align:left")
          span.pill.good
           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
@@ -3436,7 +3437,7 @@
          button.hc.z-cur.cur(aria-pressed="false" aria-label="Широчайшие, неделя 11: 3.5") 3.5
         td
          b 7.9
-         span#mavg-lats.msplit (масса 5.9 · сила 2)
+         span#mavg-lats.msplit (сила 2)
         td(style="text-align:left")
          span.pill.warn
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -3467,7 +3468,7 @@
          button.hc.z-cur.cur(aria-pressed="false" aria-label="Верх спины, неделя 11: 1.8") 1.8
         td
          b 6.8
-         span#mavg-upper_back.msplit (масса 5.8 · сила 1)
+         span#mavg-upper_back.msplit (сила 1)
         td(style="text-align:left")
          span.pill.warn
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -3498,7 +3499,7 @@
          button.hc.z-cur.cur(aria-pressed="false" aria-label="Передние дельты, неделя 11: 1") 1
         td
          b 5
-         span#mavg-delt_front.msplit (масса 3.7 · сила 1.3)
+         span#mavg-delt_front.msplit (сила 1.3)
         td(style="text-align:left")
          span.pill.warn
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -3592,7 +3593,7 @@
          button.hc.z-cur.cur(aria-pressed="false" aria-label="Бицепс, неделя 11: 4.3") 4.3
         td
          b 12.4
-         span#mavg-biceps.msplit (масса 11.4 · сила 1)
+         span#mavg-biceps.msplit (сила 1)
         td(style="text-align:left")
          span.pill.good
           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
@@ -3623,7 +3624,7 @@
          button.hc.z-cur.cur(aria-pressed="false" aria-label="Трицепс, неделя 11: 3.5") 3.5
         td
          b 9.9
-         span#mavg-triceps.msplit (масса 8.6 · сила 1.3)
+         span#mavg-triceps.msplit (сила 1.3)
         td(style="text-align:left")
          span.pill.warn
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -3654,7 +3655,7 @@
          button.hc.z-cur.cur(aria-pressed="false" aria-label="Предплечья, неделя 11: 3") 3
         td
          b 13.5
-         span#mavg-forearms.msplit (масса 12.5 · сила 1)
+         span#mavg-forearms.msplit (сила 1)
         td(style="text-align:left")
          span.pill.good
           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
@@ -3747,7 +3748,7 @@
          button.hc.z-cur.cur(aria-pressed="false" aria-label="Квадрицепс, неделя 11: 0") 0
         td
          b 9.2
-         span#mavg-quads.msplit (масса 5.9 · сила 3.3)
+         span#mavg-quads.msplit (сила 3.3)
         td(style="text-align:left")
          span.pill.warn
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -3808,7 +3809,7 @@
          button.hc.z-cur.cur(aria-pressed="false" aria-label="Ягодицы, неделя 11: 0") 0
         td
          b 1.7
-         span#mavg-glutes.msplit (масса 0 · сила 1.7)
+         span#mavg-glutes.msplit (сила 1.7)
         td(style="text-align:left")
          span.pill.serious
           svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
@@ -3877,7 +3878,7 @@
 @@ 550 -1 +7
 -   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
 +   div
-+    h3#cell-h Грудь, неделя 11: 2 подхода (масса 0 · сила 2)
++    h3#cell-h Грудь, неделя 11: 2 подхода (сила 2)
 +    div.plan-list(style="margin-top:6px")
 +     div.plan-row
 +      span.n Жим лежа
@@ -3892,7 +3893,7 @@
 @@ 550 -1 +15
 -   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
 +   div
-+    h3#cell-h Грудь, неделя 10: 11 подходов (масса 7 · сила 4)
++    h3#cell-h Грудь, неделя 10: 11 подходов (сила 4)
 +    div.plan-list(style="margin-top:6px")
 +     div.plan-row
 +      span.n Жим лежа

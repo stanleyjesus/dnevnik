@@ -3,11 +3,12 @@
    С таблицей дней эталона — эталонные тесты и общие сценарии сверки экранов — всё считается как в эталоне.
    Держат tests/rules.test.ts и, для методики под цель и порядка в дне, tests/method.test.ts. */
 import { DAYS } from './days.ts';
+import { dnum } from './dates.ts';
 import { placed } from './gear.ts';
 import { e1, estRir, work } from './sets.ts';
 import { STARTER, exKey, starterOf } from './starter.ts';
 import { DAY_H, DAY_L, DL_LIGHT, ISO, ISO_LIGHT, TARGETS, TRIAD } from './strength.ts';
-import type { Cfg, ExDef, Item, MuscleMap, ProgramCfg, Range, SetRec } from './types.ts';
+import type { Cfg, ExDef, Item, MuscleMap, ProgramCfg, Range, Session, SetRec } from './types.ts';
 
 /** Цель запаса и спад тяжёлого дня — как у силы по запасу первой версии (goals.ts, AUTO.aim и AUTO.down) */
 const AUTO_AIM = 2, AUTO_DOWN = 5;
@@ -193,6 +194,33 @@ export function logMax(it: Item, rir: number) {
   let best = 0;
   for (const s of work(it)) best = Math.max(best, setMax(s, it, rir));
   return best > 0 ? best : null;
+}
+/* Плато в двойной прогрессии (решение владельца, 26 ноября 2026; разбор «Сила, масса и плато», docs/03, раздел 21). Тренерское правило:
+   прямых исследований порога нет, а «три тренировки без рекорда» давали ложное «Плато» при медленном росте и каскад «Откат» после сброса.
+   1. Остановка каскада: считаются только тренировки после последнего снижения веса в этом дне — сброс «Плато», свой сброс атлета, шаг вниз.
+      Пока после него не набралось двух тренировок в каждом окне, нового сброса нет.
+   2. Тренд по неделям: последние 4 недели против 4 недель до них. Плато — ни лучший подход, ни один подход этого дня не вырос больше чем на 0.5%
+      и вес в диапазоне не стал больше, чем был в этом дне раньше; откат — лучший подход последних недель ниже прежнего больше чем на 5%. */
+export const PLATEAU = { days: 28, min: 2, grow: 0.005, fall: 0.05, drop: 0.05 };
+/** Плато или откат упражнения двойной прогрессии перед тренировкой date: ss — его тренировки до неё по порядку, rir — запас по методике */
+export function plateauOf(ss: Session[], date: string, rir: number): { tag: 'Плато' | 'Откат', best: Session } | null {
+  const top = (x: Session) => x.sets.reduce((m, k) => Math.max(m, k.w || 0), 0), day = (x: Session) => x.slot || '', was: Record<string, number> = {};
+  let from = 0;
+  ss.forEach((x, i) => { const t = top(x); if (!x.item.cyc && was[day(x)] > 0 && t < was[day(x)] * (1 - PLATEAU.drop) + 1e-6) from = i; was[day(x)] = t; });
+  const D = dnum(date), age = (x: Session) => D - dnum(x.date), rest = ss.slice(from);
+  const now = rest.filter(x => age(x) <= PLATEAU.days), before = rest.filter(x => age(x) > PLATEAU.days && age(x) <= 2 * PLATEAU.days);
+  if (now.length < PLATEAU.min || before.length < PLATEAU.min) return null;
+  const best = (xs: Session[]) => xs.reduce((t, x) => x.metric > t.metric ? x : t, xs[0]), b0 = best(before), b1 = best(now);
+  if (b1.metric > b0.metric * (1 + PLATEAU.grow)) return null;
+  /* любой подход этого дня вырос — не плато: прибавка повторов или веса в одном подходе тоже прогресс */
+  const per: Record<string, number> = {}, key = (x: Session, i: number) => day(x) + ':' + i;
+  for (const x of before) x.sets.forEach((k, i) => { per[key(x, i)] = Math.max(per[key(x, i)] || 0, setMax(k, x.item, rir)); });
+  for (const x of now) if (x.sets.some((k, i) => per[key(x, i)] > 0 && setMax(k, x.item, rir) > per[key(x, i)] * (1 + PLATEAU.grow))) return null;
+  /* новый вес в диапазоне — тоже прибавка: после шага веса повторов меньше, и по Эпли рост в одно-два процента не виден */
+  const heavy: Record<string, number> = {}, inRange = (x: Session) => x.sets.filter(k => !x.item.cyc && k.r! >= (x.item.range ? x.item.range[0] : 1)).reduce((m, k) => Math.max(m, k.w || 0), 0);
+  for (const x of ss) if (age(x) > PLATEAU.days) heavy[day(x)] = Math.max(heavy[day(x)] || 0, inRange(x));
+  if (now.some(x => heavy[day(x)] > 0 && inRange(x) > heavy[day(x)] + 1e-6)) return null;
+  return { tag: b1.metric < b0.metric * (1 - PLATEAU.fall) ? 'Откат' : 'Плато', best: b0.metric >= b1.metric ? b0 : b1 };
 }
 /** Вес подхода двойной прогрессии от расчётного максимума: середина диапазона с запасом по методике, вниз до шага снаряда */
 export const fromMax = (tm: number, range: Range, rir: number, step: number) => { const v = Math.floor(tm / (1 + (Math.round((range[0] + range[1]) / 2) + rir) / 30) / step + 1e-6) * step; return v > 0 ? +v.toFixed(3) : null; };

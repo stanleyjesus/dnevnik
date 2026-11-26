@@ -107,20 +107,20 @@
      div.plan-row
       span.n
        | Жим ногами
-       span.tag.accent(style="margin-left:6px") Плато
+       span.tag.accent(style="margin-left:6px") Недогруз · Перегруз · Отказ
       div.chips
        span.chip.adj
-        | 157.5
+        | 175
         small 7+
        span.chip.adj
-        | 157.5
+        | 175
         small 7+
        span.chip.adj
-        | 157.5
-        small 7+
+        | 172.5
+        small 6+
        span.chip.adj
-        | 157.5
-        small 7+
+        | 172.5
+        small 6+
      div.plan-row
       span.n Жим гантелей под углом 45
       div.chips
@@ -366,7 +366,7 @@
 @@ 16 -1 +1
 -     div.eyebrow Следующая тренировка
 +     div.eyebrow Новая тренировка
-@@ 18 -2 +49
+@@ 18 -2 +52
 -    a.btn.primary(href="#workout") Открыть план
 -   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 35 мин с отдыхом по упражнению. План по твоим правилам, в него уже внесены поправки дневника: 4. Перед стартом можно снять любую.
 +   div.row(style="margin-bottom:12px")
@@ -396,8 +396,11 @@
 +      div.grow
 +       div
 +        b Жим ногами
-+        span.tag.accent(style="margin-left:6px") Плато
-+       div.sub 3 тренировки без рекорда (лучший — 180 × 4, 22 октября): все подходы −10%, повторы набираются заново до верха диапазона
++        span.tag.accent(style="margin-left:6px") Недогруз · Перегруз · Отказ
++       div.sub подход 1: остаётся 175 кг вместо 165 — в прошлый раз 5 повторов с запасом 2, до нижней границы хватало
++       div.sub подход 2: остаётся 175 кг вместо 165 — в прошлый раз 5 повторов с запасом 2, до нижней границы хватало
++       div.sub подход 3: 175 → 172.5 кг — в прошлый раз 5 повторов с запасом 1, а с запасом 1 это меньше 6
++       div.sub подход 4: 175 → 172.5 кг — 5 повторов получились только в отказ
 +     label.prop
 +      input#pp-tbar_row(type="checkbox" checked="")
 +      div.grow
@@ -2725,7 +2728,7 @@
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Грудь, неделя 11: 4") 4
 +       td
 +        b 10
-+        span#mavg-chest.msplit (масса 7.3 · сила 2.7)
++        span#mavg-chest.msplit (сила 2.7)
 +       td(style="text-align:left")
 +        span.pill.good
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
@@ -2756,7 +2759,7 @@
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Широчайшие, неделя 11: 4") 4
 +       td
 +        b 7.9
-+        span#mavg-lats.msplit (масса 5.9 · сила 2)
++        span#mavg-lats.msplit (сила 2)
 +       td(style="text-align:left")
 +        span.pill.warn
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -2787,7 +2790,7 @@
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Верх спины, неделя 11: 2") 2
 +       td
 +        b 6.8
-+        span#mavg-upper_back.msplit (масса 5.8 · сила 1)
++        span#mavg-upper_back.msplit (сила 1)
 +       td(style="text-align:left")
 +        span.pill.warn
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -2818,7 +2821,7 @@
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Передние дельты, неделя 11: 2") 2
 +       td
 +        b 5
-+        span#mavg-delt_front.msplit (масса 3.7 · сила 1.3)
++        span#mavg-delt_front.msplit (сила 1.3)
 +       td(style="text-align:left")
 +        span.pill.warn
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -2912,7 +2915,7 @@
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Бицепс, неделя 11: 4.5") 4.5
 +       td
 +        b 12.4
-+        span#mavg-biceps.msplit (масса 11.4 · сила 1)
++        span#mavg-biceps.msplit (сила 1)
 +       td(style="text-align:left")
 +        span.pill.good
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
@@ -2943,7 +2946,7 @@
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Трицепс, неделя 11: 4.5") 4.5
 +       td
 +        b 9.9
-+        span#mavg-triceps.msplit (масса 8.6 · сила 1.3)
++        span#mavg-triceps.msplit (сила 1.3)
 +       td(style="text-align:left")
 +        span.pill.warn
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -2974,7 +2977,7 @@
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Предплечья, неделя 11: 3.3") 3.3
 +       td
 +        b 13.5
-+        span#mavg-forearms.msplit (масса 12.5 · сила 1)
++        span#mavg-forearms.msplit (сила 1)
 +       td(style="text-align:left")
 +        span.pill.good
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
@@ -3067,7 +3070,7 @@
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Квадрицепс, неделя 11: 0") 0
 +       td
 +        b 9.2
-+        span#mavg-quads.msplit (масса 5.9 · сила 3.3)
++        span#mavg-quads.msplit (сила 3.3)
 +       td(style="text-align:left")
 +        span.pill.warn
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -3128,7 +3131,7 @@
 +        button.hc.z-cur.cur(aria-pressed="false" aria-label="Ягодицы, неделя 11: 0") 0
 +       td
 +        b 1.7
-+        span#mavg-glutes.msplit (масса 0 · сила 1.7)
++        span#mavg-glutes.msplit (сила 1.7)
 +       td(style="text-align:left")
 +        span.pill.serious
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
