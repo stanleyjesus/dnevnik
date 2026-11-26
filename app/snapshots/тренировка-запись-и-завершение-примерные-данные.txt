@@ -367,7 +367,7 @@
 @@ 10 -1 +1
 -     input#np-date(type="date")
 +     input#wk-date(type="date")
-@@ 17 -142 +897
+@@ 17 -142 +903
 +  div.ex
 +   div.ex-h
 +    h3 Разгибания ног в тренажере
@@ -389,6 +389,9 @@
 +    | –
 +    input#rng-0-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 +    span прошлый раз 5 ноя
++    span.pill.info
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
++     | вес ниже прошлого раза: отметь запас — по нему дневник решит, как быстро вернуть вес
 +   div.sets
 +    div.set.head
 +     span
@@ -497,6 +500,9 @@
 +    | –
 +    input#rng-1-1.num(type="text" inputmode="numeric" aria-label="Верхняя граница повторов")
 +    span прошлый раз 5 ноя
++    span.pill.info
++     svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
++     | вес ниже прошлого раза: отметь запас — по нему дневник решит, как быстро вернуть вес
 +   div.sets
 +    div.set.head
 +     span
@@ -1290,35 +1296,35 @@
 @@ 11 -1 +1
 -     span#save-state сохранено
 +     span#save-state есть несохранённые изменения
-@@ 57 -1 +1
+@@ 60 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 10, сейчас 9")
-@@ 62 -1 +1
+@@ 65 -1 +1
 -      i.c(style="display: none;")
 +      i.c(style="display: block; left: calc(25% + 3px);")
-@@ 70 -1 +1
+@@ 73 -1 +1
 -        | цель 11+
 +        | в диапазоне: дальше цель 10+
-@@ 79 -1 +1
+@@ 82 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 12")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 12, сейчас 12")
-@@ 84 -1 +1
+@@ 87 -1 +1
 -      i.c(style="display: none;")
 +      i.c(style="display: block; left: calc(100% - 6px);")
-@@ 90 -3 +3
+@@ 93 -3 +3
 -       span.pill.info
 -        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
 -        | новый вес, цель 8+
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | верх диапазона: дальше +2.5 кг
-@@ 101 -1 +1
+@@ 104 -1 +1
 -     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 7")
 +     div.rr(role="img" aria-label="Диапазон 8–12, прошлый раз 7, сейчас 7")
-@@ 106 -1 +1
+@@ 109 -1 +1
 -      i.c(style="display: none;")
 +      i.c(style="display: block; left: calc(-8% + 6.96px);")
-@@ 114 -1 +1
+@@ 117 -1 +1
 -        | вес снижен, цель 8–12
 +        | ниже диапазона: дальше вес ниже
 
@@ -1327,6 +1333,10 @@
 @@ 11 -1 +1
 -     span#save-state есть несохранённые изменения
 +     span#save-state сохранено
+@@ 43 -3 +0
+-    span.pill.info
+-     svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+-     | вес ниже прошлого раза: отметь запас — по нему дневник решит, как быстро вернуть вес
 
 === 5. автосохранение
 записи:
@@ -1354,7 +1364,7 @@
 +     span.v 117
 +     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#8cf69a9099
 +    span.d +17% к первой неделе
-@@ 7 -912 +142
+@@ 7 -915 +142
 +    a.btn.primary(href="#workout") Продолжить
 +   p.sub Заполнено 3 из 28 подходов.
 +  section.card
@@ -1541,7 +1551,7 @@
 +       span.chip 52.5 × 12
 +       span.chip 52.5 × 11
 +       span.chip 50 × 12
-@@ 92 -827 +1509
+@@ 92 -830 +1509
 +        | рекорд
 +     div.wo-row
 +      span.n Бицепс бедра сидя в тренажере
@@ -3063,7 +3073,7 @@
 @@ 112 -0 +1
 + wk-min=
 экран: правки к шагу 9
-@@ 916 -3 +9
+@@ 919 -3 +9
 -   div.row.between
 -    button.btn.primary Завершить тренировку
 -    button.btn.ghost.danger(title="Удалить эту тренировку") Отменить
@@ -3158,15 +3168,15 @@
 +      | Трицепс с косичкой на блоке
 +      span.tag.accent(style="margin-left:6px") Плато
 +     div.chips
-+      span.chip.adj
-+       | 20
-+       small 12+
-+      span.chip.adj
-+       | 20
++      span.chip
++       | 22.5
 +       small 11+
-+      span.chip.adj
-+       | 20
++      span.chip
++       | 22.5
 +       small 10+
++      span.chip
++       | 22.5
++       small 9+
 +      span.chip.down 20 ↓
 +    div.plan-row
 +     span.n
@@ -3335,7 +3345,7 @@
 +       div
 +        b Трицепс с косичкой на блоке
 +        span.tag.accent(style="margin-left:6px") Плато
-+       div.sub 4 недели без прибавки ни в одном подходе (лучший — 22.5 × 11, 19 сентября): все подходы −10%, повторы набираются заново до верха диапазона
++       div.sub 4 недели без прибавки ни в одном подходе (лучший — 22.5 × 11, 19 сентября): сначала проверь запас — последний подход до отказа и запас 0. Выйдет больше повторов, чем обычно, — это не плато, и вес пойдёт вверх
 +     label.prop
 +      input#pp-bayesian_curl(type="checkbox" checked="")
 +      div.grow
@@ -3364,12 +3374,12 @@
 @@ 9 -1 +1
 -     span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 20 мин
 +     span#eta по плану ≈ 5 мин · все подходы записаны
-@@ 20 -859 +2
+@@ 20 -862 +2
 +      button(type="button" aria-pressed="false") День 2
 +      button(type="button" aria-pressed="true") День 3
-@@ 898 -0 +1
+@@ 901 -0 +1
 +      option(value="x_rear") Обратная бабочка
-@@ 906 -1 +0
+@@ 909 -1 +0
 -      option(value="x_rear") Обратная бабочка
 
 === 16. автосохранение второй
