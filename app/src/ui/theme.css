@@ -53,7 +53,7 @@ a { color: var(--accent-ink); }
 /* ---- блоки ---- */
 main { padding-top: 8px; }
 .card, .tile, .ex, .wo, .pday, .ex-card { border: 0; border-radius: var(--r); }
-.card { padding: 18px; }
+.card { padding: 17px; }   /* 16 + 1px рамки, как в style.css: внутри карточки та же ширина, и графики (они меряют её) рисуются теми же числами, что у эталона */
 h2 { font: 500 22px/1.15 var(--body); letter-spacing: -0.03em; text-transform: none; }
 h3 { font-weight: 500; letter-spacing: -0.01em; }
 .eyebrow { font: 500 13px/1.2 var(--body); letter-spacing: 0.01em; text-transform: none; color: var(--accent-ink); margin-bottom: 4px; }
@@ -276,3 +276,13 @@ input[type="checkbox"], input[type="radio"], input[type="range"] { accent-color:
 /* часы идущей тренировки (clock.ts) в нижнем меню: встают на место значка вкладки «Тренировка» */
 .tabs a:has(.timer)::before { display: none; }
 .tabs a .timer { order: -1; display: flex; align-items: center; height: 24px; margin: 0; padding: 0 8px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font: 600 12px/1 var(--body); letter-spacing: 0; font-variant-numeric: tabular-nums; vertical-align: 0; }
+
+/* кнопка не шире своей карточки: с более широкими «пилюлями» длинная подпись («Резервная копия всех профилей (JSON)») на 360 px
+   раздвигала страницу — теперь переносится на вторую строку */
+.btn { max-width: 100%; white-space: normal; text-align: center; line-height: 1.2; }
+/* «Завершить тренировку» и «Отменить» — в одну строку и на 360 px */
+.wk-bar:not(:has(> .confirm)) { padding: 8px 8px; }
+.wk-bar > .row { gap: 4px; }
+/* узкий экран: «День 1» не переносится, а четыре цели («Масса», «Сила», «Гибрид», «Вручную») встают в одну строку */
+.pday-h > b { white-space: nowrap; }
+@media (max-width: 400px) { .seg button { padding: 0 10px; } }
