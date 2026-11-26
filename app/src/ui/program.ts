@@ -18,6 +18,7 @@ import { pairsRow } from './care.ts';
 import { weekDays } from './platform.ts';
 import { DAY_COUNTS, awayDays, daysOf, useDays } from '../core/days.ts';
 import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift, stopOf } from '../core/rules.ts';
+import { DAY_H } from '../core/strength.ts';
 import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../core/index.ts';
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
 import { paceText } from './pace.ts';
@@ -206,7 +207,7 @@ export function vProgram() {
   out.push(h('section', { class: 'card' },
     h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow' }, 'Новая программа'), h('h2', null, manual ? 'Правка вручную' : pr.name)), h('span', { class: 'sub' }, loadText(total(pr.after)) + ' в неделю' + (empty && !pr.away ? '' : ' · сейчас ' + dayLoad(total(pr.before) + (pr.away || 0))) + (avgMin.length ? ' · тренировка ≈ ' + C.fmtDur(avgMin.reduce((a, b) => a + b, 0) / avgMin.length) : ''))),
     h('p', { class: 'note', style: 'margin-bottom:12px' }, manual ? 'Собери или поправь программу сам: добавляй упражнения в дни, меняй порядок и число подходов. Упражнений, которых нет в списке, сначала заведи в «Настройке». Записи в журнале не меняются.'
-      : triad && pr.strength ? 'Сила в тройке: ' + C.list((pr.triad || []).map(id => C.exName(pr.cfg, id).toLowerCase())) + '. Каждое движение идёт два дня в неделю: 4 × 4 с весом по запасу и лёгкий день. Остальные базовые — обычные упражнения, подсобка — чуть ниже рабочей зоны. ' + twice
+      : triad && pr.strength ? 'Сила в тройке: ' + C.list((pr.triad || []).map(id => C.exName(pr.cfg, id).toLowerCase())) + '. Каждое движение идёт два дня в неделю: ' + DAY_H.sets + ' × ' + DAY_H.reps + ' с весом по запасу и лёгкий день. Остальные базовые — обычные упражнения, подсобка — чуть ниже рабочей зоны. ' + twice
       : strong && pr.strength ? 'Сила во всех базовых. Каждое идёт два дня в неделю: 4 × 4 с весом по запасу и лёгкий день. Подсобка — чуть ниже рабочей зоны: место в неделе отдано базовым. ' + twice
       : solo && pr.strength ? (appRules() ? 'Сила в одном движении. ' + soloText(C.SLOTS.length, isoLift(pr.cfg, solo)) + ' Его мышцам — в полтора раза больше подходов, чем остальным; остальные базовые — обычные упражнения, подсобка — чуть ниже рабочей зоны. ' : 'Сила в одном базовом. ' + soloText(C.SLOTS.length) + ' Остальные базовые — раз в неделю, подсобка — чуть ниже рабочей зоны. ') + twice
       : lift ? 'Масса и сила с акцентом на одном базовом. ' + mixText(C.SLOTS.length, isoLift(pr.cfg, lift)) + ' Остальные мышцы делят объём поровну' + (thin ? '. ' + twice : ', каждая работает минимум в два дня недели.')
