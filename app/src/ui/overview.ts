@@ -12,6 +12,7 @@ import { onbAgain, onbOn, vOnboard } from './onboard.ts';
 import { weekDays } from './platform.ts';
 import { appRules, byPct, isoLift } from '../core/rules.ts';
 import { DAY_H, ISO } from '../core/strength.ts';
+import { toast } from './toast.ts';
 import type { Adapted, Cfg, Insight, Item } from '../core/index.ts';
 import type { Kid } from './types.ts';
 
@@ -90,6 +91,7 @@ export function startWorkout(p: { slot: string, date: string, items: Item[] }) {
   S.draftSaved = null; S.dirty = true; S.ui.plan = null; S.ui.confirm = null;
   backupDraft(); saveDraft();
   if (S.view === 'workout') render(); else go('workout');
+  if (S.draft.began) toast('Время пошло: часы — наверху, на вкладке «Тренировка»');   // (в эталоне нет) таймер идущей тренировки (clock.ts)
 }
 export function vOverview() {
   const out: Kid[] = [];
