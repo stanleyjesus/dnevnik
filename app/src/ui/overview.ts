@@ -11,6 +11,7 @@ import { importBox, pickBackup } from './importer.ts';
 import { onbAgain, onbOn, vOnboard } from './onboard.ts';
 import { weekDays } from './platform.ts';
 import { appRules, byPct, isoLift } from '../core/rules.ts';
+import { zoneKey, zoneMark } from './marks.ts';
 import type { Adapted, Cfg, Insight, Item } from '../core/index.ts';
 import type { Kid } from './types.ts';
 
@@ -37,30 +38,31 @@ export function planRows(items: Item[], slot: string, date: string, A: Adapted |
     let right;
     const so = !prop ? C.startOf(D.W, D.cfg, it.ex) : null;           // (в эталоне нет) вес, оценённый по похожему упражнению, помечен «оценка»
     const named = so ? so.src === 'est' ? h('span', { class: 'tag', title: 'Вес оценён по весу похожего упражнения из «Настройки» (' + C.exName(D.cfg, so.of!) + '): в журнале этого упражнения ещё нет' }, 'оценка') : h('span', { class: 'tag', title: 'Рабочий вес или разовый максимум из «Настройки»: в журнале этого упражнения ещё нет' }, 'вес из настроек') : null;
-    if (add) right = h('div', { class: 'chips' }, h('span', { class: 'chip adj' }, it.sets.length + ' × ' + it.range![0] + '–' + it.range![1] + (it.sets[0] && it.sets[0].w != null ? ' по ' + C.fmt(it.sets[0].w) + ' кг' : '')));
+    if (add) right = h('div', { class: 'chips' }, h('span', { class: 'chip adj' }, (appRules() ? setWord(it.sets.length) : it.sets.length + ' × ' + it.range![0] + '–' + it.range![1]) + (it.sets[0] && it.sets[0].w != null ? ' по ' + C.fmt(it.sets[0].w) + ' кг' : '')));
     else if (it.cyc) {
       const w = it.sets[0] ? it.sets[0].w : null;
       right = h('div', { class: 'chips' }, h('span', { class: 'chip' + (prop ? ' adj' : '') }, it.sets.length + ' × ' + it.cyc.reps + (w != null ? ' по ' + C.fmt(w) + ' кг' : '')), h('span', { class: 'tag' }, it.cyc.pct + '%'), w != null ? named : null);
     } else if (!prop && it.sets.length && it.sets.every(s => s.w == null)) {
-      right = h('div', { class: 'chips' }, h('span', { class: 'chip' }, it.sets.length + ' × ' + it.range![0] + '–' + it.range![1]), h('span', { class: 'tag' }, 'вес подбирается'));
+      right = h('div', { class: 'chips' }, h('span', { class: 'chip' }, appRules() ? setWord(it.sets.length) : it.sets.length + ' × ' + it.range![0] + '–' + it.range![1]), h('span', { class: 'tag' }, 'вес подбирается'));
     } else if (named && it.sets.length && it.sets.every(s => s.w === it.sets[0].w)) {
-      right = h('div', { class: 'chips' }, h('span', { class: 'chip' }, it.sets.length + ' × ' + it.range![0] + '–' + it.range![1] + ' по ' + C.fmt(it.sets[0].w) + ' кг'), named);
+      right = h('div', { class: 'chips' }, h('span', { class: 'chip' }, (appRules() ? setWord(it.sets.length) : it.sets.length + ' × ' + it.range![0] + '–' + it.range![1]) + ' по ' + C.fmt(it.sets[0].w) + ' кг'), named);
     } else {
       const hh = C.hints(D.W, D.cfg, it.ex, slot, date);
       right = h('div', { class: 'chips' }, it.sets.map((s, i) => {
-        if (prop && (!baseIt!.sets[i] || baseIt!.sets[i].w !== s.w)) return h('span', { class: 'chip adj' }, C.fmt(s.w), h('small', null, prop.sets[i].tg[0] + '+'));
+        /* (в эталоне нет) с днями «День N» у веса нет цели по повторам («8+»): каждая тренировка сама по себе (просьба владельца, 26 ноября 2026) */
+        if (prop && (!baseIt!.sets[i] || baseIt!.sets[i].w !== s.w)) return h('span', { class: 'chip adj' }, C.fmt(s.w), appRules() ? null : h('small', null, prop.sets[i].tg[0] + '+'));
         const g = hh.sets[i] || { rule: 'new', target: it.range };
-        return h('span', { class: 'chip ' + (g.rule === 'up' ? 'up' : g.rule === 'down' ? 'down' : '') }, C.fmt(s.w), g.rule === 'up' ? ' ↑' : g.rule === 'down' ? ' ↓' : g.rule === 'hold' ? h('small', null, g.target[0] + '+') : null);
+        return h('span', { class: 'chip ' + (g.rule === 'up' ? 'up' : g.rule === 'down' ? 'down' : '') }, C.fmt(s.w), g.rule === 'up' ? ' ↑' : g.rule === 'down' ? ' ↓' : g.rule === 'hold' && !appRules() ? h('small', null, g.target[0] + '+') : null);
       }));
     }
     rows.push(h('div', { class: 'plan-row' }, h('span', { class: 'n' }, add ? add.name : C.exName(D.cfg, it.ex), !prop && goalTag(D.cfg, it.ex) ? h('span', { class: 'tag', style: 'margin-left:6px' }, goalTag(D.cfg, it.ex)) : null, prop ? h('span', { class: 'tag accent', style: 'margin-left:6px' }, prop.tag) : add ? h('span', { class: 'tag accent', style: 'margin-left:6px' }, 'новое') : null), right));
   });
   for (const p of gone) rows.splice(Math.min(p.idx, rows.length), 0, h('div', { class: 'plan-row' }, h('span', { class: 'n muted' }, C.exName(D.cfg, p.ex), h('span', { class: 'tag accent', style: 'margin-left:6px' }, p.tag)),
     h('div', { class: 'chips' }, h('span', { class: 'tag' }, p.fix && p.fix.kind === 'move' ? 'в ' + C.SLOT[p.fix.to!].n : p.fix && p.fix.kind === 'spread' ? 'подходы — другим' : 'убрано'))));
-  if (!rows.length) rows.push(h('div', { class: 'empty', text: 'Для этого дня ещё нет прошлой тренировки. Начни с пустого листа и добавь упражнения.' }));
+  if (!rows.length) rows.push(h('div', { class: 'empty', text: appRules() ? 'Для этого дня ещё нет плана. Начни тренировку и добавь упражнения.' : 'Для этого дня ещё нет прошлой тренировки. Начни с пустого листа и добавь упражнения.' }));   // (в эталоне нет) с днями «День N» кнопки «Начать с пустого листа» нет
   return h('div', { class: 'plan-list' }, rows);
 }
-export const planLegend = (withAdj: boolean) => h('div', { class: 'legend-line' }, h('span', null, h('span', { class: 'chip up' }, '40 ↑'), ' прошлый раз взят верх диапазона, вес повышен'), h('span', null, h('span', { class: 'chip' }, '40', h('small', null, '11+')), ' тот же вес, цель по повторам'), h('span', null, h('span', { class: 'chip down' }, '40 ↓'), ' было ниже диапазона'), withAdj ? h('span', null, h('span', { class: 'chip adj' }, '40', h('small', null, '11+')), ' поправка дневника') : null);
+export const planLegend = (withAdj: boolean) => h('div', { class: 'legend-line' }, h('span', null, h('span', { class: 'chip up' }, '40 ↑'), ' прошлый раз взят верх диапазона, вес повышен'), appRules() ? null : h('span', null, h('span', { class: 'chip' }, '40', h('small', null, '11+')), ' тот же вес, цель по повторам'), h('span', null, h('span', { class: 'chip down' }, '40 ↓'), ' было ниже диапазона'), withAdj ? h('span', null, h('span', { class: 'chip adj' }, '40', appRules() ? null : h('small', null, '11+')), ' поправка дневника') : null);   // (в эталоне нет) с днями «День N» цели по повторам у веса нет
 export const setWord = (n: number) => n + ' ' + C.plural(n, ['подход', 'подхода', 'подходов']);
 export const planSets = (items: Item[]) => items.reduce((n, it) => n + it.sets.length * ((D.cfg.ex[it.ex] || {}).uni ? 0.5 : 1), 0);
 /* the diary's proposals for one day, each with a tick box */
@@ -137,7 +139,7 @@ export function vOverview() {
     const A = C.adapt(D.W, D.cfg, D.slot, D.date), sel = C.applyAdapt(A, A.off0), n = sel.used.length, more = A.props.length + A.adds.length - n;
     nextCard = h('div', { class: 'card' }, h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow' }, 'Следующая тренировка'), h('h2', null, dayTitle(D.date))),
       S.canWrite ? h('a', { class: 'btn primary', href: '#workout' }, 'Открыть план') : null),
-      h('p', { class: 'sub', style: 'margin-bottom:6px' }, sel.items.length ? setWord(planSets(sel.items)) + ', ' + durText(sel.items) + (appRules() ? ' с отдыхом по упражнению' : ' при отдыхе ' + C.fmtRest(D.cfg.rest)) + '. ' : '', A.base.prog ? 'Первый раз по программе «' + D.cfg.program!.name + '»: веса взяты из последних тренировок каждого упражнения. ' : '', n ? (A.base.prog ? 'В план' : 'План по твоим правилам, в него') + ' уже внесены поправки дневника: ' + n + '.' + (more ? ' Ещё ' + more + ' можно включить перед стартом.' : ' Перед стартом можно снять любую.') : (A.base.prog ? '' : 'План по твоим правилам от прошлой тренировки этого дня.') + (more ? ' Дневник предлагает поправки: ' + more + ', включить их можно перед стартом.' : ' Поправок дневник не предлагает.')),
+      h('p', { class: 'sub', style: 'margin-bottom:6px' }, sel.items.length ? setWord(planSets(sel.items)) + ', ' + durText(sel.items) + (appRules() ? ' с отдыхом по упражнению' : ' при отдыхе ' + C.fmtRest(D.cfg.rest)) + '. ' : '', A.base.prog ? 'Первый раз по программе «' + D.cfg.program!.name + '»: веса взяты из последних тренировок каждого упражнения. ' : '', n ? (A.base.prog ? 'В план' : 'План по твоим правилам, в него') + ' уже внесены поправки дневника: ' + n + '.' + (appRules() ? '' : more ? ' Ещё ' + more + ' можно включить перед стартом.' : ' Перед стартом можно снять любую.') : (A.base.prog ? '' : 'План по твоим правилам от прошлой тренировки этого дня.') + (more ? ' Дневник предлагает поправки: ' + more + ', включить их можно перед стартом.' : ' Поправок дневник не предлагает.')),
       planRows(sel.items, D.slot, D.date, A, sel.used), planLegend(n > 0));
   }
   const top = D.ins.filter(i => i.sev === 'crit' || i.sev === 'warn').slice(0, 4);
@@ -164,10 +166,11 @@ export function vOverview() {
     let g = null;
     for (const m of C.MUSCLES) {
       if (m.g !== g) { g = m.g; rows.push(h('div', { class: 'grp eyebrow' }, g)); }
-      rows.push(h('span', { class: 'mn' }, m.n), meter(D.avg[m.id], z), h('span', { class: 'mv' }, C.fmt(D.avg[m.id], 1)), D.cfg.ignore[m.id] && D.avg[m.id] < z.opt ? h('span', { class: 'pill' }, 'вне расчёта') : zonePill(D.avg[m.id], z));
+      const off = !!D.cfg.ignore[m.id] && D.avg[m.id] < z.opt;
+      rows.push(h('span', { class: 'mn' }, m.n), meter(D.avg[m.id], z), h('span', { class: 'mv' }, C.fmt(D.avg[m.id], 1)), appRules() ? zoneMark(D.avg[m.id], z, off) : off ? h('span', { class: 'pill' }, 'вне расчёта') : zonePill(D.avg[m.id], z));   // (в эталоне нет) с днями «День N» — значок зоны без подписи, легенда под списком (marks.ts)
     }
     out.push(h('section', { class: 'card' }, h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Нагрузка по мышцам'), h('p', { class: 'sub' }, 'Подходов в неделю, ' + refTxt + '. Подсвеченный участок шкалы — рабочая зона ' + z.opt + '–' + z.high + ', риска — минимум ' + z.min + '.')), h('a', { class: 'btn ghost sm', href: '#muscles' }, 'По неделям')),
-      h('div', { class: 'meters' }, rows)));
+      h('div', { class: appRules() ? 'meters marks' : 'meters' }, rows), appRules() ? zoneKey(z, C.MUSCLES.some(m => D.cfg.ignore[m.id] && D.avg[m.id] < z.opt)) : null));
   }
   return out;
 }

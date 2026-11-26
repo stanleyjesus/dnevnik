@@ -2503,7 +2503,7 @@
        button(type="button" aria-pressed="false") День 3
     p.sub(style="margin-bottom:6px")
     div.plan-list
-     div.empty Для этого дня ещё нет прошлой тренировки. Начни с пустого листа и добавь упражнения.
+     div.empty Для этого дня ещё нет плана. Начни тренировку и добавь упражнения.
     div.row(style="margin-top:14px")
      button.btn.primary Начать тренировку
 
@@ -3784,48 +3784,28 @@
 === 16. первая тренировка: план понедельника
 адрес: "#workout"
 шапка: как в шаге 4
-поля: правки к шагу 4
-@@ 2 -0 +1
-+ pp-add-rear=false
+поля: как в шаге 4
 сообщение: ""
 экран: правки к шагу 4
-@@ 17 -0 +12
-+   div.adj-box(style="margin-bottom:12px")
-+    div.eyebrow(style="margin-bottom:2px") Что дневник меняет в плане и почему
-+    p.sub Сними галочку, если поправка не нужна. По умолчанию включены все изменения веса, до двух добавочных подходов и одно новое упражнение за тренировку — остальное можно отметить самому.
-+    div.props
-+     label.prop
-+      input#pp-add-rear(type="checkbox")
-+      div.grow
-+       div
-+        b Обратная бабочка
-+        span.tag.accent(style="margin-left:6px") Добавить в программу
-+       div.sub 3 подхода по 8–12: задние дельты работают только косвенно: 0 подходов в неделю при рабочей зоне от 10
+@@ 17 -0 +1
 +   p.sub(style="margin-bottom:6px") Основа — программа «Своя программа»: в этот день она идёт первый раз, вес в каждом упражнении подбирается на месте. В плане 3 подхода. Всё можно поправить по ходу.
 @@ 18 -0 +2
 +    b Время: ≈ 15 мин
 +    | " — разминка, 3 подхода и отдых: у каждого упражнения свой, от 2 до 5 мин."
-@@ 19 -1 +17
--    div.empty Для этого дня ещё нет прошлой тренировки. Начни с пустого листа и добавь упражнения.
+@@ 19 -1 +12
+-    div.empty Для этого дня ещё нет плана. Начни тренировку и добавь упражнения.
 +    div.plan-row
 +     span.n Бабочка
 +     div.chips
-+      span.chip 3 × 8–12
++      span.chip 3 подхода
 +      span.tag вес подбирается
 +   div.legend-line
 +    span
 +     span.chip.up 40 ↑
 +     | " прошлый раз взят верх диапазона, вес повышен"
 +    span
-+     span.chip
-+      | 40
-+      small 11+
-+     | " тот же вес, цель по повторам"
-+    span
 +     span.chip.down 40 ↓
 +     | " было ниже диапазона"
-@@ 22 -0 +1
-+    button.btn Начать с пустого листа
 
 === 17. старт
 шапка: правки к шагу 16
@@ -3929,7 +3909,7 @@
 +    div.plan-row(style="align-items:center")
 +     div.grow
 +      b Обратная бабочка
-+      div.sub 3 подхода по 8–12: задние дельты работают только косвенно: 0 подходов в неделю при рабочей зоне от 10
++      div.sub 3 подхода: задние дельты работают только косвенно: 0 подходов в неделю при рабочей зоне от 10
 +     button.btn.sm
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +      | Добавить
@@ -4000,43 +3980,44 @@
 +     span.v 100
 +     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
 +    span.d 0% к первой неделе
-@@ 5 -27 +4
+@@ 5 -16 +4
 +     div.eyebrow Следующая тренировка
 +     h2 Четверг, 20 ноября
 +    a.btn.primary(href="#workout") Открыть план
 +   p.sub(style="margin-bottom:6px") План по твоим правилам от прошлой тренировки этого дня. Поправок дневник не предлагает.
-@@ 33 -5 +1
-+    div.empty Для этого дня ещё нет прошлой тренировки. Начни с пустого листа и добавь упражнения.
-@@ 50 -3 +0
+@@ 22 -5 +1
++    div.empty Для этого дня ещё нет плана. Начни тренировку и добавь упражнения.
+@@ 34 -2 +0
 -   div.row(style="margin-top:14px")
 -    button.btn.primary Начать тренировку
--    button.btn Начать с пустого листа
 
 === 20. журнал новичка: одна запись
 адрес: "#journal"
 шапка: как в шаге 5
 сообщение: ""
-экран: правки к шагу 1
-@@ 2 -623 +14
-+  details.week(open="")
-+   summary
-+    h2 Неделя 1
-+    span.sub 17 ноя – 23 ноя · 1 тренировка · 3 рабочих подходов
-+   div.stack(style="gap:10px;padding-bottom:14px")
-+    div.wo
-+     div.wo-h
-+      div.row
-+       b Среда, 19 ноября
-+       span.tag день 1
-+      div.row
-+       button.btn.ghost.sm Изменить
-+       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-@@ 626 -178 +4
-+      div.chips
-+       span.chip 20 × 12
-+       span.chip 20 × 12
-+       span.chip 20 × 12
+экран: целиком
+  div.wrap.stack
+   details.week(open="")
+    summary
+     h2 Неделя 1
+     span.sub 17 ноя – 23 ноя · 1 тренировка · 3 рабочих подходов
+    div.stack(style="gap:10px;padding-bottom:14px")
+     div.wo
+      div.wo-h
+       div.row
+        b Среда, 19 ноября
+        span.tag день 1
+       div.row
+        button.btn.ghost.sm Изменить
+        button.btn.ghost.sm.danger Удалить
+      details.wo-row.wo-fold
+       summary.wo-sum
+        span.n Бабочка
+        span.wo-more(aria-hidden="true")
+       div.chips
+        span.chip 20 × 12
+        span.chip 20 × 12
+        span.chip 20 × 12
 
 === 21. после перезагрузки открыт тот же профиль
 
@@ -4133,8 +4114,9 @@
 @@ 10 -1 +1
 -       b Среда, 19 ноября
 +       b Понедельник, 17 ноября
-@@ 16 -0 +280
-+      span.n Жим лежа
+@@ 17 -0 +329
++       span.n Жим лежа
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 85 × 5
@@ -4149,8 +4131,10 @@
 +        | 85 × 5
 +        small r1
 +       span.tag 77%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 0")
 +        | 57.5 × 11
@@ -4164,8 +4148,10 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 52.5 × 10
 +        small r1
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 37.5 × 11
@@ -4179,8 +4165,13 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 35 × 10
 +        small r1
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 22.5 × 10
@@ -4194,8 +4185,13 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 20 × 12
 +        small r1
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 0")
 +        | 20 × 10
@@ -4206,11 +4202,10 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 17.5 × 12
 +        small r1
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Молотки с гантелями
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 16 × 10
@@ -4234,50 +4229,62 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Жим лежа
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим лежа
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 3 по 95
 +       span.tag 87%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 55 × 12
 +       span.chip 52.5 × 12
 +       span.chip 52.5 × 11
 +       span.chip 50 × 12
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 37.5 × 11
 +       span.chip 37.5 × 9
 +       span.chip 35 × 11
 +       span.chip 35 × 9
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 10
 +       span.chip 22.5 × 9
 +       span.chip 20 × 13
 +       span.chip 20 × 11
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 20 × 9
 +       span.chip 20 × 9
 +       span.chip 17.5 × 11
-+     div.wo-row
-+      span.n Молотки с гантелями
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 16 × 10
 +       span.chip 16 × 6
 +       span.chip 14 × 12
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
 +    div.wo
 +     div.wo-h
 +      div.row
@@ -4286,8 +4293,10 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 50 × 12
@@ -4298,8 +4307,13 @@
 +       span.chip(title="в запасе повторов: 0")
 +        | 42.5 × 12
 +        small r0
-+     div.wo-row
-+      span.n Жим ногами
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим ногами
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 2")
 +        | 175 × 5
@@ -4314,8 +4328,13 @@
 +        | 175 × 5
 +        small r0
 +       span.tag 77%
-+     div.wo-row
-+      span.n Жим гантелей под углом 45
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим гантелей под углом 45
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 3")
 +        | 24 × 11
@@ -4329,11 +4348,10 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 22 × 9
 +        small r1
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Горизонтальная тяга Т-бар
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Горизонтальная тяга Т-бар
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 2")
 +        | 30 × 11
@@ -4347,8 +4365,13 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 27.5 × 12
 +        small r1
-+     div.wo-row
-+      span.n Бицепс со штангой стоя
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс со штангой стоя
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 30 × 10
@@ -4359,11 +4382,13 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 27.5 × 10
 +        small r1
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке правая
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Кисть на блоке правая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 15 × 10
@@ -4374,11 +4399,10 @@
 +       span.chip(title="в запасе повторов: 0")
 +        | 12.5 × 14
 +        small r0
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть на блоке левая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке левая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 12.5 × 14
@@ -4397,8 +4421,13 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Подтягивания
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Подтягивания
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 3")
 +        | 100 × 3
@@ -4413,8 +4442,9 @@
 +        | 100 × 3
 +        small r3
 +       span.tag 87%
-+     div.wo-row
-@@ 18 -0 +143
++     details.wo-row.wo-fold
++      summary.wo-sum
+@@ 20 -0 +169
 +       span.chip(title="в запасе повторов: 1")
 +        | 47.5 × 8
 +        small r1
@@ -4427,8 +4457,13 @@
 +       span.chip(title="в запасе повторов: 2")
 +        | 40 × 11
 +        small r2
-+     div.wo-row
-+      span.n Бицепс бедра на тренажере лежа на животе
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра на тренажере лежа на животе
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 0")
 +        | 32.5 × 8
@@ -4439,8 +4474,13 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 30 × 8
 +        small r1
-+     div.wo-row
-+      span.n Трицепс с косичкой на блоке
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс с косичкой на блоке
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 3")
 +        | 22.5 × 11
@@ -4454,11 +4494,13 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 20 × 11
 +        small r1
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс Bayesian curl
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Бицепс Bayesian curl
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 2")
 +        | 12.5 × 8
@@ -4469,11 +4511,13 @@
 +       span.chip(title="в запасе повторов: 3")
 +        | 10 × 14
 +        small r3
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 52.5 × 10
@@ -4484,11 +4528,10 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 47.5 × 12
 +        small r1
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть с гантелью правая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью правая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 1")
 +        | 12 × 10
@@ -4499,8 +4542,13 @@
 +       span.chip(title="в запасе повторов: 1")
 +        | 10 × 16
 +        small r1
-+     div.wo-row
-+      span.n Кисть с гантелью левая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью левая рука
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip(title="в запасе повторов: 3")
 +        | 10 × 14
@@ -4511,9 +4559,6 @@
 +       span.chip(title="в запасе повторов: 2")
 +        | 10 × 12
 +        small r2
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
 +     p.note(style="margin-top:8px") в субботу вместо пятницы
 +  details.week(open="")
 +   summary
@@ -4528,56 +4573,71 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Жим лежа
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим лежа
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 4 по 87.5
 +       span.tag 82%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 55 × 11
 +       span.chip 52.5 × 11
 +       span.chip 52.5 × 11
 +       span.chip 50 × 11
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 37.5 × 11
 +       span.chip 35 × 12
 +       span.chip 35 × 11
 +       span.chip 35 × 9
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 10
 +       span.chip 22.5 × 10
-@@ 19 -0 +47
+@@ 21 -0 +57
 +       span.chip 20 × 11
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 20 × 9
 +       span.chip 17.5 × 13
 +       span.chip 17.5 × 11
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Молотки с гантелями
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 16 × 9
 +       span.chip 16 × 7
 +       span.chip 14 × 13
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
 +    div.wo
 +     div.wo-h
 +      div.row
@@ -4586,54 +4646,68 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 50 × 10
 +       span.chip 47.5 × 12
 +       span.chip 45 × 7
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Жим ногами
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим ногами
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 3 по 195
 +       span.tag 87%
-+     div.wo-row
-+      span.n Жим гантелей под углом 45
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим гантелей под углом 45
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 24 × 9
 +       span.chip 22 × 12
 +       span.chip.hole(title="повторы не записаны") 22 × ?
-@@ 20 -0 +137
-+     div.wo-row
-+      span.n Горизонтальная тяга Т-бар
+@@ 22 -0 +181
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Горизонтальная тяга Т-бар
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 30 × 11
 +       span.chip 30 × 8
 +       span.chip 27.5 × 12
 +       span.chip 27.5 × 10
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Бицепс со штангой стоя
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс со штангой стоя
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip.hole(title="повторы не записаны") 30 × ?
 +       span.chip.hole(title="повторы не записаны") 27.5 × ?
 +       span.chip.hole(title="повторы не записаны") 27.5 × ?
-+     div.wo-row
-+      span.n Кисть на блоке правая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке правая
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 15 × 9
 +       span.chip 12.5 × 15
 +       span.chip 12.5 × 15
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть на блоке левая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке левая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 14
 +       span.chip 12.5 × 13
@@ -4646,64 +4720,86 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Подтягивания
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Подтягивания
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 4 по 92.5
 +       span.tag 82%
-+     div.wo-row
-+      span.n Бабочка
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бабочка
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 45 × 14
 +       span.chip 42.5 × 10
 +       span.chip 40 × 12
 +       span.chip 40 × 10
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра на тренажере лежа на животе
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра на тренажере лежа на животе
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 32.5 × 8
 +       span.chip 30 × 10
 +       span.chip 30 × 10
-+     div.wo-row
-+      span.n Трицепс с косичкой на блоке
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс с косичкой на блоке
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 10
 +       span.chip 22.5 × 9
 +       span.chip 22.5 × 8
 +       span.chip 22.5 × 5
-+     div.wo-row
-+      span.n Бицепс Bayesian curl
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс Bayesian curl
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 16
 +       span.chip 10 × 15
 +       span.chip 10 × 14
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 50 × 12
 +       span.chip 47.5 × 12
 +       span.chip 45 × 12
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть с гантелью правая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью правая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12 × 10
 +       span.chip 10 × 16
 +       span.chip 10 × 14
-+     div.wo-row
-+      span.n Кисть с гантелью левая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью левая рука
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 15
 +       span.chip 10 × 12
 +       span.chip 10 × 11
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
 +  details.week
 +   summary
 +    h2 Неделя 8
@@ -4717,49 +4813,64 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Жим лежа
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим лежа
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 5 по 80
 +       span.tag 77%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 55 × 10
 +       span.chip 52.5 × 11
 +       span.chip 52.5 × 10
 +       span.chip 50 × 11
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 37.5 × 10
 +       span.chip 35 × 11
 +       span.chip 35 × 10
 +       span.chip 35 × 8
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 11
 +       span.chip 22.5 × 8
-@@ 21 -0 +1182
+@@ 23 -0 +1519
 +       span.chip 20 × 10
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 17.5 × 13
 +       span.chip 17.5 × 12
 +       span.chip 17.5 × 10
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Молотки с гантелями
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 16 × 8
 +       span.chip 16 × 8
@@ -4772,47 +4883,57 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 50 × 9
 +       span.chip 47.5 × 11
 +       span.chip 45 × 11
-+     div.wo-row
-+      span.n Жим ногами
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим ногами
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 4 по 180
 +       span.tag 82%
-+     div.wo-row
-+      span.n Жим гантелей под углом 45
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим гантелей под углом 45
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 24 × 9
 +       span.chip 22 × 11
 +       span.chip 22 × 10
 +       span.chip 20 × 11
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Горизонтальная тяга Т-бар
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Горизонтальная тяга Т-бар
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 30 × 10
 +       span.chip 30 × 10
 +       span.chip 27.5 × 11
 +       span.chip 27.5 × 10
-+     div.wo-row
-+      span.n Бицепс со штангой стоя
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс со штангой стоя
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 30 × 8
 +       span.chip 27.5 × 11
 +       span.chip 27.5 × 10
-+     div.wo-row
-+      span.n Кисть на блоке правая
-+      div.chips
++     div.wo-row.wo-fold
++      div.wo-sum
++       span.n Кисть на блоке правая
 +       span.tag не делал
-+     div.wo-row
-+      span.n Кисть на блоке левая
-+      div.chips
++     div.wo-row.wo-fold
++      div.wo-sum
++       span.n Кисть на блоке левая
 +       span.tag не делал
 +    div.wo
 +     div.wo-h
@@ -4822,60 +4943,85 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Подтягивания
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Подтягивания
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 5 по 85
 +       span.tag 77%
-+     div.wo-row
-+      span.n Бабочка
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бабочка
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 42.5 × 12
 +       span.chip 42.5 × 10
 +       span.chip 40 × 11
 +       span.chip 37.5 × 12
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра на тренажере лежа на животе
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра на тренажере лежа на животе
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 32.5 × 8
 +       span.chip 30 × 10
 +       span.chip 30 × 9
-+     div.wo-row
-+      span.n Трицепс с косичкой на блоке
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс с косичкой на блоке
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 11
 +       span.chip 22.5 × 9
 +       span.chip 20 × 12
 +       span.chip 20 × 12
-+     div.wo-row
-+      span.n Бицепс Bayesian curl
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс Bayesian curl
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 7
 +       span.chip.hole(title="повторы не записаны") 10 × ?
 +       span.chip 10 × 12
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 47.5 × 12
 +       span.chip 45 × 12
 +       span.chip 45 × 11
-+     div.wo-row
-+      span.n Кисть с гантелью правая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью правая рука
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12 × 10
 +       span.chip 10 × 15
 +       span.chip 10 × 14
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть с гантелью левая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью левая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 13
 +       span.chip 10 × 13
@@ -4893,57 +5039,75 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Жим лежа
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим лежа
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 3 по 87.5
 +       span.tag 87%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip.warmup(title="разминочный") 30 × 15
 +       span.chip 52.5 × 12
 +       span.chip 52.5 × 10
 +       span.chip 50 × 12
 +       span.chip 50 × 10
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 35 × 12
 +       span.chip 35 × 11
 +       span.chip 35 × 10
 +       span.chip 32.5 × 12
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 9
 +       span.chip 20 × 13
 +       span.chip 20 × 12
 +       span.chip 20 × 10
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 17.5 × 12
 +       span.chip 17.5 × 12
 +       span.chip 17.5 × 10
-+     div.wo-row
-+      span.n Молотки с гантелями
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 14 × 14
 +       span.chip 14 × 14
 +       span.chip 14 × 11
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
 +    div.wo
 +     div.wo-h
 +      div.row
@@ -4952,69 +5116,86 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 47.5 × 12
 +       span.chip 45 × 12
 +       span.chip 45 × 11
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим ногами
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Жим ногами
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 180 × 4
 +       span.chip 180 × 4
 +       span.chip 180 × 4
 +       span.chip 180 × 3
 +       span.tag 82%
-+     div.wo-row
-+      span.n Жим гантелей под углом 45
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим гантелей под углом 45
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22 × 12
 +       span.chip 22 × 10
 +       span.chip 20 × 12
 +       span.chip 20 × 11
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n
-+       | Горизонтальная тяга Т-бар
-+       span.muted " · узкая рукоять"
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n
++        | Горизонтальная тяга Т-бар
++        span.muted " · узкая рукоять"
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 30 × 10
 +       span.chip 30 × 8
 +       span.chip 30 × 7
 +       span.chip 30 × 7
-+     div.wo-row
-+      span.n Бицепс со штангой стоя
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс со штангой стоя
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 27.5 × 12
 +       span.chip 27.5 × 10
 +       span.chip 27.5 × 9
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке правая
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Кисть на блоке правая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 16
 +       span.chip 12.5 × 14
 +       span.chip 12.5 × 14
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке левая
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Кисть на блоке левая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 14
 +       span.chip 12.5 × 12
 +       span.chip 12.5 × 10
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
 +    div.wo
 +     div.wo-h
 +      div.row
@@ -5023,67 +5204,81 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Подтягивания
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Подтягивания
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 3 по 95
 +       span.tag 87%
-+     div.wo-row
-+      span.n Бабочка
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бабочка
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 42.5 × 11
 +       span.chip 40 × 12
 +       span.chip 40 × 11
 +       span.chip 37.5 × 11
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра на тренажере лежа на животе
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра на тренажере лежа на животе
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 32.5 × 9
 +       span.chip 30 × 10
 +       span.chip 30 × 9
++     div.wo-row.wo-fold
++      div.wo-sum
++       span.n Трицепс с косичкой на блоке
++       span.tag не делал
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс Bayesian curl
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Трицепс с косичкой на блоке
-+      div.chips
-+       span.tag не делал
-+     div.wo-row
-+      span.n Бицепс Bayesian curl
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 16
 +       span.chip 10 × 13
 +       span.chip 10 × 12
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 47.5 × 11
 +       span.chip 45 × 11
 +       span.chip 45 × 11
-+     div.wo-row
-+      span.n Кисть с гантелью правая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью правая рука
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 16
 +       span.chip 10 × 14
 +       span.chip 10 × 13
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью левая рука
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Кисть с гантелью левая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 14
 +       span.chip 10 × 12
 +       span.chip 10 × 10
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
 +  details.week
 +   summary
 +    h2 Неделя 6
@@ -5097,43 +5292,61 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Жим лежа
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим лежа
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 4 по 80
 +       span.tag 82%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 52.5 × 11
 +       span.chip 52.5 × 10
 +       span.chip 50 × 11
 +       span.chip 50 × 9
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 35 × 11
 +       span.chip 35 × 10
 +       span.chip 32.5 × 12
 +       span.chip 32.5 × 11
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 8
 +       span.chip 20 × 12
 +       span.chip 20 × 11
 +       span.chip 20 × 9
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 17.5 × 12
 +       span.chip 17.5 × 11
 +       span.chip 17.5 × 10
-+     div.wo-row
-+      span.n Молотки с гантелями
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 14 × 12
 +       span.chip 14 × 12
@@ -5147,51 +5360,79 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 47.5 × 9
 +       span.chip 45 × 11
 +       span.chip 45 × 9
-+     div.wo-row
-+      span.n Жим ногами
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим ногами
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 5 по 165
 +       span.tag 77%
-+     div.wo-row
-+      span.n Жим гантелей под углом 45
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим гантелей под углом 45
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22 × 10
 +       span.chip 22 × 9
 +       span.chip 20 × 10
 +       span.chip 20 × 10
-+     div.wo-row
-+      span.n Горизонтальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Горизонтальная тяга в тренажере
++       span.pill.serious
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
++        | откат
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 45 × 8
 +       span.chip 45 × 8
 +       span.chip 42.5 × 9
 +       span.chip 42.5 × 8
-+     div.wo-row
-+      span.n Махи с гантелями на плечи
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Махи с гантелями на плечи
++       span.pill.serious
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
++        | откат
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 9
 +       span.chip 10 × 9
 +       span.chip 10 × 6
-+     div.wo-row
-+      span.n Бицепс со штангой стоя
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс со штангой стоя
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 27.5 × 9
 +       span.chip 27.5 × 9
 +       span.chip 27.5 × 8
-+     div.wo-row
-+      span.n Кисть на блоке правая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке правая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 15
 +       span.chip 12.5 × 13
 +       span.chip 12.5 × 12
-+     div.wo-row
-+      span.n Кисть на блоке левая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке левая
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 12
 +       span.chip 12.5 × 10
@@ -5204,51 +5445,76 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Подтягивания
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Подтягивания
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 4 по 87.5
 +       span.tag 82%
-+     div.wo-row
-+      span.n Бабочка
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бабочка
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 42.5 × 10
 +       span.chip 40 × 11
 +       span.chip 40 × 10
 +       span.chip 37.5 × 11
-+     div.wo-row
-+      span.n Бицепс бедра на тренажере лежа на животе
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра на тренажере лежа на животе
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 32.5 × 8
 +       span.chip 30 × 10
 +       span.chip 30 × 9
-+     div.wo-row
-+      span.n Трицепс с косичкой на блоке
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс с косичкой на блоке
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 10
 +       span.chip 22.5 × 8
 +       span.chip 22.5 × 7
 +       span.chip 22.5 × 6
-+     div.wo-row
-+      span.n Бицепс Bayesian curl
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс Bayesian curl
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 15
 +       span.chip 10 × 13
 +       span.chip 10 × 11
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 45 × 12
 +       span.chip 45 × 10
 +       span.chip 45 × 9
-+     div.wo-row
-+      span.n Кисть с гантелью правая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью правая рука
++       span.pill.warn
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
++        | застой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 15
 +       span.chip 10 × 15
 +       span.chip 10 × 12
-+     div.wo-row
-+      span.n Кисть с гантелью левая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью левая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 13
 +       span.chip 10 × 10
@@ -5271,40 +5537,55 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Жим лежа
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим лежа
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 5 по 72.5
 +       span.tag 77%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 52.5 × 10
 +       span.chip 52.5 × 10
 +       span.chip 50 × 11
 +       span.chip 50 × 10
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip.hole(title="повторы не записаны") 35 × ?
 +       span.chip.hole(title="повторы не записаны") 35 × ?
 +       span.chip.hole(title="повторы не записаны") 32.5 × ?
 +       span.chip.hole(title="повторы не записаны") 32.5 × ?
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 8
 +       span.chip 20 × 12
 +       span.chip 20 × 9
 +       span.chip 20 × 9
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 17.5 × 12
 +       span.chip 17.5 × 11
 +       span.chip 17.5 × 9
-+     div.wo-row
-+      span.n Молотки с гантелями
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 14 × 13
 +       span.chip 14 × 12
@@ -5317,60 +5598,79 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 45 × 12
 +       span.chip 45 × 10
 +       span.chip 45 × 9
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим ногами
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Жим ногами
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 3 по 182.5
 +       span.tag 87%
-+     div.wo-row
-+      span.n Жим гантелей под углом 45
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим гантелей под углом 45
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22 × 11
 +       span.chip 22 × 9
 +       span.chip 20 × 11
 +       span.chip 20 × 9
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Горизонтальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Горизонтальная тяга в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 45 × 11
 +       span.chip 45 × 9
 +       span.chip 42.5 × 10
 +       span.chip 42.5 × 9
-+     div.wo-row
-+      span.n Махи с гантелями на плечи
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Махи с гантелями на плечи
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 12
 +       span.chip 10 × 10
 +       span.chip 10 × 8
-+     div.wo-row
-+      span.n Бицепс со штангой стоя
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс со штангой стоя
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 27.5 × 10
 +       span.chip 27.5 × 9
 +       span.chip 25 × 12
-+     div.wo-row
-+      span.n Кисть на блоке правая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке правая
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 15
 +       span.chip 12.5 × 13
 +       span.chip 12.5 × 11
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть на блоке левая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке левая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 12
 +       span.chip 12.5 × 10
@@ -5383,66 +5683,85 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Подтягивания
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Подтягивания
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 5 по 80
 +       span.tag 77%
-+     div.wo-row
-+      span.n
-+       | Бабочка
-+       span.muted " · сиденье на деление ниже"
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n
++        | Бабочка
++        span.muted " · сиденье на деление ниже"
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 42.5 × 10
 +       span.chip 40 × 10
 +       span.chip 40 × 10
 +       span.chip 37.5 × 11
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра на тренажере лежа на животе
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра на тренажере лежа на животе
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 32.5 × 8
 +       span.chip 30 × 10
 +       span.chip 30 × 9
-+     div.wo-row
-+      span.n Трицепс с косичкой на блоке
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс с косичкой на блоке
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 11
 +       span.chip 22.5 × 10
 +       span.chip 22.5 × 8
 +       span.chip 20 × 12
-+     div.wo-row
-+      span.n Бицепс Bayesian curl
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс Bayesian curl
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 14
 +       span.chip 10 × 13
 +       span.chip 10 × 10
-+     div.wo-row
-+      span.n Пресс
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Пресс
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 7.5 × 15
 +       span.chip 0 × 15
 +       span.chip 0 × 13
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть с гантелью правая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью правая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 15
 +       span.chip 10 × 14
 +       span.chip 10 × 13
-+     div.wo-row
-+      span.n Кисть с гантелью левая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью левая рука
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 13
 +       span.chip 10 × 12
 +       span.chip 10 × 10
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
 +  details.week
 +   summary
 +    h2 Неделя 3
@@ -5456,53 +5775,65 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Жим лежа
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим лежа
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 3 по 80
 +       span.tag 87%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 52.5 × 11
 +       span.chip 52.5 × 9
 +       span.chip 50 × 9
 +       span.chip 50 × 9
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 35 × 9
 +       span.chip 35 × 9
 +       span.chip 32.5 × 11
 +       span.chip 32.5 × 11
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 20 × 13
 +       span.chip 20 × 10
 +       span.chip 20 × 10
 +       span.chip 20 × 8
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 17.5 × 12
 +       span.chip 17.5 × 10
 +       span.chip 17.5 × 10
-+     div.wo-row
-+      span.n Молотки с гантелями
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 14 × 13
 +       span.chip 14 × 11
 +       span.chip 14 × 11
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
 +    div.wo
 +     div.wo-h
 +      div.row
@@ -5511,61 +5842,80 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 45 × 11
 +       span.chip 45 × 11
 +       span.chip 45 × 9
-+     div.wo-row
-+      span.n Жим ногами
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим ногами
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 4 по 167.5
 +       span.tag 82%
-+     div.wo-row
-+      span.n Жим гантелей под углом 45
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим гантелей под углом 45
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip.warmup(title="разминочный") 14 × 12
 +       span.chip 22 × 10
 +       span.chip 22 × 10
 +       span.chip 20 × 10
 +       span.chip 20 × 9
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Горизонтальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Горизонтальная тяга в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 45 × 10
 +       span.chip 45 × 9
 +       span.chip 42.5 × 10
 +       span.chip 42.5 × 10
-+     div.wo-row
-+      span.n Махи с гантелями на плечи
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Махи с гантелями на плечи
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 13
 +       span.chip 10 × 11
 +       span.chip 10 × 9
-+     div.wo-row
-+      span.n Бицепс со штангой стоя
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс со штангой стоя
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 27.5 × 11
 +       span.chip 27.5 × 9
 +       span.chip 25 × 11
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке правая
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Кисть на блоке правая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 14
 +       span.chip 12.5 × 13
 +       span.chip 12.5 × 10
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть на блоке левая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке левая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 12
 +       span.chip 12.5 × 10
@@ -5578,63 +5928,82 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Подтягивания
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Подтягивания
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 3 по 87.5
 +       span.tag 87%
-+     div.wo-row
-+      span.n Бабочка
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бабочка
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 40 × 12
 +       span.chip 40 × 11
 +       span.chip 40 × 8
 +       span.chip 37.5 × 10
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра на тренажере лежа на животе
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра на тренажере лежа на животе
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 30 × 12
 +       span.chip 30 × 10
 +       span.chip 30 × 9
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Трицепс с косичкой на блоке
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс с косичкой на блоке
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 10
 +       span.chip 22.5 × 9
 +       span.chip 22.5 × 9
 +       span.chip 20 × 11
-+     div.wo-row
-+      span.n Бицепс Bayesian curl
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс Bayesian curl
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 15
 +       span.chip 10 × 12
 +       span.chip 10 × 10
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Пресс
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Пресс
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 5 × 15
 +       span.chip 0 × 14
 +       span.chip 0 × 13
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть с гантелью правая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью правая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 15
 +       span.chip 10 × 13
 +       span.chip 10 × 11
-+     div.wo-row
-+      span.n Кисть с гантелью левая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью левая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 12
 +       span.chip 10 × 10
@@ -5652,43 +6021,58 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Жим лежа
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим лежа
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 4 по 75
 +       span.tag 82%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 52.5 × 10
 +       span.chip 52.5 × 10
 +       span.chip 50 × 8
 +       span.chip 50 × 8
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 35 × 10
 +       span.chip 35 × 9
 +       span.chip 35 × 7
 +       span.chip 32.5 × 9
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 20 × 12
 +       span.chip 20 × 12
 +       span.chip 20 × 9
 +       span.chip 17.5 × 13
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 17.5 × 12
 +       span.chip 17.5 × 10
 +       span.chip 17.5 × 8
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Молотки с гантелями
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 14 × 12
 +       span.chip 14 × 11
@@ -5701,63 +6085,82 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Подтягивания
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Подтягивания
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 4 по 80
 +       span.tag 82%
-+     div.wo-row
-+      span.n Бабочка
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бабочка
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 40 × 11
 +       span.chip 40 × 9
 +       span.chip 40 × 9
 +       span.chip 40 × 7
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Бицепс бедра на тренажере лежа на животе
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра на тренажере лежа на животе
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 30 × 11
 +       span.chip 30 × 10
 +       span.chip 30 × 8
-+     div.wo-row
-+      span.n Трицепс с косичкой на блоке
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс с косичкой на блоке
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 11
 +       span.chip 22.5 × 9
 +       span.chip 20 × 12
 +       span.chip 20 × 9
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Бицепс Bayesian curl
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс Bayesian curl
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 13
 +       span.chip 10 × 13
 +       span.chip 10 × 9
-+     div.wo-row
-+      span.n Пресс
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Пресс
++       span.pill.good
++        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++        | рекорд
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 2.5 × 15
 +       span.chip 0 × 14
 +       span.chip 0 × 12
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью правая рука
 +       span.pill.good
 +        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +        | рекорд
-+     div.wo-row
-+      span.n Кисть с гантелью правая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 15
 +       span.chip 10 × 13
 +       span.chip 10 × 11
-+       span.pill.good
-+        svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+        | рекорд
-+     div.wo-row
-+      span.n Кисть с гантелью левая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью левая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 12
 +       span.chip 10 × 10
@@ -5775,40 +6178,52 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Жим лежа
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим лежа
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 5 по 70
 +       span.tag 77%
-+     div.wo-row
-+      span.n Вертикальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Вертикальная тяга в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 52.5 × 10
 +       span.chip 52.5 × 9
 +       span.chip 52.5 × 7
 +       span.chip 52.5 × 6
-+     div.wo-row
-+      span.n Бицепс бедра сидя в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра сидя в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 35 × 10
 +       span.chip 35 × 8
 +       span.chip 35 × 8
 +       span.chip 35 × 6
-+     div.wo-row
-+      span.n Средние дельты в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Средние дельты в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 20 × 12
 +       span.chip 20 × 9
 +       span.chip 20 × 9
 +       span.chip 20 × 7
-+     div.wo-row
-+      span.n Трицепс из за головы на блоке с косичкой
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс из за головы на блоке с косичкой
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 17.5 × 11
 +       span.chip 17.5 × 8
 +       span.chip 17.5 × 8
-+     div.wo-row
-+      span.n Молотки с гантелями
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Молотки с гантелями
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 14 × 12
 +       span.chip 14 × 10
@@ -5821,51 +6236,67 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Разгибания ног в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Разгибания ног в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 45 × 11
 +       span.chip 45 × 9
 +       span.chip 45 × 9
-+     div.wo-row
-+      span.n Жим ногами
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим ногами
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 5 по 155
 +       span.tag 77%
-+     div.wo-row
-+      span.n Жим гантелей под углом 45
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Жим гантелей под углом 45
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22 × 9
 +       span.chip 22 × 8
 +       span.chip 22 × 7
 +       span.chip 22 × 5
-+     div.wo-row
-+      span.n Горизонтальная тяга в тренажере
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Горизонтальная тяга в тренажере
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 45 × 11
 +       span.chip 45 × 9
 +       span.chip 45 × 7
 +       span.chip 45 × 7
-+     div.wo-row
-+      span.n Махи с гантелями на плечи
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Махи с гантелями на плечи
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 13
 +       span.chip 10 × 10
 +       span.chip 10 × 9
-+     div.wo-row
-+      span.n Бицепс со штангой стоя
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс со штангой стоя
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 27.5 × 10
 +       span.chip 27.5 × 9
 +       span.chip 27.5 × 7
-+     div.wo-row
-+      span.n Кисть на блоке правая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке правая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 13
 +       span.chip 12.5 × 12
 +       span.chip 12.5 × 11
-+     div.wo-row
-+      span.n Кисть на блоке левая
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть на блоке левая
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 12.5 × 12
 +       span.chip 12.5 × 10
@@ -5878,51 +6309,67 @@
 +      div.row
 +       button.btn.ghost.sm Изменить
 +       button.btn.ghost.sm.danger Удалить
-+     div.wo-row
-+      span.n Подтягивания
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Подтягивания
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 4 × 5 по 72.5
 +       span.tag 77%
-+     div.wo-row
-+      span.n Бабочка
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бабочка
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 40 × 10
 +       span.chip 40 × 9
 +       span.chip 40 × 8
 +       span.chip 40 × 8
-+     div.wo-row
-+      span.n Бицепс бедра на тренажере лежа на животе
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс бедра на тренажере лежа на животе
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 30 × 11
 +       span.chip 30 × 8
 +       span.chip 30 × 8
-+     div.wo-row
-+      span.n Трицепс с косичкой на блоке
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Трицепс с косичкой на блоке
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 22.5 × 10
 +       span.chip 22.5 × 8
 +       span.chip 22.5 × 7
 +       span.chip 22.5 × 4
-+     div.wo-row
-+      span.n Бицепс Bayesian curl
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Бицепс Bayesian curl
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 13
 +       span.chip 10 × 11
 +       span.chip 10 × 8
-+     div.wo-row
-+      span.n Пресс
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Пресс
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 0 × 15
 +       span.chip 0 × 13
 +       span.chip 0 × 12
-+     div.wo-row
-+      span.n Кисть с гантелью правая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью правая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 14
 +       span.chip 10 × 13
 +       span.chip 10 × 11
-+     div.wo-row
-+      span.n Кисть с гантелью левая рука
++     details.wo-row.wo-fold
++      summary.wo-sum
++       span.n Кисть с гантелью левая рука
++       span.wo-more(aria-hidden="true")
 +      div.chips
 +       span.chip 10 × 12
 +       span.chip 10 × 11

@@ -115,6 +115,8 @@ const heavyW = id => savedW + '.filter(w => w.items.some(i => i.ex === ' + J(id)
 const WAS = { up: 'a > b', hold: 'a === b', fail: 'a < b', short: 'a < b' };
 const seenW = (key, id, what) => expect('sessionStorage.getItem(' + J(key) + ') === "1" || (t => t.length > 1 && ((a, b) => ' + WAS[key] + ')(t[t.length - 1], t[t.length - 2]))(' + heavyW(id) + ')', what);
 const skipRow = '([...document.querySelectorAll("#view .plan-row")].find(r => r.textContent.startsWith("Разгибания ног")) || { textContent: "" })';
+/* «Начать с пустого листа»; с днями «День N» этой кнопки нет (просьба владельца, 26 ноября 2026) — тогда тренировка по плану */
+const startBlank = 'if ([...document.querySelectorAll("#view button")].some(b => b.textContent.trim() === "Начать с пустого листа")) ' + press('Начать с пустого листа') + ' else ' + press('Начать тренировку');
 /* онбординг (решение владельца, 25 ноября 2026): какой шаг на экране, видны ли вкладки, строка «что возьмёт дневник» у упражнения */
 const onbAt = (n, of) => '!!document.getElementById("onb") && document.getElementById("onb-n").textContent === "Шаг ' + n + ' из ' + of + '"';
 const DOT = '(i => [...document.querySelectorAll(".pdots button")].map(b => b.getAttribute("aria-current")).join() === [0, 1].map(j => String(j === i)).join())';   // в карусели дней онбординга открыт день i (два дня)
@@ -148,7 +150,7 @@ export const SCENARIOS = [
     /* то же, что в «журнале» у шага «вместо правки снова план»: после «Завершить» вкладка «Тренировка» иногда успевает отрисоваться посреди перехода
        на «Обзор», ещё без законченной записи, и у той страницы, где это случилось, план остался бы прежним (среда вместо пятницы). Кнопка дня берёт план заново */
     ['новый план', go('workout') + settle + press('Пятница')],
-    ['вторая тренировка в тот же день', typeDay('#np-date', 0) + settle + press('Начать с пустого листа')],
+    ['вторая тренировка в тот же день', typeDay('#np-date', 0) + settle + startBlank],
     ['автосохранение второй', type('#wk-note', 'вторая за день') + wait(AUTOSAVE)],
     ['отменить вторую: вопрос', press('Отменить')],
     ['отменить вторую: да', press('Удалить тренировку')],
@@ -168,7 +170,7 @@ export const SCENARIOS = [
     ['вернуть первую поправку', maybe(click('input[id^="pp-"]'))],
     ['отдых 3 минуты', maybe(pick('#np-rest', 180))],                                  // с днями «День N» выбора отдыха нет: его ставит дневник
     ['пятница', press('Пятница')],
-    ['пустой лист', press('Начать с пустого листа')],
+    ['пустой лист', startBlank],
     ['упражнение в пустой лист', pickAt('#add-ex', 0) + press('Добавить упражнение')],
     ['отменить: вопрос', press('Отменить')],
     ['отменить: вернуться', press('Вернуться')],
@@ -1032,8 +1034,8 @@ export const SCENARIOS = [
     ['день 2, неделя 3: в плане поправка', go('workout') + settle + press('День 2') + settle + typeDay('#np-date', 14) + settle
       + expect('document.getElementById("view").textContent.includes("Не делал два раза") && ' + skipRow + '.textContent.includes("в День 1")', 'разгибания ног остались строкой плана: уходят в день 1')
       + expect('document.getElementById("view").textContent.includes("Оценка — по твоему темпу")', 'время плана — по темпу атлета')],
-    ['снять поправку галочкой', click('#pp-leg_ext') + settle + expect('!' + skipRow + '.textContent.includes("в День 1")', 'разгибания ног снова в плане')],
-    ['вернуть поправку', click('#pp-leg_ext') + settle + expect(skipRow + '.textContent.includes("в День 1")', 'поправка снова в плане')],
+    /* галочек у поправок нет (просьба владельца, 26 ноября 2026): план выставляет дневник */
+    ['поправка без галочки', expect('!document.getElementById("pp-leg_ext") && !document.querySelector("#view .adj-box input[type=checkbox]")', 'у поправки нет галочки, карточки «Что дневник меняет» нет')],
     ['старт: убранное — отдельным блоком', press('Начать тренировку') + settle + expect('!!document.getElementById("back-leg_ext") && !' + exCard('Разгибания ног'), 'карточки нет, в блоке «Дневник убрал из плана» — «Вернуть»')],
     ['вернуть упражнение', click('#back-leg_ext') + settle + expect('!document.getElementById("back-leg_ext") && !!' + exCard('Разгибания ног'), 'карточка на месте')],
     /* в идущей тренировке у упражнения только «не делал», крестика «убрать» нет (просьба владельца, 26 ноября 2026): передумал — тренировка начинается заново */
@@ -1166,18 +1168,23 @@ export const SCENARIOS = [
   ] },
 
   /* только в приложении: лишнего на экранах нет (решение владельца, 25 ноября 2026) — вкладки «Советы» нет, на «Обзоре» сверху две плитки
-     и нет блока «Требует внимания», на «Тренировке» нет выбора «Вариант плана»: план всегда с поправками дневника, снять можно каждую галочкой */
+     и нет блока «Требует внимания», на «Тренировке» нет выбора «Вариант плана»: план всегда с поправками дневника (с 26 ноября 2026 — без галочек) */
   { name: 'лишнего на экранах нет', data: 'seed', app: true, steps: [
     ['меню: семь вкладок, «Советов» нет', go('overview') + settle + expect('[...document.querySelectorAll("#tabs a")].map(a => a.getAttribute("href")).join() === "#overview,#workout,#journal,#progress,#muscles,#program,#setup"', 'в меню семь вкладок, «Советов» среди них нет')],
     ['обзор: две плитки, без «Требует внимания»', expect('[...document.querySelectorAll("#view .tiles.two .tile .l")].map(e => e.textContent).join() === "Тренировок записано,Индекс силы" && ![...document.querySelectorAll("#view h2")].some(e => e.textContent === "Требует внимания") && !document.querySelector("#view a[href=\\"#coach\\"]")', 'сверху только «Тренировок записано» и «Индекс силы», блока «Требует внимания» и ссылки на советы нет')],
     ['адрес «Советов» открывает обзор', go('coach') + settle + expect('location.hash === "#coach" && !!document.querySelector("#view .tiles.two") && document.querySelector("#tabs a[aria-current=page]").getAttribute("href") === "#overview"', 'по адресу #coach открыт «Обзор»')],
-    ['план: с поправками, выбора варианта нет', go('workout') + settle + expect('!document.querySelector("#view [aria-label=\\"Вариант плана\\"]") && !document.getElementById("view").innerText.includes("Только по моим правилам") && document.querySelectorAll("#view input[id^=\\"pp-\\"]").length > 1 && [...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].every(e => e.checked) && document.querySelectorAll("#view .plan-row .tag.accent").length > 0', 'план с поправками дневника, все включены, переключателя варианта нет')],
-    ['снять поправку галочкой', click('input[id^="pp-"]') + settle + expect('!document.querySelector("#view input[id^=\\"pp-\\"]").checked && [...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].slice(1).every(e => e.checked) && !document.querySelector("#view [aria-label=\\"Вариант плана\\"]")', 'первая поправка снята, остальные на месте')],
-    ['после перезагрузки', RELOAD],
-    ['план после перезагрузки снова со всеми поправками', go('workout') + settle + expect('[...document.querySelectorAll("#view input[id^=\\"pp-\\"]")].every(e => e.checked) && !document.querySelector("#view [aria-label=\\"Вариант плана\\"]")', 'после перезагрузки все поправки снова включены')],
+    /* просьбы владельца 26 ноября 2026: план выставляет дневник — без карточки поправок с галочками и без «Начать с пустого листа»; у весов плана нет повторов («8+») */
+    ['план: с поправками, без галочек и выбора варианта', go('workout') + settle + expect('!document.querySelector("#view [aria-label=\\"Вариант плана\\"]") && !document.getElementById("view").innerText.includes("Только по моим правилам") && !document.querySelector("#view input[id^=\\"pp-\\"], #view .adj-box") && document.querySelectorAll("#view .plan-row .tag.accent").length > 0', 'план с поправками дневника, галочек и переключателя варианта нет')],
+    ['план: у весов нет повторов, нет пустого листа', expect('document.querySelectorAll("#view .plan-row .chip").length > 0 && !document.querySelector("#view .plan-row .chip small") && ![...document.querySelectorAll("#view button")].some(b => b.textContent.trim() === "Начать с пустого листа")', 'у весов плана нет «8+», кнопки «Начать с пустого листа» нет')],
+    ['обзор: значки зон и одна легенда', go('overview') + settle + expect('document.querySelectorAll("#view .meters.marks .pill.mark").length > 5 && ![...document.querySelectorAll("#view .meters.marks .pill")].some(p => p.textContent.trim()) && document.querySelectorAll("#view .zkey > span").length >= 5 && document.querySelector("#view .zkey").textContent.includes("рабочая зона")', 'у мышц только значок зоны, что значит значок — в легенде под списком')],
+    ['план на обзоре: у весов нет повторов', expect('document.querySelectorAll("#view .plan-row .chip").length > 0 && !document.querySelector("#view .plan-row .chip small")', 'на «Обзоре» у весов плана нет «8+»')],
+    ['мышцы: значки зон', go('muscles') + settle + expect('document.querySelectorAll("#view td .pill.mark").length > 5 && ![...document.querySelectorAll("#view td .pill")].some(p => p.textContent.trim())', 'в таблице мышц у оценки только значок')],
+    ['журнал: подходы свёрнуты', go('journal') + settle + expect('document.querySelectorAll("#view details.wo-fold").length > 3 && !document.querySelector("#view details.wo-fold[open]") && [...document.querySelectorAll("#view .wo-sum .pill")].some(p => p.textContent === "рекорд")', 'подходы упражнений свёрнуты, рядом с названием — отметка «рекорд»')],
+    ['журнал: раскрыть подходы', click('#view details.wo-fold summary') + settle + expect('document.querySelectorAll("#view details.wo-fold[open]").length === 1 && document.querySelector("#view details.wo-fold[open] .chips .chip")', 'нажатие раскрывает подходы упражнения')],
+    ['прогресс: только лучший подход', go('progress') + settle + expect('[...document.querySelectorAll("#ex-detail th")].some(t => t.textContent === "Лучший подход") && [...document.querySelectorAll("#ex-detail tbody tr")].every(r => r.querySelectorAll("td:nth-child(2) .chip").length === 1)', 'в истории упражнения у каждой тренировки один подход — лучший')],
     /* просьбы владельца 26 ноября 2026: в шапке нет названия и «записи на устройстве»; идущая тренировка без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок */
     ['шапка без названия и «записи на устройстве»', expect('getComputedStyle(document.querySelector(".top .brand")).display === "none" && getComputedStyle(document.getElementById("sync")).display === "none"', 'названия приложения и статуса «записи на устройстве» не видно')],
-    ['идущая тренировка: без ориентиров', press('Начать тренировку') + settle + expect('document.querySelectorAll("#view input[id^=\\"w-\\"]").length > 0 && document.querySelectorAll("#view button[aria-label=\\"Отметить «не делал»\\"]").length > 0 && !document.querySelector("#view input[id^=\\"rng-\\"], #view .set .track, #view .set .prev, #view .adj-box, #view button[aria-label=\\"Переместить выше\\"], #view button[aria-label=\\"Переместить ниже\\"], #view button[aria-label=\\"Убрать упражнение\\"]") && !document.getElementById("view").innerText.includes("прошлый раз") && [...document.querySelectorAll("#view input[id^=\\"r-\\"]")].every(e => !e.placeholder)', 'у подходов только вес, повторы и запас, у упражнения — «не делал»: без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок')]
+    ['идущая тренировка: без ориентиров', go('workout') + settle + press('Начать тренировку') + settle + expect('document.querySelectorAll("#view input[id^=\\"w-\\"]").length > 0 && document.querySelectorAll("#view button[aria-label=\\"Отметить «не делал»\\"]").length > 0 && !document.querySelector("#view input[id^=\\"rng-\\"], #view .set .track, #view .set .prev, #view .adj-box, #view button[aria-label=\\"Переместить выше\\"], #view button[aria-label=\\"Переместить ниже\\"], #view button[aria-label=\\"Убрать упражнение\\"]") && !document.getElementById("view").innerText.includes("прошлый раз") && [...document.querySelectorAll("#view input[id^=\\"r-\\"]")].every(e => !e.placeholder)', 'у подходов только вес, повторы и запас, у упражнения — «не делал»: без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок')]
   ] },
 
   /* только в приложении: загрузка резервной копии с экрана */

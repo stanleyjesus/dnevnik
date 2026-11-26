@@ -81,31 +81,47 @@
      div.seg(role="group" aria-label="Что показать на теле")
       button#bm-fact(aria-pressed="true") По факту
       button#bm-plan(aria-pressed="false") По программе
-    div.bodymap
-     figure.bm-fig
-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
-      figcaption Вид спереди
-     figure.bm-fig
-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
-      figcaption Вид сзади
+    div.bodymap.flip
+     div.flip-in
+      figure.bm-fig
+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
+       figcaption Вид спереди
+      figure.bm-fig(inert="")
+       svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
+       figcaption Вид сзади
+     button.bm-flip(type="button" aria-label="Вид спереди: перевернуть на вид сзади")
+      svg(viewBox="0 0 24 24" aria-hidden="true") …#f2a2c05d8a
+      span Вид спереди
     div.scale(style="margin:10px 0")
      span.sw
       i.hc.z-none
+      span.pill.mark.crit
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
       | нет нагрузки
      span.sw
       i.hc.z-low
+      span.pill.mark.serious
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
       | мало: до 4
      span.sw
       i.hc.z-base
+      span.pill.mark.warn
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
       | ниже рабочей: 4–10
      span.sw
       i.hc.z-opt
+      span.pill.mark.good
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
       | рабочая зона: 10–20
      span.sw
       i.hc.z-high
+      span.pill.mark.over
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#7b849e37b6
       | выше зоны
      span.sw
       i.hc.z-off
+      span.pill.mark.off
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
       | вне расчёта
     p.sub Нажми на мышцу или подпись, чтобы увидеть оценку и что с ней делать.
    section.card
@@ -163,9 +179,8 @@
          b 10
          span#mavg-chest.msplit (сила 2.7)
         td(style="text-align:left")
-         span.pill.good
+         span.pill.mark.good(role="img" title="рабочая зона" aria-label="рабочая зона")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-          | рабочая зона
        tr
         td Широчайшие
         td
@@ -194,9 +209,8 @@
          b 7.9
          span#mavg-lats.msplit (сила 2)
         td(style="text-align:left")
-         span.pill.warn
+         span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-          | ниже рабочей зоны
        tr
         td Верх спины
         td
@@ -225,9 +239,8 @@
          b 6.8
          span#mavg-upper_back.msplit (сила 1)
         td(style="text-align:left")
-         span.pill.warn
+         span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-          | ниже рабочей зоны
        tr
         td Передние дельты
         td
@@ -256,9 +269,8 @@
          b 5
          span#mavg-delt_front.msplit (сила 1.3)
         td(style="text-align:left")
-         span.pill.warn
+         span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-          | ниже рабочей зоны
        tr
         td Средние дельты
         td
@@ -286,9 +298,8 @@
         td
          b 4
         td(style="text-align:left")
-         span.pill.warn
+         span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-          | ниже рабочей зоны
        tr
         td Задние дельты
         td
@@ -316,9 +327,8 @@
         td
          b 1.9
         td(style="text-align:left")
-         span.pill.serious
+         span.pill.mark.serious(role="img" title="мало" aria-label="мало")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
-          | мало
        tr.g
         td(colspan="14")
          span.eyebrow Руки
@@ -350,9 +360,8 @@
          b 12.4
          span#mavg-biceps.msplit (сила 1)
         td(style="text-align:left")
-         span.pill.good
+         span.pill.mark.good(role="img" title="рабочая зона" aria-label="рабочая зона")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-          | рабочая зона
        tr
         td Трицепс
         td
@@ -381,9 +390,8 @@
          b 9.9
          span#mavg-triceps.msplit (сила 1.3)
         td(style="text-align:left")
-         span.pill.warn
+         span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-          | ниже рабочей зоны
        tr
         td Предплечья
         td
@@ -412,9 +420,8 @@
          b 13.5
          span#mavg-forearms.msplit (сила 1)
         td(style="text-align:left")
-         span.pill.good
+         span.pill.mark.good(role="img" title="рабочая зона" aria-label="рабочая зона")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-          | рабочая зона
        tr.g
         td(colspan="14")
          span.eyebrow Корпус
@@ -445,7 +452,8 @@
         td
          b 0
         td(style="text-align:left")
-         span.pill вне расчёта
+         span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
        tr
         td Разгибатели спины
         td
@@ -473,7 +481,8 @@
         td
          b 0
         td(style="text-align:left")
-         span.pill вне расчёта
+         span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
        tr.g
         td(colspan="14")
          span.eyebrow Ноги
@@ -505,9 +514,8 @@
          b 9.2
          span#mavg-quads.msplit (сила 3.3)
         td(style="text-align:left")
-         span.pill.warn
+         span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-          | ниже рабочей зоны
        tr
         td Бицепс бедра
         td
@@ -535,9 +543,8 @@
         td
          b 6.8
         td(style="text-align:left")
-         span.pill.warn
+         span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-          | ниже рабочей зоны
        tr
         td Ягодицы
         td
@@ -566,9 +573,8 @@
          b 1.7
          span#mavg-glutes.msplit (сила 1.7)
         td(style="text-align:left")
-         span.pill.serious
+         span.pill.mark.serious(role="img" title="мало" aria-label="мало")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
-          | мало
        tr
         td Икры
         td
@@ -596,25 +602,38 @@
         td
          b 0
         td(style="text-align:left")
-         span.pill вне расчёта
+         span.pill.mark.off(role="img" title="вне расчёта" aria-label="вне расчёта")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
     div.scale(style="margin-top:12px")
      span.sw
       i.hc.z-none
+      span.pill.mark.crit
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#bc815448c3
       | нет нагрузки
      span.sw
       i.hc.z-low
+      span.pill.mark.serious
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
       | мало: до 4
      span.sw
       i.hc.z-base
+      span.pill.mark.warn
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
       | ниже рабочей: 4–10
      span.sw
       i.hc.z-opt
+      span.pill.mark.good
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
       | рабочая зона: 10–20
      span.sw
       i.hc.z-high
+      span.pill.mark.over
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#7b849e37b6
       | выше зоны: больше 20
      span.sw
       i.hc.z-cur
+      span.pill.mark.off
+       svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
       | неделя ещё идёт или мышца вне расчёта
     hr.rule
     p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
@@ -635,22 +654,40 @@
 -     button#bm-plan(aria-pressed="false") По программе
 +     button#bm-fact(aria-pressed="false") По факту
 +     button#bm-plan(aria-pressed="true") По программе
-@@ 12 -1 +1
--     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
-+     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#0ab86cf155
-@@ 15 -1 +1
--     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
-+     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#2abb9fc376
+@@ 13 -1 +1
+-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
++      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#0ab86cf155
+@@ 16 -1 +1
+-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
++      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#2abb9fc376
 
 === 3. на теле: по факту
 экран: как в шаге 1
 
-=== 4. мышца на фигуре
+=== 4. фигура: вид сзади
 экран: правки к шагу 3
+@@ 10 -1 +1
+-   div.bodymap.flip
++   div.bodymap.flip.back
 @@ 12 -1 +1
--     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
-+     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#b64257d637
-@@ 36 -1 +7
+-     figure.bm-fig
++     figure.bm-fig(inert="")
+@@ 15 -1 +1
+-     figure.bm-fig(inert="")
++     figure.bm-fig
+@@ 18 -1 +1
+-    button.bm-flip(type="button" aria-label="Вид спереди: перевернуть на вид сзади")
++    button.bm-flip(type="button" aria-label="Вид сзади: перевернуть на вид спереди")
+@@ 20 -1 +1
+-     span Вид спереди
++     span Вид сзади
+
+=== 5. мышца на фигуре
+экран: правки к шагу 4
+@@ 13 -1 +1
+-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#2288eeb19f
++      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#b64257d637
+@@ 52 -1 +7
 -   p.sub Нажми на мышцу или подпись, чтобы увидеть оценку и что с ней делать.
 +   div.why
 +    div.row
@@ -660,49 +697,67 @@
 +      | рабочая зона
 +    div.sub В рабочей зоне 10–20. Менять ничего не нужно.
 
-=== 5. та же мышца: выбор снят
-экран: как в шаге 1
+=== 6. та же мышца: выбор снят
+экран: как в шаге 4
 
-=== 6. мышца по подписи
-экран: правки к шагу 4
-@@ 12 -1 +1
--     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#b64257d637
-+     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#cdaa281f22
-@@ 38 -1 +1
+=== 7. мышца по подписи
+экран: правки к шагу 5
+@@ 13 -1 +1
+-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#b64257d637
++      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#cdaa281f22
+@@ 54 -1 +1
 -     b#bm-sel Грудь: 10 подходов в неделю (сила 2.7)
 +     b#bm-sel Бицепс: 12.4 подхода в неделю (сила 1)
 
-=== 7. мышца с клавиатуры
-экран: правки к шагу 6
-@@ 12 -1 +1
--     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#cdaa281f22
-+     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#071ec39252
-@@ 15 -1 +1
--     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
-+     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#a593e92503
-@@ 38 -5 +5
+=== 8. мышца с клавиатуры
+экран: правки к шагу 7
+@@ 13 -1 +1
+-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#cdaa281f22
++      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#071ec39252
+@@ 16 -1 +1
+-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#f68c50ada7
++      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#a593e92503
+@@ 54 -5 +5
 +     b#bm-sel Средние дельты: 4 подхода в неделю
 +     span.pill.warn
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +      | ниже рабочей зоны
 +    div.sub До рабочей зоны не хватает 6 подходов. Что добавить: ещё подходы махов в стороны.
 
-=== 8. мышца вне расчёта
-экран: правки к шагу 6
-@@ 12 -1 +1
--     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#cdaa281f22
-+     svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f6961940af
-@@ 38 -5 +3
+=== 9. мышца вне расчёта
+экран: правки к шагу 7
+@@ 13 -1 +1
+-      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#cdaa281f22
++      svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f6961940af
+@@ 54 -5 +3
 +     b#bm-sel Пресс: 0 подходов в неделю
 +     span.pill вне расчёта
 +    div.sub Мышца вне расчёта: дневник сам подходы ей не выделяет и не считает её пробелом. Прибавить можно кнопкой «+» на вкладке «Программа».
 
-=== 9. ячейка недели
-экран: правки к шагу 8
-@@ 85 -1 +1
+=== 10. фигура: снова вид спереди
+экран: правки к шагу 9
+@@ 10 -1 +1
+-   div.bodymap.flip.back
++   div.bodymap.flip
+@@ 12 -1 +1
+-     figure.bm-fig(inert="")
++     figure.bm-fig
+@@ 15 -1 +1
+-     figure.bm-fig
++     figure.bm-fig(inert="")
+@@ 18 -1 +1
+-    button.bm-flip(type="button" aria-label="Вид сзади: перевернуть на вид спереди")
++    button.bm-flip(type="button" aria-label="Вид спереди: перевернуть на вид сзади")
+@@ 20 -1 +1
+-     span Вид сзади
++     span Вид спереди
+
+=== 11. ячейка недели
+экран: правки к шагу 10
+@@ 101 -1 +1
 -        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 8: 10") 10
 +        button.hc.z-opt.sel(aria-pressed="true" aria-label="Грудь, неделя 8: 10") 10
-@@ 550 -1 +15
+@@ 569 -1 +15
 -   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
 +   div
 +    h3#cell-h Грудь, неделя 8: 10 подходов (сила 2)
@@ -720,12 +775,12 @@
 +      span.sub "4 подхода, в зачёт 2 (запас от 3 повторов — за половину), основная мышца = "
 +      b 2
 
-=== 10. другая ячейка
-экран: правки к шагу 8
-@@ 235 -1 +1
+=== 12. другая ячейка
+экран: правки к шагу 10
+@@ 246 -1 +1
 -        button.hc.z-low(aria-pressed="false" aria-label="Задние дельты, неделя 6: 2") 2
 +        button.hc.z-low.sel(aria-pressed="true" aria-label="Задние дельты, неделя 6: 2") 2
-@@ 550 -1 +7
+@@ 569 -1 +7
 -   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
 +   div
 +    h3#cell-h Задние дельты, неделя 6: 2 подхода
@@ -735,26 +790,26 @@
 +      span.sub "4 подхода × 0.5, помогает = "
 +      b 2
 
-=== 11. ячейка первой недели
-экран: правки к шагу 9
-@@ 71 -1 +1
+=== 13. ячейка первой недели
+экран: правки к шагу 11
+@@ 87 -1 +1
 -        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 1: 10") 10
 +        button.hc.z-opt.sel(aria-pressed="true" aria-label="Грудь, неделя 1: 10") 10
-@@ 85 -1 +1
+@@ 101 -1 +1
 -        button.hc.z-opt.sel(aria-pressed="true" aria-label="Грудь, неделя 8: 10") 10
 +        button.hc.z-opt(aria-pressed="false" aria-label="Грудь, неделя 8: 10") 10
-@@ 551 -1 +1
+@@ 570 -1 +1
 -    h3#cell-h Грудь, неделя 8: 10 подходов (сила 2)
 +    h3#cell-h Грудь, неделя 1: 10 подходов (сила 2)
 
-=== 12. на чём основаны оценки
-экран: правки к шагу 11
-@@ 565 -1 +1
+=== 14. на чём основаны оценки
+экран: правки к шагу 13
+@@ 584 -1 +1
 -  details.card
 +  details.card(open="")
 
-=== 13. большой экран
-экран: как в шаге 11
+=== 15. большой экран
+экран: как в шаге 13
 
-=== 14. после перезагрузки выбор сброшен
+=== 16. после перезагрузки выбор сброшен
 экран: как в шаге 1

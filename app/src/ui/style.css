@@ -482,3 +482,22 @@ html { -webkit-tap-highlight-color: transparent; }   /* на iPhone нажати
 .btn, .seg button, .ex-card, .tabs a { transition: transform .12s ease-out, background-color .15s, border-color .15s, color .15s, box-shadow .15s; }
 .btn:not([disabled]):active, .seg button:active, .ex-card:active, .tabs a:active { transform: scale(.97); }
 .ghost .pslot, .ghost .pday, .ghost .pnotch, .ghost .plab { transition: none; }
+select { -webkit-appearance: none; appearance: none; padding-right: 34px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%238a94a0' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 12px 8px; }   /* стрелка списка — своя, с отступом от правого края (просьба владельца, 26 ноября 2026) */
+.ex-meta select, .mgrid select, .swaprow select { padding-right: 28px; background-position: right 9px center; }
+select.chip-sel { padding-right: 20px; background-position: right 6px center; background-size: 10px 7px; }
+.meters.marks { grid-template-columns: max-content minmax(40px, 1fr) max-content max-content; }   /* с днями «День N» у мышцы значок зоны вместо подписи: на телефоне он остаётся в строке (marks.ts) */
+.meters.marks .pill { grid-column: auto; margin: 0; }
+.pill.mark { gap: 0; }
+.pill.mark svg { width: 16px; height: 16px; }
+.pill.mark.off svg { color: var(--muted); }
+.zkey { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 12px; font-size: 12px; color: var(--ink-2); }   /* одна легенда значков зон под списком мышц */
+.zkey > span { display: inline-flex; align-items: center; gap: 5px; }
+.wo-fold { display: block; }   /* журнал с днями «День N»: подходы упражнения раскрываются нажатием на строку (marks.ts) */
+.wo-sum { display: flex; align-items: center; gap: 8px; min-height: 30px; list-style: none; }
+summary.wo-sum { cursor: pointer; }
+.wo-sum::-webkit-details-marker { display: none; }
+.wo-sum .n { flex: 1 1 auto; }
+.wo-more { width: 20px; height: 20px; flex: none; display: grid; place-items: center; }
+.wo-more::before { content: ""; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: translateY(-2px) rotate(45deg); transition: transform .2s; }
+.wo-fold[open] .wo-more::before { transform: translateY(2px) rotate(225deg); }
+.wo-fold > .chips { margin: 2px 0 4px; justify-content: flex-start; }

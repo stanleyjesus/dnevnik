@@ -9,6 +9,8 @@ import { backupDraft } from './storage.ts';
 import { D, go, render } from './render.ts';
 import { setChip } from './charts.ts';
 import { dayTitle } from './overview.ts';
+import { appRules } from '../core/rules.ts';
+import { journalRow } from './marks.ts';
 import type { Workout } from '../core/index.ts';
 
 /* ---------- journal ---------- */
@@ -43,6 +45,7 @@ export function workoutCard(w: Workout, prs: Set<string>) {
     if (it.skip) chips = [h('span', { class: 'tag' }, 'не делал')];
     else if (same) chips = [h('span', { class: 'chip' }, it.sets.length + ' × ' + it.sets[0].r + ' по ' + C.fmt(it.sets[0].w)), h('span', { class: 'tag' }, it.cyc!.pct + '%')];
     else chips = it.sets.map(s => setChip(s)).concat(it.cyc ? [h('span', { class: 'tag' }, it.cyc.pct + '%')] : []);
+    if (appRules()) { card.appendChild(journalRow(w, it, chips)); continue; }   // (в эталоне нет) с днями «День N» отметка рядом с названием, подходы — под нажатием (marks.ts)
     if (!it.cyc && prs.has(w.id + '|' + it.ex)) chips.push(pill('good', 'рекорд'));
     card.appendChild(h('div', { class: 'wo-row' }, h('span', { class: 'n' }, C.exName(D.cfg, it.ex), it.note ? h('span', { class: 'muted' }, ' · ' + it.note) : null), h('div', { class: 'chips' }, chips)));
   }

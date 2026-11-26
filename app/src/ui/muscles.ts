@@ -5,6 +5,7 @@ import { C, h } from './dom.ts';
 import { S } from './state.ts';
 import { D, render } from './render.ts';
 import { zonePill } from './charts.ts';
+import { keyMark, zoneMark } from './marks.ts';
 import { bodyMap } from './bodymap.ts';
 import { appRules } from '../core/rules.ts';
 import type { Muscle, WeekInfo } from '../core/index.ts';
@@ -14,7 +15,7 @@ import type { Muscle, WeekInfo } from '../core/index.ts';
 export function bodyCard() {
   const ui = S.ui, z = D.cfg.zones, hasFact = D.wi.ref.length > 0, pl = C.planned(D.W.filter(w => !w.open), D.cfg), plan = pl.pv;
   const by = ui.bodyBy === 'plan' || !hasFact ? 'plan' : 'fact', vals = by === 'fact' ? D.avg : plan, sel = ui.bodySel && C.MUSCLE[ui.bodySel] ? ui.bodySel : null;
-  const sw = (k: string, t: string) => h('span', { class: 'sw' }, h('i', { class: 'hc z-' + k }), t);
+  const sw = (k: string, t: string) => h('span', { class: 'sw' }, h('i', { class: 'hc z-' + k }), appRules() ? keyMark(k === 'cur' ? 'off' : k) : null, t);   // (в эталоне нет) с днями «День N» у цвета — значок зоны из столбца «Оценка»
   let info = h('p', { class: 'sub' }, 'Нажми на мышцу или подпись, чтобы увидеть оценку и что с ней делать.');
   if (sel) {
     const v = vals[sel] || 0, k = C.zone(v, z), off = D.cfg.ignore[sel] && v < z.opt, split = C.splitText(v, ((by === 'fact' ? D.avgS : pl.ps) || {})[sel] || 0);
@@ -44,7 +45,7 @@ export function vMuscles() {
         const v = (D.vol[w.no] && D.vol[w.no].m[m.id]) || 0, sel = ui.cell && ui.cell.m === m.id && ui.cell.w === w.no;
         return h('td', null, h('button', { class: 'hc ' + cellZ(m, w, v) + (w.current && !w.complete ? ' cur' : '') + (sel ? ' sel' : ''), 'aria-pressed': String(!!sel), 'aria-label': m.n + ', неделя ' + w.no + ': ' + C.fmt(v, 1), onclick: () => { ui.cell = { m: m.id, w: w.no }; render(true); } }, w.count ? C.fmt(v, 1) : '–'));
       }),
-      h('td', null, h('b', null, C.fmt(D.avg[m.id], 1)), C.splitText(D.avg[m.id], D.avgS[m.id] || 0) ? h('span', { class: 'msplit', id: 'mavg-' + m.id, text: '(' + C.splitText(D.avg[m.id], D.avgS[m.id] || 0) + ')' }) : null), h('td', { style: 'text-align:left' }, D.cfg.ignore[m.id] && D.avg[m.id] < z.opt ? h('span', { class: 'pill' }, 'вне расчёта') : zonePill(D.avg[m.id], z))));
+      h('td', null, h('b', null, C.fmt(D.avg[m.id], 1)), C.splitText(D.avg[m.id], D.avgS[m.id] || 0) ? h('span', { class: 'msplit', id: 'mavg-' + m.id, text: '(' + C.splitText(D.avg[m.id], D.avgS[m.id] || 0) + ')' }) : null), h('td', { style: 'text-align:left' }, appRules() ? zoneMark(D.avg[m.id], z, !!D.cfg.ignore[m.id] && D.avg[m.id] < z.opt) : D.cfg.ignore[m.id] && D.avg[m.id] < z.opt ? h('span', { class: 'pill' }, 'вне расчёта') : zonePill(D.avg[m.id], z))));   // (в эталоне нет) с днями «День N» — значок зоны без подписи, что он значит — в легенде под таблицей (marks.ts)
   }
   let detail;
   if (ui.cell && C.MUSCLE[ui.cell.m]) {
@@ -55,7 +56,7 @@ export function vMuscles() {
         : h('p', { class: 'sub', style: 'margin-top:4px' }, 'На этой неделе мышца не работала ни в одном упражнении. ' + 'Что добавить: ' + C.FIX[ui.cell.m] + '.'));
   } else detail = h('p', { class: 'sub' }, 'Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.');
 
-  const sw = (k: string, t: string) => h('span', { class: 'sw' }, h('i', { class: 'hc z-' + k }), t);
+  const sw = (k: string, t: string) => h('span', { class: 'sw' }, h('i', { class: 'hc z-' + k }), appRules() ? keyMark(k === 'cur' ? 'off' : k) : null, t);   // (в эталоне нет) с днями «День N» у цвета — значок зоны, как в столбце «Оценка»
   out.push(h('section', { class: 'card' },
     h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Подходы на мышцу по неделям'), h('p', { class: 'note' }, 'Подход, где мышца работает основной, считается за 1, где помогает — за 0.5. Подход, после которого в запасе осталось 3 повтора и больше, идёт за половину: ' + (appRules() ? 'у подходов по проценту от максимума' : 'у базовых по волне') + ' запас считается по проценту, если ты не отметил его сам. Оценка стоит по среднему за три последние полные недели (' + refTxt + ').'))),
     h('div', { class: 'scroll-x to-end' }, h('table', { class: 'heat' }, h('thead', null, head), h('tbody', null, body))),
