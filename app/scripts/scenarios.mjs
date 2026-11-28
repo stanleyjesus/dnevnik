@@ -115,6 +115,8 @@ const savedW = 'JSON.parse(' + stored + ').filter(x => x[0].startsWith("workouts
 const heavyW = id => savedW + '.filter(w => w.items.some(i => i.ex === ' + J(id) + ' && String(i.cyc).startsWith("83/"))).sort((a, b) => a.date < b.date ? -1 : 1).map(w => Math.max(...String(w.items.find(i => i.ex === ' + J(id) + ' && String(i.cyc).startsWith("83/")).sets).split(" ").map(s => parseFloat(s) || 0)))';   // в записи: cyc "83/4", подходы "90x4@2 90x4@2 …"
 const WAS = { up: 'a > b', hold: 'a === b', fail: 'a < b', short: 'a < b' };
 const seenW = (key, id, what) => expect('sessionStorage.getItem(' + J(key) + ') === "1" || (t => t.length > 1 && ((a, b) => ' + WAS[key] + ')(t[t.length - 1], t[t.length - 2]))(' + heavyW(id) + ')', what);
+/* идущая тренировка каруселью: номер открытой карточки */
+const open = '[...document.querySelectorAll("#wk-ex .pslot")].findIndex(x => x.getAttribute("data-off") === "0")';
 const skipRow = '([...document.querySelectorAll("#view .plan-row")].find(r => r.textContent.startsWith("Разгибания ног")) || { textContent: "" })';
 /* «Начать с пустого листа»; с днями «День N» этой кнопки нет (просьба владельца, 26 ноября 2026) — тогда тренировка по плану */
 const startBlank = 'if ([...document.querySelectorAll("#view button")].some(b => b.textContent.trim() === "Начать с пустого листа")) ' + press('Начать с пустого листа') + ' else ' + press('Начать тренировку');
@@ -212,8 +214,9 @@ export const SCENARIOS = [
     ['новое упражнение: без названия', press('Сохранить упражнение')],
     ['новое упражнение: без мышц', type('#xf-new-n', 'Фермерская прогулка') + press('Сохранить упражнение')],
     ['новое упражнение: сохранить', pick('#xf-new-m-forearms', '1') + pick('#xf-new-m-upper_back', '0.5') + type('#xf-new-lo', 10) + type('#xf-new-hi', 15) + click('#xf-new-uni') + press('Сохранить упражнение')],
-    ['дата тренировки: вчера', typeDay('#wk-date', -1)],
-    ['день программы: пятница', press('Пт')],
+    /* с днями «День N» у идущей тренировки нет шапки с датой и днём программы — упражнения идут каруселью (просьба владельца, 28 ноября 2026): эти шаги там пропускаются */
+    ['дата тренировки: вчера', maybe(typeDay('#wk-date', -1))],
+    ['день программы: пятница', maybe(press('Пт'))],
     ['отдых 2 минуты', maybe(pick('#wk-rest', 120))],
     ['заметки', type('input[id^="ex-note-"]', 'хват уже') + type('#wk-note', 'мало спал')],
     ['автосохранение', wait(AUTOSAVE)],
@@ -295,7 +298,9 @@ export const SCENARIOS = [
     ['обзор: онбординг вместо пустого обзора', go('overview') + settle + expect(onbAt(1, 7), 'онбординг, шаг 1 из 7') + expect(tabsOff, 'вкладок не видно') + expect(stored + ' === "[]"', 'в хранилище пусто')],
     /* (решение владельца, 25 ноября 2026) в карточке пустого «Обзора» две кнопки: «Собрать программу» открывает онбординг, вторая — резервная копия */
     ['пропустить: пустой обзор с двумя кнопками', click('#onb-skip') + settle + expect('!!document.querySelector(".card.empty")', 'карточка «В дневнике пока пусто»')
-      + expect('[...document.querySelectorAll(".card.empty .btn")].map(b => b.id + ":" + b.textContent).join() === "onb-again:Собрать программу,import-first:Загрузить резервную копию"', 'в карточке две кнопки: «Собрать программу» и «Загрузить резервную копию»') + expect('!(' + tabsOff + ')', 'вкладки на месте')],
+      + expect('[...document.querySelectorAll(".card.empty .btn")].map(b => b.id + ":" + b.textContent).join() === "onb-again:Собрать программу,import-first:Загрузить резервную копию"', 'в карточке две кнопки: «Собрать программу» и «Загрузить резервную копию»') + expect('!(' + tabsOff + ')', 'вкладки на месте')
+      /* (просьба владельца, 28 ноября 2026) блоки статистики видны и без тренировок — с подписью, когда в них появятся числа */
+      + expect('document.querySelector("#soon-tiles").textContent === "Тренировок записано0пока ни одной" + "Индекс силы–появится после первой тренировки" && document.getElementById("soon-muscles").textContent.includes("Появится, когда пройдёт первая неделя с тренировками")', 'плитки и «Нагрузка по мышцам» на месте, с подписью «появится»')],
     ['собрать программу: снова онбординг', click('#onb-again') + settle + expect(onbAt(1, 7) + ' && ' + tabsOff, 'онбординг, шаг 1 из 7, без вкладок')],
     ['и снова пропустить', click('#onb-skip') + settle + expect('!!document.querySelector(".card.empty")', 'карточка «В дневнике пока пусто»')],
     ...APP_TABS.slice(1).map(v => opens(v)),
@@ -325,7 +330,8 @@ export const SCENARIOS = [
     ['принять программу', click('#prog-accept') + settle + expect('document.getElementById("toast").textContent.startsWith("Программа принята")', 'сообщение «Программа принята»')
       + 'const d = JSON.parse(' + stored + ');' + expect('d.length === 1 && d[0][0] === "config/main" && Object.keys(d[0][1].ex).length === 64 && d[0][1].program.focus === "bench" && d[0][1].ex.bench.goal === "auto" && d[0][1].gear.g_pullup.step === 1',
         'в хранилище одна запись: настройка со справочником, лёгким днём, снарядом «Подтягивания» и программой вокруг жима лежа')],
-    ['обзор: первая тренировка по программе', go('overview') + settle + expect('document.getElementById("view").textContent.includes("Первая тренировка")', 'карточка «Первая тренировка»')],
+    ['обзор: первая тренировка по программе', go('overview') + settle + expect('document.getElementById("view").textContent.includes("Первая тренировка")', 'карточка «Первая тренировка»')
+      + expect('!!document.getElementById("soon-tiles") && !!document.getElementById("soon-muscles") && [...document.querySelectorAll("#soon-lifts .ex-card .nm")].map(e => e.firstChild.textContent).join() === "Жим лежа"', 'и до первой тренировки — плитки, «Базовые» с жимом лежа и «Нагрузка по мышцам», с подписью «появится»')],
     ['известный максимум жима ногами', go('setup') + settle + type('#kw-max-leg_press', 200) + settle + expect('document.getElementById("kw-out-leg_press").textContent.includes("(от максимума 200)")', 'стартовый вес считается от названного максимума: жим ногами в «Гибриде» — как подсобка, по повторам (вывод 5 аудита)')],
     ['план', go('workout') + settle + expect('document.getElementById("view").textContent.includes("Начать тренировку")', 'план первой тренировки')],
     ['старт', press('Начать тренировку')],
@@ -1203,7 +1209,16 @@ export const SCENARIOS = [
     /* просьбы владельца 26 ноября 2026: в шапке нет названия и «записи на устройстве»; идущая тренировка без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок; в начале тренировки — памятка */
     ['шапка без названия и «записи на устройстве»', expect('getComputedStyle(document.querySelector(".top .brand")).display === "none" && getComputedStyle(document.getElementById("sync")).display === "none"', 'названия приложения и статуса «записи на устройстве» не видно')],
     ['идущая тренировка: без ориентиров', go('workout') + settle + press('Начать тренировку') + settle + expect('document.querySelectorAll("#view input[id^=\\"w-\\"]").length > 0 && document.querySelectorAll("#view button[aria-label=\\"Отметить «не делал»\\"]").length > 0 && !document.querySelector("#view input[id^=\\"rng-\\"], #view .set .track, #view .set .prev, #view .adj-box, #view button[aria-label=\\"Переместить выше\\"], #view button[aria-label=\\"Переместить ниже\\"], #view button[aria-label=\\"Убрать упражнение\\"]") && !document.getElementById("view").innerText.includes("прошлый раз") && [...document.querySelectorAll("#view input[id^=\\"r-\\"]")].every(e => !e.placeholder)', 'у подходов только вес, повторы и запас, у упражнения — «не делал»: без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок') + expect('document.querySelectorAll("#memo-sheet .memo-i").length === 3 && document.activeElement.id === "memo-ok"', 'поверх начатой тренировки — памятка, кнопка «Понятно, начинаем» в фокусе')],
-    ['памятка: понятно, начинаем', click('#memo-ok') + settle + expect('!document.getElementById("memo-sheet") && document.querySelectorAll("#view input[id^=\\"w-\\"]").length > 0', 'памятка закрыта, под ней — идущая тренировка')]
+    ['памятка: понятно, начинаем', click('#memo-ok') + settle + expect('!document.getElementById("memo-sheet") && document.querySelectorAll("#view input[id^=\\"w-\\"]").length > 0', 'памятка закрыта, под ней — идущая тренировка')],
+    /* просьба владельца 28 ноября 2026: идущая тренировка — карусель упражнений, без шапки с датой; дальше — кнопкой, «не делал» листает сам; в конце — карточка «Конец тренировки» */
+    ['тренировка каруселью, без шапки', expect('!document.getElementById("wk-date") && !document.getElementById("view").innerText.includes("Тренировка идёт") && document.querySelectorAll("#wk-ex .pslot").length === document.querySelectorAll("#view .ex").length && document.querySelectorAll(".wk-dots button").length === document.querySelectorAll("#wk-ex .pslot").length', 'шапки с датой и днём нет, каждое упражнение и «Конец тренировки» — карточки карусели')
+      + expect(open + ' === 0 && document.querySelectorAll("#wk-ex .pslot")[0].querySelector("#wk-next-0")', 'открыто первое упражнение, под ним — «Следующее упражнение»')],
+    ['следующее упражнение', click('#wk-next-0') + settle + expect(open + ' === 1', 'открыто второе упражнение')],
+    ['не делал: сразу следующее', click('#wk-ex .pslot[data-off=\"0\"] button[aria-label=\"Отметить «не делал»\"]') + settle + expect(open + ' === 2 && document.getElementById("wk-dot-1").hasAttribute("data-done") && !document.getElementById("wk-dot-0").hasAttribute("data-done")', 'открыто третье, второе отмечено на полосе как сделанное')],
+    ['подходы первого: полоса отмечена', typeAll('input[id^="r-0-"]', 10) + settle + expect('document.getElementById("wk-dot-0").hasAttribute("data-done") && document.getElementById("wk-next-0").classList.contains("primary")', 'все подходы первого записаны: полоса отмечена, «Следующее упражнение» — главная кнопка')],
+    ['конец тренировки', click('.wk-dots button', -1) + settle + expect('!!document.querySelector("#wk-ex .pslot[data-off=\\"0\\"] .wk-end #wk-note") && !!document.querySelector("#wk-ex .pslot[data-off=\\"0\\"] #add-ex") && /по плану ≈/.test(document.getElementById("eta").textContent)', 'в карточке «Конец тренировки» — добавить упражнение, заметка и время по плану')],
+    ['перезагрузка посреди тренировки', RELOAD],
+    ['после перезагрузки — первое несделанное', settle + expect(open + ' === 2', 'открыто третье упражнение: первое сделано, второе отмечено «не делал»')]
   ] },
 
   /* только в приложении: загрузка резервной копии с экрана */

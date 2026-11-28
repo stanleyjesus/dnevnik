@@ -20,10 +20,11 @@ export function kept(key: string): Car {
 }
 
 const SPRING = 'linear(0, 0.055, 0.17, 0.3, 0.43, 0.545, 0.643, 0.723, 0.787, 0.836, 0.876, 0.906, 0.929, 0.947, 0.96, 0.97, 0.978, 0.984, 0.988, 0.991, 0.993, 0.995, 0.996, 0.997, 1)';   // пружина образца (жёсткость 220, затухание 26, масса 0.75) — 0.5 с; та же в style.css
-export function carousel(days: HTMLElement[], o: Car, at: { id: string; dot: (i: number) => string; lab: (i: number) => string; aria: string }): Kid[] {
+/* ref — получить функцию, которая открывает карточку с анимацией: так карусель листает кнопка внутри карточки (упражнения идущей тренировки, workcar.ts) */
+export function carousel(days: HTMLElement[], o: Car, at: { id: string; dot: (i: number) => string; lab: (i: number) => string; aria: string; ref?: (open: (i: number) => void) => void }): Kid[] {
   const n = days.length;
   o.day = Math.max(0, Math.min(o.day, n - 1));
-  const slots = days.map((d, i) => h('div', { class: 'pslot', onclick: () => open(i) },
+  const slots = days.map((d, i) => h('div', { class: 'pslot', onclick: () => { if (car.isConnected) open(i); } },   // кнопка в карточке перерисовала страницу: нажатие дошло до прежней карусели — она уже не на экране
     h('div', { class: 'pclip' }, d), h('span', { class: 'plab', 'aria-hidden': 'true' }, at.lab(i)), h('span', { class: 'pnotch', 'aria-hidden': 'true' })));
   const dots = days.map((_, i) => h('button', { type: 'button', id: at.dot(i), 'aria-label': at.lab(i), onclick: () => open(i) }));
   const place = () => {                                                      // где какой день: −2 и 2 — дальше краёв, спрятаны
@@ -77,5 +78,6 @@ export function carousel(days: HTMLElement[], o: Car, at: { id: string; dot: (i:
   car.addEventListener('click', e => { if (performance.now() - moved < 350) { moved = -1e9; e.stopPropagation(); e.preventDefault(); } }, true);   // палец листал, а не нажимал: нажатие сразу после — не нажатие
   const bar = n > 1 ? h('div', { class: 'pdots', onkeydown: key }, dots) : null;
   place();
+  if (at.ref) at.ref(open);
   return [bar, car];   // точки — над днями: день бывает длиннее экрана
 }
