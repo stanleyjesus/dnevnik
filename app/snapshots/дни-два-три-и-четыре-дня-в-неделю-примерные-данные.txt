@@ -1035,8 +1035,6 @@
 +  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
 поля: целиком
   cw-bench_light=82.5
-  cs-bench_light=8
-  cn-bench_light=3
   cr-bench_light-0=
   cr-bench_light-1=
   cr-bench_light-2=
@@ -1045,8 +1043,6 @@
   cq-bench_light-2=
   ex-note-0=
   cw-leg_press=185
-  cs-leg_press=4
-  cn-leg_press=3
   cr-leg_press-0=
   cr-leg_press-1=
   cr-leg_press-2=
@@ -1181,28 +1177,18 @@
        div.ex-meta
         span.tag Грудь
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 3 мин
-        span
-         | "75% от расчётного максимума в упражнении «Жим лежа» "
-         b 109.2 кг
-        span лёгкий день: вес меньше, повторов больше, чем в тяжёлом
+        span 3 × 8 одним весом · лёгкий день, запас около 2
        div.cyc
         label.f
          span Вес, кг
          input#cw-bench_light.num(type="text" inputmode="decimal")
-        label.f
-         span Схема
-         select#cs-bench_light
-          option(value="8" selected="") 8 повт. · 75%
-        label.f
-         span Подходов
-         input#cn-bench_light.num.sm(type="text" inputmode="numeric")
        div.cyc-sets
         span.sub Повторы по подходам
         input#cr-bench_light-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8")
         input#cr-bench_light-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8")
         input#cr-bench_light-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8")
         button.btn.sm Все по 8
-        span.sub Запас по подходам: сколько повторов оставалось до отказа. По расчёту здесь около 2. Отметь в последнем подходе: 4 и больше два раза подряд — вес на шаг выше, 0 — на шаг ниже
+        span.sub Запас по подходам
         input#cq-bench_light-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
         input#cq-bench_light-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
         input#cq-bench_light-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
@@ -1223,27 +1209,18 @@
        div.ex-meta
         span.tag Квадрицепс
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 5 мин
-        span
-         | "3 × 4 одним весом · цель — запас 2 в последнем подходе, отметь его · расчётный максимум "
-         b 224.1 кг
+        span 3 × 4 одним весом · запас 2 в последнем подходе
        div.cyc
         label.f
          span Вес, кг
          input#cw-leg_press.num(type="text" inputmode="decimal")
-        label.f
-         span Схема
-         select#cs-leg_press
-          option(value="4" selected="") 4 повт. · 83%
-        label.f
-         span Подходов
-         input#cn-leg_press.num.sm(type="text" inputmode="numeric")
        div.cyc-sets
         span.sub Повторы по подходам
         input#cr-leg_press-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="4")
         input#cr-leg_press-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="4")
         input#cr-leg_press-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="4")
         button.btn.sm Все по 4
-        span.sub Запас: сколько повторов оставалось до отказа. Отметь хотя бы в последнем подходе — он решает вес на следующей неделе: 2 и больше — плюс шаг, 1 — тот же, 0 — минус 5%
+        span.sub Запас по подходам
         input#cq-leg_press-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
         input#cq-leg_press-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
         input#cq-leg_press-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
@@ -1304,6 +1281,7 @@
          input#q-2-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-2.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1373,6 +1351,7 @@
          input#q-3-4.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 5" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 5")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-3.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1394,7 +1373,7 @@
         span.tag Бицепс бедра, Ягодицы
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -1443,6 +1422,7 @@
          input#q-4-4.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 5" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 5")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-4.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1463,7 +1443,7 @@
         span.tag Передние дельты
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -1504,6 +1484,7 @@
          input#q-5-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-5.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1564,6 +1545,7 @@
          input#q-6-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-6.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1616,6 +1598,7 @@
          input#q-7-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-7.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1636,7 +1619,7 @@
         span.tag Задние дельты
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -1677,6 +1660,7 @@
          input#q-8-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-8.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1744,105 +1728,105 @@
 
 === 16. день 2: подходы
 поля: правки к шагу 15
-@@ 4 -6 +6
+@@ 2 -6 +6
 + cr-bench_light-0=8
 + cr-bench_light-1=8
 + cr-bench_light-2=8
 + cq-bench_light-0=2
 + cq-bench_light-1=2
 + cq-bench_light-2=2
-@@ 14 -6 +6
+@@ 10 -6 +6
 + cr-leg_press-0=4
 + cr-leg_press-1=4
 + cr-leg_press-2=4
 + cq-leg_press-0=2
 + cq-leg_press-1=2
 + cq-leg_press-2=2
-@@ 22 -1 +1
+@@ 18 -1 +1
 - r-2-0=
 + r-2-0=10
-@@ 25 -1 +1
+@@ 21 -1 +1
 - r-2-1=
 + r-2-1=10
-@@ 28 -1 +1
+@@ 24 -1 +1
 - r-2-2=
 + r-2-2=10
-@@ 31 -1 +1
+@@ 27 -1 +1
 - r-2-3=
 + r-2-3=10
-@@ 35 -1 +1
+@@ 31 -1 +1
 - r-3-0=
 + r-3-0=10
-@@ 38 -1 +1
+@@ 34 -1 +1
 - r-3-1=
 + r-3-1=10
-@@ 41 -1 +1
+@@ 37 -1 +1
 - r-3-2=
 + r-3-2=10
-@@ 44 -1 +1
+@@ 40 -1 +1
 - r-3-3=
 + r-3-3=10
-@@ 47 -1 +1
+@@ 43 -1 +1
 - r-3-4=
 + r-3-4=10
-@@ 51 -1 +1
+@@ 47 -1 +1
 - r-4-0=
 + r-4-0=10
-@@ 54 -1 +1
+@@ 50 -1 +1
 - r-4-1=
 + r-4-1=10
-@@ 57 -1 +1
+@@ 53 -1 +1
 - r-4-2=
 + r-4-2=10
-@@ 60 -1 +1
+@@ 56 -1 +1
 - r-4-3=
 + r-4-3=10
-@@ 63 -1 +1
+@@ 59 -1 +1
 - r-4-4=
 + r-4-4=10
-@@ 67 -1 +1
+@@ 63 -1 +1
 - r-5-0=
 + r-5-0=10
-@@ 70 -1 +1
+@@ 66 -1 +1
 - r-5-1=
 + r-5-1=10
-@@ 73 -1 +1
+@@ 69 -1 +1
 - r-5-2=
 + r-5-2=10
-@@ 76 -1 +1
+@@ 72 -1 +1
 - r-5-3=
 + r-5-3=10
-@@ 80 -1 +1
+@@ 76 -1 +1
 - r-6-0=
 + r-6-0=10
-@@ 83 -1 +1
+@@ 79 -1 +1
 - r-6-1=
 + r-6-1=10
-@@ 86 -1 +1
+@@ 82 -1 +1
 - r-6-2=
 + r-6-2=10
-@@ 89 -1 +1
+@@ 85 -1 +1
 - r-6-3=
 + r-6-3=10
-@@ 93 -1 +1
+@@ 89 -1 +1
 - r-7-0=
 + r-7-0=10
-@@ 96 -1 +1
+@@ 92 -1 +1
 - r-7-1=
 + r-7-1=10
-@@ 99 -1 +1
+@@ 95 -1 +1
 - r-7-2=
 + r-7-2=10
-@@ 103 -1 +1
+@@ 99 -1 +1
 - r-8-0=
 + r-8-0=10
-@@ 106 -1 +1
+@@ 102 -1 +1
 - r-8-1=
 + r-8-1=10
-@@ 109 -1 +1
+@@ 105 -1 +1
 - r-8-2=
 + r-8-2=10
-@@ 112 -1 +1
+@@ 108 -1 +1
 - r-8-3=
 + r-8-3=10
 курсор: ""
@@ -1864,45 +1848,45 @@
 -    div.pclip
 +   div.pslot(data-off="-1")
 +    div.pclip(inert="")
-@@ 53 -1 +1
+@@ 43 -1 +1
 -       button#wk-next-0.btn(type="button") Следующее упражнение
 +       button#wk-next-0.btn.primary(type="button") Следующее упражнение
-@@ 56 -2 +2
+@@ 46 -2 +2
 -   div.pslot(data-off="1")
 -    div.pclip(inert="")
 +   div.pslot(data-off="0")
 +    div.pclip
-@@ 94 -1 +1
+@@ 75 -1 +1
 -       button#wk-next-1.btn(type="button") Следующее упражнение
 +       button#wk-next-1.btn.primary(type="button") Следующее упражнение
-@@ 97 -1 +1
+@@ 78 -1 +1
 -   div.pslot(data-off="2")
 +   div.pslot(data-off="1")
-@@ 154 -1 +1
+@@ 136 -1 +1
 -       button#wk-next-2.btn(type="button") Следующее упражнение
 +       button#wk-next-2.btn.primary(type="button") Следующее упражнение
-@@ 223 -1 +1
+@@ 206 -1 +1
 -       button#wk-next-3.btn(type="button") Следующее упражнение
 +       button#wk-next-3.btn.primary(type="button") Следующее упражнение
-@@ 293 -1 +1
+@@ 277 -1 +1
 -       button#wk-next-4.btn(type="button") Следующее упражнение
 +       button#wk-next-4.btn.primary(type="button") Следующее упражнение
-@@ 354 -1 +1
+@@ 339 -1 +1
 -       button#wk-next-5.btn(type="button") Следующее упражнение
 +       button#wk-next-5.btn.primary(type="button") Следующее упражнение
-@@ 414 -1 +1
+@@ 400 -1 +1
 -       button#wk-next-6.btn(type="button") Следующее упражнение
 +       button#wk-next-6.btn.primary(type="button") Следующее упражнение
-@@ 466 -1 +1
+@@ 453 -1 +1
 -       button#wk-next-7.btn(type="button") Следующее упражнение
 +       button#wk-next-7.btn.primary(type="button") Следующее упражнение
-@@ 527 -1 +1
+@@ 515 -1 +1
 -       button#wk-next-8.btn(type="button") К завершению
 +       button#wk-next-8.btn.primary(type="button") К завершению
-@@ 536 -1 +1
+@@ 524 -1 +1
 -       span#eta по плану ≈ 2 ч 15 мин · осталось ≈ 2 ч 10 мин
 +       span#eta по плану ≈ 2 ч 15 мин · все подходы записаны
-@@ 538 -1 +1
+@@ 526 -1 +1
 -       span#save-state сохранено
 +       span#save-state есть несохранённые изменения
 
@@ -5741,7 +5725,7 @@
 записи:
   + config/main {"start":"2025-09-08","zones":{"min":4,"opt":10,"high":20},"cycle":{"inc":2,"sets":4,"pct":{"3":87,"4":82,"5":77}},"method":"Примерный дневник: атлет выдуман, записи посчитаны генератором data/make.cjs. Занятий в неделе три. Три базовых упражнения - жим лежа, жим ногами, подтягивания - ведутся волной: четыре подхода на 5, 4 и 3 повтора при 77, 82 и 87 процентах от расчётного максимума; максимум за неделю прибавляет не больше 2 процентов. В остальных упражнениях сначала растут повторы, потом вес, у каждого подхода свой счёт; до отказа остаётся один повтор.","ex":{"bench":{"n":"Жим лежа","mode":"cycle","pat":"h_push","m":{"chest":1,"triceps":0.5,"delt_front":0.5},"round":5},"leg_press":{"n":"Жим ногами","mode":"cycle","pat":"knee","m":{"quads":1,"glutes":0.5},"round":5},"pullup":{"n":"Подтягивания","mode":"cycle","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"round":1},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"step":1},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"step":2.5},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"step":5},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"step":5},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"step":5},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"step":1},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"step":5},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"step":5},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"step":1},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"step":5},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"step":5},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"step":1.25},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"step":1},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"step":1},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"step":1.25},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"step":1.25},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"step":5},"leg_curl_lying":{"n":"Бицепс бедра на тренажере лежа на животе","pat":"iso","m":{"hams":1},"step":5},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"step":5},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"step":1},"x_rdl":{"n":"Румынская тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":0.5,"forearms":0.5}},"x_ohp":{"n":"Жим над головой","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5}},"x_rear":{"n":"Обратная бабочка","pat":"iso","m":{"delt_rear":1,"upper_back":0.5}},"bench_light":{"n":"Жим лежа — лёгкий день","mode":"light","of":"bench","pat":"h_push","m":{"chest":1,"triceps":0.5,"delt_front":0.5}},"x_pullover":{"n":"Пуловер на верхнем блоке","pat":"iso","m":{"lats":1},"lo":10,"hi":15},"chest_press":{"n":"Жим в тренажере на грудь сидя","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"db_bench":{"n":"Жим гантелей лежа","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"dumbbell"},"db_ohp":{"n":"Жим гантелей сидя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"lat_raise":{"n":"Махи гантелями в стороны","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"dumbbell"},"squat":{"n":"Приседания со штангой","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"barbell"},"lunge":{"n":"Выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"hip_thrust":{"n":"Ягодичный мост со штангой","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"barbell"},"abduction":{"n":"Отведение ног в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"back_ext":{"n":"Гиперэкстензия","pat":"hinge","m":{"erectors":1,"glutes":0.5,"hams":0.5},"lo":10,"hi":15,"gear":"barbell"},"incline_bench":{"n":"Жим штанги под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"barbell"},"incline_press_machine":{"n":"Жим в тренажере на грудь под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"smith_incline":{"n":"Жим в тренажере Смита под углом","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"gear":"machine"},"close_grip_bench":{"n":"Жим лежа узким хватом","pat":"h_push","m":{"triceps":1,"chest":0.5,"delt_front":0.5},"gear":"barbell"},"cable_fly":{"n":"Сведение рук в кроссовере","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"db_fly":{"n":"Разводка гантелей лежа","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"dumbbell"},"cable_fly_low":{"n":"Сведение рук на блоке снизу вверх","pat":"iso","m":{"chest":1,"delt_front":0.5},"gear":"cable"},"pulldown_cable":{"n":"Тяга верхнего блока","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pulldown_neutral":{"n":"Тяга верхнего блока параллельным хватом","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"gear":"cable"},"pullover_db":{"n":"Пуловер с гантелью лежа","pat":"iso","m":{"lats":1},"lo":10,"hi":15,"gear":"dumbbell"},"seated_row":{"n":"Тяга нижнего блока к поясу","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"cable"},"barbell_row":{"n":"Тяга штанги в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"barbell"},"db_row":{"n":"Тяга гантели в наклоне","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"chest_row_db":{"n":"Тяга гантелей лежа на наклонной скамье","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"gear":"dumbbell"},"shrug":{"n":"Шраги с гантелями","pat":"iso","m":{"upper_back":1},"gear":"dumbbell"},"ohp":{"n":"Жим штанги стоя","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"barbell"},"shoulder_press_machine":{"n":"Жим в тренажере на плечи","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"machine"},"arnold":{"n":"Жим Арнольда с гантелями","pat":"v_push","m":{"delt_front":1,"delt_mid":0.5,"triceps":0.5},"gear":"dumbbell"},"cable_lat_raise":{"n":"Махи в стороны на блоке","pat":"iso","m":{"delt_mid":1},"lo":10,"hi":20,"gear":"cable"},"face_pull":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"cable"},"rear_delt_db":{"n":"Махи гантелями в наклоне","pat":"iso","m":{"delt_rear":1,"upper_back":0.5},"gear":"dumbbell"},"db_curl":{"n":"Сгибания рук с гантелями","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"cable_curl":{"n":"Сгибания рук на блоке","pat":"iso","m":{"biceps":1},"gear":"cable"},"incline_curl":{"n":"Сгибания рук с гантелями на наклонной скамье","pat":"iso","m":{"biceps":1},"gear":"dumbbell"},"preacher_curl":{"n":"Сгибания рук на скамье Скотта","pat":"iso","m":{"biceps":1},"gear":"barbell"},"skullcrusher":{"n":"Французский жим лежа","pat":"iso","m":{"triceps":1},"gear":"barbell"},"tri_overhead_db":{"n":"Трицепс из-за головы с гантелью","pat":"iso","m":{"triceps":1},"gear":"dumbbell"},"wrist_curl":{"n":"Сгибания кистей со штангой","pat":"iso","m":{"forearms":1},"gear":"barbell"},"hack_squat":{"n":"Гакк-приседания","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"smith_squat":{"n":"Приседания в тренажере Смита","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"machine"},"goblet_squat":{"n":"Кубковые приседания с гантелью","pat":"knee","m":{"quads":1,"glutes":0.5},"gear":"dumbbell"},"step_up":{"n":"Зашагивания на скамью с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"bulgarian":{"n":"Болгарские выпады с гантелями","pat":"knee","m":{"quads":1,"glutes":1},"gear":"dumbbell"},"deadlift":{"n":"Становая тяга","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"barbell"},"db_rdl":{"n":"Румынская тяга с гантелями","pat":"hinge","m":{"hams":1,"glutes":1,"erectors":1},"gear":"dumbbell"},"glute_bridge_machine":{"n":"Ягодичный мост в тренажере","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"smith_hip_thrust":{"n":"Ягодичный мост в тренажере Смита","pat":"hinge","m":{"glutes":1,"hams":0.5},"gear":"machine"},"cable_kickback":{"n":"Отведение ноги назад на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"kickback_machine":{"n":"Отведение ноги назад в тренажере","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"machine"},"cable_abduction":{"n":"Отведение ноги в сторону на блоке","pat":"iso","m":{"glutes":1},"lo":10,"hi":15,"gear":"cable"},"calf_standing":{"n":"Подъем на носки стоя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"calf_seated":{"n":"Подъем на носки сидя","pat":"iso","m":{"calves":1},"lo":10,"hi":15,"gear":"machine"},"cable_crunch":{"n":"Скручивания на блоке","pat":"iso","m":{"abs":1},"lo":10,"hi":15,"gear":"cable"}},"days":4,"program":{"name":"Равномерно на всё тело","focus":"","others":"","since":"2025-11-14","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"x_ohp","n":3},{"ex":"lat_raise_machine","n":5},{"ex":"x_rear","n":4},{"ex":"leg_ext","n":3}],"wed":[{"ex":"leg_press"},{"ex":"x_rdl","n":5},{"ex":"x_ohp","n":4},{"ex":"leg_ext","n":4},{"ex":"barbell_curl","n":3}],"fri":[{"ex":"pullup"},{"ex":"incline_db","n":2},{"ex":"tri_overhead","n":2},{"ex":"lat_raise_db","n":2},{"ex":"x_pullover","n":5},{"ex":"hammer","n":3}],"d4":[{"ex":"tbar_row","n":5},{"ex":"incline_db","n":4},{"ex":"x_rdl","n":5},{"ex":"x_rear","n":4}]},"prev":{"goals":{"bench":"auto","leg_press":"auto","pullup":""},"program":{"name":"Пауэрбилдинг: жим лежа","focus":"bench","others":"grow","since":"2025-11-12","made":"2025-11-12","slots":{"mon":[{"ex":"bench"},{"ex":"lat_pulldown","n":5},{"ex":"x_rdl","n":5},{"ex":"x_ohp","n":5},{"ex":"lat_raise_machine","n":5},{"ex":"hammer","n":3},{"ex":"x_rear","n":4},{"ex":"x_pullover","n":3},{"ex":"leg_ext","n":3}],"wed":[{"ex":"bench_light"},{"ex":"leg_press"},{"ex":"incline_db","n":4},{"ex":"tbar_row","n":5},{"ex":"x_rdl","n":5},{"ex":"x_ohp","n":4},{"ex":"leg_ext","n":4},{"ex":"barbell_curl","n":3},{"ex":"x_rear","n":4}]},"budget":100,"drop":["pullup"]},"days":2},"budget":100}}
 экран: правки к шагу 16
-@@ 2 -122 +24
+@@ 2 -103 +24
 +  section.card
 +   div.sec-h
 +    h2 Упражнения
@@ -5766,75 +5750,75 @@
 +       span.chip
 +        | Бицепс бедра на тренажере лежа на животе
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Бицепс бедра на тренажере лежа на животе")
-@@ 125 -7 +3
+@@ 106 -7 +3
 +       span.chip
 +        | Бицепс бедра сидя в тренажере
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Бицепс бедра сидя в тренажере")
-@@ 133 -7 +3
+@@ 114 -7 +3
 +       span.chip
 +        | Вертикальная тяга в тренажере
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Вертикальная тяга в тренажере")
-@@ 141 -7 +3
+@@ 122 -7 +3
 +       span.chip
 +        | Гакк-приседания
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Гакк-приседания")
-@@ 149 -36 +3
+@@ 130 -37 +3
 +       span.chip
 +        | Горизонтальная тяга в тренажере
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Горизонтальная тяга в тренажере")
-@@ 186 -7 +3
+@@ 168 -7 +3
 +       span.chip
 +        | Жим в тренажере на грудь под углом
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Жим в тренажере на грудь под углом")
-@@ 194 -7 +3
+@@ 176 -7 +3
 +       span.chip
 +        | Жим в тренажере на грудь сидя
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Жим в тренажере на грудь сидя")
-@@ 202 -7 +3
+@@ 184 -7 +3
 +       span.chip
 +        | Жим в тренажере на плечи
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Жим в тренажере на плечи")
-@@ 210 -7 +3
+@@ 192 -7 +3
 +       span.chip
 +        | Жим в тренажере Смита под углом
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Жим в тренажере Смита под углом")
-@@ 218 -37 +3
+@@ 200 -38 +3
 +       span.chip
 +        | Отведение ног в тренажере
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Отведение ног в тренажере")
-@@ 256 -7 +3
+@@ 239 -7 +3
 +       span.chip
 +        | Отведение ноги назад в тренажере
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Отведение ноги назад в тренажере")
-@@ 264 -7 +3
+@@ 247 -7 +3
 +       span.chip
 +        | Подъем на носки сидя
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Подъем на носки сидя")
-@@ 272 -7 +3
+@@ 255 -7 +3
 +       span.chip
 +        | Подъем на носки стоя
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Подъем на носки стоя")
-@@ 280 -7 +3
+@@ 263 -7 +3
 +       span.chip
 +        | Приседания в тренажере Смита
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Приседания в тренажере Смита")
-@@ 288 -36 +3
+@@ 271 -37 +3
 +       span.chip
 +        | Разгибания ног в тренажере
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Разгибания ног в тренажере")
-@@ 325 -7 +3
+@@ 309 -7 +3
 +       span.chip
 +        | Средние дельты в тренажере
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Средние дельты в тренажере")
-@@ 333 -7 +3
+@@ 317 -7 +3
 +       span.chip
 +        | Ягодичный мост в тренажере
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Ягодичный мост в тренажере")
-@@ 341 -7 +3
+@@ 325 -7 +3
 +       span.chip
 +        | Ягодичный мост в тренажере Смита
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Ягодичный мост в тренажере Смита")
-@@ 349 -35 +77
+@@ 333 -36 +77
 +      div.row(style="flex-wrap:nowrap")
 +       select#gear-add-machine.grow(style="min-width:0" aria-label="Упражнение для снаряда: Тренажёр")
 +        option(value="pec_fly") Бабочка
@@ -5912,47 +5896,47 @@
 +       span.chip
 +        | Кисть на блоке левая
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Кисть на блоке левая")
-@@ 385 -7 +3
+@@ 370 -7 +3
 +       span.chip
 +        | Кисть на блоке правая
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Кисть на блоке правая")
-@@ 393 -7 +3
+@@ 378 -7 +3
 +       span.chip
 +        | Махи в стороны на блоке
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Махи в стороны на блоке")
-@@ 401 -7 +3
+@@ 386 -7 +3
 +       span.chip
 +        | Отведение ноги в сторону на блоке
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Отведение ноги в сторону на блоке")
-@@ 409 -35 +3
+@@ 394 -36 +3
 +       span.chip
 +        | Отведение ноги назад на блоке
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Отведение ноги назад на блоке")
-@@ 445 -7 +3
+@@ 431 -7 +3
 +       span.chip
 +        | Пуловер на верхнем блоке
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Пуловер на верхнем блоке")
-@@ 453 -7 +3
+@@ 439 -7 +3
 +       span.chip
 +        | Сведение рук в кроссовере
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Сведение рук в кроссовере")
-@@ 461 -36 +3
+@@ 447 -37 +3
 +       span.chip
 +        | Сведение рук на блоке снизу вверх
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Сведение рук на блоке снизу вверх")
-@@ 498 -7 +3
+@@ 485 -7 +3
 +       span.chip
 +        | Сгибания рук на блоке
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Сгибания рук на блоке")
-@@ 506 -7 +3
+@@ 493 -7 +3
 +       span.chip
 +        | Скручивания на блоке
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Скручивания на блоке")
-@@ 514 -7 +3
+@@ 501 -7 +3
 +       span.chip
 +        | Трицепс из за головы на блоке с косичкой
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Трицепс из за головы на блоке с косичкой")
-@@ 522 -64 +1517
+@@ 509 -65 +1517
 +       span.chip
 +        | Трицепс с косичкой на блоке
 +        button.icon-btn(style="width:20px;height:20px" title="Убрать со снаряда" aria-label="Убрать со снаряда: Трицепс с косичкой на блоке")
@@ -7875,154 +7859,159 @@
 +   button#wk-dot-3(type="button" aria-label="4. Обратная бабочка" aria-current="false")
 +   button#wk-dot-4(type="button" aria-label="5. Скручивания на блоке" aria-current="false")
 +   button#wk-dot-5(type="button" aria-label="Конец" aria-current="false")
-@@ 18 -143 +0
-@@ 165 -1 +1
+@@ 18 -125 +0
+@@ 147 -1 +1
 -      p#warm-3.sub.warm(title=#60d213b7c2) Разминка, кг: 15 × 6 · 25 × 3
 +      p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 17.5 × 6 · 27.5 × 3
-@@ 180 -1 +1
+@@ 162 -1 +1
 -        input#w-3-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +        input#w-0-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 182 -2 +2
+@@ 164 -2 +2
 -        input#r-3-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 -        input#q-3-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +        input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +        input#q-0-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 188 -1 +1
+@@ 170 -1 +1
 -        input#w-3-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +        input#w-0-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 190 -2 +2
+@@ 172 -2 +2
 -        input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 -        input#q-3-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +        input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +        input#q-0-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 196 -1 +1
+@@ 178 -1 +1
 -        input#w-3-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +        input#w-0-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 198 -2 +2
+@@ 180 -2 +2
 -        input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 -        input#q-3-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +        input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 +        input#q-0-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 204 -1 +1
+@@ 186 -1 +1
 -        input#w-3-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
 +        input#w-0-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
-@@ 206 -2 +2
+@@ 188 -2 +2
 -        input#r-3-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 -        input#q-3-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
 +        input#r-0-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 +        input#q-0-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
-@@ 212 -1 +1
+@@ 194 -1 +1
 -        input#w-3-4.num(type="text" inputmode="decimal" aria-label="Вес, подход 5")
 +        input#w-0-4.num(type="text" inputmode="decimal" aria-label="Вес, подход 5")
-@@ 214 -2 +2
+@@ 196 -2 +2
 -        input#r-3-4.num(type="text" inputmode="numeric" aria-label="Повторы, подход 5" placeholder="")
 -        input#q-3-4.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 5" placeholder="–")
 +        input#r-0-4.num(type="text" inputmode="numeric" aria-label="Повторы, подход 5" placeholder="")
 +        input#q-0-4.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 5" placeholder="–")
-@@ 221 -1 +1
+@@ 200 -1 +1
+-      p#live-3.sub.live(hidden="")
++      p#live-0.sub.live(hidden="")
+@@ 204 -1 +1
 -      input#ex-note-3(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +      input#ex-note-0(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 223 -2 +2
+@@ 206 -2 +2
 -       button#wk-next-3.btn(type="button") Следующее упражнение
 -    span.plab(aria-hidden="true") 4. Горизонтальная тяга Т-б…
 +       button#wk-next-0.btn(type="button") Следующее упражнение
 +    span.plab(aria-hidden="true") 1. Горизонтальная тяга Т-б…
-@@ 226 -1 +1
+@@ 209 -1 +1
 -   div.pslot(data-off="2")
 +   div.pslot(data-off="1")
-@@ 230 -1 +1
+@@ 213 -1 +1
 -       h3 Румынская тяга
 +       h3 Жим гантелей под углом 45
-@@ 234 -1 +1
+@@ 217 -1 +1
 -      p#warm-4.sub.warm(title=#60d213b7c2) Разминка: 70% × 5 от рабочего веса
 +      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 18 × 5
-@@ 236 -1 +1
+@@ 219 -1 +1
 -       span.tag Бицепс бедра, Ягодицы
 +       span.tag Грудь
-@@ 239 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 250 -1 +1
+@@ 222 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 233 -1 +1
 -        input#w-4-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +        input#w-1-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 252 -2 +2
+@@ 235 -2 +2
 -        input#r-4-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 -        input#q-4-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +        input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +        input#q-1-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 258 -1 +1
+@@ 241 -1 +1
 -        input#w-4-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +        input#w-1-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 260 -2 +2
+@@ 243 -2 +2
 -        input#r-4-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 -        input#q-4-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +        input#r-1-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +        input#q-1-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 266 -1 +1
+@@ 249 -1 +1
 -        input#w-4-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +        input#w-1-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 268 -2 +2
+@@ 251 -2 +2
 -        input#r-4-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 -        input#q-4-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +        input#r-1-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 +        input#q-1-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 274 -1 +1
+@@ 257 -1 +1
 -        input#w-4-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
 +        input#w-1-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
-@@ 276 -2 +2
+@@ 259 -2 +2
 -        input#r-4-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 -        input#q-4-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
 +        input#r-1-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 +        input#q-1-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
-@@ 280 -8 +0
-@@ 291 -1 +1
+@@ 263 -9 +1
++      p#live-1.sub.live(hidden="")
+@@ 275 -1 +1
 -      input#ex-note-4(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +      input#ex-note-1(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 293 -2 +2
+@@ 277 -2 +2
 -       button#wk-next-4.btn(type="button") Следующее упражнение
 -    span.plab(aria-hidden="true") 5. Румынская тяга
 +       button#wk-next-1.btn(type="button") Следующее упражнение
 +    span.plab(aria-hidden="true") 2. Жим гантелей под углом…
-@@ 300 -1 +1
+@@ 284 -1 +1
 -       h3 Жим над головой
 +       h3 Румынская тяга
-@@ 305 -1 +1
+@@ 289 -1 +1
 -       span.tag Передние дельты
 +       span.tag Бицепс бедра, Ягодицы
-@@ 308 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 319 -1 +1
+@@ 292 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 303 -1 +1
 -        input#w-5-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +        input#w-2-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 321 -2 +2
+@@ 305 -2 +2
 -        input#r-5-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 -        input#q-5-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +        input#r-2-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +        input#q-2-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 327 -1 +1
+@@ 311 -1 +1
 -        input#w-5-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +        input#w-2-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 329 -2 +2
+@@ 313 -2 +2
 -        input#r-5-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 -        input#q-5-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +        input#r-2-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +        input#q-2-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 335 -1 +1
+@@ 319 -1 +1
 -        input#w-5-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +        input#w-2-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 337 -2 +2
+@@ 321 -2 +2
 -        input#r-5-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 -        input#q-5-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +        input#r-2-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 +        input#q-2-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 343 -1 +1
+@@ 327 -1 +1
 -        input#w-5-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
 +        input#w-2-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
-@@ 345 -2 +2
+@@ 329 -2 +2
 -        input#r-5-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 -        input#q-5-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
 +        input#r-2-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 +        input#q-2-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
-@@ 349 -0 +8
+@@ 333 -1 +9
+-      p#live-5.sub.live(hidden="")
 +       div.set.bare
 +        span.i 5
 +        input#w-2-4.num(type="text" inputmode="decimal" aria-label="Вес, подход 5")
@@ -8031,124 +8020,129 @@
 +        input#q-2-4.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 5" placeholder="–")
 +        button.icon-btn(title="Убрать подход" aria-label="Убрать подход 5")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 352 -1 +1
++      p#live-2.sub.live(hidden="")
+@@ 337 -1 +1
 -      input#ex-note-5(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +      input#ex-note-2(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 354 -2 +2
+@@ 339 -2 +2
 -       button#wk-next-5.btn(type="button") Следующее упражнение
 -    span.plab(aria-hidden="true") 6. Жим над головой
 +       button#wk-next-2.btn(type="button") Следующее упражнение
 +    span.plab(aria-hidden="true") 3. Румынская тяга
-@@ 361 -1 +1
+@@ 346 -1 +1
 -       h3 Разгибания ног в тренажере
 +       h3 Обратная бабочка
-@@ 366 -1 +1
+@@ 351 -1 +1
 -       span.tag Квадрицепс
 +       span.tag Задние дельты
-@@ 379 -1 +1
+@@ 364 -1 +1
 -        input#w-6-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +        input#w-3-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 381 -2 +2
+@@ 366 -2 +2
 -        input#r-6-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 -        input#q-6-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +        input#r-3-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +        input#q-3-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 387 -1 +1
+@@ 372 -1 +1
 -        input#w-6-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +        input#w-3-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 389 -2 +2
+@@ 374 -2 +2
 -        input#r-6-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 -        input#q-6-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +        input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +        input#q-3-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 395 -1 +1
+@@ 380 -1 +1
 -        input#w-6-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +        input#w-3-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 397 -2 +2
+@@ 382 -2 +2
 -        input#r-6-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 -        input#q-6-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +        input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 +        input#q-3-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 403 -1 +1
+@@ 388 -1 +1
 -        input#w-6-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
 +        input#w-3-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
-@@ 405 -2 +2
+@@ 390 -2 +2
 -        input#r-6-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 -        input#q-6-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
 +        input#r-3-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 +        input#q-3-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
-@@ 412 -1 +1
+@@ 394 -1 +1
+-      p#live-6.sub.live(hidden="")
++      p#live-3.sub.live(hidden="")
+@@ 398 -1 +1
 -      input#ex-note-6(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +      input#ex-note-3(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 414 -2 +2
+@@ 400 -2 +2
 -       button#wk-next-6.btn(type="button") Следующее упражнение
 -    span.plab(aria-hidden="true") 7. Разгибания ног в тренаж…
 +       button#wk-next-3.btn(type="button") Следующее упражнение
 +    span.plab(aria-hidden="true") 4. Обратная бабочка
-@@ 421 -1 +1
+@@ 407 -1 +1
 -       h3 Бицепс со штангой стоя
 +       h3 Скручивания на блоке
-@@ 425 -0 +1
+@@ 411 -0 +1
 +      p#warm-4.sub.warm(title=#60d213b7c2) Разминка: 70% × 5 от рабочего веса
-@@ 426 -1 +1
+@@ 412 -1 +1
 -       span.tag Бицепс
 +       span.tag Пресс
-@@ 429 -52 +0
-@@ 492 -1 +1
+@@ 415 -53 +0
+@@ 479 -1 +1
 -        input#w-8-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
 +        input#w-4-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 494 -2 +2
+@@ 481 -2 +2
 -        input#r-8-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 -        input#q-8-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +        input#r-4-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +        input#q-4-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-@@ 500 -1 +1
+@@ 487 -1 +1
 -        input#w-8-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
 +        input#w-4-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 502 -2 +2
+@@ 489 -2 +2
 -        input#r-8-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 -        input#q-8-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +        input#r-4-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +        input#q-4-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-@@ 508 -1 +1
+@@ 495 -1 +1
 -        input#w-8-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +        input#w-4-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-@@ 510 -2 +2
+@@ 497 -2 +2
 -        input#r-8-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 -        input#q-8-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 +        input#r-4-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 +        input#q-4-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-@@ 514 -8 +0
-@@ 525 -1 +1
+@@ 501 -9 +1
++      p#live-4.sub.live(hidden="")
+@@ 513 -1 +1
 -      input#ex-note-8(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +      input#ex-note-4(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 527 -2 +2
+@@ 515 -2 +2
 -       button#wk-next-8.btn(type="button") К завершению
 -    span.plab(aria-hidden="true") 9. Обратная бабочка
 +       button#wk-next-4.btn(type="button") К завершению
 +    span.plab(aria-hidden="true") 5. Скручивания на блоке
-@@ 536 -1 +1
+@@ 524 -1 +1
 -       span#eta по плану ≈ 2 ч 15 мин · осталось ≈ 2 ч 10 мин
 +       span#eta по плану ≈ 1 ч 15 мин · осталось ≈ 1 ч 10 мин
-@@ 545 -1 +0
+@@ 533 -1 +0
 -           option(value="lat_pulldown") Вертикальная тяга в тренажере
-@@ 549 -1 +0
+@@ 537 -1 +0
 -           option(value="bench_light") Жим лежа — лёгкий день
-@@ 552 -0 +1
+@@ 540 -0 +1
 +           option(value="lat_raise_db") Махи с гантелями на плечи
-@@ 554 -0 +1
+@@ 542 -0 +1
 +           option(value="pullup") Подтягивания
-@@ 557 -0 +1
+@@ 545 -0 +1
 +           option(value="cable_crunch") Скручивания на блоке
-@@ 558 -0 +1
+@@ 546 -0 +1
 +           option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
-@@ 563 -0 +5
+@@ 551 -0 +5
 +           option(value="bulgarian") Болгарские выпады с гантелями
 +           option(value="lat_pulldown") Вертикальная тяга в тренажере
 +           option(value="lunge") Выпады с гантелями
 +           option(value="hack_squat") Гакк-приседания
 +           option(value="back_ext") Гиперэкстензия
-@@ 564 -0 +12
+@@ 552 -0 +12
 +           option(value="arnold") Жим Арнольда с гантелями
 +           option(value="incline_press_machine") Жим в тренажере на грудь под углом
 +           option(value="chest_press") Жим в тренажере на грудь сидя
@@ -8161,7 +8155,7 @@
 +           option(value="incline_bench") Жим штанги под углом
 +           option(value="ohp") Жим штанги стоя
 +           option(value="step_up") Зашагивания на скамью с гантелями
-@@ 568 -2 +10
+@@ 556 -2 +10
 -           option(value="lat_raise_db") Махи с гантелями на плечи
 -           option(value="pullup") Подтягивания
 +           option(value="goblet_squat") Кубковые приседания с гантелью
@@ -8174,7 +8168,7 @@
 +           option(value="cable_kickback") Отведение ноги назад на блоке
 +           option(value="calf_seated") Подъем на носки сидя
 +           option(value="calf_standing") Подъем на носки стоя
-@@ 571 -1 +14
+@@ 559 -1 +14
 -           option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
 +           option(value="smith_squat") Приседания в тренажере Смита
 +           option(value="squat") Приседания со штангой
@@ -8190,7 +8184,7 @@
 +           option(value="incline_curl") Сгибания рук с гантелями на наклонной скамье
 +           option(value="deadlift") Становая тяга
 +           option(value="tri_overhead_db") Трицепс из-за головы с гантелью
-@@ 573 -0 +12
+@@ 561 -0 +12
 +           option(value="pulldown_cable") Тяга верхнего блока
 +           option(value="pulldown_neutral") Тяга верхнего блока параллельным хватом
 +           option(value="chest_row_db") Тяга гантелей лежа на наклонной скамье
@@ -8278,25 +8272,25 @@
 +   button#wk-dot-2(type="button" aria-label="3. Румынская тяга" aria-current="false" data-done="")
 +   button#wk-dot-3(type="button" aria-label="4. Обратная бабочка" aria-current="false" data-done="")
 +   button#wk-dot-4(type="button" aria-label="5. Скручивания на блоке" aria-current="false" data-done="")
-@@ 76 -1 +1
+@@ 77 -1 +1
 -       button#wk-next-0.btn(type="button") Следующее упражнение
 +       button#wk-next-0.btn.primary(type="button") Следующее упражнение
-@@ 137 -1 +1
+@@ 139 -1 +1
 -       button#wk-next-1.btn(type="button") Следующее упражнение
 +       button#wk-next-1.btn.primary(type="button") Следующее упражнение
-@@ 205 -1 +1
+@@ 208 -1 +1
 -       button#wk-next-2.btn(type="button") Следующее упражнение
 +       button#wk-next-2.btn.primary(type="button") Следующее упражнение
-@@ 265 -1 +1
+@@ 269 -1 +1
 -       button#wk-next-3.btn(type="button") Следующее упражнение
 +       button#wk-next-3.btn.primary(type="button") Следующее упражнение
-@@ 319 -1 +1
+@@ 324 -1 +1
 -       button#wk-next-4.btn(type="button") К завершению
 +       button#wk-next-4.btn.primary(type="button") К завершению
-@@ 328 -1 +1
+@@ 333 -1 +1
 -       span#eta по плану ≈ 1 ч 15 мин · осталось ≈ 1 ч 10 мин
 +       span#eta по плану ≈ 1 ч 15 мин · все подходы записаны
-@@ 330 -1 +1
+@@ 335 -1 +1
 -       span#save-state сохранено
 +       span#save-state есть несохранённые изменения
 

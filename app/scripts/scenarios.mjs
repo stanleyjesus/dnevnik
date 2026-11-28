@@ -77,6 +77,13 @@ const TRIAD_DAYS = 'r.length === 3 && ["Приседания со штангой
   + ' && r.every(d => d[1].split(" — ")[0] !== d[0].replace(/(новое|сила по запасу)+$/, ""))';
 /* движение, которого ещё нет в журнале, — без веса: атлет вводит его сам (здесь 60 кг) */
 const NEW_W = 'for (const e of document.querySelectorAll("input[id^=\\"cw-\\"]")) if (!e.value) __t.type("#" + e.id, 0, 60);';
+/* карточка дня силовой роли в идущей тренировке (просьба владельца, 28 ноября 2026, пункт 10): одна строка схемы и запаса — без списка схемы, числа подходов
+   и расчётного максимума; в памятке карточка «Подбери вес» — когда у упражнения тренировки нет веса (движение, которого ещё нет в журнале) */
+const ROLE_CARD = expect('!document.querySelector("#view select[id^=\\"cs-\\"], #view input[id^=\\"cn-\\"]") && !document.getElementById("view").textContent.includes("расчётный максимум")'
+  + ' && [...document.querySelectorAll("#view .ex")].filter(c => c.querySelector(".cyc")).every(c => /^\\d+ × \\d+ одним весом · (запас 2 в последнем подходе|(лёгкий|средний) день, запас около 2|поддержание, запас около 2)$/.test(c.querySelector(".ex-meta > span:not(.tag)").textContent))',
+  'у дня силовой роли — одна строка схемы и запаса, без схемы, числа подходов и расчётного максимума')
+  + expect('document.querySelectorAll("#memo-sheet .memo-i").length === ([...document.querySelectorAll("#view .ex")].some(c => c.querySelector(".cyc") ? !c.querySelector("input[id^=\\"cw-\\"]").value : ![...c.querySelectorAll("input[id^=\\"w-\\"]")].some(e => e.value)) ? 4 : 3)',
+    'карточка «Подбери вес» в памятке — только когда у упражнения нет веса');
 
 /* для сценариев, которые идут только в приложении */
 const box = 'document.getElementById("import-box")';
@@ -597,7 +604,7 @@ export const SCENARIOS = [
     ['действует сейчас: сказано про тройку', expect('(__t.at("tab"), document).querySelector("#view section.card").textContent.includes("Сила в тройке: приседания со штангой, жим лежа и становая тяга — каждое два раза в неделю, остальные базовые — обычные упражнения")', 'строка о тройке в «Действует сейчас»')
       + expect(goalIs('force') + ' && ' + listIs('ps', 'p'), 'выбрана цель «Сила», тройка')],
     ['обзор', go('overview')],
-    ...week(1, 2, null, NEW_W),
+    ...week(1, 2, null, ROLE_CARD + NEW_W),
     ['программа после первой недели', go('program') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 'p'), 'цель по-прежнему «Сила», тройка')],
     ...week(2, 1, null, NEW_W + mark('запас 2 в последнем подходе: плюс шаг', 'up')),
     ['неделя 2: вес повышен после запаса 2', go('overview') + settle + seenW('up', 'bench', 'на второй неделе карточка движения говорит «запас 2 в последнем подходе: плюс шаг»')],
@@ -1115,6 +1122,35 @@ export const SCENARIOS = [
     ['время записи', type('#wk-min', 70) + press('Сохранить изменения') + settle + expect(savedW + '.find(w => w.date === __t.day(14)).min === 70', 'время записано')]
   ] },
 
+  /* вес по ходу тренировки (просьба владельца, 28 ноября 2026; docs/03, раздел 25): подход на нижней границе диапазона — следующим подходам вес легче
+     по Эпли и одна строка причины; исправил повторы — вес снова по плану; подход легче верха на 2 и больше — тяжелее; вес, вписанный руками, дневник
+     не трогает; добавленный подход берёт поправку; у упражнения без веса — подсказка, как его подобрать, и карточка в памятке.
+     Первое упражнение дня 2 на примерных данных — разгибания ног: 8–12, запас по методике 1, шаг 2.5 */
+  { name: 'тренировка: вес по ходу', data: 'seed', app: true, steps: [
+    ['план дня 2', go('workout') + settle + press('День 2') + settle + typeDay('#np-date', 0)],
+    /* обратную бабочку дневник предлагает новым упражнением (задние дельты ниже рабочей зоны): веса у неё ещё нет */
+    ['старт: у обратной бабочки веса нет — в памятке «Подбери вес»', press('Начать тренировку') + settle
+      + expect('document.querySelectorAll("#memo-sheet .memo-i").length === 4 && [...document.querySelectorAll("#memo-sheet .memo-i b")].pop().textContent === "Подбери вес"', 'четвёртая карточка памятки — «Подбери вес»')
+      + expect('[...document.querySelectorAll("#view .ex")].filter(c => c.querySelector(".pick")).map(c => c.querySelector("h3").textContent).join() === "Обратная бабочка"', 'подсказка подбора веса — только у упражнения без веса')
+      + click('#memo-ok') + settle + 'sessionStorage.setItem("w01", document.getElementById("w-0-1").value);'
+      + expect('document.getElementById("view").querySelector(".ex h3").textContent === "Разгибания ног в тренажере" && document.getElementById("live-0").hidden', 'первое — разгибания ног, строки причины пока нет')],
+    ['подход 1 на нижней границе: дальше легче', type('#r-0-0', 8) + type('#q-0-0', 1) + settle
+      + 'const w0 = +document.getElementById("w-0-0").value, w1 = +document.getElementById("w-0-1").value, L = document.getElementById("live-0");'
+      + expect('w1 === Math.min(w0 - 2.5, Math.floor(w0 * 1.3 / (1 + 10 / 30) / 2.5 + 1e-6) * 2.5) && w1 < +sessionStorage.getItem("w01")', 'второй подход легче: по Эпли на 9 повторов с запасом 1, вниз до шага')
+      + expect('!L.hidden && L.textContent === "Дальше легче, " + w1 + " кг: в подходе 1 — 8 повторов с запасом 1"', 'под подходами — строка причины')],
+    ['исправил: 10 повторов — вес по плану', type('#r-0-0', 10) + settle
+      + expect('document.getElementById("w-0-1").value === sessionStorage.getItem("w01") && document.getElementById("live-0").hidden', 'вес второго подхода — снова по плану, строки нет')],
+    ['подход 1 лёгкий: дальше тяжелее', type('#r-0-0', 16) + settle
+      + expect('+document.getElementById("w-0-1").value > +sessionStorage.getItem("w01") && document.getElementById("live-0").textContent.startsWith("Дальше тяжелее, ")', 'второй подход тяжелее, строка причины')],
+    ['вес третьего вписан руками — его дневник не трогает', type('#w-0-2', 45) + type('#r-0-0', 8) + settle
+      + expect('document.getElementById("w-0-2").value === "45" && +document.getElementById("w-0-1").value < +sessionStorage.getItem("w01")', 'третий — 45, как вписал атлет; второй снова легче')],
+    ['подходы записаны, третий на нижней границе — добавленный подход легче', type('#r-0-1', 10) + type('#r-0-2', 7) + press('Подход') + settle
+      + 'const n = document.querySelectorAll("input[id^=\\"w-0-\\"]").length;'
+      + expect('document.getElementById("w-0-" + (n - 1)).value === "42.5" && document.getElementById("live-0").textContent === "Дальше легче, 42.5 кг: в подходе 3 — 7 повторов"', '45 × 7 без отметки запаса — как с запасом 1: по Эпли 57, на 9 повторов — 42.5')],
+    ['автосохранение', wait(AUTOSAVE)],
+    ['после перезагрузки веса на месте', RELOAD]
+  ] },
+
   /* программа короче, когда не успеваешь (просьба владельца, 25 ноября 2026; docs/03, раздел 20): программа принята под 1 ч 30 мин, а тренировки идут
      около двух часов. После двух таких тренировок дневник только считает время по темпу; после третьей сам собирает программу той же цели под то же время,
      уже с темпом, и принимает её. «Вернуть прежнюю» отменяет сокращение, и ту программу дневник больше сам не сокращает */
@@ -1253,7 +1289,7 @@ export const SCENARIOS = [
     ['мышцы: открыть «Ноги»', click('#mg-dot-3') + settle + expect('document.querySelector("#mg-days .pslot[data-off=\\"0\\"] .pday-h b").textContent === "Ноги"', 'открыта карточка «Ноги»')],
     /* просьбы владельца 26 ноября 2026: в шапке нет названия и «записи на устройстве»; идущая тренировка без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок; в начале тренировки — памятка */
     ['шапка без названия и «записи на устройстве»', expect('getComputedStyle(document.querySelector(".top .brand")).display === "none" && getComputedStyle(document.getElementById("sync")).display === "none"', 'названия приложения и статуса «записи на устройстве» не видно')],
-    ['идущая тренировка: без ориентиров', go('workout') + settle + press('Начать тренировку') + settle + expect('document.querySelectorAll("#view input[id^=\\"w-\\"]").length > 0 && document.querySelectorAll("#view button[aria-label=\\"Отметить «не делал»\\"]").length > 0 && !document.querySelector("#view input[id^=\\"rng-\\"], #view .set .track, #view .set .prev, #view .adj-box, #view button[aria-label=\\"Переместить выше\\"], #view button[aria-label=\\"Переместить ниже\\"], #view button[aria-label=\\"Убрать упражнение\\"]") && !document.getElementById("view").innerText.includes("прошлый раз") && [...document.querySelectorAll("#view input[id^=\\"r-\\"]")].every(e => !e.placeholder)', 'у подходов только вес, повторы и запас, у упражнения — «не делал»: без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок') + expect('document.querySelectorAll("#memo-sheet .memo-i").length === 3 && document.activeElement.id === "memo-ok"', 'поверх начатой тренировки — памятка, кнопка «Понятно, начинаем» в фокусе')],
+    ['идущая тренировка: без ориентиров', go('workout') + settle + press('Начать тренировку') + settle + expect('document.querySelectorAll("#view input[id^=\\"w-\\"]").length > 0 && document.querySelectorAll("#view button[aria-label=\\"Отметить «не делал»\\"]").length > 0 && !document.querySelector("#view input[id^=\\"rng-\\"], #view .set .track, #view .set .prev, #view .adj-box, #view button[aria-label=\\"Переместить выше\\"], #view button[aria-label=\\"Переместить ниже\\"], #view button[aria-label=\\"Убрать упражнение\\"]") && !document.getElementById("view").innerText.includes("прошлый раз") && [...document.querySelectorAll("#view input[id^=\\"r-\\"]")].every(e => !e.placeholder)', 'у подходов только вес, повторы и запас, у упражнения — «не делал»: без диапазона, прошлого раза, ориентиров, стрелок, «убрать» и поправок') + expect('document.querySelectorAll("#memo-sheet .memo-i").length === (document.querySelector("#view .pick") ? 4 : 3) && document.activeElement.id === "memo-ok"', 'поверх начатой тренировки — памятка (с карточкой «Подбери вес», когда у упражнения нет веса), кнопка «Понятно, начинаем» в фокусе')],
     ['памятка: понятно, начинаем', click('#memo-ok') + settle + expect('!document.getElementById("memo-sheet") && document.querySelectorAll("#view input[id^=\\"w-\\"]").length > 0', 'памятка закрыта, под ней — идущая тренировка')],
     /* просьба владельца 28 ноября 2026: идущая тренировка — карусель упражнений, без шапки с датой; дальше — кнопкой, «не делал» листает сам; в конце — карточка «Конец тренировки» */
     ['тренировка каруселью, без шапки', expect('!document.getElementById("wk-date") && !document.getElementById("view").innerText.includes("Тренировка идёт") && document.querySelectorAll("#wk-ex .pslot").length === document.querySelectorAll("#view .ex").length && document.querySelectorAll(".wk-dots button").length === document.querySelectorAll("#wk-ex .pslot").length', 'шапки с датой и днём нет, каждое упражнение и «Конец тренировки» — карточки карусели')
