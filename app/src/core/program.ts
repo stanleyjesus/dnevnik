@@ -333,7 +333,7 @@ export function nudgeMuscle(c2: Cfg, slots: ProgSlots, m: string, dir: number, o
     let best: { sc: number; sl: Slot; e: ProgEntry } | null = null;
     for (const sl of SLOTS) for (const e of slots[sl.id]) {
       const c = mOf(e.ex)[m] || 0;
-      if (!e.n || c <= 0) continue;
+      if (!e.n || c <= 0 || (o.keep && o.keep(sl, e))) continue;   // (в эталоне нет) упражнение, которое атлет только что выбрал заменой, «−» не трогает (balance.ts)
       /* the purest exercise for this muscle first: the neighbours should lose as little as possible, least of all those not yet in the working zone */
       const others = Object.entries(mOf(e.ex)).filter(([x, v]) => x !== m && v > 0 && !ign[x]);
       const side = others.reduce((a, x) => a + x[1], 0), harm = others.filter(([x, v]) => (T.pv[x] || 0) - v * uniF(e.ex) < o.z.opt).reduce((a, x) => a + x[1], 0);
@@ -358,6 +358,7 @@ export function nudgeMuscle(c2: Cfg, slots: ProgSlots, m: string, dir: number, o
     if (tot + cost > o.budget + 0.01) { full = Math.max(full, tot + 1 <= o.budget + 0.01 ? 2 : 1); return; }
     if (ms.some(([x, v]) => (T.day[sl.id][x] || 0) + v * cost > o.dayCap + 0.01)) { why = why || 'мешает лимит ' + o.dayCap + ' подходов на мышцу за тренировку'; return; }
     if (ms.some(([x, v]) => !ign[x] && x !== m && (T.pv[x] || 0) + v * cost > o.z.high + 0.01)) { why = why || 'соседние мышцы уже у верха рабочей зоны'; return; }
+    if (o.fits && !o.fits(sl, id, sets, isAdd)) { why = why || o.fitsWhy || ''; return; }   // (в эталоне нет) после замены: день не длиннее времени, дни подряд не хуже (balance.ts)
     /* the purest exercise first, so the neighbours gain as little as possible; a new exercise only when the ones in the programme do not fit */
     const others = ms.filter(([x]) => x !== m), side = others.reduce((a, x) => a + x[1], 0), over = others.filter(([x]) => !ign[x] && (T.pv[x] || 0) >= o.z.opt).reduce((a, x) => a + x[1], 0);
     const sc = c * 2 - 0.3 * side - 0.3 * over - 0.012 * T.load[sl.id] - (isAdd ? 0.8 + 0.04 * slots[sl.id].length - LONG_K * stretchOf(info(id)) : 0);   // (в эталоне нет) растянутый вариант раньше
