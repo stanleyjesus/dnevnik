@@ -157,7 +157,52 @@ function inPage(base, isRef, seed, known, pack) {
   /* дни артефакта и те же дни в приложении, когда оно запущено со своими днями */
   const DAY_ALIAS = { 'Понедельник': 'День 1', 'Среда': 'День 2', 'Пятница': 'День 3', 'Пн': 'День 1', 'Ср': 'День 2', 'Пт': 'День 3' };
   /* n — номер среди подходящих; отрицательный — с конца */
-  const el = (sel, n = 0) => { const list = all(sel), e = list[n < 0 ? list.length + n : n]; if (!e) throw new Error('нет элемента ' + sel + ' [' + n + '] на экране ' + (location.hash || '#overview') + ', таких всего ' + list.length); return e; };
+  const find = (sel, n = 0) => { const list = all(sel), e = list[n < 0 ? list.length + n : n]; if (!e) throw new Error('нет элемента ' + sel + ' [' + n + '] на экране ' + (location.hash || '#overview') + ', таких всего ' + list.length); return e; };
+  /* Мастер новой программы (просьба владельца, 28 ноября 2026): с днями «День N» на «Программе» нет блока сборки — кнопка «Собрать новую программу»
+     открывает мастер, где выбор цели, времени и дней — на шаге «Цель и время», а дни, таблица мышц и «Принять программу» — на шаге «Программа».
+     Шаги сценариев называют элементы прежнего блока: на «Программе» помощник сам открывает мастер и переходит на шаг, где элемент лежит.
+     У эталона и у приложения с днями артефакта (общие сценарии сверки) мастера нет — там всё как раньше */
+  const wiz = () => !isRef && !window.__dnevnikWeek && location.hash === '#program';
+  const W = () => document.getElementById('onb');
+  const ORDER = { build: ['start', 'goal', 'care', 'prog', 'weights', 'done'], own: ['start', 'care', 'prog', 'weights', 'done'] };
+  /* довести мастер до шага step; path — 'build' (собрать) или 'own' (своя программа), без него — путь, по которому мастер уже идёт,
+     если на нём такой шаг есть, иначе «собрать». Шаг 'tab' — выйти из мастера на вкладку, 'days' — шаг, где выбирается число дней */
+  /* после нажатия прежний экран ещё мгновение лежит поверх нового (smooth.ts) и уходит через 200 мс; шаг мастера, пройденный помощником,
+     читается сразу — прежний слой убирается, как только появится, иначе выражение увидит два мастера */
+  const unghost = () => {
+    const v = document.getElementById('view'), drop = () => v.querySelectorAll(':scope > .ghost').forEach(g => g.remove());
+    drop(); const mo = new MutationObserver(drop); mo.observe(v, { childList: true }); realSet(() => mo.disconnect(), 600);
+  };
+  const at = (step, path) => {
+    if (!wiz()) return;
+    unghost();
+    if (step === 'tab') { const x = W() && (document.getElementById('onb-end') || document.getElementById('onb-cancel')); if (x) x.click(); return; }
+    if (!W()) find('#prog-new').click();
+    const cur = W().dataset.step === 'start' ? '' : W().dataset.path;
+    if (step === 'days') step = (path || cur) === 'own' ? 'prog' : 'goal';
+    const want = path || (cur && ORDER[cur] && ORDER[cur].includes(step) ? cur : 'build');
+    if (W().dataset.path !== want) for (let k = 0; k < 8 && W().dataset.step !== 'start'; k++) find('#onb-back').click();
+    if (W().dataset.step === 'start' && step !== 'start') find(want === 'own' ? '#onb-own' : '#onb-build').click();
+    for (let k = 0; k < 8 && W().dataset.step !== step; k++) {
+      const seq = ORDER[W().dataset.path] || [], i = seq.indexOf(W().dataset.step), j = seq.indexOf(step);
+      if (j < 0) throw new Error('нет шага ' + step + ' у мастера по пути ' + W().dataset.path);
+      find(j > i ? '#onb-next' : '#onb-back').click();
+    }
+    if (W().dataset.step !== step) throw new Error('нет перехода на шаг ' + step + ' мастера: он на шаге ' + W().dataset.step);
+  };
+  /* где лежит элемент прежнего блока: выбор цели, времени и дней — на шаге «Цель и время» (у своей программы дни — на шаге «Программа»),
+     «Вернуть прежнюю» и дни действующей программы — на самой вкладке, всё остальное — на шаге «Программа»; «Принять программу» — кнопка мастера */
+  const TAB = /^#(prog-undo|prog-new|pc-|pd-away)/, GOAL = /^#(pg-|pm$|pl$|ps$|pt$|po-|pd-drop|pd-\d)/;
+  const ALIAS = { '#prog-accept': '#onb-accept' };
+  const el = (sel, n = 0) => {
+    if (!wiz()) return find(sel, n);
+    const s = W() && ALIAS[sel] || sel;
+    try { return find(s, n); } catch (e) {
+      if (TAB.test(sel)) { if (!W()) throw e; at('tab'); return find(sel, n); }
+      at(/^#pd-\d/.test(sel) ? 'days' : GOAL.test(sel) ? 'goal' : 'prog');
+      return find(ALIAS[sel] || sel, n);
+    }
+  };
   const fill = (e, value) => { e.focus(); e.value = String(value); e.dispatchEvent(new Event('input', { bubbles: true })); e.dispatchEvent(new Event('change', { bubbles: true })); e.blur(); };
   const req = r => new Promise((ok, no) => { r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error); });
   /* все сохранённые документы: у эталона — из его хранилища в памяти, у приложения — прямо из базы браузера, мимо кода приложения */
@@ -229,18 +274,25 @@ function inPage(base, isRef, seed, known, pack) {
        поэтому шаг называет сам сценарий: значением ('manual', 'even', 'm:glutes', 'l:bench'; 's' и 's:bench' есть только в приложении) или местом в своей группе —
        { prio: 0 } первая группа мышц, { lift: -1 } последнее базовое. Приложение сначала получает нажатие на цель, потом выбор в списке */
     async mode(what) {
-      const pre = typeof what === 'string' ? '' : 'prio' in what ? 'm:' : 'l:', at = pre ? (pre === 'm:' ? what.prio : what.lift) : 0;
+      const pre = typeof what === 'string' ? '' : 'prio' in what ? 'm:' : 'l:', place = pre ? (pre === 'm:' ? what.prio : what.lift) : 0;
       const choose = sel => {
-        const e = el(sel), list = [...e.options].filter(o => pre ? o.value.startsWith(pre) : o.value === what), o = list[at < 0 ? list.length + at : at];
+        const e = el(sel), list = [...e.options].filter(o => pre ? o.value.startsWith(pre) : o.value === what), o = list[place < 0 ? list.length + place : place];
         if (!o) throw new Error('в списке ' + sel + ' нет пункта ' + JSON.stringify(what) + ': ' + [...e.options].map(x => x.value).join(', '));
         e.focus(); e.value = o.value; e.dispatchEvent(new Event('input', { bubbles: true })); e.dispatchEvent(new Event('change', { bubbles: true })); e.blur();
       };
       if (isRef) return choose('#pf');
       const goal = pre ? (pre === 'm:' ? 'mass' : 'mix') : what === 'manual' ? 'hand' : what === 's' || what === 'p' || what.startsWith('s:') ? 'force' : what.startsWith('l:') ? 'mix' : 'mass';
+      /* с днями «День N» — мастер: «Вручную» — это «Своя программа» на первом шаге, цель — на шаге «Цель и время»; потом — шаг «Программа» с готовыми днями */
+      if (wiz()) { if (goal === 'hand') return at('prog', 'own'); at('goal', 'build'); }
       const b = el('#pg-' + goal);
       if (b.getAttribute('aria-pressed') !== 'true') { b.click(); await pause(60); }
       if (goal !== 'hand') choose(goal === 'mass' ? '#pm' : goal === 'mix' ? '#pl' : '#ps');
+      if (wiz()) { await pause(60); at('prog'); }
     },
+    /* мастер новой программы на шаге step (у эталона и с днями артефакта ничего не делает) */
+    at,
+    /* что видно на шаге «Программа» мастера или на вкладке: мастер открыт и на каком шаге */
+    wizStep: () => W() ? W().dataset.path + ':' + W().dataset.step : '',
     key(sel, n, key) { const e = el(sel, n); e.focus(); e.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true })); },
     point(sel, n, type, fx = 0.5, fy = 0.5) { const e = el(sel, n), b = e.getBoundingClientRect(); e.dispatchEvent(new PointerEvent(type, { bubbles: type !== 'pointerenter' && type !== 'pointerleave', clientX: b.left + b.width * fx, clientY: b.top + b.height * fy, pointerType: 'mouse' })); },
     /* что на экране можно нажать и заполнить — подсказка, когда шаг не нашёл свою кнопку; одинаковые поля подходов свёрнуты в одну строку */

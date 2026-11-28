@@ -558,3 +558,16 @@ table.heat.card-heat td { padding: 3px 2px; }
 .wo.old { background: var(--sunken); }   /* тренировка прежнего дневника, загруженная поверх своей программы (journal.ts, workoutCard) */
 .wo.old .tag { background: var(--surface); }
 tr.old td { background: var(--sunken); }   /* то же в истории упражнения на «Прогрессе» (progress.ts, exerciseDetail) */
+.wk-car { --pc: var(--surface); }   /* идущая тренировка с днями «День N» каруселью (workcar.ts): карточка упражнения — фон карусели */
+.wk-car .pslot { --g: 8px; --pv: 14px; --pw: 40px; --W: min(560px, calc(100cqw - 2 * (var(--g) + var(--pv)))); }
+.wk-car .ex { width: var(--W); border: 0; border-radius: 0; background: none; transition: opacity .3s .08s, transform .5s var(--ease); }
+.wk-car .pslot:not([data-off="0"]) .ex { opacity: 0; transform: translateX(24px); transition: opacity .15s, transform .5s var(--ease); }
+.wk-car .pslot[data-off^="-"] .ex { transform: translateX(-24px); }
+.wk-car.drag .ex, .ghost .wk-car .ex { transition: none; }
+.wk-next { justify-content: flex-end; margin-top: 14px; }
+.wk-dots { flex-wrap: wrap; }
+.wk-dots button[data-done]::after { background: color-mix(in srgb, var(--accent) 45%, var(--line-2)); }
+.wk-dots button[aria-current="true"]::after { width: 44px; }
+.wk-end .sub { margin: 4px 0 12px; }
+.wk-new { border-top: 1px solid var(--line); padding-top: 12px; }
+@media (prefers-reduced-motion: reduce) { .wk-car .ex { transition: none !important; } }
