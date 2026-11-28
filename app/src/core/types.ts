@@ -97,6 +97,7 @@ export interface Cfg {
   rest: number;                               // отдых между подходами, секунды
   care?: string[];                            // (только приложение) что беречь: больные места по id из ZONES (rules.ts)
   pairs?: string[];                           // (только приложение) дни программы подряд: пары id дней, «mon-wed» (rules.ts, pairsOf)
+  maint?: string[];                           // (только приложение) группы мышц на поддержании по id из MAINT_GROUPS (rules.ts, maintOf)
 }
 /** Всё, что нужно замечаниям и запросу для разбора */
 export interface State { workouts: Workout[]; cfg: Cfg; body: BodyRec[]; today: string }
@@ -150,8 +151,8 @@ export interface LibEntry { id: string; def: ExDef }
     exact — any, потому что сортировка вычитает эти «да / нет» друг из друга как числа */
 export interface Swap { id: string; n: string; m: MuscleMap; uni: boolean; def?: ExDef; exact?: any; like?: number; shared?: number; main?: string[] }
 /** Условия сборки: зоны, мышцы вне расчёта, приоритетные мышцы, лимит недели и дня, общий уровень; time — минут на тренировку, в которые укладывается каждый день */
-export interface OptOpts { z: Zones; ignore?: Record<string, number>; prio?: Record<string, number>; budget: number; dayCap: number; level?: number; noFill?: boolean; allDays?: boolean; time?: number; split?: Record<string, string[]> | null;
-  keep?: (sl: Slot, e: ProgEntry) => boolean; fits?: (sl: Slot, id: string, sets: number, isAdd: boolean) => boolean; fitsWhy?: string }   // split — (в эталоне нет) дни, где мышца может быть основной, когда есть дни подряд (rules.ts, pairSplit); keep, fits, fitsWhy — (в эталоне нет) кнопки мышц после замены (balance.ts): что «−» не трогает, куда «+» можно и почему нельзя
+export interface OptOpts { z: Zones; ignore?: Record<string, number>; prio?: Record<string, number>; budget: number; dayCap: number; level?: number; noFill?: boolean; allDays?: boolean; time?: number; split?: Record<string, string[]> | null; maint?: Record<string, number>;
+  keep?: (sl: Slot, e: ProgEntry) => boolean; fits?: (sl: Slot, id: string, sets: number, isAdd: boolean) => boolean; fitsWhy?: string }   // split — (в эталоне нет) дни, где мышца может быть основной, когда есть дни подряд (rules.ts, pairSplit); keep, fits, fitsWhy — (в эталоне нет) кнопки мышц после замены (balance.ts): что «−» не трогает, куда «+» можно и почему нельзя; maint — (в эталоне нет) мышцы на поддержании (rules.ts, maintOf)
 /** Упражнение, убранное сборкой из дня */
 export interface Cut { ex: string; sl: Slot; to?: string | null }
 /** (в эталоне нет) упражнение, чьи подходы сборка отдала другому упражнению того же дня на ту же мышцу (вывод 8 аудита): was — оно стояло в программе до сборки */

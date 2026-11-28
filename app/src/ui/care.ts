@@ -2,20 +2,22 @@
    careBox — больные места и стоп-упражнения: в онбординге это свой шаг после «Цели и времени», в «Настройке» — карточка в свёрнутой части.
    Больное место ничего не убирает: у упражнений, которые его нагружают, в собранной программе и в списке замен красная пилюля (builtday.ts).
    Стоп-упражнение сборка не ставит и в заменах не предлагает (core/rules.ts, stopOf). pairsRow — какие дни программы идут подряд:
-   в двух днях подряд мышца основная только в одном (core/rules.ts, pairsOf). Только с днями «День N». */
+   в двух днях подряд мышца основная только в одном (core/rules.ts, pairsOf). Только с днями «День N».
+   (28 ноября 2026, пункт 11 вопросов владельца, вариант «Поддерживать») там же — группы мышц на поддержании: сборка даёт им треть уровня,
+   не меньше четырёх подходов в неделю (core/rules.ts, maintOf). */
 import { C, h } from './dom.ts';
 import { S } from './state.ts';
 import { saveCfg } from './storage.ts';
 import { toast } from './toast.ts';
 import { D, render } from './render.ts';
 import { dayNo } from '../core/days.ts';
-import { ZONES, dayLinks, pairsOf } from '../core/rules.ts';
+import { MAINT, MAINT_GROUPS, ZONES, dayLinks, pairsOf } from '../core/rules.ts';
 
 /* стоп-упражнения и дни подряд меняют сборку: черновик и план считаются заново. Программу «Вручную» (и свою программу в онбординге)
    атлет раскладывает сам — её черновик с правками остаётся. Больное место сборку не меняет: пилюли считаются при показе (builtday.ts, carePills) */
 const fresh = () => { S.ui.plan = null; if (S.ui.prog && S.ui.prog.focus !== 'manual') S.ui.prog.draft = null; render(true); };
 
-/** Больные места и стоп-упражнения */
+/** Больные места, стоп-упражнения и мышцы на поддержании */
 export function careBox(ro?: boolean) {
   const cfg = D.cfg, care = cfg.care || [];
   const zone = async (id: string) => {
@@ -24,6 +26,12 @@ export function careBox(ro?: boolean) {
   };
   const stop = async (id: string, on: boolean) => {
     if (!(await saveCfg(raw => { const e = raw.ex[id]; if (!e) return; if (on) e.stop = true; else delete e.stop; }))) return;
+    fresh();
+  };
+  const maint = cfg.maint || [];
+  const hold = async (id: string) => {
+    if (!maint.includes(id) && maint.length + 1 >= MAINT_GROUPS.length) { toast('Всё на поддержании не бывает: тогда расти нечему'); return; }
+    if (!(await saveCfg(raw => { const L = Array.isArray(raw.maint) ? raw.maint.filter((x: string) => x !== id) : []; if (!maint.includes(id)) L.push(id); if (L.length) raw.maint = L; else delete raw.maint; }))) return;
     fresh();
   };
   const stops = Object.keys(cfg.ex).filter(id => cfg.ex[id].stop).sort((a, b) => C.exName(cfg, a).localeCompare(C.exName(cfg, b), 'ru'));
@@ -38,7 +46,10 @@ export function careBox(ro?: boolean) {
       ro ? null : h('button', { type: 'button', class: 'x', id: 'stop-off-' + id, 'aria-label': 'Убрать из стоп-упражнений: ' + C.exName(cfg, id), onclick: () => stop(id, false) }, '×')))) : null,
     ro ? null : h('select', { id: 'stop-add', 'aria-label': 'Добавить стоп-упражнение', onchange: e => { if (e.target.value) stop(e.target.value, true); } },
       h('option', { value: '', selected: true, text: 'Добавить стоп-упражнение…' }),
-      can.map(id => h('option', { value: id, text: C.exName(cfg, id) }))));
+      can.map(id => h('option', { value: id, text: C.exName(cfg, id) }))),
+    h('div', { class: 'eyebrow', style: 'margin:14px 0 4px' }, 'Поддерживать'),
+    h('p', { class: 'note', style: 'margin-bottom:8px' }, 'Не растить сейчас: треть подходов, не меньше ' + MAINT.min + ' в неделю.'),
+    h('div', { class: 'picks', role: 'group', 'aria-label': 'Поддерживать' }, MAINT_GROUPS.map(g => h('button', { type: 'button', class: 'btn sm', id: 'maint-' + g.id, disabled: !!ro, 'aria-pressed': String(maint.includes(g.id)), onclick: () => hold(g.id) }, g.n))));
 }
 
 /** Какие дни программы идут подряд: соседние дни по кругу, при двух днях — ничего */

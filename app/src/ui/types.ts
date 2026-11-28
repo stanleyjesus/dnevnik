@@ -45,6 +45,7 @@ export interface RawCfg {
   time?: number;                                                    // минут на одну тренировку (только приложение): от них считается лимит недели на «Программе»; нет поля — не ограничено
   care?: string[];                                                  // что беречь: больные места по id (только приложение, core/rules.ts, ZONES); нет поля — ничего
   pairs?: string[];                                                 // дни программы подряд: «mon-wed» (только приложение, core/rules.ts, pairsOf); нет поля — подряд нет
+  maint?: string[];                                                 // группы мышц на поддержании (только приложение, core/rules.ts, maintOf); нет поля — никого
 }
 /** Разбор от модели, сохранённый ещё в артефакте: приложение его хранит, но не показывает */
 export interface CoachNote { text: string; at?: string; q?: string; cut?: boolean }

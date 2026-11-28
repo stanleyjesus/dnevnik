@@ -580,6 +580,15 @@
        option(value="lat_raise_machine") Средние дельты в тренажере
        option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
        option(value="tri_pushdown") Трицепс с косичкой на блоке
+      div.eyebrow(style="margin:14px 0 4px") Поддерживать
+      p.note(style="margin-bottom:8px") Не растить сейчас: треть подходов, не меньше 4 в неделю.
+      div.picks(role="group" aria-label="Поддерживать")
+       button#maint-chest.btn.sm(type="button" aria-pressed="false") Грудь
+       button#maint-back.btn.sm(type="button" aria-pressed="false") Спина
+       button#maint-delts.btn.sm(type="button" aria-pressed="false") Плечи
+       button#maint-arms.btn.sm(type="button" aria-pressed="false") Руки
+       button#maint-thighs.btn.sm(type="button" aria-pressed="false") Бёдра
+       button#maint-glutes.btn.sm(type="button" aria-pressed="false") Ягодицы
     section.card
      div.sec-h
       div
@@ -840,22 +849,22 @@
 +        span#gear-loose-n.cnt " 0"
 @@ 221 -49 +1
 +      p.sub(style="margin:8px 0 2px") Все упражнения разложены по снарядам.
-@@ 423 -1 +1
+@@ 432 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Грудь, Передние дельты ½
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Грудь, Передние дельты ½
-@@ 439 -1 +1
+@@ 448 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Бицепс, Предплечья ½
 +      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Бицепс, Предплечья ½
-@@ 455 -1 +1
+@@ 464 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · базовое, шаг 2.5 кг · Грудь, Трицепс ½, Передние дельты ½
 +      span.sub(style="flex:2 1 220px") штанга · базовое, шаг 2.5 кг · Грудь, Трицепс ½, Передние дельты ½
-@@ 459 -1 +1
+@@ 468 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · базовое, шаг 2.5 кг · Квадрицепс, Ягодицы ½
 +      span.sub(style="flex:2 1 220px") тренажёр · базовое, шаг 2.5 кг · Квадрицепс, Ягодицы ½
-@@ 483 -1 +1
+@@ 492 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · базовое, шаг 2.5 кг · Широчайшие, Верх спины ½, Бицепс ½, Предплечья ½
 +      span.sub(style="flex:2 1 220px") подтягивания · базовое, шаг 1 кг · Широчайшие, Верх спины ½, Бицепс ½, Предплечья ½
-@@ 517 -1 +1
+@@ 526 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Пресс
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Пресс
 
@@ -1681,7 +1690,7 @@
 +      option(value="shrug") Шраги с гантелями
 +      option(value="glute_bridge_machine") Ягодичный мост в тренажере
 +      option(value="hip_thrust") Ягодичный мост со штангой
-@@ 510 -0 +28
+@@ 519 -0 +28
 +       | Болгарские выпады с гантелями
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Квадрицепс, Ягодицы
@@ -1710,7 +1719,7 @@
 +      button#ex-del-back_ext.btn.ghost.sm(aria-label="Убрать из справочника: Гиперэкстензия") Убрать
 +     div.plan-row
 +      span.n
-@@ 516 -0 +70
+@@ 525 -0 +70
 +       | Жим в тренажере на грудь
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Грудь, Передние дельты ½, Трицепс ½
@@ -1781,7 +1790,7 @@
 +      button#ex-del-lat_raise.btn.ghost.sm(aria-label="Убрать из справочника: Махи гантелями в стороны") Убрать
 +     div.plan-row
 +      span.n
-@@ 522 -0 +35
+@@ 531 -0 +35
 +       | Обратная бабочка
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Задние дельты, Верх спины ½
@@ -1817,7 +1826,7 @@
 +      button#ex-del-calf_standing.btn.ghost.sm(aria-label="Убрать из справочника: Подъем на носки стоя") Убрать
 +     div.plan-row
 +      span.n
-@@ 526 -0 +147
+@@ 535 -0 +147
 +     div.plan-row
 +      span.n
 +       | Приседания со штангой
@@ -1981,7 +1990,7 @@
   pa-fri=leg_curl_seated
 сообщение: ""
 экран: правки к шагу 5
-@@ 4 -1413 +896
+@@ 4 -1422 +896
 +    div
 +     div.eyebrow Действует сейчас
 +     h2 Своя программа
@@ -2922,7 +2931,7 @@
 @@ 774 -6 +0
 @@ 985 -1 +0
 -      option(value="cable_crunch") Скручивания на блоке
-@@ 1328 -7 +0
+@@ 1337 -7 +0
 
 === 9. после перезагрузки то же
 сообщение: ""

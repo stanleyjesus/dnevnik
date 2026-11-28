@@ -728,7 +728,8 @@ export const SCENARIOS = [
     ['два дня в неделю', click('#pd-2') + settle + expect('document.getElementById("pd-2").getAttribute("aria-pressed") === "true" && ' + cfgMain + '.days === 2', 'два дня, число дней в настройке профиля')],
     ['время на тренировку: полтора часа', pick('#pt', 90) + settle + expect(cfgMain + '.time === 90', 'время 90 минут в настройке профиля')
       + expect('!document.getElementById("onb-sum") && !document.querySelector("#onb > .note")', 'под выбором ни итога, ни пояснения: текст убран (просьба владельца, 25 ноября 2026)')],
-    ['дальше: что беречь', click('#onb-next') + settle + expect(onbAt(3, 7), 'шаг 3 из 7') + expect('[...document.querySelectorAll("#care .picks button")].map(b => b.textContent).join() === "Плечо,Локоть,Запястье,Поясница,Тазобедренный сустав,Колено"', 'шесть мест')],
+    ['дальше: что беречь', click('#onb-next') + settle + expect(onbAt(3, 7), 'шаг 3 из 7') + expect('[...document.querySelectorAll("#care .picks[aria-label=\'Что болит\'] button")].map(b => b.textContent).join() === "Плечо,Локоть,Запястье,Поясница,Тазобедренный сустав,Колено"', 'шесть мест')
+      + expect('[...document.querySelectorAll("#care .picks[aria-label=\'Поддерживать\'] button")].map(b => b.textContent).join() === "Грудь,Спина,Плечи,Руки,Бёдра,Ягодицы" && !document.querySelector("#care [id^=maint-][aria-pressed=true]")', 'на поддержании — шесть групп, ничего не отмечено (пункт 11 вопросов владельца, 28 ноября 2026)')],
     ['болит плечо', click('#care-shoulder') + settle + expect('document.getElementById("care-shoulder").getAttribute("aria-pressed") === "true" && JSON.stringify(' + cfgMain + '.care) === \'["shoulder"]\'', 'плечо отмечено и сохранено в настройке профиля')],
     ['стоп-упражнение: приседания со штангой', pick('#stop-add', 'squat') + settle + expect(cfgMain + '.ex.squat.stop === true && document.getElementById("stop-list").textContent.startsWith("Приседания со штангой")', 'приседания — стоп-упражнение')],
     ['дальше: программа', click('#onb-next') + settle + expect(onbAt(4, 7), 'шаг 4 из 7') + 'const r = ' + draftRows + ';'
@@ -812,7 +813,8 @@ export const SCENARIOS = [
   ] },
 
   /* только в приложении: дни подряд на «Программе» и что беречь в «Настройке» (решения владельца, 25 ноября 2026, пункты 6 и 2): пара дней сохраняется
-     в настройке профиля, сборка пишет заметку «Дни подряд»; все дни подряд не бывают; больное колено — красные пилюли у упражнений, которые его нагружают */
+     в настройке профиля, сборка пишет заметку «Дни подряд»; все дни подряд не бывают; больное колено — красные пилюли у упражнений, которые его нагружают;
+     руки на поддержании (28 ноября 2026, пункт 11) — заметка «На поддержании», всё на поддержании не бывает */
   { name: 'программа: дни подряд и что беречь', app: true, steps: [
     ['программа: дни подряд', go('program') + settle + expect('[...document.querySelectorAll("#pp button")].map(b => b.textContent).join() === "1–2,2–3,3–1" && !document.querySelector("#pp button[aria-pressed=true]")', 'три пары соседних дней, ничего не отмечено')],
     ['дни 1 и 2 подряд', click('#pp-mon-wed') + settle + expect('JSON.stringify(' + cfgMain + '.pairs) === \'["mon-wed"]\' && document.getElementById("pp-mon-wed").getAttribute("aria-pressed") === "true"', 'пара сохранена в настройке профиля')
@@ -822,7 +824,13 @@ export const SCENARIOS = [
     ['снять дни 2 и 3', click('#pp-wed-fri') + settle + expect('JSON.stringify(' + cfgMain + '.pairs) === \'["mon-wed"]\'', 'одна пара')],
     ['настройка: что беречь', go('setup') + settle + click('#setup-more > summary') + settle + expect('document.querySelector("#setup-more > summary").textContent === "Остальные настройки: что беречь, профили, справочник, данные" && !!document.getElementById("care-card")', 'в свёрнутой части — «Что беречь» первым')],
     ['болит колено', click('#care-knee') + settle + expect('JSON.stringify(' + cfgMain + '.care) === \'["knee"]\' && document.getElementById("care-knee").getAttribute("aria-pressed") === "true"', 'колено отмечено и сохранено')],
-    ['программа: пилюли «Колено»', go('program') + settle + 'const d = ' + DRAFT + ';' + expect('[...d.querySelectorAll(".pday .tag.crit")].length > 0 && [...d.querySelectorAll(".pday .tag.crit")].every(t => t.textContent === "Колено")', 'у упражнений на ноги — красная пилюля «Колено»')],
+    /* (пункт 11 вопросов владельца, 28 ноября 2026, вариант «Поддерживать») группы мышц на поддержании: треть уровня, не меньше четырёх в неделю */
+    ['руки на поддержании', click('#maint-arms') + settle + expect('JSON.stringify(' + cfgMain + '.maint) === \'["arms"]\' && document.getElementById("maint-arms").getAttribute("aria-pressed") === "true"', 'руки отмечены и сохранены в настройке профиля')],
+    ['всё на поддержании нельзя', click('#maint-chest') + settle + click('#maint-back') + settle + click('#maint-delts') + settle + click('#maint-thighs') + settle + click('#maint-glutes') + settle
+      + expect(toastIs('Всё на поддержании не бывает: тогда расти нечему'), 'сообщение') + expect(cfgMain + '.maint.length === 5 && document.getElementById("maint-glutes").getAttribute("aria-pressed") === "false"', 'шестая группа не отмечена')],
+    ['снова только руки', click('#maint-chest') + settle + click('#maint-back') + settle + click('#maint-delts') + settle + click('#maint-thighs') + settle + expect('JSON.stringify(' + cfgMain + '.maint) === \'["arms"]\'', 'на поддержании — руки')],
+    ['программа: пилюли «Колено»', go('program') + settle + 'const d = ' + DRAFT + ';' + expect('[...d.querySelectorAll(".pday .tag.crit")].length > 0 && [...d.querySelectorAll(".pday .tag.crit")].every(t => t.textContent === "Колено")', 'у упражнений на ноги — красная пилюля «Колено»')
+      + expect('[...document.querySelectorAll("#prog-why .why b")].some(b => b.textContent.startsWith("На поддержании: бицепс и трицепс"))', 'в «Что изменилось и почему» — заметка «На поддержании: бицепс и трицепс»')],
     ['после перезагрузки то же', RELOAD]
   ] },
 

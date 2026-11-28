@@ -2,7 +2,7 @@
    Перенесено из reference/src/core.js: тела функций без изменений. */
 import { clone } from './records.ts';
 import { GEAR, NO_GEAR, placed } from './gear.ts';
-import { OFF_APP, appCfg, appEx, appRules, careList, pairList } from './rules.ts';
+import { OFF_APP, appCfg, appEx, appRules, careList, maintList, pairList } from './rules.ts';
 import type { Cfg, ExDef } from './types.ts';
 
 /* ---------- config ---------- */
@@ -39,6 +39,7 @@ export function mergeCfg(raw: any): Cfg {
   c.rest = +raw.rest >= 30 && +raw.rest <= 600 ? +raw.rest : 120;   // seconds of rest between sets, for the time estimate
   /* (в эталоне нет) что беречь и дни программы подряд (решение владельца, 25 ноября 2026; rules.ts, ZONES и pairsOf): поля есть, только когда что-то отмечено */
   { const care = careList(raw.care), pairs = pairList(raw.pairs); if (care.length) c.care = care; if (pairs.length) c.pairs = pairs; }
+  { const maint = maintList(raw.maint); if (maint.length) c.maint = maint; }   // (в эталоне нет) мышцы на поддержании (пункт 11 вопросов владельца, 28 ноября 2026; rules.ts, maintOf)
   appCfg(c);                                                         // (в эталоне нет) программа вокруг одного базового с «Растут как раньше»: остальные базовые — сила по запасу (решение владельца, 24 ноября 2026)
   return c;
 }

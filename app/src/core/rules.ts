@@ -2,6 +2,7 @@
    Они действуют, когда приложение выбрало дни «День 1…N» (useDays): так открывается любой профиль в приложении.
    С таблицей дней эталона — эталонные тесты и общие сценарии сверки экранов — всё считается как в эталоне.
    Держат tests/rules.test.ts и, для методики под цель и порядка в дне, tests/method.test.ts. */
+import { MUSCLES } from './catalog.ts';
 import { DAYS } from './days.ts';
 import { dnum } from './dates.ts';
 import { placed } from './gear.ts';
@@ -623,6 +624,34 @@ export function stopOf(cfg: Cfg): (id: string, def?: { n?: string } | null) => b
   const names = new Set(own.map(id => exKey(cfg.ex[id].n)));
   return (id, def) => { const e = cfg.ex[id]; return e ? !!e.stop || names.has(exKey(e.n)) : !!def && names.has(exKey(def.n)); };
 }
+
+/* Мышцы на поддержании (пункт 11 вопросов владельца, 28 ноября 2026, вариант «Поддерживать»). В эталоне этого нет.
+   Атлет отмечает группы мышц, которые сейчас не растит: сборка даёт им треть общего уровня, но не меньше MAINT.min подходов в неделю,
+   а освободившиеся подходы и время уходят мышцам, которые растут. Набранное держится и на трети недельного объёма (Bickel и соавт., 2011;
+   обзор Spiering и соавт., 2021): «треть» — из этих данных, «не меньше 4» — тренерское правило с запасом (docs/03, раздел 24).
+   Мышцы в приоритете и мышцы цели «Силы» атлет выбрал растить — они не на поддержании. Всё на поддержании не бывает: расти тогда нечему.
+   В плане тренировки «Мало объёма» такой мышце — только ниже MAINT.min, а при плато подход ей не прибавляется (adapt.ts). */
+export const MAINT = { k: 1 / 3, min: 4 };
+/** Группы мышц, которые можно поставить на поддержание: id, название на кнопке, мышцы. Группы не пересекаются */
+export const MAINT_GROUPS: { id: string; n: string; m: string[] }[] = [
+  { id: 'chest', n: 'Грудь', m: ['chest'] },
+  { id: 'back', n: 'Спина', m: ['lats', 'upper_back'] },
+  { id: 'delts', n: 'Плечи', m: ['delt_front', 'delt_mid', 'delt_rear'] },
+  { id: 'arms', n: 'Руки', m: ['biceps', 'triceps', 'forearms'] },
+  { id: 'thighs', n: 'Бёдра', m: ['quads', 'hams'] },
+  { id: 'glutes', n: 'Ягодицы', m: ['glutes'] }
+];
+/** Группы на поддержании из настройки, как она сохранена: только известные, без повторов, по порядку MAINT_GROUPS */
+export const maintList = (raw: unknown) => Array.isArray(raw) ? MAINT_GROUPS.map(g => g.id).filter(id => raw.includes(id)) : [];
+/** Мышцы на поддержании: с днями «День N», только в расчёте и не в приоритете (prio). Если расти нечему — никого */
+export function maintOf(cfg: Cfg, prio?: Record<string, number>): Record<string, number> {
+  if (!appRules() || !cfg.maint || !cfg.maint.length) return {};
+  const out: Record<string, number> = {}, up = (m: string) => !!prio && !!prio[m];
+  for (const g of MAINT_GROUPS) if (cfg.maint.includes(g.id)) for (const m of g.m) if (!cfg.ignore[m] && !up(m)) out[m] = 1;
+  return MUSCLES.some(m => !cfg.ignore[m.id] && !out[m.id]) ? out : {};
+}
+/** Недельная цель мышцы на поддержании при общем уровне lvl */
+export const maintAim = (lvl: number) => Math.max(MAINT.min, Math.round(lvl * MAINT.k));
 
 /* Дни подряд (решение владельца, 25 ноября 2026, пункт 6 разбора «Чего не хватает сборке программы», вариант «Мышца в одном из двух»). В эталоне этого нет.
    Дни программы — «День 1…N» без дней недели, поэтому какие из них идут подряд, атлет отмечает сам: пары соседних дней по кругу (1–2, 2–3, 3–1).

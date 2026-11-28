@@ -10,7 +10,7 @@ import { goalOf, goalRange, GOALS, waveOf } from './goals.ts';
 import { allStats, exStats, program, sessions, stalledSets } from './stats.ts';
 import { formulaRange, hints, lastSessionItem, makeItem, plan, planCycle, roundTo, startWeight, suggestSet } from './plan.ts';
 import { planned } from './tally.ts';
-import { appRules, byPct, PLATEAU, plateauOf, rdlDef, RIR_CHECK, rirOf, shown, stopOf } from './rules.ts';
+import { appRules, byPct, MAINT, maintOf, PLATEAU, plateauOf, rdlDef, RIR_CHECK, rirOf, shown, stopOf } from './rules.ts';
 import { estMinutes } from './time.ts';
 import { SKIP, skipFixes } from './skips.ts';
 import type { Tally } from './tally.ts';
@@ -80,7 +80,9 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
   let room = weekCap - SLOTS.reduce((a, sl) => a + (pl.load[sl.id] || 0), 0);
   const dayV: Record<string, number> = pl.day[slot] || {};
   const fitsDay = (e: ExDef, n: number) => Object.entries(e.m || {}).every(([m, c]) => !c || (dayV[m] || 0) + n * c * (e.uni ? 0.5 : 1) <= caps.day + 0.01);
-  for (const m of MUSCLES) { const v = pl.pv[m.id] || 0; if (v > 0 && v < z.opt - 0.5 && pl.prim[m.id] && !cfg.ignore[m.id]) short[m.id] = v; if (v > z.high) over[m.id] = v; }
+  /* (в эталоне нет) мышце на поддержании «Мало объёма» — только ниже MAINT.min (пункт 11 вопросов владельца, 28 ноября 2026; rules.ts, maintOf) */
+  const maint = maintOf(cfg), lowOf = (m: string) => maint[m] ? MAINT.min : z.opt;
+  for (const m of MUSCLES) { const v = pl.pv[m.id] || 0; if (v > 0 && v < lowOf(m.id) - 0.5 && pl.prim[m.id] && !cfg.ignore[m.id]) short[m.id] = v; if (v > z.high) over[m.id] = v; }
   const q = (n: number) => n + ' ' + plural(n, ['день', 'дня', 'дней']);
   const fixes = base.prog ? [] : skipFixes(workouts, cfg, slot, date, base.items);   // (в эталоне нет) два раза подряд не сделано (skips.ts)
 
@@ -158,7 +160,7 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
               notes: ['8 недель без прибавки, хотя запас проверен: замена на «' + exName(cfg, sw) + '» — те же мышцы, другой стимул' + (known ? '' : '; вес подбери сам')] });
             return;
           }
-          const low = Object.entries(ex.m || {}).filter(([m, c]) => c >= 1 && !cfg.ignore[m] && (pl.pv[m] || 0) < PLATEAU.vol).map(([m]) => m).sort((a, c) => (pl.pv[a] || 0) - (pl.pv[c] || 0))[0];
+          const low = Object.entries(ex.m || {}).filter(([m, c]) => c >= 1 && !cfg.ignore[m] && !maint[m] && (pl.pv[m] || 0) < PLATEAU.vol).map(([m]) => m).sort((a, c) => (pl.pv[a] || 0) - (pl.pv[c] || 0))[0];   // (в эталоне нет) мышце на поддержании подход при плато не прибавляется
           const grew = mine.length > 1 && mine[mine.length - 1].sets.length > mine[0].sets.length;
           if (low && !grew) stuck = { kind: 'add', m: low, why: why + ', а запас проверен: +1 подход — ' + MUSCLE[low].n.toLowerCase() + ' по программе ' + nSets(+(pl.pv[low] || 0).toFixed(1)) + ' в неделю, меньше ' + PLATEAU.vol };
         }
@@ -246,7 +248,7 @@ export function adapt(workouts: Workout[], cfg: Cfg, slot: string, date: string)
         room -= ex.uni ? 0.5 : 1;
         const l = sets[sets.length - 1];
         sets.push({ w: l.w, tg: [lo, hi] });
-        notes.push('+1 подход: ' + MUSCLE[m].n.toLowerCase() + ' по программе — ' + nSets(+short[m].toFixed(1)) + ' в неделю, рабочая зона от ' + z.opt);
+        notes.push('+1 подход: ' + MUSCLE[m].n.toLowerCase() + ' по программе — ' + nSets(+short[m].toFixed(1)) + ' в неделю, ' + (maint[m] ? 'на поддержании от ' + MAINT.min : 'рабочая зона от ' + z.opt));   // (в эталоне нет) мышца на поддержании
         used[m] = true; tag('Мало объёма');
         break;
       }

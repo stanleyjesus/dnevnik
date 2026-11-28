@@ -15,9 +15,9 @@ const iso = (d0: string, add: number) => { const d = new Date(d0 + 'T00:00:00Z')
 
 /** Атлет на тяге верхнего блока: перед каждой тренировкой берёт план с поправками дневника, делает повторы по своему максимуму.
     log — отмечает запас, когда повторов больше верха диапазона; иначе останавливается на верхе диапазона и запас не пишет.
-    С заметкой «Проверка запаса» последний подход — до отказа, запас 0. swap — соглашается на замену упражнения */
-function athlete(perWeek: number, growWeek: number, n: number, log: boolean, swap = false) {
-  const raw = readJson('data/config.json');
+    С заметкой «Проверка запаса» последний подход — до отказа, запас 0. swap — соглашается на замену упражнения; extra — поля настройки поверх примерной */
+function athlete(perWeek: number, growWeek: number, n: number, log: boolean, swap = false, extra?: Record<string, unknown>) {
+  const raw = Object.assign(readJson('data/config.json'), extra || {});
   if (swap) raw.ex.x_pulldown_narrow = { n: 'Тяга верхнего блока узким хватом', gear: raw.ex[EX].gear, pat: raw.ex[EX].pat, m: { lats: 1, upper_back: 0.5, biceps: 0.5 } };   // замена на те же мышцы
   const cfg = Core.mergeCfg(raw), W: Workout[] = [], tags: string[] = [], slots = perWeek === 1 ? ['mon'] : ['mon', 'fri'], off: Record<string, number> = { mon: 0, fri: 4 };
   for (let wk = 0, k = 0; k < n; wk++) for (const sl of slots) {
@@ -181,3 +181,15 @@ test('статус на «Прогрессе» — по тому же тренд
   /* с таблицей дней эталона — три тренировки без рекорда, как у эталона */
   assert.deepEqual(look(LW, Core.mergeCfg(later.config)), {});
 });
+
+test('мышца на поддержании: «Мало объёма» — только ниже четырёх в неделю, подхода при плато нет (пункт 11 вопросов владельца, 28 ноября 2026)', () => withDays(3, () => {
+  /* тот же атлет на плато, спина на поддержании: пятого подхода «Мало объёма» нет — у широчайших 4 по программе, это не меньше четырёх; при плато подход не прибавляется
+     (без поддержания, но с четырьмя подходами было бы «8:Плато +1») */
+  const r = athlete(1, 0, 30, false, false, { maint: ['back'] });
+  assert.deepEqual([r.at, r.sets], [['7:Плато (проверка)', '16:Плато (проверка)', '25:Плато (проверка)'], '4'.repeat(30)]);
+  /* «неделей позже»: средним дельтам мало подходов — пятый подход у махов; с плечами на поддержании — нет */
+  const later = readJson('data/later.json').profiles[0], LW: Workout[] = Core.sortW(later.workouts.map((d: Record<string, unknown>) => Core.fromDoc(String(d.id), d)));
+  const find = (extra: Record<string, unknown>) => { const a = Core.adapt(LW, Core.mergeCfg(Object.assign({}, later.config, extra)), 'mon', '2025-11-19'); return (a.props.find(x => x.ex === 'lat_raise_machine') || { tag: '' }).tag; };
+  assert.equal(find({}), 'Мало объёма');
+  assert.equal(find({ maint: ['delts'] }), '');
+}));

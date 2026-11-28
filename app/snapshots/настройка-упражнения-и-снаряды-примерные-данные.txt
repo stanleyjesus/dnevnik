@@ -476,6 +476,15 @@
        option(value="lat_raise_machine") Средние дельты в тренажере
        option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
        option(value="tri_pushdown") Трицепс с косичкой на блоке
+      div.eyebrow(style="margin:14px 0 4px") Поддерживать
+      p.note(style="margin-bottom:8px") Не растить сейчас: треть подходов, не меньше 4 в неделю.
+      div.picks(role="group" aria-label="Поддерживать")
+       button#maint-chest.btn.sm(type="button" aria-pressed="false") Грудь
+       button#maint-back.btn.sm(type="button" aria-pressed="false") Спина
+       button#maint-delts.btn.sm(type="button" aria-pressed="false") Плечи
+       button#maint-arms.btn.sm(type="button" aria-pressed="false") Руки
+       button#maint-thighs.btn.sm(type="button" aria-pressed="false") Бёдра
+       button#maint-glutes.btn.sm(type="button" aria-pressed="false") Ягодицы
     section.card
      div.sec-h
       div
@@ -686,7 +695,7 @@
 +    details(style="margin-top:10px")
 @@ 393 -0 +1
 +      option(value="x_mhvtwvj4") Тяга к лицу на блоке
-@@ 519 -0 +7
+@@ 528 -0 +7
 +     div.plan-row
 +      span.n
 +       | Тяга к лицу на блоке
@@ -884,7 +893,7 @@
 +       div#kw-out-x_mhvtwym8.kw-out.sub вес подберёшь на первой тренировке
 @@ 410 -0 +1
 +      option(value="x_mhvtwym8") Фермерская прогулка
-@@ 543 -0 +7
+@@ 552 -0 +7
 +     div.plan-row
 +      span.n
 +       | Фермерская прогулка
@@ -943,7 +952,7 @@
 +      div.kw-row
 @@ 417 -0 +1
 +      option(value="x_mhvtwze0") Подъём на носки стоя
-@@ 544 -0 +7
+@@ 553 -0 +7
 +     div.plan-row
 +      span.n
 +       | Подъём на носки стоя
@@ -995,19 +1004,19 @@
 записи:
   + config/main {"start":"2025-09-08","zones":{"min":4,"opt":10,"high":20},"cycle":{"inc":2,"sets":4,"pct":{"3":87,"4":82,"5":77}},"method":"Примерный дневник: атлет выдуман, записи посчитаны генератором data/make.cjs. Занятий в неделе три. Три базовых упражнения - жим лежа, жим ногами, подтягивания - ведутся волной: четыре подхода на 5, 4 и 3 повтора при 77, 82 и 87 процентах от расчётного максимума; максимум за неделю прибавляет не больше 2 процентов. В остальных упражнениях сначала растут повторы, потом вес, у каждого подхода свой счёт; до отказа остаётся один повтор.","ex":{"bench":{"n":"Жим лежа","mode":"cycle","pat":"h_push","m":{"chest":1,"triceps":0.5,"delt_front":0.5},"round":5},"leg_press":{"n":"Жим ногами","mode":"cycle","pat":"knee","m":{"quads":1,"glutes":0.5},"round":5},"pullup":{"n":"Подтягивания","mode":"cycle","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"round":1},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"step":1},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"step":2.5},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"step":5},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"step":5},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"step":5},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"step":1},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"step":5},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"step":5},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"step":1},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"step":5},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"step":5},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"step":1.25},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"step":1},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"step":1},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"step":1.25},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"step":1.25},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"step":5},"leg_curl_lying":{"n":"Бицепс бедра на тренажере лежа на животе","pat":"iso","m":{"hams":1},"step":5},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"step":5},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"step":1},"x_mhvtwvj4":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5}},"x_mhvtwym8":{"n":"Фермерская прогулка","pat":"iso","m":{"upper_back":0.5,"forearms":1},"gear":"machine"},"x_mhvtwze0":{"n":"Подъём на носки стоя","pat":"iso","m":{"calves":1}}},"gear":{"cable":{"step":4}}}
 экран: правки к шагу 9
-@@ 513 -1 +1
+@@ 522 -1 +1
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Предплечья
 +      span.sub(style="flex:2 1 220px") блок · шаг 4 кг · Предплечья
-@@ 517 -1 +1
+@@ 526 -1 +1
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Предплечья
 +      span.sub(style="flex:2 1 220px") блок · шаг 4 кг · Предплечья
-@@ 545 -1 +1
+@@ 554 -1 +1
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Трицепс
 +      span.sub(style="flex:2 1 220px") блок · шаг 4 кг · Трицепс
-@@ 549 -1 +1
+@@ 558 -1 +1
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Трицепс
 +      span.sub(style="flex:2 1 220px") блок · шаг 4 кг · Трицепс
-@@ 580 -1 +1
+@@ 589 -1 +1
 -      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Задние дельты, Верх спины ½
 +      span.sub(style="flex:2 1 220px") блок · шаг 4 кг · Задние дельты, Верх спины ½
 
@@ -1023,25 +1032,25 @@
 записи:
   + config/main {"start":"2025-09-08","zones":{"min":4,"opt":10,"high":20},"cycle":{"inc":2,"sets":4,"pct":{"3":87,"4":82,"5":77}},"method":"Примерный дневник: атлет выдуман, записи посчитаны генератором data/make.cjs. Занятий в неделе три. Три базовых упражнения - жим лежа, жим ногами, подтягивания - ведутся волной: четыре подхода на 5, 4 и 3 повтора при 77, 82 и 87 процентах от расчётного максимума; максимум за неделю прибавляет не больше 2 процентов. В остальных упражнениях сначала растут повторы, потом вес, у каждого подхода свой счёт; до отказа остаётся один повтор.","ex":{"bench":{"n":"Жим лежа","mode":"cycle","pat":"h_push","m":{"chest":1,"triceps":0.5,"delt_front":0.5},"round":5},"leg_press":{"n":"Жим ногами","mode":"cycle","pat":"knee","m":{"quads":1,"glutes":0.5},"round":5},"pullup":{"n":"Подтягивания","mode":"cycle","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"round":1},"incline_db":{"n":"Жим гантелей под углом 45","pat":"h_push","m":{"chest":1,"delt_front":0.5,"triceps":0.5},"step":1},"pec_fly":{"n":"Бабочка","pat":"iso","m":{"chest":1,"delt_front":0.5},"step":2.5},"lat_pulldown":{"n":"Вертикальная тяга в тренажере","pat":"v_pull","m":{"lats":1,"upper_back":0.5,"biceps":0.5},"step":5},"row_machine":{"n":"Горизонтальная тяга в тренажере","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"step":5},"tbar_row":{"n":"Горизонтальная тяга Т-бар","pat":"h_pull","m":{"upper_back":1,"lats":0.5,"delt_rear":0.5,"biceps":0.5},"step":5},"lat_raise_db":{"n":"Махи с гантелями на плечи","pat":"iso","m":{"delt_mid":1},"step":1},"lat_raise_machine":{"n":"Средние дельты в тренажере","pat":"iso","m":{"delt_mid":1},"step":5},"barbell_curl":{"n":"Бицепс со штангой стоя","pat":"iso","m":{"biceps":1},"step":5},"hammer":{"n":"Молотки с гантелями","pat":"iso","m":{"biceps":1,"forearms":0.5},"step":1},"bayesian_curl":{"n":"Бицепс Bayesian curl","pat":"iso","m":{"biceps":1},"step":5},"tri_pushdown":{"n":"Трицепс с косичкой на блоке","pat":"iso","m":{"triceps":1},"step":5},"tri_overhead":{"n":"Трицепс из за головы на блоке с косичкой","pat":"iso","m":{"triceps":1},"step":1.25},"wrist_db_r":{"n":"Кисть с гантелью правая рука","pat":"iso","m":{"forearms":1},"uni":true,"step":1},"wrist_db_l":{"n":"Кисть с гантелью левая рука","pat":"iso","m":{"forearms":1},"uni":true,"step":1},"wrist_cable_r":{"n":"Кисть на блоке правая","pat":"iso","m":{"forearms":1},"uni":true,"step":1.25},"wrist_cable_l":{"n":"Кисть на блоке левая","pat":"iso","m":{"forearms":1},"uni":true,"step":1.25},"leg_ext":{"n":"Разгибания ног в тренажере","pat":"iso","m":{"quads":1},"step":5},"leg_curl_lying":{"n":"Бицепс бедра на тренажере лежа на животе","pat":"iso","m":{"hams":1},"step":5},"leg_curl_seated":{"n":"Бицепс бедра сидя в тренажере","pat":"iso","m":{"hams":1},"step":5},"abs":{"n":"Пресс","pat":"iso","m":{"abs":1},"step":1},"x_mhvtwvj4":{"n":"Тяга к лицу на блоке","pat":"iso","m":{"delt_rear":1,"upper_back":0.5}},"x_mhvtwym8":{"n":"Фермерская прогулка","pat":"iso","m":{"upper_back":0.5,"forearms":1},"gear":"machine"},"x_mhvtwze0":{"n":"Подъём на носки стоя","pat":"iso","m":{"calves":1}}},"gear":{"cable":{"step":4},"machine":{"step":1.25}}}
 экран: правки к шагу 13
-@@ 477 -1 +1
+@@ 486 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Бицепс бедра
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 1.25 кг · Бицепс бедра
-@@ 481 -1 +1
+@@ 490 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Бицепс бедра
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 1.25 кг · Бицепс бедра
-@@ 493 -1 +1
+@@ 502 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Широчайшие, Верх спины ½, Бицепс ½, Предплечья ½
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 1.25 кг · Широчайшие, Верх спины ½, Бицепс ½, Предплечья ½
-@@ 537 -1 +1
+@@ 546 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Квадрицепс
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 1.25 кг · Квадрицепс
-@@ 541 -1 +1
+@@ 550 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Средние дельты
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 1.25 кг · Средние дельты
-@@ 555 -1 +1
+@@ 564 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Верх спины, Широчайшие ½, Задние дельты ½, Бицепс ½, Предплечья ½
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 1.25 кг · Верх спины, Широчайшие ½, Задние дельты ½, Бицепс ½, Предплечья ½
-@@ 587 -1 +1
+@@ 596 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Предплечья, Верх спины ½
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 1.25 кг · Предплечья, Верх спины ½
 
@@ -1091,7 +1100,7 @@
 -        span#gear-loose-n.cnt " 7"
 +        span#gear-loose-n.cnt " 6"
 @@ 241 -8 +0
-@@ 473 -1 +1
+@@ 482 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Грудь, Передние дельты ½
 +      span.sub(style="flex:2 1 220px") блок · шаг 4 кг · Грудь, Передние дельты ½
 
@@ -1149,7 +1158,7 @@
 +         option(value="barbell") Штанга
 +         option(value="dumbbell") Гантель
 +       span.chip
-@@ 472 -1 +1
+@@ 481 -1 +1
 -      span.sub(style="flex:2 1 220px") тренажёр · шаг 1.25 кг · Бицепс бедра
 +      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Бицепс бедра
 
@@ -1343,7 +1352,7 @@
   pm=even
   pt=0
 экран: правки к шагу 25
-@@ 4 -593 +638
+@@ 4 -602 +638
 +    div
 +     div.eyebrow Действует сейчас
 +     h2 Своя программа
