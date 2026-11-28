@@ -70,7 +70,7 @@ export interface CycleCfg { inc: number; sets: number; pct: PctMap }
 /** Упражнение в программе. n — число подходов (у упражнений по процентам его задаёт волна).
     Остальное живёт только в черновике сборки: chg — сколько подходов прибавлено, pin — закреплено,
     isNew — добавлено сборкой, from — перенесено из этого дня, was — чем упражнение было до замены */
-export interface ProgEntry { ex: string; n?: number; chg?: number; pin?: boolean; isNew?: boolean; from?: string; was?: string }
+export interface ProgEntry { ex: string; n?: number; chg?: number; pin?: boolean; isNew?: boolean; from?: string; was?: string; lack?: string }   // lack — (в эталоне нет) после замены не удалось вернуть мышце объём: какой мышце и сколько (balance.ts)
 /** Программа по дням */
 export type ProgSlots = Record<string, ProgEntry[]>;
 /** Принятая программа: действует в дне, пока в нём не было тренировки с даты since.
@@ -150,7 +150,8 @@ export interface LibEntry { id: string; def: ExDef }
     exact — any, потому что сортировка вычитает эти «да / нет» друг из друга как числа */
 export interface Swap { id: string; n: string; m: MuscleMap; uni: boolean; def?: ExDef; exact?: any; like?: number; shared?: number; main?: string[] }
 /** Условия сборки: зоны, мышцы вне расчёта, приоритетные мышцы, лимит недели и дня, общий уровень; time — минут на тренировку, в которые укладывается каждый день */
-export interface OptOpts { z: Zones; ignore?: Record<string, number>; prio?: Record<string, number>; budget: number; dayCap: number; level?: number; noFill?: boolean; allDays?: boolean; time?: number; split?: Record<string, string[]> | null }   // split — (в эталоне нет) дни, где мышца может быть основной, когда есть дни подряд (rules.ts, pairSplit)
+export interface OptOpts { z: Zones; ignore?: Record<string, number>; prio?: Record<string, number>; budget: number; dayCap: number; level?: number; noFill?: boolean; allDays?: boolean; time?: number; split?: Record<string, string[]> | null;
+  keep?: (sl: Slot, e: ProgEntry) => boolean; fits?: (sl: Slot, id: string, sets: number, isAdd: boolean) => boolean; fitsWhy?: string }   // split — (в эталоне нет) дни, где мышца может быть основной, когда есть дни подряд (rules.ts, pairSplit); keep, fits, fitsWhy — (в эталоне нет) кнопки мышц после замены (balance.ts): что «−» не трогает, куда «+» можно и почему нельзя
 /** Упражнение, убранное сборкой из дня */
 export interface Cut { ex: string; sl: Slot; to?: string | null }
 /** (в эталоне нет) упражнение, чьи подходы сборка отдала другому упражнению того же дня на ту же мышцу (вывод 8 аудита): was — оно стояло в программе до сборки */

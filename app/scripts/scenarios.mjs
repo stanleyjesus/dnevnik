@@ -801,6 +801,19 @@ export const SCENARIOS = [
       + expect('!!d.querySelector(".pday .pctl") && !!document.getElementById("pa-mon") && !!document.getElementById("pb-mon") && !!d.querySelector(".linkbtn[id^=sw-]")', 'в «Вручную» — «выше», «−/+», «убрать», «В день» и ссылка «заменить»')]
   ] },
 
+  /* только в приложении: с днями «День N» замена у программы, которую собрал дневник, не меняет баланс мышц (пункт 1 вопросов владельца, 28 ноября 2026; core/balance.ts):
+     у варианта замены видно, что он сделает с недельным объёмом мышц, а после замены дневник возвращает мышцам объём ходами кнопок «−» и «+» у мышцы */
+  { name: 'программа: замена не меняет баланс мышц', app: true, steps: [
+    ['замена со сдвигом: в списке видно, что изменится', go('program') + settle + 'const d = ' + DRAFT + '; let hit = -1;'
+      + 'for (const id of [...d.querySelectorAll(".pday button[id^=sw-]")].map(b => b.id)) { __t.click("#" + id, 0); await __t.settle();'
+      + ' const cards = [...document.querySelectorAll("#view .swaprow .ex-card")]; hit = cards.findIndex(c => /−\\d[\\d.]*.* в неделю/.test((c.querySelector(".sub") || { textContent: "" }).textContent));'
+      + ' if (hit >= 0) break; __t.click("#" + id, 0); await __t.settle(); }'
+      + 'window.__hit = hit;' + expect('window.__hit >= 0', 'у варианта замены — сколько подходов в неделю потеряет мышца')],
+    ['заменить со сдвигом', '__t.click("#view .swaprow .ex-card", window.__hit);' + settle
+      + expect('/→/.test(document.getElementById("toast").textContent) && /Объём мышц выровнен|Не хватает/.test(document.getElementById("toast").textContent)', 'в сообщении о замене — как дневник выровнял объём мышц')
+      + expect('!!document.getElementById("prog-hand") && /подход|Новое упражнение/.test(document.getElementById("prog-hand").textContent)', 'в «Что изменилось и почему» — ходы выравнивания')]
+  ] },
+
   /* только в приложении: дни подряд на «Программе» и что беречь в «Настройке» (решения владельца, 25 ноября 2026, пункты 6 и 2): пара дней сохраняется
      в настройке профиля, сборка пишет заметку «Дни подряд»; все дни подряд не бывают; больное колено — красные пилюли у упражнений, которые его нагружают */
   { name: 'программа: дни подряд и что беречь', app: true, steps: [
