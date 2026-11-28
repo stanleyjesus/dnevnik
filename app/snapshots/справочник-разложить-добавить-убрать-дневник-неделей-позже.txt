@@ -825,6 +825,15 @@
        option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
        option(value="tri_pushdown") Трицепс с косичкой на блоке
        option(value="hip_thrust") Ягодичный мост со штангой
+      div.eyebrow(style="margin:14px 0 4px") Поддерживать
+      p.note(style="margin-bottom:8px") Не растить сейчас: треть подходов, не меньше 4 в неделю.
+      div.picks(role="group" aria-label="Поддерживать")
+       button#maint-chest.btn.sm(type="button" aria-pressed="false") Грудь
+       button#maint-back.btn.sm(type="button" aria-pressed="false") Спина
+       button#maint-delts.btn.sm(type="button" aria-pressed="false") Плечи
+       button#maint-arms.btn.sm(type="button" aria-pressed="false") Руки
+       button#maint-thighs.btn.sm(type="button" aria-pressed="false") Бёдра
+       button#maint-glutes.btn.sm(type="button" aria-pressed="false") Ягодицы
     section.card
      div.sec-h
       div
@@ -1139,25 +1148,25 @@
 +        span#gear-loose-n.cnt " 0"
 @@ 336 -64 +1
 +      p.sub(style="margin:8px 0 2px") Все упражнения разложены по снарядам.
-@@ 626 -1 +1
+@@ 635 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Грудь, Передние дельты ½
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Грудь, Передние дельты ½
-@@ 642 -1 +1
+@@ 651 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Бицепс, Предплечья ½
 +      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Бицепс, Предплечья ½
-@@ 658 -1 +1
+@@ 667 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · базовое, шаг 2.5 кг · Грудь, Передние дельты ½, Трицепс ½
 +      span.sub(style="flex:2 1 220px") штанга · базовое, шаг 2.5 кг · Грудь, Передние дельты ½, Трицепс ½
-@@ 662 -1 +1
+@@ 671 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · базовое, шаг 2.5 кг · Квадрицепс, Ягодицы ½
 +      span.sub(style="flex:2 1 220px") тренажёр · базовое, шаг 2.5 кг · Квадрицепс, Ягодицы ½
-@@ 715 -1 +1
+@@ 724 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Разгибатели спины, Ягодицы ½, Бицепс бедра ½
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Разгибатели спины, Ягодицы ½, Бицепс бедра ½
-@@ 769 -1 +1
+@@ 778 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Пресс
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Пресс
-@@ 782 -1 +1
+@@ 791 -1 +1
 -      span.sub(style="flex:2 1 220px") без снаряда · шаг 2.5 кг · Бицепс бедра, Ягодицы, Разгибатели спины ½, Предплечья ½
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Бицепс бедра, Ягодицы, Разгибатели спины ½, Предплечья ½
 
@@ -2106,7 +2115,7 @@
 +      option(value="shrug") Шраги с гантелями
 +      option(value="glute_bridge_machine") Ягодичный мост в тренажере
 +      option(value="smith_hip_thrust") Ягодичный мост в тренажере Смита
-@@ 663 -0 +7
+@@ 672 -0 +7
 +       | Болгарские выпады с гантелями
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Квадрицепс, Ягодицы
@@ -2114,7 +2123,7 @@
 +      button#ex-del-bulgarian.btn.ghost.sm(aria-label="Убрать из справочника: Болгарские выпады с гантелями") Убрать
 +     div.plan-row
 +      span.n
-@@ 670 -0 +7
+@@ 679 -0 +7
 +       | Гакк-приседания
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Квадрицепс, Ягодицы ½
@@ -2122,7 +2131,7 @@
 +      button#ex-del-hack_squat.btn.ghost.sm(aria-label="Убрать из справочника: Гакк-приседания") Убрать
 +     div.plan-row
 +      span.n
-@@ 683 -0 +7
+@@ 692 -0 +7
 +       | Жим Арнольда с гантелями
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") гантель · шаг 2 кг · Передние дельты, Средние дельты ½, Трицепс ½
@@ -2130,7 +2139,7 @@
 +      button#ex-del-arnold.btn.ghost.sm(aria-label="Убрать из справочника: Жим Арнольда с гантелями") Убрать
 +     div.plan-row
 +      span.n
-@@ 690 -0 +21
+@@ 699 -0 +21
 +       | Жим в тренажере на грудь под углом
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Грудь, Передние дельты ½, Трицепс ½
@@ -2152,7 +2161,7 @@
 +      button#ex-del-smith_incline.btn.ghost.sm(aria-label="Убрать из справочника: Жим в тренажере Смита под углом") Убрать
 +     div.plan-row
 +      span.n
-@@ 704 -0 +49
+@@ 713 -0 +49
 +       | Жим лежа узким хватом
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") штанга · шаг 2.5 кг · Трицепс, Грудь ½, Передние дельты ½
@@ -2202,7 +2211,7 @@
 +      button#ex-del-rear_delt_db.btn.ghost.sm(aria-label="Убрать из справочника: Махи гантелями в наклоне") Убрать
 +     div.plan-row
 +      span.n
-@@ 717 -0 +7
+@@ 726 -0 +7
 +       | Обратная бабочка
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Задние дельты, Верх спины ½
@@ -2210,7 +2219,7 @@
 +      button#ex-del-x_rear.btn.ghost.sm(aria-label="Убрать из справочника: Обратная бабочка") Убрать
 +     div.plan-row
 +      span.n
-@@ 724 -0 +35
+@@ 733 -0 +35
 +       | Отведение ноги в сторону на блоке
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Ягодицы
@@ -2246,7 +2255,7 @@
 +      button#ex-del-calf_standing.btn.ghost.sm(aria-label="Убрать из справочника: Подъем на носки стоя") Убрать
 +     div.plan-row
 +      span.n
-@@ 730 -0 +7
+@@ 739 -0 +7
 +       | Приседания в тренажере Смита
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") тренажёр · шаг 2.5 кг · Квадрицепс, Ягодицы
@@ -2254,7 +2263,7 @@
 +      button#ex-del-smith_squat.btn.ghost.sm(aria-label="Убрать из справочника: Приседания в тренажере Смита") Убрать
 +     div.plan-row
 +      span.n
-@@ 737 -0 +21
+@@ 746 -0 +21
 +       | Пуловер на верхнем блоке
 +       span.muted " · не в программе"
 +      span.sub(style="flex:2 1 220px") блок · шаг 2.5 кг · Широчайшие
@@ -2276,7 +2285,7 @@
 +      button#ex-del-db_fly.btn.ghost.sm(aria-label="Убрать из справочника: Разводка гантелей лежа") Убрать
 +     div.plan-row
 +      span.n
-@@ 742 -0 +154
+@@ 751 -0 +154
 +     div.plan-row
 +      span.n
 +       | Румынская тяга с гантелями
@@ -3070,7 +3079,7 @@
 @@ 960 -6 +0
 @@ 1206 -1 +0
 -      option(value="cable_crunch") Скручивания на блоке
-@@ 1630 -7 +0
+@@ 1639 -7 +0
 
 === 9. после перезагрузки то же
 сообщение: ""
