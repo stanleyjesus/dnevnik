@@ -15,8 +15,9 @@ import { factDur, minField, paceText } from './pace.ts';
 import { warmLine } from './warmup.ts';
 import { liveApply, liveLine, ownWeight, PICK } from './live.ts';
 import { trimLine, trimProgram } from './trim.ts';
+import { workCar, wkNext } from './workcar.ts';   // (в эталоне нет) идущая тренировка каруселью (просьба владельца, 28 ноября 2026)
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
-import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
+import type { CyclePlan, Kid, RangeTrack, SetGoal, SetsSource } from './types.ts';
 
 /* ---------- workout ---------- */
 export function vWorkout() {
@@ -81,9 +82,12 @@ export function setFeedback(st: SetRec, g: SetGoal | null | undefined, range: Ra
   return null;
 }
 export function workoutEditor() {
-  const d = S.draft as Workout, out = [], ro = !S.canWrite;
+  const d = S.draft as Workout, out: Kid[] = [], ro = !S.canWrite;
   const wk = C.weekNo(d.date, D.cfg.start!);
-  out.push(h('div', { class: 'card' },
+  /* (в эталоне нет) идущая тренировка с днями «День N» — каруселью, без шапки с датой, днём и неделей (просьба владельца, 28 ноября 2026; workcar.ts):
+     упражнения — карточками, остальное — в последней карточке «Конец тренировки» */
+  const car = appRules() && !!d.open, tail: Kid[] = [], dst = car ? tail : out;
+  if (!car) out.push(h('div', { class: 'card' },
     h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow' }, d.open ? 'Тренировка идёт' : 'Правка записи'), h('h2', null, dayTitle(d.date))),
       h('span', { class: 'sub' }, 'Неделя ' + wk + ' · ', h('span', { id: 'eta' }, ''), ' · ', h('span', { id: 'save-state' }, ''))),
     h('div', { class: 'row' },
@@ -93,20 +97,21 @@ export function workoutEditor() {
       appRules() && !d.open ? minField(d, 'Длилась, мин') : null)));   // (в эталоне нет) время по факту можно поправить в записи
 
   const A = d.open ? C.adapt(D.W, D.cfg, d.slot!, d.date) : null;
-  d.items.forEach((it, idx) => out.push(exerciseCard(d, it, idx, A)));
+  const cards = d.items.map((it, idx) => exerciseCard(d, it, idx, A));
+  if (!car) out.push(...cards);
   /* (в эталоне нет) упражнения, которые поправка «Не делал два раза» убрала из плана (core/skips.ts): их можно вернуть */
   const gone = goneOf(d, A);
-  if (gone.length && !ro) out.push(h('div', { class: 'adj-box' }, h('div', { class: 'eyebrow', style: 'margin-bottom:2px' }, 'Дневник убрал из плана'),
+  if (gone.length && !ro) dst.push(h('div', { class: 'adj-box' }, h('div', { class: 'eyebrow', style: 'margin-bottom:2px' }, 'Дневник убрал из плана'),
     h('div', { class: 'plan-list' }, gone.map(p => h('div', { class: 'plan-row', style: 'align-items:center' }, h('div', { class: 'grow' }, h('b', { text: C.exName(D.cfg, p.ex) }), h('div', { class: 'sub', text: p.notes[0].charAt(0).toUpperCase() + p.notes[0].slice(1) + '.' })),
       h('button', { class: 'btn sm', id: 'back-' + p.ex, onclick: () => { d.items.splice(Math.min(p.idx, d.items.length), 0, C.clone(A!.base.items[p.idx])); touch(); render(true); } }, 'Вернуть'))))));
   if (A && !ro) {
     const adds = A.adds.filter(a => !d.items.some(it => it.ex === a.exId || a.a.cover(D.cfg.ex[it.ex])));
-    if (adds.length) out.push(h('div', { class: 'adj-box' }, h('div', { class: 'eyebrow', style: 'margin-bottom:2px' }, 'Дневник предлагает добавить сегодня'),
+    if (adds.length) dst.push(h('div', { class: 'adj-box' }, h('div', { class: 'eyebrow', style: 'margin-bottom:2px' }, 'Дневник предлагает добавить сегодня'),
       h('div', { class: 'plan-list' }, adds.map(a => h('div', { class: 'plan-row', style: 'align-items:center' }, h('div', { class: 'grow' }, h('b', { text: a.name }), h('div', { class: 'sub', text: setWord(a.sets) + (appRules() ? '' : ' по ' + a.range[0] + '–' + a.range[1]) + ': ' + a.why })), h('button', { class: 'btn sm', onclick: () => addProposed(a) }, icon('plus'), 'Добавить'))))));
   }
 
   /* add exercise */
-  if (S.ui.exForm === 'new-in-workout') out.push(h('div', { class: 'card' }, h('h3', { style: 'margin-bottom:10px' }, 'Новое упражнение'), exForm(null, id => { S.ui.exForm = null; if (id) addExercise(id); else render(true); })));
+  if (S.ui.exForm === 'new-in-workout') dst.push(h('div', { class: car ? 'wk-new' : 'card' }, h('h3', { style: 'margin-bottom:10px' }, 'Новое упражнение'), exForm(null, id => { S.ui.exForm = null; if (id) addExercise(id); else render(true); })));
   else {
     const ids = Object.keys(D.cfg.ex).sort((a, b) => C.exName(D.cfg, a).localeCompare(C.exName(D.cfg, b), 'ru'));
     const inP = ids.filter(i => D.prog.has(i)), rest = ids.filter(i => !D.prog.has(i));
@@ -114,9 +119,12 @@ export function workoutEditor() {
       inP.length ? h('optgroup', { label: 'Сейчас в программе' }, inP.map(i => h('option', { value: i, text: C.exName(D.cfg, i) }))) : null,
       rest.length ? h('optgroup', { label: 'Остальные' }, rest.map(i => h('option', { value: i, text: C.exName(D.cfg, i) }))) : null,
       h('option', { value: '__new', text: '+ Новое упражнение…' }));
-    out.push(h('div', { class: 'row' }, h('div', { class: 'grow' }, sel), h('button', { class: 'btn', onclick: () => { const v = $('add-ex')!.value; if (v === '__new') { S.ui.exForm = 'new-in-workout'; render(true); } else addExercise(v); } }, icon('plus'), 'Добавить упражнение')));
+    dst.push(h('div', { class: 'row' }, h('div', { class: 'grow' }, sel), h('button', { class: 'btn', onclick: () => { const v = $('add-ex')!.value; if (v === '__new') { S.ui.exForm = 'new-in-workout'; render(true); } else addExercise(v); } }, icon('plus'), 'Добавить упражнение')));
   }
-  out.push(h('label', { class: 'f' }, h('span', null, 'Заметка к тренировке'), h('textarea', { id: 'wk-note', placeholder: 'Самочувствие, сон, что мешало', oninput: e => { d.note = e.target.value; touch(); } }, d.note || '')));
+  dst.push(h('label', { class: 'f' }, h('span', null, 'Заметка к тренировке'), h('textarea', { id: 'wk-note', placeholder: 'Самочувствие, сон, что мешало', oninput: e => { d.note = e.target.value; touch(); } }, d.note || '')));
+
+  if (car) out.push(workCar(d, cards, d.items.map(it => C.exName(D.cfg, it.ex)), h('div', { class: 'ex wk-end' }, h('div', { class: 'ex-h' }, h('h3', null, 'Конец тренировки')),
+    h('p', { class: 'sub' }, h('span', { id: 'eta' }, ''), ' · ', h('span', { id: 'save-state' }, '')), h('div', { class: 'stack' }, tail))));
 
   /* bottom bar */
   let empty = 0, skipEx = 0;
@@ -175,7 +183,7 @@ export function exerciseCard(d: Workout, it: Item, idx: number, A: Adapted | nul
     h('div', { class: 'ex-tools' },
       bare ? null : h('button', { class: 'icon-btn', title: 'Выше', 'aria-label': 'Переместить выше', onclick: () => move(-1) }, icon('arrowU')),
       bare ? null : h('button', { class: 'icon-btn', title: 'Ниже', 'aria-label': 'Переместить ниже', onclick: () => move(1) }, icon('arrowD')),
-      h('button', { class: 'icon-btn', title: it.skip ? 'Вернуть в тренировку' : 'Не делал', 'aria-label': it.skip ? 'Вернуть в тренировку' : 'Отметить «не делал»', 'aria-pressed': String(!!it.skip), onclick: () => { it.skip = !it.skip; if (it.skip) it.sets.forEach(s => { s.r = null; s.skip = true; }); else it.sets.forEach(s => { delete s.skip; }); touch(); render(true); } }, icon('skip')),
+      h('button', { class: 'icon-btn', title: it.skip ? 'Вернуть в тренировку' : 'Не делал', 'aria-label': it.skip ? 'Вернуть в тренировку' : 'Отметить «не делал»', 'aria-pressed': String(!!it.skip), onclick: () => { it.skip = !it.skip; if (it.skip) it.sets.forEach(s => { s.r = null; s.skip = true; }); else it.sets.forEach(s => { delete s.skip; }); touch(); if (it.skip && bare) wkNext(d, idx); render(true); } }, icon('skip')),   // (в эталоне нет) в карусели идущей тренировки «не делал» открывает следующее упражнение (workcar.ts)
       bare ? null : h('button', { class: 'icon-btn', title: 'Убрать из тренировки', 'aria-label': 'Убрать упражнение', onclick: () => { d.items.splice(idx, 1); touch(); render(true); } }, icon('x')))));
   if (it.skip) { card.appendChild(h('p', { class: 'sub' }, 'Отмечено «не делал». План: ' + it.sets.map(s => C.fmt(s.w)).join(' · ') + ' кг.')); return card; }
   const prop = A ? A.props.find(p => (p.ex === it.ex || (p.swap === it.ex && !d.items.some(x => x.ex === p.ex))) && !p.drop) : null;   // (в эталоне нет) возвращённое упражнение, которое убрала поправка «Не делал два раза», идёт по правилу; замена при долгом плато — по своей поправке
