@@ -4,7 +4,10 @@
    только при первом сохранении настройки профиля, пустое хранилище остаётся рабочим состоянием.
 
    Состав: 34 упражнения основного набора (id, мышцы и снаряды — из исходного справочника дневника)
-   и 29 распространённых упражнений зала. Каждое лежит на снаряде: «Без снаряда» во встроенном списке пусто.
+   и 44 распространённых упражнения зала. Каждое лежит на снаряде: «Без снаряда» во встроенном списке пусто.
+   28 ноября 2026 (просьба владельца, пункты 7–9): жим в тренажёре на грудь назван «сидя» — под углом это другое упражнение,
+   и добавлено 15 упражнений: варианты для разнообразия по дням недели (docs/03, раздел 23), растянутые варианты
+   и прямая работа на ягодицы. Упражнения в тренажёре Смита лежат на снаряде «Тренажёр».
    Базовые (жим лежа, жим ногами, подтягивания) идут по волне, остальные — двойная прогрессия. */
 import { clone } from './records.ts';
 import { GEAR, NO_GEAR, gearGuess } from './gear.ts';
@@ -24,7 +27,7 @@ export const STARTER: Record<string, ExDef> = {
   bench: { n: 'Жим лежа', pat: 'h_push', m: PRESS, mode: 'cycle', gear: 'barbell' },
   leg_press: { n: 'Жим ногами', pat: 'knee', m: SQUAT, mode: 'cycle', gear: 'machine' },
   pullup: { n: 'Подтягивания', pat: 'v_pull', m: PULL, mode: 'cycle', gear: 'g_pullup' },
-  chest_press: { n: 'Жим в тренажере на грудь', pat: 'h_push', m: PRESS, gear: 'machine' },
+  chest_press: { n: 'Жим в тренажере на грудь сидя', pat: 'h_push', m: PRESS, gear: 'machine' },
   db_bench: { n: 'Жим гантелей лежа', pat: 'h_push', m: PRESS, gear: 'dumbbell' },
   incline_db: { n: 'Жим гантелей под углом 45', pat: 'h_push', m: PRESS, gear: 'dumbbell' },
   pec_fly: { n: 'Бабочка', pat: 'iso', m: FLY, gear: 'machine' },
@@ -57,31 +60,46 @@ export const STARTER: Record<string, ExDef> = {
   abs: { n: 'Пресс', pat: 'iso', m: { abs: 1 }, lo: 10, hi: 15, gear: 'machine' },
   /* распространённые упражнения зала: названия такие, что дневник читает из них те же мышцы */
   incline_bench: { n: 'Жим штанги под углом', pat: 'h_push', m: PRESS, gear: 'barbell' },
+  incline_press_machine: { n: 'Жим в тренажере на грудь под углом', pat: 'h_push', m: PRESS, gear: 'machine' },
+  smith_incline: { n: 'Жим в тренажере Смита под углом', pat: 'h_push', m: PRESS, gear: 'machine' },
   close_grip_bench: { n: 'Жим лежа узким хватом', pat: 'h_push', m: { triceps: 1, chest: 0.5, delt_front: 0.5 }, gear: 'barbell' },
   cable_fly: { n: 'Сведение рук в кроссовере', pat: 'iso', m: FLY, gear: 'cable' },
   db_fly: { n: 'Разводка гантелей лежа', pat: 'iso', m: FLY, gear: 'dumbbell' },
+  cable_fly_low: { n: 'Сведение рук на блоке снизу вверх', pat: 'iso', m: FLY, gear: 'cable' },
   pulldown_cable: { n: 'Тяга верхнего блока', pat: 'v_pull', m: PULL, gear: 'cable' },
+  pulldown_neutral: { n: 'Тяга верхнего блока параллельным хватом', pat: 'v_pull', m: PULL, gear: 'cable' },
   pullover_cable: { n: 'Пуловер на верхнем блоке', pat: 'iso', m: { lats: 1 }, lo: 10, hi: 15, gear: 'cable' },
+  pullover_db: { n: 'Пуловер с гантелью лежа', pat: 'iso', m: { lats: 1 }, lo: 10, hi: 15, gear: 'dumbbell' },
   seated_row: { n: 'Тяга нижнего блока к поясу', pat: 'h_pull', m: ROW, gear: 'cable' },
   barbell_row: { n: 'Тяга штанги в наклоне', pat: 'h_pull', m: ROW, gear: 'barbell' },
   db_row: { n: 'Тяга гантели в наклоне', pat: 'h_pull', m: ROW, gear: 'dumbbell' },
+  chest_row_db: { n: 'Тяга гантелей лежа на наклонной скамье', pat: 'h_pull', m: ROW, gear: 'dumbbell' },
   shrug: { n: 'Шраги с гантелями', pat: 'iso', m: { upper_back: 1 }, gear: 'dumbbell' },
   ohp: { n: 'Жим штанги стоя', pat: 'v_push', m: OHP, gear: 'barbell' },
   shoulder_press_machine: { n: 'Жим в тренажере на плечи', pat: 'v_push', m: OHP, gear: 'machine' },
+  arnold: { n: 'Жим Арнольда с гантелями', pat: 'v_push', m: OHP, gear: 'dumbbell' },
   cable_lat_raise: { n: 'Махи в стороны на блоке', pat: 'iso', m: { delt_mid: 1 }, lo: 10, hi: 20, gear: 'cable' },
   face_pull: { n: 'Тяга к лицу на блоке', pat: 'iso', m: REAR, gear: 'cable' },
   rear_delt_db: { n: 'Махи гантелями в наклоне', pat: 'iso', m: REAR, gear: 'dumbbell' },
   db_curl: { n: 'Сгибания рук с гантелями', pat: 'iso', m: { biceps: 1 }, gear: 'dumbbell' },
   cable_curl: { n: 'Сгибания рук на блоке', pat: 'iso', m: { biceps: 1 }, gear: 'cable' },
+  incline_curl: { n: 'Сгибания рук с гантелями на наклонной скамье', pat: 'iso', m: { biceps: 1 }, gear: 'dumbbell' },
   preacher_curl: { n: 'Сгибания рук на скамье Скотта', pat: 'iso', m: { biceps: 1 }, gear: 'barbell' },
   skullcrusher: { n: 'Французский жим лежа', pat: 'iso', m: { triceps: 1 }, gear: 'barbell' },
+  tri_overhead_db: { n: 'Трицепс из-за головы с гантелью', pat: 'iso', m: { triceps: 1 }, gear: 'dumbbell' },
   wrist_curl: { n: 'Сгибания кистей со штангой', pat: 'iso', m: { forearms: 1 }, gear: 'barbell' },
   hack_squat: { n: 'Гакк-приседания', pat: 'knee', m: SQUAT, gear: 'machine' },
+  smith_squat: { n: 'Приседания в тренажере Смита', pat: 'knee', m: SQUAT, gear: 'machine' },
+  goblet_squat: { n: 'Кубковые приседания с гантелью', pat: 'knee', m: SQUAT, gear: 'dumbbell' },
+  step_up: { n: 'Зашагивания на скамью с гантелями', pat: 'knee', m: LUNGE, gear: 'dumbbell' },
   bulgarian: { n: 'Болгарские выпады с гантелями', pat: 'knee', m: LUNGE, gear: 'dumbbell' },
   deadlift: { n: 'Становая тяга', pat: 'hinge', m: RDL, gear: 'barbell' },
   db_rdl: { n: 'Румынская тяга с гантелями', pat: 'hinge', m: RDL, gear: 'dumbbell' },
   glute_bridge_machine: { n: 'Ягодичный мост в тренажере', pat: 'hinge', m: BRIDGE, gear: 'machine' },
+  smith_hip_thrust: { n: 'Ягодичный мост в тренажере Смита', pat: 'hinge', m: BRIDGE, gear: 'machine' },
   cable_kickback: { n: 'Отведение ноги назад на блоке', pat: 'iso', m: { glutes: 1 }, lo: 10, hi: 15, gear: 'cable' },
+  kickback_machine: { n: 'Отведение ноги назад в тренажере', pat: 'iso', m: { glutes: 1 }, lo: 10, hi: 15, gear: 'machine' },
+  cable_abduction: { n: 'Отведение ноги в сторону на блоке', pat: 'iso', m: { glutes: 1 }, lo: 10, hi: 15, gear: 'cable' },
   calf_standing: { n: 'Подъем на носки стоя', pat: 'iso', m: { calves: 1 }, lo: 10, hi: 15, gear: 'machine' },
   calf_seated: { n: 'Подъем на носки сидя', pat: 'iso', m: { calves: 1 }, lo: 10, hi: 15, gear: 'machine' },
   cable_crunch: { n: 'Скручивания на блоке', pat: 'iso', m: { abs: 1 }, lo: 10, hi: 15, gear: 'cable' }

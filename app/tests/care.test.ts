@@ -70,7 +70,7 @@ test('стоп-упражнение сборка не ставит, в заме�
   assert.ok(!ids(pr).includes('chest_press'));
   const was = Core.SLOTS.flatMap(sl => pr.slots[sl.id].filter(e => e.was === 'chest_press'));
   assert.ok(was.length > 0, 'замена помечена «вместо»');
-  assert.ok(noteOf(pr, /^Жим в тренажере на грудь → /), pr.notes.map(n => n.t).join(' | '));
+  assert.ok(noteOf(pr, /^Жим в тренажере на грудь сидя → /), pr.notes.map(n => n.t).join(' | '));
 }));
 
 test('дни подряд: пары соседних дней по кругу, от трёх дней; места дней в неделе — сутки между днями подряд', () => {
