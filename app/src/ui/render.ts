@@ -6,7 +6,7 @@ import { derive, S, VIEWS } from './state.ts';
 import { switchProfile } from './storage.ts';
 import { drawCharts } from './charts.ts';
 import { VIEW_FN } from './views.ts';
-import { onbOn } from './onboard.ts';
+import { newOn, onbOn } from './onboard.ts';
 import { weekDays } from './platform.ts';
 import { workoutClock } from './clock.ts';
 import { appRules } from '../core/rules.ts';
@@ -25,7 +25,7 @@ export function softRender() {
 export function render(force?: boolean) {
   stale = false;
   D = derive();
-  document.body.classList.toggle('onb-on', S.view === 'overview' && onbOn());   // (в эталоне нет) онбординг — на весь экран, без вкладок (onboard.ts)
+  document.body.classList.toggle('onb-on', (S.view === 'overview' && onbOn()) || (S.view === 'program' && newOn()));   // (в эталоне нет) онбординг и мастер новой программы — на весь экран, без вкладок (onboard.ts)
   paintTop();
   const v = $('view');
   const y = window.scrollY;

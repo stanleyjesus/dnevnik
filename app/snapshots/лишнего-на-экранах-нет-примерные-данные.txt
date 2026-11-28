@@ -3019,655 +3019,493 @@
 @@ 23 -1 +1
 - a(href="#program") Программа
 + a(href="#program" aria-current="page") Программа
-поля: целиком
-  pm=even
-  pt=0
-экран: правки к шагу 8
-@@ 5 -53 +5
-+     div.eyebrow Действует сейчас
-+     h2 Своя программа
-+    span.sub 67 подходов в неделю
-+   p.sub Она ведётся по тренировкам: дневник берёт за основу последнюю тренировку каждого дня и строит по ней следующую.
-+   div(style="margin-top:12px")
-@@ 59 -5 +4
-+     button#pc-dot-mon(type="button" aria-label="День 1" aria-current="true")
-+     button#pc-dot-wed(type="button" aria-label="День 2" aria-current="false")
-+     button#pc-dot-fri(type="button" aria-label="День 3" aria-current="false")
-+    div#pc-days.pcar(role="group" aria-roledescription="карусель" aria-label="Дни программы" tabindex="0")
-@@ 68 -108 +27
-+         b День 1
-+         span.sub 22 подхода · ≈ 1 ч 15 мин
-+        div.prow
-+         div.grow
-+          div.pn Жим лежа
-+          div.sub 4 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Вертикальная тяга в тренажере
-+          div.sub 4 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Бицепс бедра сидя в тренажере
-+          div.sub 4 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Средние дельты в тренажере
-+          div.sub 4 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Трицепс из за головы на блоке с косичкой
-+          div.sub 3 × 8–13
-+        div.prow
-+         div.grow
-+          div.pn Молотки с гантелями
-+          div.sub 3 × 8–13
-+      span.plab(aria-hidden="true") День 1
-@@ 181 -62 +31
-+         b День 2
-+         span.sub 21 подход · ≈ 1 ч 20 мин
-+        div.prow
-+         div.grow
-+          div.pn Разгибания ног в тренажере
-+          div.sub 3 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Жим ногами
-+          div.sub 4 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Жим гантелей под углом 45
-+          div.sub 4 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Горизонтальная тяга Т-бар
-+          div.sub 4 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Бицепс со штангой стоя
-+          div.sub 3 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Кисть на блоке правая
-+          div.sub 3 × 8–15
-+        div.prow
-+         div.grow
-+          div.pn Кисть на блоке левая
-+          div.sub 3 × 8–16
-+      span.plab(aria-hidden="true") День 2
-@@ 248 -44 +35
-+         b День 3
-+         span.sub 24 подхода · ≈ 1 ч 30 мин
-+        div.prow
-+         div.grow
-+          div.pn Подтягивания
-+          div.sub 4 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Бабочка
-+          div.sub 4 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Бицепс бедра на тренажере лежа на животе
-+          div.sub 3 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Трицепс с косичкой на блоке
-+          div.sub 4 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Бицепс Bayesian curl
-+          div.sub 3 × 8–16
-+        div.prow
-+         div.grow
-+          div.pn Разгибания ног в тренажере
-+          div.sub 3 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Кисть с гантелью правая рука
-+          div.sub 3 × 8–15
-+        div.prow
-+         div.grow
-+          div.pn Кисть с гантелью левая рука
-+          div.sub 3 × 8–16
-+      span.plab(aria-hidden="true") День 3
-@@ 293 -0 +149
-+  section.card
-+   div.sec-h
-+    div
-+     div.eyebrow Новая программа
-+     h2 Равномерно на всё тело
-+    span.sub 80 подходов в неделю · сейчас 67 · тренировка ≈ 1 ч 35 мин
-+   p.note(style="margin-bottom:12px") Все мышцы в цели получают поровну, разброс — около двух подходов. Каждая мышца работает минимум в два дня недели. Лимиты недели и дня не нарушаются.
-+   div.row(style="margin-bottom:12px;align-items:flex-end")
-+    div#pg.pf
-+     span Цель
-+     div.seg.multi(role="group" aria-label="Цель программы")
-+      button#pg-mass(type="button" aria-pressed="true") Масса
-+      button#pg-force(type="button" aria-pressed="false") Сила
-+      button#pg-mix(type="button" aria-pressed="false") Гибрид
-+      button#pg-hand(type="button" aria-pressed="false") Вручную
-+    label.f
-+     span Мышцы в приоритете
-+     select#pm
-+      option(value="even" selected="") Всем поровну
-+      option(value="m:legs") Ноги и ягодицы
-+      option(value="m:glutes") Ягодицы
-+      option(value="m:upper") Верх тела
-+      option(value="m:back") Спина
-+      option(value="m:chest") Грудь и плечи
-+      option(value="m:delts") Плечи
-+      option(value="m:arms") Руки
-+    div#pd.pf
-+     span Дней в неделю
-+     div.seg(role="group" aria-label="Тренировочных дней в неделю")
-+      button#pd-2(type="button" aria-pressed="false") 2
-+      button#pd-3(type="button" aria-pressed="true") 3
-+      button#pd-4(type="button" aria-pressed="false") 4
+поля: —
+экран: правки к шагу 6
+@@ 2 -78 +9
++  section#onb.card(data-step="prog" data-path="build" data-enter="" style="max-width:760px;margin:0 auto;width:100%")
++   div.onb-steps(aria-hidden="true")
++    i.on
++    i.on
++    i.on
++    i.on.now
++    i
++    i
++   div.onb-top
+@@ 81 -9 +2
++     b Готово на 67%
++    button#onb-cancel.btn.ghost.sm(type="button") Отмена
+@@ 92 -153 +465
++     div#onb-n.eyebrow Шаг 4 из 6
++     h2 Программа
++   div.row(style="align-items:flex-end;margin-bottom:10px")
 +    div#pp.pf
 +     span Дни подряд
 +     div.picks(role="group" aria-label="Какие дни программы идут подряд")
 +      button#pp-mon-wed.btn.sm(type="button" aria-pressed="false") 1–2
 +      button#pp-wed-fri.btn.sm(type="button" aria-pressed="false") 2–3
 +      button#pp-fri-mon.btn.sm(type="button" aria-pressed="false") 3–1
-+    label.f
-+     span Время на тренировку
-+     select#pt
-+      option(value="0" selected="") не ограничено
-+      option(value="60") до 1 ч
-+      option(value="75") до 1 ч 15 мин
-+      option(value="90") до 1 ч 30 мин
-+      option(value="105") до 1 ч 45 мин
-+      option(value="120") до 2 ч
-+      option(value="135") до 2 ч 15 мин
-+      option(value="150") до 2 ч 30 мин
-+   div
-+    div.pdots
-+     button#pn-dot-mon(type="button" aria-label="День 1" aria-current="true")
-+     button#pn-dot-wed(type="button" aria-label="День 2" aria-current="false")
-+     button#pn-dot-fri(type="button" aria-label="День 3" aria-current="false")
-+    div#pn-days.pcar(role="group" aria-roledescription="карусель" aria-label="Дни новой программы" tabindex="0")
-+     div.pslot(data-off="0")
-+      div.pclip
-+       div.pday
-+        div.pday-h
-+         b День 1
-+         span.sub 27 подходов · ≈ 1 ч 35 мин
-+        div.prow
-+         div.grow
-+          div.pn Жим лежа
-+          div.sub 4 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Вертикальная тяга в тренажере
-+          div.sub 4 × 6–10
-+         button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Румынская тяга
-+          div.sub 2 × 6–10
-+         button#sw-mon-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Жим над головой
-+          div.sub 2 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Бицепс бедра сидя в тренажере
-+          div.sub 4 × 8–12
-+         button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Средние дельты в тренажере
-+          div.sub 4 × 8–12
-+         button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Средние дельты в тренажере") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Трицепс из за головы на блоке с косичкой
-+          div.sub 3 × 8–13
-+         button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Обратная бабочка
-+          div.sub 4 × 8–12
-+      span.plab(aria-hidden="true") День 1
-+      span.pnotch(aria-hidden="true")
-+     div.pslot(data-off="1")
-+      div.pclip(inert="")
-+       div.pday
-+        div.pday-h
-+         b День 2
-+         span.sub 28 подходов · ≈ 1 ч 40 мин
-+        div.prow
-+         div.grow
-+          div.pn Жим ногами
-+          div.sub 4 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Жим гантелей под углом 45
-+          div.sub 4 × 6–10
-+         button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей под углом 45") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Горизонтальная тяга Т-бар
-+          div.sub 4 × 6–10
-+         button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Ягодичный мост
-+          div.sub 4 × 6–10
-+         button#sw-wed-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Жим над головой
-+          div.sub 2 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Разгибания ног в тренажере
-+          div.sub 3 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Бицепс со штангой стоя
-+          div.sub 3 × 8–12
-+         button#sw-wed-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Обратная бабочка
-+          div.sub 2 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Махи с гантелями на плечи
-+          div.sub 2 × 8–16
-+         button#sw-wed-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
-+      span.plab(aria-hidden="true") День 2
-+      span.pnotch(aria-hidden="true")
-@@ 297 -76 +45
-+         b День 3
-+         span.sub 25 подходов · ≈ 1 ч 35 мин
-+        div.prow
-+         div.grow
-+          div.pn Подтягивания
-+          div.sub 4 × 6–10
-+        div.prow
-+         div.grow
-+          div.pn Ягодичный мост
-+          div.sub 2 × 6–10
-+         button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Бабочка
-+          div.sub 4 × 8–12
-+         button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бабочка") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Бицепс бедра на тренажере лежа на животе
-+          div.sub 3 × 8–12
-+         button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра на тренажере лежа на животе") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Трицепс с косичкой на блоке
-+          div.sub 2 × 8–12
-+         button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс с косичкой на блоке") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Бицепс Bayesian curl
-+          div.sub 3 × 8–16
-+         button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс Bayesian curl") Заменить
-+        div.prow
-+         div.grow
-+          div.pn Разгибания ног в тренажере
-+          div.sub 3 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Обратная бабочка
-+          div.sub 2 × 8–12
-+        div.prow
-+         div.grow
-+          div.pn Махи с гантелями на плечи
-+          div.sub 2 × 8–16
-+         button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
-+      span.plab(aria-hidden="true") День 3
-@@ 374 -31 +1
-+   p.sub(style="margin-top:8px") Полоса слева — замена. Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
-@@ 406 -1 +312
--   p.sub Нажми на ячейку, чтобы увидеть, из каких упражнений сложилась цифра.
-+   div.grid2.even
-+    div(style="min-width:0")
-+     div.eyebrow(style="margin-bottom:4px") Недельный объём по мышцам
-+     div.bodymap.flip
-+      div.flip-in
-+       figure.bm-fig
-+        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид спереди") …#f189a436e7
-+        figcaption Вид спереди
-+       figure.bm-fig(inert="")
-+        svg(viewBox="0 0 300 416" role="group" aria-label="Нагрузка по мышцам, вид сзади") …#579002d196
-+        figcaption Вид сзади
-+      button.bm-flip(type="button" aria-label="Вид спереди: перевернуть на вид сзади")
-+       svg(viewBox="0 0 24 24" aria-hidden="true") …#f2a2c05d8a
-+       span Вид спереди
-+     details#prog-why.whybox
-+      summary Что изменилось и почему
-+      div.why
-+       b Все мышцы в рабочей зоне, поровну
-+       div.sub Каждая мышца в цели получает от 10 до 12 подходов в неделю, ни одна не выделяется. Всего 80 подходов при лимите 100.
-+      div.why
-+       b Новое в день 1: Румынская тяга
-+       div.sub 2 × 6–10. Бицепс бедра: было 7, станет 12 в неделю; Ягодицы: было 2, станет 10 в неделю.
-+      div.why
-+       b Новое в день 1: Жим над головой
-+       div.sub 2 × 6–10. Передние дельты: было 6, станет 10 в неделю.
-+      div.why
-+       b Новое в день 1: Обратная бабочка
-+       div.sub 4 × 8–12. Задние дельты: было 2, станет 10 в неделю.
-+      div.why
-+       b Новое в день 2: Ягодичный мост
-+       div.sub 4 × 6–10. Ягодицы: было 2, станет 10 в неделю.
-+      div.why
-+       b Новое в день 2: Жим над головой
-+       div.sub 2 × 6–10. Передние дельты: было 6, станет 10 в неделю.
-+      div.why
-+       b Новое в день 2: Обратная бабочка
-+       div.sub 2 × 8–12. Задние дельты: было 2, станет 10 в неделю.
-+      div.why
-+       b Новое в день 2: Махи с гантелями на плечи
-+       div.sub 2 × 8–16. Средние дельты: было 4, станет 10 в неделю.
-+      div.why
-+       b Новое в день 3: Ягодичный мост
-+       div.sub 2 × 6–10. Ягодицы: было 2, станет 10 в неделю.
-+      div.why
-+       b Новое в день 3: Обратная бабочка
-+       div.sub 2 × 8–12. Задние дельты: было 2, станет 10 в неделю.
-+      div.why
-+       b Новое в день 3: Махи с гантелями на плечи
-+       div.sub 2 × 8–16. Средние дельты: было 4, станет 10 в неделю.
-+      div.why
-+       b Убраны подходы
-+       div.sub Трицепс с косичкой на блоке (день 3) −2. Эти мышцы получали заметно больше, чем им отведено.
-+      div.why
-+       b Мышцы вне расчёта: предплечья — без подходов
-+       div.sub Убрано: Кисть на блоке правая (день 2), Кисть на блоке левая (день 2), Кисть с гантелью правая рука (день 3), Кисть с гантелью левая рука (день 3). В этих упражнениях основная мышца — вне расчёта, а таким мышцам сборка подходы не даёт. Нужны — прибавь кнопкой «+» у мышцы в таблице объёма.
-+      div.why
-+       b Убрано из программы
-+       div.sub Молотки с гантелями (день 1): эти упражнения давали лишнее мышцам, которые и так выше своего уровня, или не помещались в лимит недели.
-+      div.why
-+       b Порядок упражнений: день 2
-+       div.sub Сначала базовое дня, многосуставные — раньше изоляции, соседние упражнения — на разные мышцы. По исследованиям в упражнении ближе к началу тренировки больше повторов и сильнее растёт сила; чередование мышц — правило дневника. Свой порядок — в «Вручную»: там сборка его не трогает.
-+    div(style="min-width:0")
-+     div#prog-free.free.some(role="status")
-+      div.free-main
-+       b#prog-free-n.free-n 20
-+       div
-+        div.free-t подходов свободно
-+        div.sub В программе 80 из 100
-+      div.free-bar(aria-hidden="true")
-+       i(style="width:80.0%")
-+     div.scroll-x.mwrap
-+      table.mtab
-+       thead
-+        tr
-+         th Мышца
-+         th.c-now Сейчас
-+         th Станет
-+         th.c-zone(style="text-align:left") Оценка
-+         th(style="text-align:center") − / +
-+       tbody
-+        tr
-+         td Грудь
-+         td.c-now 12
-+         td 12
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-chest.icon-btn(title="Убавить подход" aria-label="Убавить подход: Грудь")
++   div.pdots
++    button#onb-dot-mon(type="button" aria-label="День 1" aria-current="true")
++    button#onb-dot-wed(type="button" aria-label="День 2" aria-current="false")
++    button#onb-dot-fri(type="button" aria-label="День 3" aria-current="false")
++   div#onb-days.pcar(role="group" aria-roledescription="карусель" aria-label="Дни программы" tabindex="0")
++    div.pslot(data-off="0")
++     div.pclip
++      div.pday
++       div.pday-h
++        b День 1
++        span.sub 27 подходов · ≈ 1 ч 35 мин
++       div.prow
++        div.grow
++         div.pn Жим лежа
++         div.sub 4 × 6–10
++       div.prow
++        div.grow
++         div.pn Вертикальная тяга в тренажере
++         div.sub 4 × 6–10
++        button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
++       div.prow
++        div.grow
++         div.pn Румынская тяга
++         div.sub 2 × 6–10
++        button#sw-mon-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
++       div.prow
++        div.grow
++         div.pn Жим над головой
++         div.sub 2 × 6–10
++       div.prow
++        div.grow
++         div.pn Бицепс бедра сидя в тренажере
++         div.sub 4 × 8–12
++        button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
++       div.prow
++        div.grow
++         div.pn Средние дельты в тренажере
++         div.sub 4 × 8–12
++        button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Средние дельты в тренажере") Заменить
++       div.prow
++        div.grow
++         div.pn Трицепс из за головы на блоке с косичкой
++         div.sub 3 × 8–13
++        button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
++       div.prow
++        div.grow
++         div.pn Обратная бабочка
++         div.sub 4 × 8–12
++     span.plab(aria-hidden="true") День 1
++     span.pnotch(aria-hidden="true")
++    div.pslot(data-off="1")
++     div.pclip(inert="")
++      div.pday
++       div.pday-h
++        b День 2
++        span.sub 28 подходов · ≈ 1 ч 40 мин
++       div.prow
++        div.grow
++         div.pn Жим ногами
++         div.sub 4 × 6–10
++       div.prow
++        div.grow
++         div.pn Жим гантелей под углом 45
++         div.sub 4 × 6–10
++        button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей под углом 45") Заменить
++       div.prow
++        div.grow
++         div.pn Горизонтальная тяга Т-бар
++         div.sub 4 × 6–10
++        button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
++       div.prow
++        div.grow
++         div.pn Ягодичный мост
++         div.sub 4 × 6–10
++        button#sw-wed-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост") Заменить
++       div.prow
++        div.grow
++         div.pn Жим над головой
++         div.sub 2 × 6–10
++       div.prow
++        div.grow
++         div.pn Разгибания ног в тренажере
++         div.sub 3 × 8–12
++       div.prow
++        div.grow
++         div.pn Бицепс со штангой стоя
++         div.sub 3 × 8–12
++        button#sw-wed-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
++       div.prow
++        div.grow
++         div.pn Обратная бабочка
++         div.sub 2 × 8–12
++       div.prow
++        div.grow
++         div.pn Махи с гантелями на плечи
++         div.sub 2 × 8–16
++        button#sw-wed-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
++     span.plab(aria-hidden="true") День 2
++     span.pnotch(aria-hidden="true")
++    div.pslot(data-off="2")
++     div.pclip(inert="")
++      div.pday
++       div.pday-h
++        b День 3
++        span.sub 25 подходов · ≈ 1 ч 35 мин
++       div.prow
++        div.grow
++         div.pn Подтягивания
++         div.sub 4 × 6–10
++       div.prow
++        div.grow
++         div.pn Ягодичный мост
++         div.sub 2 × 6–10
++        button#sw-fri-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост") Заменить
++       div.prow
++        div.grow
++         div.pn Бабочка
++         div.sub 4 × 8–12
++        button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бабочка") Заменить
++       div.prow
++        div.grow
++         div.pn Бицепс бедра на тренажере лежа на животе
++         div.sub 3 × 8–12
++        button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра на тренажере лежа на животе") Заменить
++       div.prow
++        div.grow
++         div.pn Трицепс с косичкой на блоке
++         div.sub 2 × 8–12
++        button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс с косичкой на блоке") Заменить
++       div.prow
++        div.grow
++         div.pn Бицепс Bayesian curl
++         div.sub 3 × 8–16
++        button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс Bayesian curl") Заменить
++       div.prow
++        div.grow
++         div.pn Разгибания ног в тренажере
++         div.sub 3 × 8–12
++       div.prow
++        div.grow
++         div.pn Обратная бабочка
++         div.sub 2 × 8–12
++       div.prow
++        div.grow
++         div.pn Махи с гантелями на плечи
++         div.sub 2 × 8–16
++        button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи с гантелями на плечи") Заменить
++     span.plab(aria-hidden="true") День 3
++     span.pnotch(aria-hidden="true")
++   div(style="margin-top:12px")
++    details#prog-mus.whybox
++     summary
++      | Подходы по мышцам
++      span#pn-sets.sub(style="display:block;margin-top:2px") 80 подходов в неделю · сейчас 67 · тренировка ≈ 1 ч 35 мин
++     div.stack(style="gap:12px;margin-top:10px")
++      div
++       b#pn-name Равномерно на всё тело
++       p#pn-note.note Все мышцы в цели получают поровну, разброс — около двух подходов. Каждая мышца работает минимум в два дня недели. Лимиты недели и дня не нарушаются.
++      div#prog-free.free.some(role="status")
++       div.free-main
++        b#prog-free-n.free-n 20
++        div
++         div.free-t подходов свободно
++         div.sub В программе 80 из 100
++       div.free-bar(aria-hidden="true")
++        i(style="width:80.0%")
++      div.scroll-x.mwrap
++       table.mtab
++        thead
++         tr
++          th Мышца
++          th.c-now Сейчас
++          th Станет
++          th.c-zone(style="text-align:left") Оценка
++          th(style="text-align:center") − / +
++        tbody
++         tr
++          td Грудь
++          td.c-now 12
++          td 12
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-chest.icon-btn(title="Убавить подход" aria-label="Убавить подход: Грудь")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-chest.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Грудь")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Широчайшие
++          td.c-now 10
++          td 10
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-lats.icon-btn(title="Убавить подход" aria-label="Убавить подход: Широчайшие")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-lats.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Широчайшие")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Верх спины
++          td.c-now 8
++          td
++           span.tag.accent(style="margin-right:6px") +4
++           b 12
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-upper_back.icon-btn(title="Убавить подход" aria-label="Убавить подход: Верх спины")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-upper_back.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Верх спины")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Передние дельты
++          td.c-now 6
++          td
++           span.tag.accent(style="margin-right:6px") +4
++           b 10
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-delt_front.icon-btn(title="Убавить подход" aria-label="Убавить подход: Передние дельты")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-delt_front.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Передние дельты")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Средние дельты
++          td.c-now 4
++          td
++           span.tag.accent(style="margin-right:6px") +6
++           b 10
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-delt_mid.icon-btn(title="Убавить подход" aria-label="Убавить подход: Средние дельты")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-delt_mid.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Средние дельты")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Задние дельты
++          td.c-now 2
++          td
++           span.tag.accent(style="margin-right:6px") +8
++           b 10
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-delt_rear.icon-btn(title="Убавить подход" aria-label="Убавить подход: Задние дельты")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-delt_rear.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Задние дельты")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Бицепс
++          td.c-now 15
++          td
++           span.tag.accent(style="margin-right:6px") −3
++           b 12
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-biceps.icon-btn(title="Убавить подход" aria-label="Убавить подход: Бицепс")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-biceps.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Бицепс")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Трицепс
++          td.c-now 11
++          td 11
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-triceps.icon-btn(title="Убавить подход" aria-label="Убавить подход: Трицепс")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-triceps.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Трицепс")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Предплечья
++          td.c-now 16.5
++          td
++           span.tag.accent(style="margin-right:6px") −6.5
++           b 10
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-forearms.icon-btn(title="Убавить подход" aria-label="Убавить подход: Предплечья")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-forearms.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Предплечья")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Пресс
++          td.c-now 0
++          td 0
++          td.c-zone(style="text-align:left")
++           span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
 +            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-chest.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Грудь")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Широчайшие
-+         td.c-now 10
-+         td 10
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-lats.icon-btn(title="Убавить подход" aria-label="Убавить подход: Широчайшие")
++            | вне расчёта
++          td.mctl
++           div.pctl
++            button#mn-abs.icon-btn(title="Убавить подход" aria-label="Убавить подход: Пресс" disabled="")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-abs.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Пресс")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Разгибатели спины
++          td.c-now 0
++          td
++           span.tag.accent(style="margin-right:6px") +1
++           b 1
++          td.c-zone(style="text-align:left")
++           span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
 +            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-lats.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Широчайшие")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Верх спины
-+         td.c-now 8
-+         td
-+          span.tag.accent(style="margin-right:6px") +4
-+          b 12
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-upper_back.icon-btn(title="Убавить подход" aria-label="Убавить подход: Верх спины")
++            | вне расчёта
++          td.mctl
++           div.pctl
++            button#mn-erectors.icon-btn(title="Убавить подход" aria-label="Убавить подход: Разгибатели спины")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-erectors.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Разгибатели спины")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Квадрицепс
++          td.c-now 10
++          td 10
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-quads.icon-btn(title="Убавить подход" aria-label="Убавить подход: Квадрицепс")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-quads.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Квадрицепс")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Бицепс бедра
++          td.c-now 7
++          td
++           span.tag.accent(style="margin-right:6px") +5
++           b 12
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-hams.icon-btn(title="Убавить подход" aria-label="Убавить подход: Бицепс бедра")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-hams.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Бицепс бедра")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Ягодицы
++          td.c-now 2
++          td
++           span.tag.accent(style="margin-right:6px") +8
++           b 10
++          td.c-zone(style="text-align:left")
++           span.pill.good
++            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
++            | рабочая зона
++          td.mctl
++           div.pctl
++            button#mn-glutes.icon-btn(title="Убавить подход" aria-label="Убавить подход: Ягодицы")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-glutes.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Ягодицы")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++         tr
++          td Икры
++          td.c-now 0
++          td 0
++          td.c-zone(style="text-align:left")
++           span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
 +            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-upper_back.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Верх спины")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Передние дельты
-+         td.c-now 6
-+         td
-+          span.tag.accent(style="margin-right:6px") +4
-+          b 10
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-delt_front.icon-btn(title="Убавить подход" aria-label="Убавить подход: Передние дельты")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-delt_front.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Передние дельты")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Средние дельты
-+         td.c-now 4
-+         td
-+          span.tag.accent(style="margin-right:6px") +6
-+          b 10
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-delt_mid.icon-btn(title="Убавить подход" aria-label="Убавить подход: Средние дельты")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-delt_mid.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Средние дельты")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Задние дельты
-+         td.c-now 2
-+         td
-+          span.tag.accent(style="margin-right:6px") +8
-+          b 10
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-delt_rear.icon-btn(title="Убавить подход" aria-label="Убавить подход: Задние дельты")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-delt_rear.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Задние дельты")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Бицепс
-+         td.c-now 15
-+         td
-+          span.tag.accent(style="margin-right:6px") −3
-+          b 12
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-biceps.icon-btn(title="Убавить подход" aria-label="Убавить подход: Бицепс")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-biceps.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Бицепс")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Трицепс
-+         td.c-now 11
-+         td 11
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-triceps.icon-btn(title="Убавить подход" aria-label="Убавить подход: Трицепс")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-triceps.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Трицепс")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Предплечья
-+         td.c-now 16.5
-+         td
-+          span.tag.accent(style="margin-right:6px") −6.5
-+          b 10
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-forearms.icon-btn(title="Убавить подход" aria-label="Убавить подход: Предплечья")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-forearms.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Предплечья")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Пресс
-+         td.c-now 0
-+         td 0
-+         td.c-zone(style="text-align:left")
-+          span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           | вне расчёта
-+         td.mctl
-+          div.pctl
-+           button#mn-abs.icon-btn(title="Убавить подход" aria-label="Убавить подход: Пресс" disabled="")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-abs.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Пресс")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Разгибатели спины
-+         td.c-now 0
-+         td
-+          span.tag.accent(style="margin-right:6px") +1
-+          b 1
-+         td.c-zone(style="text-align:left")
-+          span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           | вне расчёта
-+         td.mctl
-+          div.pctl
-+           button#mn-erectors.icon-btn(title="Убавить подход" aria-label="Убавить подход: Разгибатели спины")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-erectors.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Разгибатели спины")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Квадрицепс
-+         td.c-now 10
-+         td 10
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-quads.icon-btn(title="Убавить подход" aria-label="Убавить подход: Квадрицепс")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-quads.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Квадрицепс")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Бицепс бедра
-+         td.c-now 7
-+         td
-+          span.tag.accent(style="margin-right:6px") +5
-+          b 12
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-hams.icon-btn(title="Убавить подход" aria-label="Убавить подход: Бицепс бедра")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-hams.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Бицепс бедра")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Ягодицы
-+         td.c-now 2
-+         td
-+          span.tag.accent(style="margin-right:6px") +8
-+          b 10
-+         td.c-zone(style="text-align:left")
-+          span.pill.good
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+           | рабочая зона
-+         td.mctl
-+          div.pctl
-+           button#mn-glutes.icon-btn(title="Убавить подход" aria-label="Убавить подход: Ягодицы")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-glutes.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Ягодицы")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+        tr
-+         td Икры
-+         td.c-now 0
-+         td 0
-+         td.c-zone(style="text-align:left")
-+          span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
-+           svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           | вне расчёта
-+         td.mctl
-+          div.pctl
-+           button#mn-calves.icon-btn(title="Убавить подход" aria-label="Убавить подход: Икры" disabled="")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+           button#mp-calves.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Икры")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+     p.note(style="margin-top:6px") «−» освобождает подход, «+» отдаёт его мышце: дневник сам выбирает упражнение.
-+   div.row(style="margin-top:14px")
-+    button#prog-accept.btn.primary Принять программу
-+    span.sub Ближайшая тренировка каждого дня будет построена по ней, веса возьмутся из последних тренировок.
++            | вне расчёта
++          td.mctl
++           div.pctl
++            button#mn-calves.icon-btn(title="Убавить подход" aria-label="Убавить подход: Икры" disabled="")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
++            button#mp-calves.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Икры")
++             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
++      p.note «−» освобождает подход, «+» отдаёт его мышце: дневник сам выбирает упражнение.
++      p#pn-time.sub Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
++      details#prog-why.whybox
++       summary Что изменилось и почему
++       div.why
++        b Все мышцы в рабочей зоне, поровну
++        div.sub Каждая мышца в цели получает от 10 до 12 подходов в неделю, ни одна не выделяется. Всего 80 подходов при лимите 100.
++       div.why
++        b Новое в день 1: Румынская тяга
++        div.sub 2 × 6–10. Бицепс бедра: было 7, станет 12 в неделю; Ягодицы: было 2, станет 10 в неделю.
++       div.why
++        b Новое в день 1: Жим над головой
++        div.sub 2 × 6–10. Передние дельты: было 6, станет 10 в неделю.
++       div.why
++        b Новое в день 1: Обратная бабочка
++        div.sub 4 × 8–12. Задние дельты: было 2, станет 10 в неделю.
++       div.why
++        b Новое в день 2: Ягодичный мост
++        div.sub 4 × 6–10. Ягодицы: было 2, станет 10 в неделю.
++       div.why
++        b Новое в день 2: Жим над головой
++        div.sub 2 × 6–10. Передние дельты: было 6, станет 10 в неделю.
++       div.why
++        b Новое в день 2: Обратная бабочка
++        div.sub 2 × 8–12. Задние дельты: было 2, станет 10 в неделю.
++       div.why
++        b Новое в день 2: Махи с гантелями на плечи
++        div.sub 2 × 8–16. Средние дельты: было 4, станет 10 в неделю.
++       div.why
++        b Новое в день 3: Ягодичный мост
++        div.sub 2 × 6–10. Ягодицы: было 2, станет 10 в неделю.
++       div.why
++        b Новое в день 3: Обратная бабочка
++        div.sub 2 × 8–12. Задние дельты: было 2, станет 10 в неделю.
++       div.why
++        b Новое в день 3: Махи с гантелями на плечи
++        div.sub 2 × 8–16. Средние дельты: было 4, станет 10 в неделю.
++       div.why
++        b Убраны подходы
++        div.sub Трицепс с косичкой на блоке (день 3) −2. Эти мышцы получали заметно больше, чем им отведено.
++       div.why
++        b Мышцы вне расчёта: предплечья — без подходов
++        div.sub Убрано: Кисть на блоке правая (день 2), Кисть на блоке левая (день 2), Кисть с гантелью правая рука (день 3), Кисть с гантелью левая рука (день 3). В этих упражнениях основная мышца — вне расчёта, а таким мышцам сборка подходы не даёт. Нужны — прибавь кнопкой «+» у мышцы в таблице объёма.
++       div.why
++        b Убрано из программы
++        div.sub Молотки с гантелями (день 1): эти упражнения давали лишнее мышцам, которые и так выше своего уровня, или не помещались в лимит недели.
++       div.why
++        b Порядок упражнений: день 2
++        div.sub Сначала базовое дня, многосуставные — раньше изоляции, соседние упражнения — на разные мышцы. По исследованиям в упражнении ближе к началу тренировки больше повторов и сильнее растёт сила; чередование мышц — правило дневника. Свой порядок — в «Вручную»: там сборка его не трогает.
++   div.row.onb-foot(style="margin-top:16px;justify-content:space-between")
++    button#onb-back.btn(type="button") Назад
++    button#onb-accept.btn.primary(type="button") Принять программу
 
 === 13. программа: открыть день 2
-экран: правки к шагу 12
-@@ 11 -2 +2
--     button#pc-dot-mon(type="button" aria-label="День 1" aria-current="true")
--     button#pc-dot-wed(type="button" aria-label="День 2" aria-current="false")
-+     button#pc-dot-mon(type="button" aria-label="День 1" aria-current="false")
-+     button#pc-dot-wed(type="button" aria-label="День 2" aria-current="true")
-@@ 15 -2 +2
--     div.pslot(data-off="0")
--      div.pclip
-+     div.pslot(data-off="-1")
-+      div.pclip(inert="")
-@@ 47 -2 +2
--     div.pslot(data-off="1")
--      div.pclip(inert="")
-+     div.pslot(data-off="0")
-+      div.pclip
-@@ 83 -1 +1
--     div.pslot(data-off="2")
-+     div.pslot(data-off="1")
 
 === 14. мышцы: группы каруселью
 адрес: "#muscles"
 шапка: как в шаге 8
-поля: —
 экран: как в шаге 8
 
 === 15. мышцы: открыть «Ноги»
@@ -3709,7 +3547,6 @@
 - a(href="#muscles" aria-current="page") Мышцы
 + a(href="#muscles") Мышцы
 поля: целиком
-  wk-date=2025-11-12
   w-0-0=50
   r-0-0=
   q-0-0=
@@ -3812,467 +3649,518 @@
   + td-draft {"id":"2025-11-12","date":"2025-11-12","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null},{"w":50,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":192.5,"r":null},{"w":192.5,"r":null},{"w":192.5,"r":null},{"w":192.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}],"began":1762941617000}
 экран: целиком
   div.wrap.stack
-   div.card
-    div.sec-h
-     div
-      div.eyebrow Тренировка идёт
-      h2 Среда, 12 ноября
-     span.sub
-      | "Неделя 10 · "
-      span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
-      | " · "
-      span#save-state сохранено
-    div.row
-     label.f
-      span Дата
-      input#wk-date(type="date")
-     label.f
-      span День программы
-      div.seg(role="group" aria-label="День программы")
-       button(type="button" aria-pressed="false") День 1
-       button(type="button" aria-pressed="true") День 2
-       button(type="button" aria-pressed="false") День 3
-   div.ex
-    div.ex-h
-     h3 Разгибания ног в тренажере
-     div.ex-tools
-      button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
-    p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 35 × 5
-    div.ex-meta
-     span.tag Квадрицепс
-     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
-     span запас 1
-    div.sets
-     div.set.head.bare
-      span
-      span Вес, кг
-      span
-      span Повторы
-      span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
-      span
-     div.set.bare
-      span.i 1
-      input#w-0-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-      span.x ×
-      input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
-      input#q-0-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 2
-      input#w-0-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-      span.x ×
-      input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
-      input#q-0-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 3
-      input#w-0-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-      span.x ×
-      input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
-      input#q-0-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-    button.btn.ghost.sm(style="margin-top:6px")
-     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-     | Подход
-    input#ex-note-0(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-   div.ex
-    div.ex-h
-     h3 Жим ногами
-     div.ex-tools
-      button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
-    p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 95 × 6 · 152.5 × 3
-    div.ex-meta
-     span.tag Квадрицепс
-     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
-     span запас 1
-    div.sets
-     div.set.head.bare
-      span
-      span Вес, кг
-      span
-      span Повторы
-      span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
-      span
-     div.set.bare
-      span.i 1
-      input#w-1-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-      span.x ×
-      input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
-      input#q-1-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 2
-      input#w-1-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-      span.x ×
-      input#r-1-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
-      input#q-1-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 3
-      input#w-1-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-      span.x ×
-      input#r-1-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
-      input#q-1-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 4
-      input#w-1-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
-      span.x ×
-      input#r-1-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
-      input#q-1-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-    button.btn.ghost.sm(style="margin-top:6px")
-     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-     | Подход
-    input#ex-note-1(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-   div.ex
-    div.ex-h
-     h3 Жим гантелей под углом 45
-     div.ex-tools
-      button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
-    p#warm-2.sub.warm(title=#60d213b7c2) Разминка, кг: 16 × 5
-    div.ex-meta
-     span.tag Грудь
-     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
-     span запас 1
-    div.sets
-     div.set.head.bare
-      span
-      span Вес, кг
-      span
-      span Повторы
-      span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
-      span
-     div.set.bare
-      span.i 1
-      input#w-2-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-      span.x ×
-      input#r-2-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
-      input#q-2-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 2
-      input#w-2-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-      span.x ×
-      input#r-2-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
-      input#q-2-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 3
-      input#w-2-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-      span.x ×
-      input#r-2-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
-      input#q-2-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 4
-      input#w-2-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
-      span.x ×
-      input#r-2-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
-      input#q-2-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-    button.btn.ghost.sm(style="margin-top:6px")
-     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-     | Подход
-    input#ex-note-2(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-   div.ex
-    div.ex-h
-     h3 Горизонтальная тяга Т-бар
-     div.ex-tools
-      button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
-    p#warm-3.sub.warm(title=#60d213b7c2) Разминка, кг: 15 × 6 · 25 × 3
-    div.ex-meta
-     span.tag Верх спины
-     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин 30 с
-     span запас 2: со свободным весом отказ опасен
-    div.sets
-     div.set.head.bare
-      span
-      span Вес, кг
-      span
-      span Повторы
-      span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 2") Запас
-      span
-     div.set.bare
-      span.i 1
-      input#w-3-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-      span.x ×
-      input#r-3-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
-      input#q-3-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 2
-      input#w-3-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-      span.x ×
-      input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
-      input#q-3-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 3
-      input#w-3-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-      span.x ×
-      input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
-      input#q-3-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 4
-      input#w-3-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
-      span.x ×
-      input#r-3-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
-      input#q-3-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 5
-      input#w-3-4.num(type="text" inputmode="decimal" aria-label="Вес, подход 5")
-      span.x ×
-      input#r-3-4.num(type="text" inputmode="numeric" aria-label="Повторы, подход 5" placeholder="")
-      input#q-3-4.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 5" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 5")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-    button.btn.ghost.sm(style="margin-top:6px")
-     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-     | Подход
-    input#ex-note-3(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-   div.ex
-    div.ex-h
-     h3 Бицепс со штангой стоя
-     div.ex-tools
-      button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
-    div.ex-meta
-     span.tag Бицепс
-     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
-     span запас 1
-    div.sets
-     div.set.head.bare
-      span
-      span Вес, кг
-      span
-      span Повторы
-      span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
-      span
-     div.set.bare
-      span.i 1
-      input#w-4-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-      span.x ×
-      input#r-4-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
-      input#q-4-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 2
-      input#w-4-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-      span.x ×
-      input#r-4-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
-      input#q-4-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 3
-      input#w-4-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-      span.x ×
-      input#r-4-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
-      input#q-4-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-    button.btn.ghost.sm(style="margin-top:6px")
-     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-     | Подход
-    input#ex-note-4(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-   div.ex
-    div.ex-h
-     h3 Кисть на блоке правая
-     div.ex-tools
-      button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
-    div.ex-meta
-     span.tag Предплечья
-     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 1 мин между сторонами
-     span запас 1
-    div.sets
-     div.set.head.bare
-      span
-      span Вес, кг
-      span
-      span Повторы
-      span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
-      span
-     div.set.bare
-      span.i 1
-      input#w-5-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-      span.x ×
-      input#r-5-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
-      input#q-5-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 2
-      input#w-5-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-      span.x ×
-      input#r-5-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
-      input#q-5-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 3
-      input#w-5-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-      span.x ×
-      input#r-5-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
-      input#q-5-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-    button.btn.ghost.sm(style="margin-top:6px")
-     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-     | Подход
-    input#ex-note-5(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-   div.ex
-    div.ex-h
-     h3 Кисть на блоке левая
-     div.ex-tools
-      button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
-    div.ex-meta
-     span.tag Предплечья
-     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 1 мин между сторонами
-     span запас 1
-    div.sets
-     div.set.head.bare
-      span
-      span Вес, кг
-      span
-      span Повторы
-      span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
-      span
-     div.set.bare
-      span.i 1
-      input#w-6-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-      span.x ×
-      input#r-6-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
-      input#q-6-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 2
-      input#w-6-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-      span.x ×
-      input#r-6-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
-      input#q-6-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 3
-      input#w-6-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-      span.x ×
-      input#r-6-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
-      input#q-6-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-    button.btn.ghost.sm(style="margin-top:6px")
-     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-     | Подход
-    input#ex-note-6(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-   div.ex
-    div.ex-h
-     h3 Обратная бабочка
-     div.ex-tools
-      button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
-    div.ex-meta
-     span.tag Задние дельты
-     span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
-     span запас 1
-     span первая запись: подбери вес, с которым в запасе останется один повтор
-    div.sets
-     div.set.head.bare
-      span
-      span Вес, кг
-      span
-      span Повторы
-      span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
-      span
-     div.set.bare
-      span.i 1
-      input#w-7-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-      span.x ×
-      input#r-7-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
-      input#q-7-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 2
-      input#w-7-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-      span.x ×
-      input#r-7-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
-      input#q-7-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-     div.set.bare
-      span.i 3
-      input#w-7-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
-      span.x ×
-      input#r-7-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
-      input#q-7-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
-      button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
-       svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-    button.btn.ghost.sm(style="margin-top:6px")
-     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-     | Подход
-    input#ex-note-7(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-   div.row
-    div.grow
-     select#add-ex(aria-label="Упражнение")
-      optgroup(label="Сейчас в программе")
-       option(value="pec_fly") Бабочка
-       option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе
-       option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
-       option(value="barbell_curl") Бицепс со штангой стоя
-       option(value="bayesian_curl") Бицепс Bayesian curl
-       option(value="lat_pulldown") Вертикальная тяга в тренажере
-       option(value="tbar_row") Горизонтальная тяга Т-бар
-       option(value="incline_db") Жим гантелей под углом 45
-       option(value="bench") Жим лежа
-       option(value="leg_press") Жим ногами
-       option(value="wrist_cable_l") Кисть на блоке левая
-       option(value="wrist_cable_r") Кисть на блоке правая
-       option(value="wrist_db_l") Кисть с гантелью левая рука
-       option(value="wrist_db_r") Кисть с гантелью правая рука
-       option(value="hammer") Молотки с гантелями
-       option(value="pullup") Подтягивания
-       option(value="leg_ext") Разгибания ног в тренажере
-       option(value="lat_raise_machine") Средние дельты в тренажере
-       option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
-       option(value="tri_pushdown") Трицепс с косичкой на блоке
-      optgroup(label="Остальные")
-       option(value="row_machine") Горизонтальная тяга в тренажере
-       option(value="lat_raise_db") Махи с гантелями на плечи
-       option(value="x_rear") Обратная бабочка
-       option(value="abs") Пресс
-      option(value="__new") + Новое упражнение…
-    button.btn
-     svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-     | Добавить упражнение
-   label.f
-    span Заметка к тренировке
-    textarea#wk-note(placeholder="Самочувствие, сон, что мешало")
+   div.pdots.wk-dots
+    button#wk-dot-0(type="button" aria-label="1. Разгибания ног в тренаж…" aria-current="true")
+    button#wk-dot-1(type="button" aria-label="2. Жим ногами" aria-current="false")
+    button#wk-dot-2(type="button" aria-label="3. Жим гантелей под углом…" aria-current="false")
+    button#wk-dot-3(type="button" aria-label="4. Горизонтальная тяга Т-б…" aria-current="false")
+    button#wk-dot-4(type="button" aria-label="5. Бицепс со штангой стоя" aria-current="false")
+    button#wk-dot-5(type="button" aria-label="6. Кисть на блоке правая" aria-current="false")
+    button#wk-dot-6(type="button" aria-label="7. Кисть на блоке левая" aria-current="false")
+    button#wk-dot-7(type="button" aria-label="8. Обратная бабочка" aria-current="false")
+    button#wk-dot-8(type="button" aria-label="Конец" aria-current="false")
+   div#wk-ex.pcar.wk-car(role="group" aria-roledescription="карусель" aria-label="Упражнения тренировки" tabindex="0")
+    div.pslot(data-off="0")
+     div.pclip
+      div.ex
+       div.ex-h
+        h3 Разгибания ног в тренажере
+        div.ex-tools
+         button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
+       p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 35 × 5
+       div.ex-meta
+        span.tag Квадрицепс
+        span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
+        span запас 1
+       div.sets
+        div.set.head.bare
+         span
+         span Вес, кг
+         span
+         span Повторы
+         span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
+         span
+        div.set.bare
+         span.i 1
+         input#w-0-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
+         span.x ×
+         input#r-0-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
+         input#q-0-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 2
+         input#w-0-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
+         span.x ×
+         input#r-0-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
+         input#q-0-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 3
+         input#w-0-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
+         span.x ×
+         input#r-0-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
+         input#q-0-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       button.btn.ghost.sm(style="margin-top:6px")
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+        | Подход
+       input#ex-note-0(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
+       div.row.wk-next
+        button#wk-next-0.btn(type="button") Следующее упражнение
+     span.plab(aria-hidden="true") 1. Разгибания ног в тренаж…
+     span.pnotch(aria-hidden="true")
+    div.pslot(data-off="1")
+     div.pclip(inert="")
+      div.ex
+       div.ex-h
+        h3 Жим ногами
+        div.ex-tools
+         button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
+       p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 95 × 6 · 152.5 × 3
+       div.ex-meta
+        span.tag Квадрицепс
+        span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
+        span запас 1
+       div.sets
+        div.set.head.bare
+         span
+         span Вес, кг
+         span
+         span Повторы
+         span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
+         span
+        div.set.bare
+         span.i 1
+         input#w-1-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
+         span.x ×
+         input#r-1-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
+         input#q-1-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 2
+         input#w-1-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
+         span.x ×
+         input#r-1-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
+         input#q-1-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 3
+         input#w-1-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
+         span.x ×
+         input#r-1-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
+         input#q-1-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 4
+         input#w-1-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
+         span.x ×
+         input#r-1-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
+         input#q-1-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       button.btn.ghost.sm(style="margin-top:6px")
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+        | Подход
+       input#ex-note-1(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
+       div.row.wk-next
+        button#wk-next-1.btn(type="button") Следующее упражнение
+     span.plab(aria-hidden="true") 2. Жим ногами
+     span.pnotch(aria-hidden="true")
+    div.pslot(data-off="2")
+     div.pclip(inert="")
+      div.ex
+       div.ex-h
+        h3 Жим гантелей под углом 45
+        div.ex-tools
+         button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
+       p#warm-2.sub.warm(title=#60d213b7c2) Разминка, кг: 16 × 5
+       div.ex-meta
+        span.tag Грудь
+        span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
+        span запас 1
+       div.sets
+        div.set.head.bare
+         span
+         span Вес, кг
+         span
+         span Повторы
+         span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
+         span
+        div.set.bare
+         span.i 1
+         input#w-2-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
+         span.x ×
+         input#r-2-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
+         input#q-2-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 2
+         input#w-2-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
+         span.x ×
+         input#r-2-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
+         input#q-2-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 3
+         input#w-2-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
+         span.x ×
+         input#r-2-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
+         input#q-2-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 4
+         input#w-2-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
+         span.x ×
+         input#r-2-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
+         input#q-2-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       button.btn.ghost.sm(style="margin-top:6px")
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+        | Подход
+       input#ex-note-2(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
+       div.row.wk-next
+        button#wk-next-2.btn(type="button") Следующее упражнение
+     span.plab(aria-hidden="true") 3. Жим гантелей под углом…
+     span.pnotch(aria-hidden="true")
+    div.pslot(data-off="2")
+     div.pclip(inert="")
+      div.ex
+       div.ex-h
+        h3 Горизонтальная тяга Т-бар
+        div.ex-tools
+         button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
+       p#warm-3.sub.warm(title=#60d213b7c2) Разминка, кг: 15 × 6 · 25 × 3
+       div.ex-meta
+        span.tag Верх спины
+        span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин 30 с
+        span запас 2: со свободным весом отказ опасен
+       div.sets
+        div.set.head.bare
+         span
+         span Вес, кг
+         span
+         span Повторы
+         span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 2") Запас
+         span
+        div.set.bare
+         span.i 1
+         input#w-3-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
+         span.x ×
+         input#r-3-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
+         input#q-3-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 2
+         input#w-3-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
+         span.x ×
+         input#r-3-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
+         input#q-3-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 3
+         input#w-3-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
+         span.x ×
+         input#r-3-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
+         input#q-3-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 4
+         input#w-3-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
+         span.x ×
+         input#r-3-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
+         input#q-3-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 5
+         input#w-3-4.num(type="text" inputmode="decimal" aria-label="Вес, подход 5")
+         span.x ×
+         input#r-3-4.num(type="text" inputmode="numeric" aria-label="Повторы, подход 5" placeholder="")
+         input#q-3-4.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 5" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 5")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       button.btn.ghost.sm(style="margin-top:6px")
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+        | Подход
+       input#ex-note-3(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
+       div.row.wk-next
+        button#wk-next-3.btn(type="button") Следующее упражнение
+     span.plab(aria-hidden="true") 4. Горизонтальная тяга Т-б…
+     span.pnotch(aria-hidden="true")
+    div.pslot(data-off="2")
+     div.pclip(inert="")
+      div.ex
+       div.ex-h
+        h3 Бицепс со штангой стоя
+        div.ex-tools
+         button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
+       div.ex-meta
+        span.tag Бицепс
+        span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
+        span запас 1
+       div.sets
+        div.set.head.bare
+         span
+         span Вес, кг
+         span
+         span Повторы
+         span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
+         span
+        div.set.bare
+         span.i 1
+         input#w-4-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
+         span.x ×
+         input#r-4-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
+         input#q-4-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 2
+         input#w-4-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
+         span.x ×
+         input#r-4-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
+         input#q-4-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 3
+         input#w-4-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
+         span.x ×
+         input#r-4-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
+         input#q-4-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       button.btn.ghost.sm(style="margin-top:6px")
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+        | Подход
+       input#ex-note-4(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
+       div.row.wk-next
+        button#wk-next-4.btn(type="button") Следующее упражнение
+     span.plab(aria-hidden="true") 5. Бицепс со штангой стоя
+     span.pnotch(aria-hidden="true")
+    div.pslot(data-off="2")
+     div.pclip(inert="")
+      div.ex
+       div.ex-h
+        h3 Кисть на блоке правая
+        div.ex-tools
+         button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
+       div.ex-meta
+        span.tag Предплечья
+        span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 1 мин между сторонами
+        span запас 1
+       div.sets
+        div.set.head.bare
+         span
+         span Вес, кг
+         span
+         span Повторы
+         span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
+         span
+        div.set.bare
+         span.i 1
+         input#w-5-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
+         span.x ×
+         input#r-5-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
+         input#q-5-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 2
+         input#w-5-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
+         span.x ×
+         input#r-5-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
+         input#q-5-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 3
+         input#w-5-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
+         span.x ×
+         input#r-5-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
+         input#q-5-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       button.btn.ghost.sm(style="margin-top:6px")
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+        | Подход
+       input#ex-note-5(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
+       div.row.wk-next
+        button#wk-next-5.btn(type="button") Следующее упражнение
+     span.plab(aria-hidden="true") 6. Кисть на блоке правая
+     span.pnotch(aria-hidden="true")
+    div.pslot(data-off="2")
+     div.pclip(inert="")
+      div.ex
+       div.ex-h
+        h3 Кисть на блоке левая
+        div.ex-tools
+         button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
+       div.ex-meta
+        span.tag Предплечья
+        span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 1 мин между сторонами
+        span запас 1
+       div.sets
+        div.set.head.bare
+         span
+         span Вес, кг
+         span
+         span Повторы
+         span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
+         span
+        div.set.bare
+         span.i 1
+         input#w-6-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
+         span.x ×
+         input#r-6-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
+         input#q-6-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 2
+         input#w-6-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
+         span.x ×
+         input#r-6-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
+         input#q-6-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 3
+         input#w-6-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
+         span.x ×
+         input#r-6-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
+         input#q-6-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       button.btn.ghost.sm(style="margin-top:6px")
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+        | Подход
+       input#ex-note-6(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
+       div.row.wk-next
+        button#wk-next-6.btn(type="button") Следующее упражнение
+     span.plab(aria-hidden="true") 7. Кисть на блоке левая
+     span.pnotch(aria-hidden="true")
+    div.pslot(data-off="2")
+     div.pclip(inert="")
+      div.ex
+       div.ex-h
+        h3 Обратная бабочка
+        div.ex-tools
+         button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#6774d1a4ec
+       div.ex-meta
+        span.tag Задние дельты
+        span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
+        span запас 1
+        span первая запись: подбери вес, с которым в запасе останется один повтор
+       div.sets
+        div.set.head.bare
+         span
+         span Вес, кг
+         span
+         span Повторы
+         span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
+         span
+        div.set.bare
+         span.i 1
+         input#w-7-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
+         span.x ×
+         input#r-7-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
+         input#q-7-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 2
+         input#w-7-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
+         span.x ×
+         input#r-7-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
+         input#q-7-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+        div.set.bare
+         span.i 3
+         input#w-7-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
+         span.x ×
+         input#r-7-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
+         input#q-7-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
+         button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       button.btn.ghost.sm(style="margin-top:6px")
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+        | Подход
+       input#ex-note-7(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
+       div.row.wk-next
+        button#wk-next-7.btn(type="button") К завершению
+     span.plab(aria-hidden="true") 8. Обратная бабочка
+     span.pnotch(aria-hidden="true")
+    div.pslot(data-off="2")
+     div.pclip(inert="")
+      div.ex.wk-end
+       div.ex-h
+        h3 Конец тренировки
+       p.sub
+        span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
+        | " · "
+        span#save-state сохранено
+       div.stack
+        div.row
+         div.grow
+          select#add-ex(aria-label="Упражнение")
+           optgroup(label="Сейчас в программе")
+            option(value="pec_fly") Бабочка
+            option(value="leg_curl_lying") Бицепс бедра на тренажере лежа на животе
+            option(value="leg_curl_seated") Бицепс бедра сидя в тренажере
+            option(value="barbell_curl") Бицепс со штангой стоя
+            option(value="bayesian_curl") Бицепс Bayesian curl
+            option(value="lat_pulldown") Вертикальная тяга в тренажере
+            option(value="tbar_row") Горизонтальная тяга Т-бар
+            option(value="incline_db") Жим гантелей под углом 45
+            option(value="bench") Жим лежа
+            option(value="leg_press") Жим ногами
+            option(value="wrist_cable_l") Кисть на блоке левая
+            option(value="wrist_cable_r") Кисть на блоке правая
+            option(value="wrist_db_l") Кисть с гантелью левая рука
+            option(value="wrist_db_r") Кисть с гантелью правая рука
+            option(value="hammer") Молотки с гантелями
+            option(value="pullup") Подтягивания
+            option(value="leg_ext") Разгибания ног в тренажере
+            option(value="lat_raise_machine") Средние дельты в тренажере
+            option(value="tri_overhead") Трицепс из за головы на блоке с косичкой
+            option(value="tri_pushdown") Трицепс с косичкой на блоке
+           optgroup(label="Остальные")
+            option(value="row_machine") Горизонтальная тяга в тренажере
+            option(value="lat_raise_db") Махи с гантелями на плечи
+            option(value="x_rear") Обратная бабочка
+            option(value="abs") Пресс
+           option(value="__new") + Новое упражнение…
+         button.btn
+          svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
+          | Добавить упражнение
+        label.f
+         span Заметка к тренировке
+         textarea#wk-note(placeholder="Самочувствие, сон, что мешало")
+     span.plab(aria-hidden="true") Конец
+     span.pnotch(aria-hidden="true")
    div.wk-bar
     div.row.between
      button.btn.primary Завершить тренировку
@@ -4281,3 +4169,145 @@
 === 18. памятка: понятно, начинаем
 сообщение: "Время пошло: часы — внизу, на вкладке «Тренировка»"
 курсор: ""
+
+=== 19. тренировка каруселью, без шапки
+сообщение: ""
+
+=== 20. следующее упражнение
+экран: правки к шагу 19
+@@ 3 -2 +2
+-   button#wk-dot-0(type="button" aria-label="1. Разгибания ног в тренаж…" aria-current="true")
+-   button#wk-dot-1(type="button" aria-label="2. Жим ногами" aria-current="false")
++   button#wk-dot-0(type="button" aria-label="1. Разгибания ног в тренаж…" aria-current="false")
++   button#wk-dot-1(type="button" aria-label="2. Жим ногами" aria-current="true")
+@@ 13 -2 +2
+-   div.pslot(data-off="0")
+-    div.pclip
++   div.pslot(data-off="-1")
++    div.pclip(inert="")
+@@ 66 -2 +2
+-   div.pslot(data-off="1")
+-    div.pclip(inert="")
++   div.pslot(data-off="0")
++    div.pclip
+@@ 127 -1 +1
+-   div.pslot(data-off="2")
++   div.pslot(data-off="1")
+
+=== 21. не делал: сразу следующее
+шапка: правки к шагу 20
+@@ 21 -1 +1
+-  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
++  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:04
+поля: правки к шагу 20
+@@ 11 -13 +0
+черновик:
+  + td-draft {"id":"2025-11-12","date":"2025-11-12","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":null},{"w":50,"r":null},{"w":42.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":192.5,"r":null,"skip":true},{"w":192.5,"r":null,"skip":true},{"w":192.5,"r":null,"skip":true},{"w":192.5,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}],"began":1762941617000}
+экран: правки к шагу 20
+@@ 4 -2 +2
+-   button#wk-dot-1(type="button" aria-label="2. Жим ногами" aria-current="true")
+-   button#wk-dot-2(type="button" aria-label="3. Жим гантелей под углом…" aria-current="false")
++   button#wk-dot-1(type="button" aria-label="2. Жим ногами" aria-current="false" data-done="")
++   button#wk-dot-2(type="button" aria-label="3. Жим гантелей под углом…" aria-current="true")
+@@ 13 -1 +1
+-   div.pslot(data-off="-1")
++   div.pslot(data-off="-2")
+@@ 66 -3 +3
+-   div.pslot(data-off="0")
+-    div.pclip
+-     div.ex
++   div.pslot(data-off="-1")
++    div.pclip(inert="")
++     div.ex.skipped
+@@ 72 -1 +1
+-        button.icon-btn(title="Не делал" aria-label="Отметить «не делал»" aria-pressed="false")
++        button.icon-btn(title="Вернуть в тренировку" aria-label="Вернуть в тренировку" aria-pressed="true")
+@@ 74 -49 +1
++      p.sub Отмечено «не делал». План: 192.5 · 192.5 · 192.5 · 192.5 кг.
+@@ 124 -1 +1
+-       button#wk-next-1.btn(type="button") Следующее упражнение
++       button#wk-next-1.btn.primary(type="button") Следующее упражнение
+@@ 127 -2 +2
+-   div.pslot(data-off="1")
+-    div.pclip(inert="")
++   div.pslot(data-off="0")
++    div.pclip
+@@ 188 -1 +1
+-   div.pslot(data-off="2")
++   div.pslot(data-off="1")
+@@ 472 -1 +1
+-       span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
++       span#eta по плану ≈ 1 ч 20 мин · осталось ≈ 1 ч 15 мин
+@@ 474 -1 +1
+-       span#save-state сохранено
++       span#save-state есть несохранённые изменения
+
+=== 22. подходы первого: полоса отмечена
+поля: правки к шагу 21
+@@ 2 -1 +1
+- r-0-0=
++ r-0-0=10
+@@ 5 -1 +1
+- r-0-1=
++ r-0-1=10
+@@ 8 -1 +1
+- r-0-2=
++ r-0-2=10
+черновик:
+  + td-draft {"id":"2025-11-12","date":"2025-11-12","slot":"wed","note":"","open":true,"items":[{"ex":"leg_ext","cyc":null,"range":[8,12],"sets":[{"w":50,"r":10},{"w":50,"r":10},{"w":42.5,"r":10}],"note":"","skip":false,"rir":null},{"ex":"leg_press","cyc":null,"range":[6,10],"sets":[{"w":192.5,"r":null,"skip":true},{"w":192.5,"r":null,"skip":true},{"w":192.5,"r":null,"skip":true},{"w":192.5,"r":null,"skip":true}],"note":"","skip":true,"rir":null},{"ex":"incline_db","cyc":null,"range":[6,10],"sets":[{"w":24,"r":null},{"w":24,"r":null},{"w":22,"r":null},{"w":22,"r":null}],"note":"","skip":false,"rir":null},{"ex":"tbar_row","cyc":null,"range":[6,10],"sets":[{"w":32.5,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null},{"w":30,"r":null}],"note":"","skip":false,"rir":null},{"ex":"barbell_curl","cyc":null,"range":[8,12],"sets":[{"w":30,"r":null},{"w":27.5,"r":null},{"w":27.5,"r":null}],"note":"Проверка запаса: последний подход — до отказа","skip":false,"rir":null},{"ex":"wrist_cable_r","cyc":null,"range":[8,15],"sets":[{"w":15,"r":null},{"w":15,"r":null},{"w":15,"r":null}],"note":"","skip":false,"rir":null},{"ex":"wrist_cable_l","cyc":null,"range":[8,16],"sets":[{"w":12.5,"r":null},{"w":12.5,"r":null},{"w":12.5,"r":null}],"note":"","skip":false,"rir":null},{"ex":"x_rear","cyc":null,"range":[8,12],"sets":[{"w":null,"r":null},{"w":null,"r":null},{"w":null,"r":null}],"note":"","skip":false,"rir":null}],"began":1762941617000}
+экран: правки к шагу 21
+@@ 3 -1 +1
+-   button#wk-dot-0(type="button" aria-label="1. Разгибания ног в тренаж…" aria-current="false")
++   button#wk-dot-0(type="button" aria-label="1. Разгибания ног в тренаж…" aria-current="false" data-done="")
+@@ 63 -1 +1
+-       button#wk-next-0.btn(type="button") Следующее упражнение
++       button#wk-next-0.btn.primary(type="button") Следующее упражнение
+@@ 424 -1 +1
+-       span#eta по плану ≈ 1 ч 20 мин · осталось ≈ 1 ч 15 мин
++       span#eta по плану ≈ 1 ч 20 мин · осталось ≈ 1 ч 5 мин
+
+=== 23. конец тренировки
+экран: правки к шагу 22
+@@ 5 -1 +1
+-   button#wk-dot-2(type="button" aria-label="3. Жим гантелей под углом…" aria-current="true")
++   button#wk-dot-2(type="button" aria-label="3. Жим гантелей под углом…" aria-current="false")
+@@ 11 -1 +1
+-   button#wk-dot-8(type="button" aria-label="Конец" aria-current="false")
++   button#wk-dot-8(type="button" aria-label="Конец" aria-current="true")
+@@ 66 -1 +1
+-   div.pslot(data-off="-1")
++   div.pslot(data-off="-2")
+@@ 79 -2 +2
+-   div.pslot(data-off="0")
+-    div.pclip
++   div.pslot(data-off="-2")
++    div.pclip(inert="")
+@@ 140 -1 +1
+-   div.pslot(data-off="1")
++   div.pslot(data-off="-2")
+@@ 209 -1 +1
+-   div.pslot(data-off="2")
++   div.pslot(data-off="-2")
+@@ 261 -1 +1
+-   div.pslot(data-off="2")
++   div.pslot(data-off="-2")
+@@ 313 -1 +1
+-   div.pslot(data-off="2")
++   div.pslot(data-off="-2")
+@@ 365 -1 +1
+-   div.pslot(data-off="2")
++   div.pslot(data-off="-1")
+@@ 418 -2 +2
+-   div.pslot(data-off="2")
+-    div.pclip(inert="")
++   div.pslot(data-off="0")
++    div.pclip
+
+=== 24. перезагрузка посреди тренировки
+шапка: как в шаге 17
+экран: правки к шагу 22
+@@ 426 -1 +1
+-       span#save-state есть несохранённые изменения
++       span#save-state сохранено
+
+=== 25. после перезагрузки — первое несделанное

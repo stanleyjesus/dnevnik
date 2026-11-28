@@ -21,13 +21,19 @@ export function progLifts(cfg: Cfg) {
   return lifts;
 }
 
+/** Режим сборки, с которого начинается черновик: тот, по которому собрана действующая программа; без программы — «Вручную», если дни пусты, иначе «Равномерно».
+    Тот же начальный режим берёт мастер новой программы (onboard.ts) */
+export function progFocus(P: Cfg['program'], lifts: string[], empty: boolean) {
+  return P && P.strength && P.triad && P.triad.length && appRules() ? 'p' : P && P.strength && P.focus && lifts.includes(P.focus) ? 's:' + P.focus : P && P.strength && lifts.length ? 's' : P && P.focus && lifts.includes(P.focus) ? 'l:' + P.focus : P && P.prio && C.PRIOS.some(g => g.id === P.prio) ? 'm:' + P.prio : empty ? 'manual' : 'even';
+}
+
 /** Черновик новой программы для того, что действует сейчас (cur; empty — в днях пусто), и обработчики правок в днях.
     awaySig — что стоит в днях вне недели: от него зависит, пересобирать ли черновик */
 export function progDraft(cfg: Cfg, cur: ProgSlots, empty: boolean, lifts: string[], awaySig: string) {
   const P = cfg.program;
   const ui = S.ui;
   const budgets = [40, 50, 60, 70, 80, 90, 100, 110, 120].filter(v => v < cfg.caps.week).concat(cfg.caps.week);
-  if (!ui.prog) ui.prog = { focus: P && P.strength && P.triad && P.triad.length && appRules() ? 'p' : P && P.strength && P.focus && lifts.includes(P.focus) ? 's:' + P.focus : P && P.strength && lifts.length ? 's' : P && P.focus && lifts.includes(P.focus) ? 'l:' + P.focus : P && P.prio && C.PRIOS.some(g => g.id === P.prio) ? 'm:' + P.prio : empty ? 'manual' : 'even',
+  if (!ui.prog) ui.prog = { focus: progFocus(P, lifts, empty),
     others: othersOf(P), budget: P && +P.budget! > 0 && +P.budget! <= cfg.caps.week ? +P.budget! : cfg.caps.week, draft: null, key: '' };
   if (lostMode(ui.prog.focus, lifts)) setMode(ui.prog, modeAfter(ui.prog.focus, lifts), cfg.caps.week);   // выбранного базового больше нет в справочнике: в эталоне экран оставался в режиме, которого уже не собрать
   const st = ui.prog, manual = st.focus === 'manual', lift = st.focus.startsWith('l:') ? st.focus.slice(2) : null, prio = st.focus.startsWith('m:') ? st.focus.slice(2) : '';

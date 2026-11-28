@@ -37,11 +37,12 @@ export function workCar(d: Workout, cards: HTMLElement[], names: string[], end: 
   car.classList.add('wk-car');
   if (bar) bar.classList.add('wk-dots');
   /* сделано ли упражнение — следом за вводом: полоса отмечена, кнопка «дальше» становится главной */
-  const mark = () => d.items.forEach((it, i) => {
-    const ok = exDone(it), b = cards[i].querySelector('.wk-next .btn');
+  /* после «Добавить упражнение» нажатие доходит и до прежней карусели, которую перерисовка уже убрала: у неё карточек меньше, чем упражнений */
+  const mark = () => { if (car.isConnected || !car.parentNode) cards.forEach((c, i) => {
+    const it = d.items[i], ok = !!it && exDone(it), b = c.querySelector('.wk-next .btn');
     if (bar && bar.children[i]) bar.children[i].toggleAttribute('data-done', ok);
     if (b) b.classList.toggle('primary', ok);
-  });
+  }); };
   car.addEventListener('input', mark);
   car.addEventListener('click', mark);                                    // «Все по N» у подходов по проценту ставит повторы без ввода
   mark();

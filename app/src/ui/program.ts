@@ -23,6 +23,7 @@ import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
 import { paceText } from './pace.ts';
 import { carousel, kept } from './carousel.ts';   // (в эталоне нет) дни программы каруселью с днями «День N»
+import { newOn, onbNew, vOnboard } from './onboard.ts';   // (в эталоне нет) новая программа — в мастере (просьба владельца, 28 ноября 2026)
 
 /* ---------- UI: the programme — what runs now, and a new one: by hand or built around a priority ---------- */
 export const progSig = (slots: ProgSlots) => C.SLOTS.map(sl => (slots[sl.id] || []).map(e => e.ex + ':' + (e.n || '')).join(',')).join('|');
@@ -136,7 +137,9 @@ export function vProgram() {
      у текущей программы и у черновика — свой открытый день */
   const days = (list: HTMLElement[], key: string, aria: string) => carousel(list, kept(key), { id: key + '-days', dot: i => key + '-dot-' + C.SLOTS[i].id, lab: i => C.SLOTS[i].n, aria });
   if (S.conn !== 'ready') return [];
+  if (newOn()) return vOnboard('new');                               // (в эталоне нет) мастер новой программы — вместо вкладки, без вкладок (onboard.ts)
   const out = [], cfg = D.cfg, P = cfg.program, ro = !S.canWrite, done = D.W.filter(w => !w.open);
+  const wiz = appRules() && !weekDays();                             // (в эталоне нет) с днями «День N» блока «Новая программа» нет: кнопка открывает мастер (просьба владельца, 28 ноября 2026)
   const cur = C.currentSlots(D.W, cfg), curT = C.progTally(cfg, cur), empty = C.SLOTS.every(sl => !cur[sl.id].length);
   const lastOf: Record<string, Workout> = {};
   for (const w of done) if (w.slot) lastOf[w.slot] = w;
@@ -154,7 +157,7 @@ export function vProgram() {
     const on = P.strength && P.focus ? C.SLOTS.filter(sl => cur[sl.id].some(e => e.ex === P.focus || (C.isLight(cfg, e.ex) && cfg.ex[e.ex].of === P.focus))).length : 0;
     state = [h('p', { class: 'sub' }, 'Принята ' + C.fmtDate(P.made || P.since, true) + '. ',
       !pending.length ? (holes.length ? 'Её дни уже идут по ней.' : 'Все дни уже идут по ней: дальше каждый день строится от своей прошлой тренировки.') : started ? 'Ещё не было по ней: ' + C.list(pending.map(sl => sl.n.toLowerCase())) + '.' : 'По ней ещё не было ни одной тренировки.',
-      holes.length ? ' ' + C.list(holes.map((sl, i) => i ? sl.n.toLowerCase() : sl.n)) + ' в ней ' + (holes.length > 1 ? 'пусты: заполнятся' : 'пуст: заполнится') + ', когда примешь программу ниже.' : '',
+      holes.length ? ' ' + C.list(holes.map((sl, i) => i ? sl.n.toLowerCase() : sl.n)) + ' в ней ' + (holes.length > 1 ? 'пусты: заполнятся' : 'пуст: заполнится') + (wiz ? ', когда примешь новую программу.' : ', когда примешь программу ниже.') : '',
       P.focus && cfg.ex[P.focus] && !(appRules() && P.strength) ? ' Приоритет — «' + C.exName(cfg, P.focus) + '», остальные базовые ' + (P.others === 'grow' ? 'растут как раньше.' : P.others === 'plain' && appRules() ? 'идут как подсобка.' : 'на поддержании.') : '',
       P.prio && C.PRIOS.some(g => g.id === P.prio) ? ' Приоритет — ' + C.PRIOS.find(g => g.id === P.prio)!.n.toLowerCase() + '.' : '',
       /* (в эталоне нет) с днями «День N» под «Силой» по проценту идёт только цель: тройка или одно упражнение (пункт 8) */
@@ -165,19 +168,26 @@ export function vProgram() {
       /* (в эталоне нет) программу сократил дневник: тренировки не влезали во время (trim.ts) */
       appRules() && P.trim ? ' Сократил дневник: тренировки шли ×' + C.fmt(P.trim.k, 2) + ' к расчёту и не влезали в ' + C.fmtDur(P.trim.time) + ', было ' + C.nSets(P.trim.from) + ' в неделю.' : ''),
     !started && !ro && P.prev ? h('div', { class: 'row', style: 'margin-top:8px' }, h('button', { class: 'btn sm', id: 'prog-undo', onclick: undoProgram }, 'Вернуть прежнюю')) : null];
-  } else state = h('p', { class: 'sub' }, empty ? 'Программы пока нет. Собери её ниже: добавь упражнения в дни и нажми «Принять программу».' : 'Она ведётся по тренировкам: дневник берёт за основу последнюю тренировку каждого дня и строит по ней следующую.');
+  } else state = h('p', { class: 'sub' }, empty ? (wiz ? 'Программы пока нет. Собери её по шагам: цель, время и дни.' : 'Программы пока нет. Собери её ниже: добавь упражнения в дни и нажми «Принять программу».') : 'Она ведётся по тренировкам: дневник берёт за основу последнюю тренировку каждого дня и строит по ней следующую.');
   /* (в эталоне нет) дней в неделе стало меньше, а в убранном дне что-то стоит: в план оно не попадает, пока не принята программа на новое число дней */
   const away = awayDays(done, cfg), awaySig = away.map(d => d.id + ':' + d.items.map(e => e.ex + ':' + (e.n || '')).join(',')).join(';'), exWord = (n: number) => n + ' ' + C.plural(n, ['упражнение', 'упражнения', 'упражнений']);
   const awayNote = away.length ? h('p', { class: 'note', id: 'pd-away', role: 'status', style: 'margin-top:8px' }, away.map(d => {
     const base = d.items.filter(e => C.isCycle(cfg, e.ex)).map(e => C.exName(cfg, e.ex)), rest = d.items.length - base.length;
     return C.SLOT[d.id].n + ' сейчас не в неделе: ' + (base.length ? C.list(base) + (rest ? ' и ещё ' + exWord(rest) : '') : exWord(rest)) + ' в план не ' + (d.items.length === 1 ? 'попадает' : 'попадают') + '.';
-  }).join(' ') + (ro ? '' : ' Прими программу ниже — сборка разложит неделю заново, а в «Вручную» добавь их в дни сам — или верни прежнее число дней.')) : null;
+  }).join(' ') + (ro ? '' : wiz ? ' Собери новую программу — сборка разложит неделю заново, а в своей программе добавь их в дни сам — или верни прежнее число дней.' : ' Прими программу ниже — сборка разложит неделю заново, а в «Вручную» добавь их в дни сам — или верни прежнее число дней.')) : null;
   out.push(h('section', { class: 'card' },
     h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow' }, 'Действует сейчас'), h('h2', null, P ? P.name : empty ? 'Программы нет' : 'Своя программа')), empty ? null : h('span', { class: 'sub' }, loadText(C.SLOTS.reduce((a, sl) => a + curT.load[sl.id], 0)) + ' в неделю')),
     state, awayNote,
     empty ? null : appRules() ? h('div', { style: 'margin-top:12px' }, days(C.SLOTS.map(sl => progDay(cfg, sl, cur[sl.id], curT.load[sl.id], null, null, null)), 'pc', 'Дни программы')) : h('div', { class: C.SLOTS.length === 2 ? 'grid2 even' : C.SLOTS.length === 4 ? 'grid4' : 'grid3', style: 'margin-top:12px' }, C.SLOTS.map(sl => progDay(cfg, sl, cur[sl.id], curT.load[sl.id], null, null, null))),   // (в эталоне нет) с днями «День N» дни — каруселью (просьба владельца, 26 ноября 2026)
     rulesBox(C.ruleBreaks(cfg, curT))));
   if (ro) return out;
+  /* (в эталоне нет) с днями «День N» вместо блока сборки — кнопка: новая программа собирается по шагам мастера, как при первом входе (просьба владельца, 28 ноября 2026; onboard.ts) */
+  if (wiz) {
+    out.push(h('section', { class: 'card', id: 'prog-new-box' }, h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow' }, 'Новая программа'), h('h2', null, empty && !P ? 'Собрать программу' : 'Собрать новую'))),
+      h('p', { class: 'sub', style: 'margin-bottom:12px' }, 'По шагам: цель, время, что беречь, дни и веса. ' + (P || !empty ? 'Действующая остаётся, пока не примешь новую.' : 'Можно и свою — по дням.')),
+      h('button', { class: 'btn primary', id: 'prog-new', onclick: onbNew }, empty && !P ? 'Собрать программу' : 'Собрать новую программу')));
+    return out;
+  }
 
   /* a new one */
   const { st, pr, edit, fit, time, budgets, manual, lift, prio, strong, solo, triad, changed, recount, pick } = progDraft(cfg, cur, empty, lifts, awaySig);   // черновик — общий с онбордингом (draft.ts)

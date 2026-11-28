@@ -11,7 +11,12 @@
         на столько повторов, а меньше нижней границы диапазона — вместо них встаёт первая замена на те же мышцы (вертикальная тяга) с пояснением;
      5. Готово — программа с весами старта и переход к первой тренировке.
    Расчёт тот же, что на вкладках: мастер только ведёт по шагам. Он идёт только с днями «День N» — с таблицей дней эталона
-   (общие сценарии сверки с артефактом) пустой «Обзор» прежний. «Пропустить» возвращает прежний пустой «Обзор» до перезагрузки. */
+   (общие сценарии сверки с артефактом) пустой «Обзор» прежний. «Пропустить» возвращает прежний пустой «Обзор» до перезагрузки.
+   Новая программа (просьба владельца, 28 ноября 2026): с днями «День N» блока сборки на «Программе» нет — кнопка «Собрать новую программу»
+   открывает этот же мастер (kind 'new') прямо на вкладке «Программа», без вкладок. Шаги те же, без переноса записей из файла и без памятки
+   (она и так встречает каждую тренировку); «Отмена» до «Принять» оставляет действующую программу, после — «К программе». Ушёл на другую
+   вкладку до «Принять» — мастер ждёт на том же шаге, после — закончен. Сборка, правки и «Принять» — те же, что были в блоке: черновик общий (draft.ts), а таблица мышц
+   с «−» и «+» — свёрнутой строкой «Подходы по мышцам» на шаге «Программа» (musbox.ts; решение владельца, 28 ноября 2026) */
 import { $, C, h, toInt, toNum } from './dom.ts';
 import { PT, S } from './state.ts';
 import { dbErr, toast } from './toast.ts';
@@ -23,8 +28,10 @@ import { bodyMap } from './bodymap.ts';   // фигура с нагрузкой 
 import { careBox, pairsRow } from './care.ts';
 import { memoCards } from './memo.ts';
 import { carousel } from './carousel.ts';   // дни программы каруселью   // что беречь и дни подряд (решение владельца, 25 ноября 2026)
-import { progDraft, progLifts } from './draft.ts';
-import { goalPicker, modeBudget } from './goal.ts';
+import { progDraft, progFocus, progLifts } from './draft.ts';
+import { musBox } from './musbox.ts';   // таблица мышц с «−» и «+» — свёрнутой строкой на шаге «Программа»
+import { goalOf, goalPicker, modeBudget, othersOf } from './goal.ts';
+import { rulesBox } from './program.ts';
 import { TIMES, timeOf } from './fit.ts';
 import { weekDays } from './platform.ts';
 import { importBox, pickBackup } from './importer.ts';
@@ -43,9 +50,11 @@ interface Paste { text: string; days: PasteDay[] | null; pick: Record<string, st
     steps — снаряды, шаг которых атлет ввёл в мастере, took — программа принята в мастере;
     reps — сколько раз подряд атлет делает упражнение с весом тела, away — такие упражнения, которые пока заменены: id → чем и дни программы до замены,
     day — какой день программы открыт в карусели шага «Программа» (с 0) */
-interface Onb { gen: number; step: Step; path: 'build' | 'own' | 'paste'; focus: string; steps: Record<string, boolean>; took: boolean; done: boolean; paste: Paste; reps: Record<string, number>; away: Record<string, { to: string; slots: ProgSlots }>; day: number }
+interface Onb { gen: number; kind: 'first' | 'new'; step: Step; path: 'build' | 'own' | 'paste'; focus: string; steps: Record<string, boolean>; took: boolean; done: boolean; paste: Paste; reps: Record<string, number>; away: Record<string, { to: string; slots: ProgSlots }>; day: number }
 const NEW = '+new';
 let O: Onb | null = null;
+/* сколько дней было до того, как в мастере новой программы выбрали другое число: помнится до «Принять», и после «Отмены» тоже — число дней сохранено сразу */
+let was: { gen: number; n: number } | null = null;
 /* профили, где мастер пропустили: до перезагрузки страницы там прежний пустой «Обзор» */
 const skipped = new Set<string>();
 
@@ -55,6 +64,7 @@ const fresh = () => !skipped.has(S.profile) && !S.cfg.program && !(S.draft && S.
 /** Мастер на экране: идёт или должен начаться. Пока программа в нём не принята, он заканчивается сам, как только профиль перестал быть пустым (загружена копия) */
 export function onbOn(): boolean {
   if (S.conn !== 'ready' || !S.canWrite || weekDays() || !appRules()) return false;
+  if (O && O.gen === S.gen && O.kind === 'new') return !O.done ? false : fresh();   // мастер новой программы идёт на «Программе»
   if (O && O.gen === S.gen) {
     if (!O.done && !O.took && !fresh()) O.done = true;
     return !O.done;
@@ -63,6 +73,21 @@ export function onbOn(): boolean {
 }
 /** Пустой «Обзор» после «Пропустить»: вернуться к мастеру */
 export function onbAgain() { skipped.delete(S.profile); O = null; render(); }
+
+const blank = (kind: Onb['kind'], focus: string): Onb => ({ gen: S.gen, kind, step: 'start', path: 'build', focus, steps: {}, took: false, done: false, paste: { text: '', days: null, pick: {}, gear: {}, fill: false }, reps: {}, away: {}, day: 0 });
+/** Мастер новой программы на «Программе»: идёт, пока его не закончили и не отменили */
+export function newOn(): boolean {
+  return !!O && O.gen === S.gen && O.kind === 'new' && !O.done && S.conn === 'ready' && S.canWrite && !weekDays() && appRules();
+}
+/** «Собрать новую программу» на «Программе»: мастер начинается с режима, по которому собрана действующая программа */
+export function onbNew() {
+  const cfg = D.cfg, cur = C.currentSlots(D.W, cfg);
+  shown = ''; S.ui.prog = null;
+  O = blank('new', progFocus(cfg.program, progLifts(cfg), C.SLOTS.every(sl => !cur[sl.id].length)));
+  render();
+}
+/* ушли с «Программы» после «Принять» — мастер новой программы закончен; до «Принять» он ждёт: вернувшись, атлет продолжает с того же шага */
+addEventListener('hashchange', () => { if (O && O.kind === 'new' && O.took && location.hash !== '#program') { O.done = true; S.ui.prog = null; } });
 
 /** Что возьмёт дневник для первой тренировки упражнения без журнала: строка под полями известных весов (здесь и в «Настройке»).
     Читает свежую настройку, поэтому строка следует за вводом без перерисовки страницы */
@@ -74,9 +99,11 @@ export function startLine(id: string) {
   return 'старт: ' + w + ' на ' + C.rangeOf(D.W, c, id).join('–') + ' повторов' + (by ? ' — ' + by : s.src === 'work' ? '' : ' (от максимума ' + C.fmt(C.knownMax(c, id), 1) + ')');
 }
 
-const seq = (o: Onb): Step[] => o.path === 'own' ? ['start', 'care', 'prog', 'weights', 'done', 'memo'] : o.path === 'paste' ? ['start', 'paste', 'care', 'prog', 'weights', 'done', 'memo'] : ['start', 'goal', 'care', 'prog', 'weights', 'done', 'memo'];
+const seq = (o: Onb): Step[] => (o.path === 'own' ? ['start', 'care', 'prog', 'weights', 'done', 'memo'] as Step[] : o.path === 'paste' ? ['start', 'paste', 'care', 'prog', 'weights', 'done', 'memo'] as Step[] : ['start', 'goal', 'care', 'prog', 'weights', 'done', 'memo'] as Step[]).filter(x => x !== 'memo' || o.kind === 'first');   // у новой программы памятки нет: она встречает каждую тренировку
 const to = (step: Step) => { O!.step = step; O!.day = 0; render(); };   // на шаг «Программа» мастер приходит к первому дню
 function skip() { skipped.add(S.profile); O!.done = true; render(); }
+/* новая программа: «Отмена» — действующая программа остаётся */
+function cancel() { O!.done = true; S.ui.prog = null; render(); }
 /* мастер закончен: дальше — обычные вкладки */
 function finish(view: string) { O!.done = true; S.ui.plan = null; go(view); }
 /* шаг мастера: номер, заголовок, пояснение в одну-две строки, содержимое и кнопки внизу */
@@ -84,10 +111,12 @@ let shown = '';   // шаг, который на экране: появлени�
 function frame(title: string, text: string | null, body: Kid[], back: (() => void) | null, next: Kid) {
   const o = O!, all = seq(o), n = all.indexOf(o.step) + 1, enter = shown !== o.step;
   shown = o.step;
-  const end = o.step === 'start' || o.step === 'goal' || o.step === 'care' || o.step === 'paste' || o.step === 'prog' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-skip', onclick: skip }, 'Пропустить')
+  const before = o.step === 'start' || o.step === 'goal' || o.step === 'care' || o.step === 'paste' || o.step === 'prog';
+  const end = o.kind === 'new' ? before && !o.took ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-cancel', onclick: cancel }, 'Отмена') : h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-end', onclick: () => finish('program') }, 'К программе')
+    : before ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-skip', onclick: skip }, 'Пропустить')
     : o.step === 'done' || o.step === 'memo' ? h('button', { type: 'button', class: 'btn ghost sm', id: 'onb-end', onclick: () => finish('overview') }, 'В дневник') : null;
   /* полоса шагов и «Готово на N%» сверху, «Назад» и «Дальше» — внизу за чертой (новый дизайн, 26 ноября 2026) */
-  return h('section', { class: 'card', id: 'onb', 'data-enter': enter ? '' : null, style: 'max-width:760px;margin:0 auto;width:100%' },
+  return h('section', { class: 'card', id: 'onb', 'data-step': o.step, 'data-path': o.path, 'data-enter': enter ? '' : null, style: 'max-width:760px;margin:0 auto;width:100%' },
     h('div', { class: 'onb-steps', 'aria-hidden': 'true' }, all.map((_, i) => h('i', { class: i < n - 1 ? 'on' : i === n - 1 ? 'on now' : null }))),
     h('div', { class: 'onb-top' }, h('span', null, h('b', null, 'Готово на ' + Math.round(n / all.length * 100) + '%')), end),
     h('div', { class: 'sec-h' }, h('div', null, h('div', { class: 'eyebrow', id: 'onb-n' }, 'Шаг ' + n + ' из ' + all.length), h('h2', null, title))),
@@ -99,7 +128,7 @@ function frame(title: string, text: string | null, body: Kid[], back: (() => voi
 /* черновик программы: тот же, что на «Программе»; режим берётся из мастера, пока на «Программе» его не выбрали */
 function draft() {
   const cfg = D.cfg, o = O!;
-  if (!S.ui.prog) S.ui.prog = { focus: o.focus, others: 'plain', budget: modeBudget(o.focus, cfg.caps.week), draft: null, key: '' };
+  if (!S.ui.prog) S.ui.prog = { focus: o.focus, others: othersOf(cfg.program), budget: modeBudget(o.focus, cfg.caps.week), draft: null, key: '', daysWas: o.kind === 'new' && was && was.gen === S.gen ? was.n : undefined };   // новая программа: «Остальные базовые» — как у действующей
   const cur = C.currentSlots(D.W, cfg), empty = C.SLOTS.every(sl => !cur[sl.id].length);
   const d = progDraft(cfg, cur, empty, progLifts(cfg), '');
   o.focus = d.st.focus;
@@ -134,19 +163,22 @@ const total = (load: Record<string, number>) => C.SLOTS.reduce((a, sl) => a + lo
 const daysRow = () => h('div', { class: 'pf', id: 'pd' }, h('span', null, 'Дней в неделю'), h('div', { class: 'seg', role: 'group', 'aria-label': 'Тренировочных дней в неделю' },
   DAY_COUNTS.map(n => h('button', { type: 'button', id: 'pd-' + n, 'aria-pressed': String(n === C.SLOTS.length), onclick: async () => {
     if (n === C.SLOTS.length) return;
+    if (O!.kind === 'new' && !(was && was.gen === S.gen)) was = { gen: S.gen, n: C.SLOTS.length };   // новая программа: «Вернуть прежнюю» вернёт и число дней, как на «Программе»
+    if (S.ui.prog && O!.kind === 'new') S.ui.prog.daysWas = was!.n;
     await saveCfg(raw => { if (n === 3) delete raw.days; else raw.days = n; });
     useDays(n, false); if (S.ui.prog) S.ui.prog.draft = null; if (O!.path === 'paste') O!.paste.fill = true; S.ui.plan = null; render(true);
   } }, String(n)))));
 
 function vStart(): View {
   const opt = (id: string, title: string, text: string, act: () => void) => h('button', { type: 'button', class: 'ex-card', id, onclick: act }, h('span', { class: 'nm' }, title), h('span', { class: 'sub' }, text));
-  return [frame('С чего начнём?', 'Записи хранятся только на этом устройстве.', [
+  const now = O!.kind === 'new';                                     // новая программа: записи уже есть, переноса из файла здесь нет — он в «Настройке» → «Данные»
+  return [frame(now ? 'Новая программа' : 'С чего начнём?', now ? 'Текущая действует, пока не примешь новую.' : 'Записи хранятся только на этом устройстве.', [
     h('div', { class: 'stack', style: 'gap:8px' },
       opt('onb-build', 'Собрать программу', 'Под твою цель и время.', () => { O!.path = 'build'; if (O!.focus === 'manual') O!.focus = 'even'; S.ui.prog = null; to('goal'); }),
-      opt('onb-own', 'У меня своя программа', 'Свои упражнения по дням.', () => { O!.path = 'own'; O!.focus = 'manual'; S.ui.prog = null; to('care'); }),
+      opt('onb-own', now ? 'Своя программа' : 'У меня своя программа', now ? 'Свои упражнения по дням, начиная с текущих.' : 'Свои упражнения по дням.', () => { O!.path = 'own'; O!.focus = 'manual'; S.ui.prog = null; to('care'); }),
       opt('onb-paste', 'Вставить программу текстом', 'Из заметок — дневник разложит сам.', () => { O!.path = 'paste'; O!.focus = 'manual'; to('paste'); }),
-      opt('onb-import', 'Перенести записи из файла', 'Резервная копия с другого устройства.', pickBackup)),
-    importBox()], null, h('span'))];
+      now ? null : opt('onb-import', 'Перенести записи из файла', 'Резервная копия с другого устройства.', pickBackup)),
+    now ? null : importBox()], null, h('span'))];
 }
 
 const EXAMPLE = 'День 1\nЖим лежа 4×6–8 80 кг\nТяга верхнего блока 3×10\nМахи гантелями в стороны 3×12\n\nДень 2\nПриседания со штангой 4×6–8\nРумынская тяга 3×8\nСгибания ног лежа 3×12';
@@ -194,14 +226,28 @@ function vPaste(): View {
     () => to('start'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', disabled: !chosen, onclick: next }, 'Дальше'))];
 }
 
+/* за выбранное время не уложиться даже с самым малым лимитом недели — та же подсказка, что была под выбором времени на «Программе» */
+const fitNote = (d: ReturnType<typeof draft>) => d.fit && !d.fit.fits ? h('p', { class: 'sub', id: 'pt-note', role: 'status', style: 'margin:-4px 0 12px' }, 'За ' + C.fmtDur(d.time) + ' не уложиться: даже ' + d.fit.budget + ' подходов в неделю — это тренировка ≈ ' + C.fmtDur(d.fit.min) + '. Выбери больше времени или больше дней в неделю.') : null;
+
 function vGoal(): View {
-  const cfg = D.cfg, d = draft(), st = d.st, time = timeOf(S.cfgRaw);
+  const cfg = D.cfg, d = draft(), st = d.st, time = timeOf(S.cfgRaw), now = O!.kind === 'new';   // новая программа: и то, что было в блоке сборки на «Программе»
   return [frame('Цель и время', null, [
     h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' },
       goalPicker(st, cfg, progLifts(cfg), d.pick, true),
+      /* «Гибрид»: остальные базовые — как подсобка или растут как раньше; базовых больше, чем дней, — каким жертвовать (решения владельца, 23 и 25 ноября 2026).
+         Раньше это было в блоке сборки на «Программе» (просьба владельца, 28 ноября 2026) */
+      now && goalOf(st.focus) === 'mix' ? h('div', { class: 'pf' }, h('span', null, 'Остальные базовые'), h('div', { class: 'seg multi', role: 'group', 'aria-label': 'Остальные базовые упражнения' },
+        h('button', { type: 'button', id: 'po-plain', 'aria-pressed': String(st.others === 'plain'), onclick: () => d.pick(st.focus, 'plain') }, 'Как подсобка'),
+        h('button', { type: 'button', id: 'po-grow', 'aria-pressed': String(st.others === 'grow'), onclick: () => d.pick(st.focus, 'grow') }, 'Растут как раньше'))) : null,
+      (now ? d.pr.dropped : []).map((x, i) => h('label', { class: 'f' }, h('span', null, 'Без базового'), h('select', { id: 'pd-drop' + (i ? '-' + i : ''), onchange: e => {
+        const v = e.target.value, next = d.pr.dropped.slice(), j = next.indexOf(v);
+        if (j >= 0) next[j] = next[i];
+        next[i] = v; st.drop = next; st.draft = null; render(true);
+      } }, d.pr.dropFrom.map(id => h('option', { value: id, selected: id === x, text: C.exName(cfg, id) }))))),
       daysRow(),
       h('label', { class: 'f' }, h('span', null, 'Время на тренировку'), h('select', { id: 'pt', onchange: async e => { const v = +e.target.value; await saveCfg(raw => { if (v) raw.time = v; else delete raw.time; }); if (!v) { st.budget = modeBudget(st.focus, cfg.caps.week); delete st.keep; } st.draft = null; render(true); } },
-        [0].concat(TIMES.includes(time) || !time ? TIMES : TIMES.concat(time).sort((a, b) => a - b)).map(v => h('option', { value: v, selected: v === time, text: v ? 'до ' + C.fmtDur(v) : 'не ограничено' })))))],
+        [0].concat(TIMES.includes(time) || !time ? TIMES : TIMES.concat(time).sort((a, b) => a - b)).map(v => h('option', { value: v, selected: v === time, text: v ? 'до ' + C.fmtDur(v) : 'не ограничено' }))))),
+    now ? fitNote(d) : null],
     () => to('start'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('care') }, 'Дальше'))];
 }
 
@@ -219,11 +265,11 @@ function dayCarousel(days: HTMLElement[]): Kid[] {
 }
 
 function vProg(): View {
-  const cfg = D.cfg, d = draft(), pr = d.pr, P = cfg.program, own = O!.path !== 'build';
+  const cfg = D.cfg, d = draft(), pr = d.pr, P = cfg.program, own = O!.path !== 'build', now = O!.kind === 'new';
   const accept = async () => {
     O!.step = 'weights'; O!.took = true;                                // до перерисовки внутри acceptProgram: мастер не должен закончиться, увидев программу
     await acceptProgram(pr, d.manual ? pr.name : null);
-    if (!S.cfg.program) { O!.step = 'prog'; O!.took = false; }
+    if (!S.cfg.program) { O!.step = 'prog'; O!.took = false; } else was = null;
     render();
   };
   const next = d.changed ? h('button', { type: 'button', class: 'btn primary', id: 'onb-accept', onclick: accept }, 'Принять программу')
@@ -232,7 +278,12 @@ function vProg(): View {
   return [frame(own ? 'Твоя программа' : 'Программа', null, [   // на шаге только дни программы (просьба владельца, 25 ноября 2026)
     own ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, daysRow())
       : C.SLOTS.length > 2 ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, pairsRow()) : null,   // дни подряд — у дней программы, которую собрал дневник (просьба владельца, 25 ноября 2026)
-    dayCarousel(C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit)))],
+    now && !own ? fitNote(d) : null,
+    dayCarousel(C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit))),
+    /* новая программа (просьба владельца, 28 ноября 2026): что было в блоке под днями черновика — нарушения лимитов и свёрнутая строка «Подходы по мышцам»
+       с таблицей мышц, «−» и «+» (musbox.ts). В первом входе шаг прежний: только дни (просьба владельца, 25 ноября 2026) */
+    now ? rulesBox(C.ruleBreaks(pr.cfg, pr.after)) : null,
+    now ? h('div', { style: 'margin-top:12px' }, musBox(d, C.SLOTS.every(sl => !C.currentSlots(D.W, cfg)[sl.id].length))) : null],
     () => to('care'), next)];
 }
 
@@ -244,6 +295,7 @@ function progIds() {
 function vWeights(): View {
   const cfg = D.cfg, o = O!, ids = progIds(), done = D.W.filter(w => !w.open);
   const gears = [...new Set(ids.map(id => C.gearOf(cfg, id)))];
+  if (o.kind === 'new') for (const g of gears) o.steps[g] = true;      // новая программа: шаг веса снарядов уже знаком — он стоит в поле, его можно поправить
   const usual = (g: string) => (C.GEAR.find(x => x.id === g) || cfg.gear[g]).step;
   const refresh = () => { for (const id of ids) { const out = $('kw-out-' + id); if (out) out.textContent = startLine(id); } };
   const setStep = async (g: string, val: string) => {
@@ -350,7 +402,7 @@ function vDone(): View {
       'У тебя пока ' + O!.reps[id] + ' повторов, нужно от ' + C.rangeOf(D.W, cfg, id)[0] + '. Вернёшь кнопкой «Заменить» на «Программе».')),
     h('div', { id: 'onb-body-map', style: 'margin-top:14px' }, h('div', { class: 'eyebrow', style: 'margin-bottom:4px' }, 'Нагрузка мышц за неделю: ' + loadText(total(t.load))),
       bodyMap(t.pv, { z: cfg.zones, ignore: cfg.ignore, sel: null, pick: null }))],
-    () => to('weights'), h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('memo') }, 'Дальше'))];
+    () => to('weights'), O!.kind === 'new' ? h('button', { type: 'button', class: 'btn primary', id: 'onb-go', onclick: () => finish('workout') }, 'Открыть тренировку') : h('button', { type: 'button', class: 'btn primary', id: 'onb-next', onclick: () => to('memo') }, 'Дальше'))];
 }
 /* последний шаг — памятка: на чём держать внимание в подходе (просьба владельца, 26 ноября 2026); та же встречает каждую тренировку */
 function vMemo(): View {
@@ -358,9 +410,9 @@ function vMemo(): View {
     h('button', { type: 'button', class: 'btn primary', id: 'onb-go', onclick: () => finish('workout') }, 'Открыть первую тренировку'))];
 }
 
-/** Мастер вместо пустого «Обзора» */
-export function vOnboard(): View {
-  if (!O || O.gen !== S.gen) { shown = ''; O = { gen: S.gen, step: 'start', path: 'build', focus: 'even', steps: {}, took: false, done: false, paste: { text: '', days: null, pick: {}, gear: {}, fill: false }, reps: {}, away: {}, day: 0 }; }
+/** Мастер вместо пустого «Обзора» (kind 'first') или вместо «Программы» (kind 'new', onbNew) */
+export function vOnboard(kind: Onb['kind'] = 'first'): View {
+  if (!O || O.gen !== S.gen || O.kind !== kind) { shown = ''; O = blank(kind, 'even'); }
   const v = O.step === 'goal' ? vGoal() : O.step === 'care' ? vCare() : O.step === 'paste' ? vPaste() : O.step === 'prog' ? vProg() : O.step === 'weights' ? vWeights() : O.step === 'done' ? vDone() : O.step === 'memo' ? vMemo() : vStart();
   return v;
 }
