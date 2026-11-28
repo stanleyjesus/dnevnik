@@ -75,6 +75,7 @@ export interface UiState {
   q: string; coachBusy: boolean; coachText: string | null; coachErr: string | null;      // остались от запроса разбора: приложение их не использует
   prog: ProgUi | null; bodyBy: 'fact' | 'plan' | null; bodySel: string | null;
   newEx?: NewExUi | null; setupMore?: boolean;
+  backupAsk?: boolean;                                                                    // (в эталоне нет) напомнить о резервной копии над «Обзором» (remind.ts)
 }
 /** Связь с хранилищем: ещё не открыто, записи грузятся, готово, хранилища нет, сбой */
 export type Conn = 'connecting' | 'loading' | 'ready' | 'none' | 'error';

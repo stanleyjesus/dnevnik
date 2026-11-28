@@ -23,17 +23,21 @@ export const profName = () => (S.profiles.find(p => p.id === S.profile) || { n: 
 export function derive() {
   const today = C.todayStr();
   C.setTarget(S.cfg.rir);
-  const cfg = S.cfg.start ? S.cfg : Object.assign({}, S.cfg, { start: C.mondayOf(S.workouts.length ? S.workouts[0].date : today) });
-  const W = S.workouts;
+  /* (в эталоне нет) тренировки прежнего дневника, загруженные поверх своей программы (old; data/backup.ts, mergeBackup), — только история:
+     журнал, прогресс, недели по факту. План, программа, поправки и темп считаются по W, где их нет (просьба владельца, 28 ноября 2026).
+     Недели считаются с первой тренировки, и прежнего дневника тоже: иначе его недели в журнале были бы нулевой и отрицательными */
+  const WA = S.workouts, W = WA.some(w => w.old) ? WA.filter(w => !w.old) : WA, olds = new Set(WA.filter(w => w.old).map(w => w.id));
+  const cfg = S.cfg.start && !(olds.size && C.mondayOf(WA[0].date) < S.cfg.start) ? S.cfg : Object.assign({}, S.cfg, { start: C.mondayOf(S.workouts.length ? S.workouts[0].date : today) });
   const st = { workouts: W, cfg, body: S.body, today };
-  const wi = C.weeksInfo(W, cfg, today), vol = C.volume(W, cfg), av = C.avgVolume(vol, wi.ref);
+  const wi = C.weeksInfo(WA, cfg, today), vol = C.volume(WA, cfg), av = C.avgVolume(vol, wi.ref);
   const pace = appRules() ? paceOf(W, cfg) : { k: 1, n: 0 };           // (в эталоне нет) темп атлета по времени, названному в конце тренировок (core/pace.ts)
   setPace(pace.k);
-  const stats = C.allStats(W, cfg);
+  const prog = C.program(W, cfg) as ProgSet, stats = C.allStats(WA, cfg);
+  if (olds.size) for (const s of stats) s.active = prog.has(s.id);     // «в программе» — по программе без тренировок прежнего дневника
   const slot = C.nextSlot(W, today);
   return {
-    today, cfg, W, st, wi, vol, avg: av.avg, avgS: av.avgS, pat: av.pat, stats, statBy: Object.fromEntries(stats.map(s => [s.id, s])),
-    ins: C.insights(st), idx: C.strengthIndex(W, cfg), prog: C.program(W, cfg) as ProgSet, slot, date: C.nextDate(slot, today, W),
+    today, cfg, W, WA, olds, st, wi, vol, avg: av.avg, avgS: av.avgS, pat: av.pat, stats, statBy: Object.fromEntries(stats.map(s => [s.id, s])),
+    ins: C.insights(st), idx: C.strengthIndex(WA, cfg), prog, slot, date: C.nextDate(slot, today, W),
     openW: W.find(w => w.open) || null, pace
   };
 }
