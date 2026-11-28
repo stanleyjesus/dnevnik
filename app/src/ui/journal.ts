@@ -15,11 +15,11 @@ import type { Workout } from '../core/index.ts';
 
 /* ---------- journal ---------- */
 export function vJournal() {
-  if (!D.W.length) return S.conn === 'ready' ? [h('div', { class: 'card empty' }, 'Записей пока нет.')] : [];
+  if (!D.WA.length) return S.conn === 'ready' ? [h('div', { class: 'card empty' }, 'Записей пока нет.')] : [];   // (в эталоне нет) в журнале и тренировки прежнего дневника (state.ts, derive)
   const out = [], prs: Set<string> = new Set();
   for (const s of D.stats) { let mx = -1; s.ss.forEach((x, i) => { if (i && x.metric > mx * 1.0005) prs.add(x.wid + '|' + s.id); mx = Math.max(mx, x.metric); }); }
   const byWeek: Record<number, Workout[]> = {};
-  for (const w of D.W) { const k = C.weekNo(w.date, D.cfg.start!); (byWeek[k] || (byWeek[k] = [])).push(w); }
+  for (const w of D.WA) { const k = C.weekNo(w.date, D.cfg.start!); (byWeek[k] || (byWeek[k] = [])).push(w); }
   const nos = Array.from(new Set(D.wi.weeks.map(w => w.no).concat(Object.keys(byWeek).map(Number)))).sort((a, b) => b - a);
   for (const no of nos) {
     const ws = byWeek[no] || [], [a, b] = C.weekRange(no, D.cfg.start!), v = D.vol[no];
@@ -35,8 +35,8 @@ export function vJournal() {
 }
 export function workoutCard(w: Workout, prs: Set<string>) {
   const del = S.ui.confirm === 'del:' + w.id;
-  const card = h('div', { class: 'wo' }, h('div', { class: 'wo-h' },
-    h('div', { class: 'row' }, h('b', { text: dayTitle(w.date) }), w.slot && C.SLOT[w.slot] && (!weekDays() || C.SLOT[w.slot].dow !== C.dow(w.date)) ? h('span', { class: 'tag' }, (weekDays() ? 'день: ' : '') + C.SLOT[w.slot].n.toLowerCase()) : null, w.open ? h('span', { class: 'tag accent' }, 'идёт') : null),
+  const card = h('div', { class: w.old ? 'wo old' : 'wo' }, h('div', { class: 'wo-h' },   // (в эталоне нет) тренировка прежнего дневника — другим фоном и с пометкой (просьба владельца, 28 ноября 2026)
+    h('div', { class: 'row' }, h('b', { text: dayTitle(w.date) }), !w.old && w.slot && C.SLOT[w.slot] && (!weekDays() || C.SLOT[w.slot].dow !== C.dow(w.date)) ? h('span', { class: 'tag' }, (weekDays() ? 'день: ' : '') + C.SLOT[w.slot].n.toLowerCase()) : null, w.open ? h('span', { class: 'tag accent' }, 'идёт') : null, w.old ? h('span', { class: 'tag old' }, 'прежний дневник') : null),
     S.canWrite ? (del ? h('div', { class: 'row' }, h('span', { class: 'sub' }, 'Удалить запись?'), h('button', { class: 'btn sm danger', onclick: () => deleteWorkout(w.id) }, 'Удалить'), h('button', { class: 'btn sm', onclick: () => { S.ui.confirm = null; render(true); } }, 'Нет'))
       : h('div', { class: 'row' }, h('button', { class: 'btn ghost sm', onclick: () => editWorkout(w) }, w.open ? 'Продолжить' : 'Изменить'), h('button', { class: 'btn ghost sm danger', onclick: () => { S.ui.confirm = 'del:' + w.id; render(true); } }, 'Удалить'))) : null));
   for (const it of w.items) {
