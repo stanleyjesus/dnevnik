@@ -1,5 +1,6 @@
 /* Запись подходов текстом; тренировка <-> документ хранилища.
-   Перенесено из reference/src/core.js: тела функций без изменений, кроме времени тренировки (min и began, pace.ts; просьбы владельца 25 и 26 ноября 2026). */
+   Перенесено из reference/src/core.js: тела функций без изменений, кроме времени тренировки (min и began, pace.ts; просьбы владельца 25 и 26 ноября 2026)
+   и пометки old у тренировок прежнего дневника (просьба владельца, 28 ноября 2026; data/backup.ts, mergeBackup). */
 import { fmt } from './format.ts';
 import type { ItemDoc, SetRec, Workout, WorkoutDoc } from './types.ts';
 
@@ -37,6 +38,7 @@ export function fromDoc(id: string, d?: Partial<WorkoutDoc> | null): Workout {
   };
   if (+d.min! > 0) w.min = Math.round(+d.min!);                   // (в эталоне нет) сколько минут шла тренировка (pace.ts)
   if (w.open && +d.began! > 0) w.began = +d.began!;                // (в эталоне нет) когда нажато «Начать тренировку»: только у идущей
+  if (d.old === true) w.old = true;                                 // (в эталоне нет) из прежнего дневника: в истории, но не в плане (data/backup.ts, mergeBackup)
   return w;
 }
 export function toDoc(w: Workout): WorkoutDoc {
@@ -52,6 +54,7 @@ export function toDoc(w: Workout): WorkoutDoc {
   if (w.open) d.open = true;
   if (w.min) d.min = w.min;                                         // (в эталоне нет) время по факту
   if (w.open && w.began) d.began = w.began;                         // (в эталоне нет) старт идущей тренировки
+  if (w.old) d.old = true;                                          // (в эталоне нет) тренировка из прежнего дневника
   return d;
 }
 export const clone = <T,>(o: T): T => JSON.parse(JSON.stringify(o));
