@@ -864,8 +864,6 @@
 +  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
 поля: целиком
   cw-bench=92.5
-  cs-bench=4
-  cn-bench=3
   cr-bench-0=
   cr-bench-1=
   cr-bench-2=
@@ -874,8 +872,6 @@
   cq-bench-2=
   ex-note-0=
   cw-squat_light=60
-  cs-squat_light=8
-  cn-squat_light=3
   cr-squat_light-0=
   cr-squat_light-1=
   cr-squat_light-2=
@@ -975,27 +971,18 @@
        div.ex-meta
         span.tag Грудь
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 5 мин
-        span
-         | "3 × 4 одним весом · цель — запас 2 в последнем подходе, отметь его · расчётный максимум "
-         b 110.4 кг
+        span 3 × 4 одним весом · запас 2 в последнем подходе
        div.cyc
         label.f
          span Вес, кг
          input#cw-bench.num(type="text" inputmode="decimal")
-        label.f
-         span Схема
-         select#cs-bench
-          option(value="4" selected="") 4 повт. · 83%
-        label.f
-         span Подходов
-         input#cn-bench.num.sm(type="text" inputmode="numeric")
        div.cyc-sets
         span.sub Повторы по подходам
         input#cr-bench-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="4")
         input#cr-bench-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="4")
         input#cr-bench-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="4")
         button.btn.sm Все по 4
-        span.sub Запас: сколько повторов оставалось до отказа. Отметь хотя бы в последнем подходе — он решает вес на следующей неделе: 2 и больше — плюс шаг, 1 — тот же, 0 — минус 5%
+        span.sub Запас по подходам
         input#cq-bench-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
         input#cq-bench-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
         input#cq-bench-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
@@ -1016,28 +1003,19 @@
        div.ex-meta
         span.tag Ягодицы, Квадрицепс
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 3 мин
-        span
-         | "75% от расчётного максимума в упражнении «Приседания со штангой» "
-         b 80 кг
-        span лёгкий день: вес меньше, повторов больше, чем в тяжёлом
+        span 3 × 8 одним весом · лёгкий день, запас около 2
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.cyc
         label.f
          span Вес, кг
          input#cw-squat_light.num(type="text" inputmode="decimal")
-        label.f
-         span Схема
-         select#cs-squat_light
-          option(value="8" selected="") 8 повт. · 75%
-        label.f
-         span Подходов
-         input#cn-squat_light.num.sm(type="text" inputmode="numeric")
        div.cyc-sets
         span.sub Повторы по подходам
         input#cr-squat_light-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8")
         input#cr-squat_light-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8")
         input#cr-squat_light-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8")
         button.btn.sm Все по 8
-        span.sub Запас по подходам: сколько повторов оставалось до отказа. По расчёту здесь около 2. Отметь в последнем подходе: 4 и больше два раза подряд — вес на шаг выше, 0 — на шаг ниже
+        span.sub Запас по подходам
         input#cq-squat_light-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
         input#cq-squat_light-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
         input#cq-squat_light-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
@@ -1083,6 +1061,7 @@
          input#q-2-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-2.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1103,7 +1082,7 @@
         span.tag Передние дельты
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -1136,6 +1115,7 @@
          input#q-3-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-3.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1181,6 +1161,7 @@
          input#q-4-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-4.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1241,6 +1222,7 @@
          input#q-5-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-5.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1293,6 +1275,7 @@
          input#q-6-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-6.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1314,7 +1297,7 @@
         span.tag Задние дельты
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -1355,6 +1338,7 @@
          input#q-7-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-7.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -1432,72 +1416,72 @@
 
 === 9. неделя 1, пн: подходы
 поля: правки к шагу 8
-@@ 4 -6 +6
+@@ 2 -6 +6
 + cr-bench-0=4
 + cr-bench-1=4
 + cr-bench-2=4
 + cq-bench-0=2
 + cq-bench-1=2
 + cq-bench-2=2
-@@ 14 -6 +6
+@@ 10 -6 +6
 + cr-squat_light-0=8
 + cr-squat_light-1=8
 + cr-squat_light-2=8
 + cq-squat_light-0=2
 + cq-squat_light-1=2
 + cq-squat_light-2=2
-@@ 22 -1 +1
+@@ 18 -1 +1
 - r-2-0=
 + r-2-0=10
-@@ 25 -1 +1
+@@ 21 -1 +1
 - r-2-1=
 + r-2-1=10
-@@ 29 -1 +1
+@@ 25 -1 +1
 - r-3-0=
 + r-3-0=10
-@@ 32 -1 +1
+@@ 28 -1 +1
 - r-3-1=
 + r-3-1=10
-@@ 35 -1 +1
+@@ 31 -1 +1
 - r-3-2=
 + r-3-2=10
-@@ 39 -1 +1
+@@ 35 -1 +1
 - r-4-0=
 + r-4-0=10
-@@ 42 -1 +1
+@@ 38 -1 +1
 - r-4-1=
 + r-4-1=10
-@@ 46 -1 +1
+@@ 42 -1 +1
 - r-5-0=
 + r-5-0=10
-@@ 49 -1 +1
+@@ 45 -1 +1
 - r-5-1=
 + r-5-1=10
-@@ 52 -1 +1
+@@ 48 -1 +1
 - r-5-2=
 + r-5-2=10
-@@ 55 -1 +1
+@@ 51 -1 +1
 - r-5-3=
 + r-5-3=10
-@@ 59 -1 +1
+@@ 55 -1 +1
 - r-6-0=
 + r-6-0=10
-@@ 62 -1 +1
+@@ 58 -1 +1
 - r-6-1=
 + r-6-1=10
-@@ 65 -1 +1
+@@ 61 -1 +1
 - r-6-2=
 + r-6-2=10
-@@ 69 -1 +1
+@@ 65 -1 +1
 - r-7-0=
 + r-7-0=10
-@@ 72 -1 +1
+@@ 68 -1 +1
 - r-7-1=
 + r-7-1=10
-@@ 75 -1 +1
+@@ 71 -1 +1
 - r-7-2=
 + r-7-2=10
-@@ 78 -1 +1
+@@ 74 -1 +1
 - r-7-3=
 + r-7-3=10
 курсор: ""
@@ -1518,39 +1502,39 @@
 -    div.pclip
 +   div.pslot(data-off="-1")
 +    div.pclip(inert="")
-@@ 51 -1 +1
+@@ 42 -1 +1
 -       button#wk-next-0.btn(type="button") Следующее упражнение
 +       button#wk-next-0.btn.primary(type="button") Следующее упражнение
-@@ 54 -2 +2
+@@ 45 -2 +2
 -   div.pslot(data-off="1")
 -    div.pclip(inert="")
 +   div.pslot(data-off="0")
 +    div.pclip
-@@ 93 -1 +1
+@@ 75 -1 +1
 -       button#wk-next-1.btn(type="button") Следующее упражнение
 +       button#wk-next-1.btn.primary(type="button") Следующее упражнение
-@@ 96 -1 +1
+@@ 78 -1 +1
 -   div.pslot(data-off="2")
 +   div.pslot(data-off="1")
-@@ 138 -1 +1
+@@ 121 -1 +1
 -       button#wk-next-2.btn(type="button") Следующее упражнение
 +       button#wk-next-2.btn.primary(type="button") Следующее упражнение
-@@ 191 -1 +1
+@@ 175 -1 +1
 -       button#wk-next-3.btn(type="button") Следующее упражнение
 +       button#wk-next-3.btn.primary(type="button") Следующее упражнение
-@@ 236 -1 +1
+@@ 221 -1 +1
 -       button#wk-next-4.btn(type="button") Следующее упражнение
 +       button#wk-next-4.btn.primary(type="button") Следующее упражнение
-@@ 296 -1 +1
+@@ 282 -1 +1
 -       button#wk-next-5.btn(type="button") Следующее упражнение
 +       button#wk-next-5.btn.primary(type="button") Следующее упражнение
-@@ 348 -1 +1
+@@ 335 -1 +1
 -       button#wk-next-6.btn(type="button") Следующее упражнение
 +       button#wk-next-6.btn.primary(type="button") Следующее упражнение
-@@ 410 -1 +1
+@@ 398 -1 +1
 -       button#wk-next-7.btn(type="button") К завершению
 +       button#wk-next-7.btn.primary(type="button") К завершению
-@@ 419 -1 +1
+@@ 407 -1 +1
 -       span#eta по плану ≈ 1 ч 40 мин · осталось ≈ 1 ч 35 мин
 +       span#eta по плану ≈ 1 ч 40 мин · все подходы записаны
 
@@ -1646,8 +1630,6 @@
 шапка: как в шаге 8
 поля: целиком
   cw-squat=60
-  cs-squat=4
-  cn-squat=3
   cr-squat-0=
   cr-squat-1=
   cr-squat-2=
@@ -1656,8 +1638,6 @@
   cq-squat-2=
   ex-note-0=
   cw-deadlift_light=60
-  cs-deadlift_light=6
-  cn-deadlift_light=3
   cr-deadlift_light-0=
   cr-deadlift_light-1=
   cr-deadlift_light-2=
@@ -1737,58 +1717,41 @@
 @@ 23 -1 +1
 -       span.tag Грудь
 +       span.tag Ягодицы, Квадрицепс
-@@ 27 -1 +1
--        b 110.4 кг
-+        b 72.3 кг
-@@ 31 -1 +1
+@@ 26 -0 +1
++       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 29 -1 +1
 -        input#cw-bench.num(type="text" inputmode="decimal")
 +        input#cw-squat.num(type="text" inputmode="decimal")
-@@ 34 -1 +1
--        select#cs-bench
-+        select#cs-squat
-@@ 38 -1 +1
--        input#cn-bench.num.sm(type="text" inputmode="numeric")
-+        input#cn-squat.num.sm(type="text" inputmode="numeric")
-@@ 41 -3 +3
+@@ 32 -3 +3
 -       input#cr-bench-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="4")
 -       input#cr-bench-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="4")
 -       input#cr-bench-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="4")
 +       input#cr-squat-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="4")
 +       input#cr-squat-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="4")
 +       input#cr-squat-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="4")
-@@ 46 -3 +3
+@@ 37 -3 +3
 -       input#cq-bench-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
 -       input#cq-bench-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
 -       input#cq-bench-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
 +       input#cq-squat-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
 +       input#cq-squat-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
 +       input#cq-squat-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
-@@ 52 -1 +1
+@@ 43 -1 +1
 -    span.plab(aria-hidden="true") 1. Жим лежа
 +    span.plab(aria-hidden="true") 1. Приседания со штангой
-@@ 58 -1 +1
+@@ 49 -1 +1
 -       h3 Приседания со штангой — лёгкий день
 +       h3 Становая тяга — лёгкий день
-@@ 64 -1 +1
+@@ 55 -1 +1
 -       span.tag Ягодицы, Квадрицепс
 +       span.tag Бицепс бедра, Ягодицы, Разгибатели спины
-@@ 67 -2 +2
--        | "75% от расчётного максимума в упражнении «Приседания со штангой» "
--        b 80 кг
-+        | "79% от расчётного максимума в упражнении «Становая тяга» "
-+        b 75.9 кг
-@@ 73 -1 +1
+@@ 57 -1 +1
+-       span 3 × 8 одним весом · лёгкий день, запас около 2
++       span 3 × 6 одним весом · лёгкий день, запас около 2
+@@ 62 -1 +1
 -        input#cw-squat_light.num(type="text" inputmode="decimal")
 +        input#cw-deadlift_light.num(type="text" inputmode="decimal")
-@@ 76 -2 +2
--        select#cs-squat_light
--         option(value="8" selected="") 8 повт. · 75%
-+        select#cs-deadlift_light
-+         option(value="6" selected="") 6 повт. · 79%
-@@ 80 -1 +1
--        input#cn-squat_light.num.sm(type="text" inputmode="numeric")
-+        input#cn-deadlift_light.num.sm(type="text" inputmode="numeric")
-@@ 83 -4 +4
+@@ 65 -4 +4
 -       input#cr-squat_light-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8")
 -       input#cr-squat_light-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8")
 -       input#cr-squat_light-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8")
@@ -1797,45 +1760,45 @@
 +       input#cr-deadlift_light-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="6")
 +       input#cr-deadlift_light-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="6")
 +       button.btn.sm Все по 6
-@@ 88 -3 +3
+@@ 70 -3 +3
 -       input#cq-squat_light-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
 -       input#cq-squat_light-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
 -       input#cq-squat_light-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
 +       input#cq-deadlift_light-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
 +       input#cq-deadlift_light-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
 +       input#cq-deadlift_light-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
-@@ 94 -1 +1
+@@ 76 -1 +1
 -    span.plab(aria-hidden="true") 2. Приседания со штангой —…
 +    span.plab(aria-hidden="true") 2. Становая тяга — лёгкий…
-@@ 100 -1 +1
+@@ 82 -1 +1
 -       h3 Вертикальная тяга в тренажере
 +       h3 Жим гантелей под углом 45
-@@ 104 -1 +1
+@@ 86 -1 +1
 -      p#warm-2.sub.warm(title=#60d213b7c2) Разминка, кг: 40 × 5
 +      p#warm-2.sub.warm(title=#60d213b7c2) Разминка, кг: 18 × 5
-@@ 106 -1 +1
+@@ 88 -1 +1
 -       span.tag Широчайшие
 +       span.tag Грудь
-@@ 139 -1 +1
+@@ 122 -1 +1
 -    span.plab(aria-hidden="true") 3. Вертикальная тяга в тре…
 +    span.plab(aria-hidden="true") 3. Жим гантелей под углом…
-@@ 145 -1 +1
+@@ 128 -1 +1
 -       h3 Жим гантелей сидя
 +       h3 Горизонтальная тяга Т-бар
-@@ 149 -0 +1
+@@ 132 -0 +1
 +      p#warm-3.sub.warm(title=#60d213b7c2) Разминка, кг: 15 × 6 · 22.5 × 3
-@@ 150 -4 +3
+@@ 133 -4 +3
 -       span.tag Передние дельты
 -       span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
 -       span запас 1
--       span первая запись: подбери вес, с которым в запасе останется один повтор
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
 +       span.tag Верх спины
 +       span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин 30 с
 +       span запас 2: со свободным весом отказ опасен
-@@ 160 -1 +1
+@@ 143 -1 +1
 -        span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
 +        span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 2") Запас
-@@ 186 -0 +8
+@@ 169 -0 +8
 +       div.set.bare
 +        span.i 4
 +        input#w-3-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
@@ -1844,109 +1807,109 @@
 +        input#q-3-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
 +        button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 192 -1 +1
+@@ 176 -1 +1
 -    span.plab(aria-hidden="true") 4. Жим гантелей сидя
 +    span.plab(aria-hidden="true") 4. Горизонтальная тяга Т-б…
-@@ 198 -1 +1
+@@ 182 -1 +1
 -       h3 Бицепс бедра сидя в тренажере
 +       h3 Разгибания ног в тренажере
-@@ 202 -1 +0
+@@ 186 -1 +0
 -      p#warm-4.sub.warm(title=#60d213b7c2) Разминка, кг: 25 × 5
-@@ 204 -1 +1
+@@ 188 -1 +1
 -       span.tag Бицепс бедра
 +       span.tag Квадрицепс
-@@ 237 -1 +1
+@@ 222 -1 +1
 -    span.plab(aria-hidden="true") 5. Бицепс бедра сидя в тре…
 +    span.plab(aria-hidden="true") 5. Разгибания ног в тренаж…
-@@ 243 -1 +1
+@@ 228 -1 +1
 -       h3 Средние дельты в тренажере
 +       h3 Бицепс со штангой стоя
-@@ 248 -1 +1
+@@ 233 -1 +1
 -       span.tag Средние дельты
 +       span.tag Бицепс
-@@ 275 -16 +0
-@@ 297 -1 +1
+@@ 260 -16 +0
+@@ 283 -1 +1
 -    span.plab(aria-hidden="true") 6. Средние дельты в тренаж…
 +    span.plab(aria-hidden="true") 6. Бицепс со штангой стоя
-@@ 303 -1 +1
+@@ 289 -1 +1
 -       h3 Трицепс из за головы на блоке с косичкой
 +       h3 Махи гантелями в стороны
-@@ 307 -0 +1
+@@ 293 -0 +1
 +      p#warm-6.sub.warm(title=#60d213b7c2) Разминка: 70% × 5 от рабочего веса
-@@ 308 -1 +1
+@@ 294 -1 +1
 -       span.tag Трицепс
 +       span.tag Средние дельты
-@@ 311 -0 +1
-+       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 335 -8 +0
-@@ 349 -1 +1
+@@ 297 -0 +1
++       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 321 -8 +0
+@@ 336 -1 +1
 -    span.plab(aria-hidden="true") 7. Трицепс из за головы на…
 +    span.plab(aria-hidden="true") 7. Махи гантелями в стороны
-@@ 359 -1 +0
+@@ 346 -1 +0
 -      p#warm-7.sub.warm(title=#60d213b7c2) Разминка: 70% × 5 от рабочего веса
-@@ 364 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 389 -16 +0
-@@ 419 -1 +1
+@@ 351 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 376 -16 +0
+@@ 407 -1 +1
 -       span#eta по плану ≈ 1 ч 40 мин · осталось ≈ 1 ч 35 мин
 +       span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
 
 === 13. неделя 1, ср: подходы
 поля: правки к шагу 12
-@@ 4 -6 +6
+@@ 2 -6 +6
 + cr-squat-0=4
 + cr-squat-1=4
 + cr-squat-2=4
 + cq-squat-0=2
 + cq-squat-1=2
 + cq-squat-2=2
-@@ 14 -6 +6
+@@ 10 -6 +6
 + cr-deadlift_light-0=6
 + cr-deadlift_light-1=6
 + cr-deadlift_light-2=6
 + cq-deadlift_light-0=2
 + cq-deadlift_light-1=2
 + cq-deadlift_light-2=2
-@@ 22 -1 +1
+@@ 18 -1 +1
 - r-2-0=
 + r-2-0=10
-@@ 25 -1 +1
+@@ 21 -1 +1
 - r-2-1=
 + r-2-1=10
-@@ 29 -1 +1
+@@ 25 -1 +1
 - r-3-0=
 + r-3-0=10
-@@ 32 -1 +1
+@@ 28 -1 +1
 - r-3-1=
 + r-3-1=10
-@@ 35 -1 +1
+@@ 31 -1 +1
 - r-3-2=
 + r-3-2=10
-@@ 38 -1 +1
+@@ 34 -1 +1
 - r-3-3=
 + r-3-3=10
-@@ 42 -1 +1
+@@ 38 -1 +1
 - r-4-0=
 + r-4-0=10
-@@ 45 -1 +1
+@@ 41 -1 +1
 - r-4-1=
 + r-4-1=10
-@@ 49 -1 +1
+@@ 45 -1 +1
 - r-5-0=
 + r-5-0=10
-@@ 52 -1 +1
+@@ 48 -1 +1
 - r-5-1=
 + r-5-1=10
-@@ 56 -1 +1
+@@ 52 -1 +1
 - r-6-0=
 + r-6-0=10
-@@ 59 -1 +1
+@@ 55 -1 +1
 - r-6-1=
 + r-6-1=10
-@@ 63 -1 +1
+@@ 59 -1 +1
 - r-7-0=
 + r-7-0=10
-@@ 66 -1 +1
+@@ 62 -1 +1
 - r-7-1=
 + r-7-1=10
 черновик:
@@ -1966,39 +1929,39 @@
 -    div.pclip
 +   div.pslot(data-off="-1")
 +    div.pclip(inert="")
-@@ 51 -1 +1
+@@ 43 -1 +1
 -       button#wk-next-0.btn(type="button") Следующее упражнение
 +       button#wk-next-0.btn.primary(type="button") Следующее упражнение
-@@ 54 -2 +2
+@@ 46 -2 +2
 -   div.pslot(data-off="1")
 -    div.pclip(inert="")
 +   div.pslot(data-off="0")
 +    div.pclip
-@@ 93 -1 +1
+@@ 76 -1 +1
 -       button#wk-next-1.btn(type="button") Следующее упражнение
 +       button#wk-next-1.btn.primary(type="button") Следующее упражнение
-@@ 96 -1 +1
+@@ 79 -1 +1
 -   div.pslot(data-off="2")
 +   div.pslot(data-off="1")
-@@ 138 -1 +1
+@@ 122 -1 +1
 -       button#wk-next-2.btn(type="button") Следующее упражнение
 +       button#wk-next-2.btn.primary(type="button") Следующее упражнение
-@@ 199 -1 +1
+@@ 184 -1 +1
 -       button#wk-next-3.btn(type="button") Следующее упражнение
 +       button#wk-next-3.btn.primary(type="button") Следующее упражнение
-@@ 243 -1 +1
+@@ 229 -1 +1
 -       button#wk-next-4.btn(type="button") Следующее упражнение
 +       button#wk-next-4.btn.primary(type="button") Следующее упражнение
-@@ 287 -1 +1
+@@ 274 -1 +1
 -       button#wk-next-5.btn(type="button") Следующее упражнение
 +       button#wk-next-5.btn.primary(type="button") Следующее упражнение
-@@ 333 -1 +1
+@@ 321 -1 +1
 -       button#wk-next-6.btn(type="button") Следующее упражнение
 +       button#wk-next-6.btn.primary(type="button") Следующее упражнение
-@@ 377 -1 +1
+@@ 366 -1 +1
 -       button#wk-next-7.btn(type="button") К завершению
 +       button#wk-next-7.btn.primary(type="button") К завершению
-@@ 386 -1 +1
+@@ 375 -1 +1
 -       span#eta по плану ≈ 1 ч 35 мин · осталось ≈ 1 ч 30 мин
 +       span#eta по плану ≈ 1 ч 35 мин · все подходы записаны
 
@@ -2139,8 +2102,6 @@
 шапка: как в шаге 8
 поля: целиком
   cw-deadlift=60
-  cs-deadlift=4
-  cn-deadlift=3
   cr-deadlift-0=
   cr-deadlift-1=
   cr-deadlift-2=
@@ -2149,8 +2110,6 @@
   cq-deadlift-2=
   ex-note-0=
   cw-bench_light=82.5
-  cs-bench_light=8
-  cn-bench_light=3
   cr-bench_light-0=
   cr-bench_light-1=
   cr-bench_light-2=
@@ -2243,82 +2202,66 @@
 @@ 23 -1 +1
 -       span.tag Грудь
 +       span.tag Бицепс бедра, Ягодицы, Разгибатели спины
-@@ 27 -1 +1
--        b 110.4 кг
-+        b 72.3 кг
-@@ 31 -1 +1
+@@ 26 -0 +1
++       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 29 -1 +1
 -        input#cw-bench.num(type="text" inputmode="decimal")
 +        input#cw-deadlift.num(type="text" inputmode="decimal")
-@@ 34 -1 +1
--        select#cs-bench
-+        select#cs-deadlift
-@@ 38 -1 +1
--        input#cn-bench.num.sm(type="text" inputmode="numeric")
-+        input#cn-deadlift.num.sm(type="text" inputmode="numeric")
-@@ 41 -3 +3
+@@ 32 -3 +3
 -       input#cr-bench-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="4")
 -       input#cr-bench-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="4")
 -       input#cr-bench-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="4")
 +       input#cr-deadlift-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="4")
 +       input#cr-deadlift-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="4")
 +       input#cr-deadlift-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="4")
-@@ 46 -3 +3
+@@ 37 -3 +3
 -       input#cq-bench-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
 -       input#cq-bench-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
 -       input#cq-bench-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
 +       input#cq-deadlift-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
 +       input#cq-deadlift-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
 +       input#cq-deadlift-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
-@@ 52 -1 +1
+@@ 43 -1 +1
 -    span.plab(aria-hidden="true") 1. Жим лежа
 +    span.plab(aria-hidden="true") 1. Становая тяга
-@@ 58 -1 +1
+@@ 49 -1 +1
 -       h3 Приседания со штангой — лёгкий день
 +       h3 Жим лежа — лёгкий день
-@@ 62 -1 +1
+@@ 53 -1 +1
 -      p#warm-1.sub.warm(title=#60d213b7c2) Разминка: 50% × 6 · 80% × 3 от рабочего веса
 +      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 40 × 6 · 65 × 3
-@@ 64 -1 +1
+@@ 55 -1 +1
 -       span.tag Ягодицы, Квадрицепс
 +       span.tag Грудь
-@@ 67 -2 +2
--        | "75% от расчётного максимума в упражнении «Приседания со штангой» "
--        b 80 кг
-+        | "75% от расчётного максимума в упражнении «Жим лежа» "
-+        b 110.4 кг
-@@ 73 -1 +1
+@@ 58 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 62 -1 +1
 -        input#cw-squat_light.num(type="text" inputmode="decimal")
 +        input#cw-bench_light.num(type="text" inputmode="decimal")
-@@ 76 -1 +1
--        select#cs-squat_light
-+        select#cs-bench_light
-@@ 80 -1 +1
--        input#cn-squat_light.num.sm(type="text" inputmode="numeric")
-+        input#cn-bench_light.num.sm(type="text" inputmode="numeric")
-@@ 83 -3 +3
+@@ 65 -3 +3
 -       input#cr-squat_light-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8")
 -       input#cr-squat_light-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8")
 -       input#cr-squat_light-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8")
 +       input#cr-bench_light-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="8")
 +       input#cr-bench_light-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="8")
 +       input#cr-bench_light-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="8")
-@@ 88 -3 +3
+@@ 70 -3 +3
 -       input#cq-squat_light-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
 -       input#cq-squat_light-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
 -       input#cq-squat_light-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
 +       input#cq-bench_light-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
 +       input#cq-bench_light-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
 +       input#cq-bench_light-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
-@@ 94 -1 +1
+@@ 76 -1 +1
 -    span.plab(aria-hidden="true") 2. Приседания со штангой —…
 +    span.plab(aria-hidden="true") 2. Жим лежа — лёгкий день
-@@ 100 -1 +1
+@@ 82 -1 +1
 -       h3 Вертикальная тяга в тренажере
 +       h3 Подтягивания
-@@ 104 -1 +1
+@@ 86 -1 +1
 -      p#warm-2.sub.warm(title=#60d213b7c2) Разминка, кг: 40 × 5
 +      p#warm-2.sub.warm(title=#60d213b7c2) Разминка: 5 повт. полегче — без отягощения или с помощью
-@@ 133 -0 +16
+@@ 115 -0 +16
 +       div.set.bare
 +        span.i 3
 +        input#w-2-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
@@ -2335,60 +2278,61 @@
 +        input#q-2-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
 +        button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
 +         svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
-@@ 139 -1 +1
+@@ 122 -1 +1
 -    span.plab(aria-hidden="true") 3. Вертикальная тяга в тре…
 +    span.plab(aria-hidden="true") 3. Подтягивания
-@@ 145 -1 +1
+@@ 128 -1 +1
 -       h3 Жим гантелей сидя
 +       h3 Бабочка
-@@ 150 -1 +1
+@@ 133 -1 +1
 -       span.tag Передние дельты
 +       span.tag Грудь
-@@ 153 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 178 -8 +0
-@@ 192 -1 +1
+@@ 136 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 161 -8 +0
+@@ 176 -1 +1
 -    span.plab(aria-hidden="true") 4. Жим гантелей сидя
 +    span.plab(aria-hidden="true") 4. Бабочка
-@@ 198 -1 +1
+@@ 182 -1 +1
 -       h3 Бицепс бедра сидя в тренажере
 +       h3 Бицепс бедра на тренажере лежа на животе
-@@ 202 -1 +0
+@@ 186 -1 +0
 -      p#warm-4.sub.warm(title=#60d213b7c2) Разминка, кг: 25 × 5
-@@ 237 -1 +1
+@@ 222 -1 +1
 -    span.plab(aria-hidden="true") 5. Бицепс бедра сидя в тре…
 +    span.plab(aria-hidden="true") 5. Бицепс бедра на тренаже…
-@@ 243 -1 +1
+@@ 228 -1 +1
 -       h3 Средние дельты в тренажере
 +       h3 Трицепс с косичкой на блоке
-@@ 248 -1 +1
+@@ 233 -1 +1
 -       span.tag Средние дельты
 +       span.tag Трицепс
-@@ 275 -16 +0
-@@ 297 -1 +1
+@@ 260 -16 +0
+@@ 283 -1 +1
 -    span.plab(aria-hidden="true") 6. Средние дельты в тренаж…
 +    span.plab(aria-hidden="true") 6. Трицепс с косичкой на б…
-@@ 303 -1 +1
+@@ 289 -1 +1
 -       h3 Трицепс из за головы на блоке с косичкой
 +       h3 Бицепс Bayesian curl
-@@ 308 -1 +1
+@@ 294 -1 +1
 -       span.tag Трицепс
 +       span.tag Бицепс
-@@ 349 -1 +1
+@@ 336 -1 +1
 -    span.plab(aria-hidden="true") 7. Трицепс из за головы на…
 +    span.plab(aria-hidden="true") 7. Бицепс Bayesian curl
-@@ 355 -1 +1
+@@ 342 -1 +1
 -       h3 Обратная бабочка
 +       h3 Разгибания ног в тренажере
-@@ 359 -1 +1
+@@ 346 -1 +1
 -      p#warm-7.sub.warm(title=#60d213b7c2) Разминка: 70% × 5 от рабочего веса
 +      p#warm-7.sub.warm(title=#60d213b7c2) Разминка, кг: 35 × 5
-@@ 361 -1 +1
+@@ 348 -1 +1
 -       span.tag Задние дельты
 +       span.tag Квадрицепс
-@@ 364 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 389 -0 +29
+@@ 351 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 376 -0 +30
++      p#live-7.sub.live(hidden="")
 +      button.btn.ghost.sm(style="margin-top:6px")
 +       svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
 +       | Подход
@@ -2418,34 +2362,37 @@
 +        span Повторы
 +        span(title="Сколько повторов оставалось до отказа. Пусто — как по методике: 1") Запас
 +        span
-@@ 390 -2 +2
+@@ 377 -2 +2
 -        span.i 3
 -        input#w-7-2.num(type="text" inputmode="decimal" aria-label="Вес, подход 3")
 +        span.i 1
 +        input#w-8-0.num(type="text" inputmode="decimal" aria-label="Вес, подход 1")
-@@ 393 -3 +3
+@@ 380 -3 +3
 -        input#r-7-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="")
 -        input#q-7-2.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 3" placeholder="–")
 -        button.icon-btn(title="Убрать подход" aria-label="Убрать подход 3")
 +        input#r-8-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="")
 +        input#q-8-0.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 1" placeholder="–")
 +        button.icon-btn(title="Убрать подход" aria-label="Убрать подход 1")
-@@ 398 -2 +2
+@@ 385 -2 +2
 -        span.i 4
 -        input#w-7-3.num(type="text" inputmode="decimal" aria-label="Вес, подход 4")
 +        span.i 2
 +        input#w-8-1.num(type="text" inputmode="decimal" aria-label="Вес, подход 2")
-@@ 401 -3 +3
+@@ 388 -3 +3
 -        input#r-7-3.num(type="text" inputmode="numeric" aria-label="Повторы, подход 4" placeholder="")
 -        input#q-7-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
 -        button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
 +        input#r-8-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="")
 +        input#q-8-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
 +        button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
-@@ 408 -1 +1
+@@ 392 -1 +1
+-      p#live-7.sub.live(hidden="")
++      p#live-8.sub.live(hidden="")
+@@ 396 -1 +1
 -      input#ex-note-7(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
 +      input#ex-note-8(type="text" style="width:100%;margin-top:8px" placeholder="Заметка к упражнению" aria-label="Заметка к упражнению")
-@@ 410 -2 +2
+@@ 398 -2 +2
 -       button#wk-next-7.btn(type="button") К завершению
 -    span.plab(aria-hidden="true") 8. Обратная бабочка
 +       button#wk-next-8.btn(type="button") К завершению
@@ -2453,69 +2400,69 @@
 
 === 17. неделя 1, пт: подходы
 поля: правки к шагу 16
-@@ 4 -6 +6
+@@ 2 -6 +6
 + cr-deadlift-0=4
 + cr-deadlift-1=4
 + cr-deadlift-2=4
 + cq-deadlift-0=2
 + cq-deadlift-1=2
 + cq-deadlift-2=2
-@@ 14 -6 +6
+@@ 10 -6 +6
 + cr-bench_light-0=8
 + cr-bench_light-1=8
 + cr-bench_light-2=8
 + cq-bench_light-0=2
 + cq-bench_light-1=2
 + cq-bench_light-2=2
-@@ 22 -1 +1
+@@ 18 -1 +1
 - r-2-0=
 + r-2-0=10
-@@ 25 -1 +1
+@@ 21 -1 +1
 - r-2-1=
 + r-2-1=10
-@@ 28 -1 +1
+@@ 24 -1 +1
 - r-2-2=
 + r-2-2=10
-@@ 31 -1 +1
+@@ 27 -1 +1
 - r-2-3=
 + r-2-3=10
-@@ 35 -1 +1
+@@ 31 -1 +1
 - r-3-0=
 + r-3-0=10
-@@ 38 -1 +1
+@@ 34 -1 +1
 - r-3-1=
 + r-3-1=10
-@@ 42 -1 +1
+@@ 38 -1 +1
 - r-4-0=
 + r-4-0=10
-@@ 45 -1 +1
+@@ 41 -1 +1
 - r-4-1=
 + r-4-1=10
-@@ 49 -1 +1
+@@ 45 -1 +1
 - r-5-0=
 + r-5-0=10
-@@ 52 -1 +1
+@@ 48 -1 +1
 - r-5-1=
 + r-5-1=10
-@@ 56 -1 +1
+@@ 52 -1 +1
 - r-6-0=
 + r-6-0=10
-@@ 59 -1 +1
+@@ 55 -1 +1
 - r-6-1=
 + r-6-1=10
-@@ 62 -1 +1
+@@ 58 -1 +1
 - r-6-2=
 + r-6-2=10
-@@ 66 -1 +1
+@@ 62 -1 +1
 - r-7-0=
 + r-7-0=10
-@@ 69 -1 +1
+@@ 65 -1 +1
 - r-7-1=
 + r-7-1=10
-@@ 73 -1 +1
+@@ 69 -1 +1
 - r-8-0=
 + r-8-0=10
-@@ 76 -1 +1
+@@ 72 -1 +1
 - r-8-1=
 + r-8-1=10
 черновик:
@@ -2536,42 +2483,42 @@
 -    div.pclip
 +   div.pslot(data-off="-1")
 +    div.pclip(inert="")
-@@ 52 -1 +1
+@@ 44 -1 +1
 -       button#wk-next-0.btn(type="button") Следующее упражнение
 +       button#wk-next-0.btn.primary(type="button") Следующее упражнение
-@@ 55 -2 +2
+@@ 47 -2 +2
 -   div.pslot(data-off="1")
 -    div.pclip(inert="")
 +   div.pslot(data-off="0")
 +    div.pclip
-@@ 94 -1 +1
+@@ 76 -1 +1
 -       button#wk-next-1.btn(type="button") Следующее упражнение
 +       button#wk-next-1.btn.primary(type="button") Следующее упражнение
-@@ 97 -1 +1
+@@ 79 -1 +1
 -   div.pslot(data-off="2")
 +   div.pslot(data-off="1")
-@@ 155 -1 +1
+@@ 138 -1 +1
 -       button#wk-next-2.btn(type="button") Следующее упражнение
 +       button#wk-next-2.btn.primary(type="button") Следующее упражнение
-@@ 199 -1 +1
+@@ 183 -1 +1
 -       button#wk-next-3.btn(type="button") Следующее упражнение
 +       button#wk-next-3.btn.primary(type="button") Следующее упражнение
-@@ 243 -1 +1
+@@ 228 -1 +1
 -       button#wk-next-4.btn(type="button") Следующее упражнение
 +       button#wk-next-4.btn.primary(type="button") Следующее упражнение
-@@ 287 -1 +1
+@@ 273 -1 +1
 -       button#wk-next-5.btn(type="button") Следующее упражнение
 +       button#wk-next-5.btn.primary(type="button") Следующее упражнение
-@@ 339 -1 +1
+@@ 326 -1 +1
 -       button#wk-next-6.btn(type="button") Следующее упражнение
 +       button#wk-next-6.btn.primary(type="button") Следующее упражнение
-@@ 384 -1 +1
+@@ 372 -1 +1
 -       button#wk-next-7.btn(type="button") Следующее упражнение
 +       button#wk-next-7.btn.primary(type="button") Следующее упражнение
-@@ 429 -1 +1
+@@ 418 -1 +1
 -       button#wk-next-8.btn(type="button") К завершению
 +       button#wk-next-8.btn.primary(type="button") К завершению
-@@ 438 -1 +1
+@@ 427 -1 +1
 -       span#eta по плану ≈ 1 ч 40 мин · осталось ≈ 1 ч 35 мин
 +       span#eta по плану ≈ 1 ч 40 мин · все подходы записаны
 
@@ -2845,34 +2792,34 @@
 @@ 1 -1 +1
 - cw-bench=92.5
 + cw-bench=95
-@@ 11 -1 +1
+@@ 9 -1 +1
 - cw-squat_light=60
 + cw-squat_light=55
-@@ 21 -1 +1
+@@ 17 -1 +1
 - w-2-0=60
 + w-2-0=62.5
-@@ 24 -1 +1
+@@ 20 -1 +1
 - w-2-1=57.5
 + w-2-1=60
-@@ 28 -1 +1
+@@ 24 -1 +1
 - w-3-0=
 + w-3-0=2
-@@ 31 -1 +1
+@@ 27 -1 +1
 - w-3-1=
 + w-3-1=2
-@@ 34 -1 +1
+@@ 30 -1 +1
 - w-3-2=
 + w-3-2=2
-@@ 68 -1 +1
+@@ 64 -1 +1
 - w-7-0=
 + w-7-0=0
-@@ 71 -1 +1
+@@ 67 -1 +1
 - w-7-1=
 + w-7-1=0
-@@ 74 -1 +1
+@@ 70 -1 +1
 - w-7-2=
 + w-7-2=0
-@@ 77 -1 +1
+@@ 73 -1 +1
 - w-7-3=
 + w-7-3=0
 записи:
@@ -2883,23 +2830,19 @@
 @@ 21 -1 +1
 -      p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 35 × 6 · 55 × 4 · 67.5 × 2 · 82.5 × 1
 +      p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 37.5 × 6 · 55 × 4 · 70 × 2 · 85 × 1
-@@ 27 -1 +1
--        b 110.4 кг
-+        b 114.5 кг
-@@ 62 -1 +1
+@@ 53 -1 +1
 -      p#warm-1.sub.warm(title=#60d213b7c2) Разминка: 50% × 6 · 80% × 3 от рабочего веса
 +      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 27.5 × 6 · 42.5 × 3
-@@ 68 -1 +1
--        b 80 кг
-+        b 72.3 кг
-@@ 104 -1 +1
+@@ 58 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 86 -1 +1
 -      p#warm-2.sub.warm(title=#60d213b7c2) Разминка, кг: 40 × 5
 +      p#warm-2.sub.warm(title=#60d213b7c2) Разминка, кг: 42.5 × 5
-@@ 153 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 364 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 421 -1 +1
+@@ 136 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 351 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 409 -1 +1
 -       span#save-state есть несохранённые изменения
 +       span#save-state сохранено
 
@@ -2908,48 +2851,48 @@
 @@ 1 -1 +1
 - cw-bench=92.5
 + cw-bench=95
-@@ 7 -3 +3
+@@ 5 -3 +3
 - cq-bench-0=2
 - cq-bench-1=2
 - cq-bench-2=2
 + cq-bench-0=1
 + cq-bench-1=1
 + cq-bench-2=1
-@@ 11 -1 +1
+@@ 9 -1 +1
 - cw-squat_light=60
 + cw-squat_light=55
-@@ 17 -3 +3
+@@ 13 -3 +3
 - cq-squat_light-0=2
 - cq-squat_light-1=2
 - cq-squat_light-2=2
 + cq-squat_light-0=1
 + cq-squat_light-1=1
 + cq-squat_light-2=1
-@@ 21 -1 +1
+@@ 17 -1 +1
 - w-2-0=60
 + w-2-0=62.5
-@@ 24 -1 +1
+@@ 20 -1 +1
 - w-2-1=57.5
 + w-2-1=60
-@@ 28 -1 +1
+@@ 24 -1 +1
 - w-3-0=
 + w-3-0=2
-@@ 31 -1 +1
+@@ 27 -1 +1
 - w-3-1=
 + w-3-1=2
-@@ 34 -1 +1
+@@ 30 -1 +1
 - w-3-2=
 + w-3-2=2
-@@ 68 -1 +1
+@@ 64 -1 +1
 - w-7-0=
 + w-7-0=0
-@@ 71 -1 +1
+@@ 67 -1 +1
 - w-7-1=
 + w-7-1=0
-@@ 74 -1 +1
+@@ 70 -1 +1
 - w-7-2=
 + w-7-2=0
-@@ 77 -1 +1
+@@ 73 -1 +1
 - w-7-3=
 + w-7-3=0
 черновик:
@@ -2958,22 +2901,18 @@
 @@ 21 -1 +1
 -      p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 35 × 6 · 55 × 4 · 67.5 × 2 · 82.5 × 1
 +      p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 37.5 × 6 · 55 × 4 · 70 × 2 · 85 × 1
-@@ 27 -1 +1
--        b 110.4 кг
-+        b 114.5 кг
-@@ 62 -1 +1
+@@ 53 -1 +1
 -      p#warm-1.sub.warm(title=#60d213b7c2) Разминка: 50% × 6 · 80% × 3 от рабочего веса
 +      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 27.5 × 6 · 42.5 × 3
-@@ 68 -1 +1
--        b 80 кг
-+        b 72.3 кг
-@@ 104 -1 +1
+@@ 58 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 86 -1 +1
 -      p#warm-2.sub.warm(title=#60d213b7c2) Разминка, кг: 40 × 5
 +      p#warm-2.sub.warm(title=#60d213b7c2) Разминка, кг: 42.5 × 5
-@@ 153 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 364 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
+@@ 136 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 351 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
 
 === 23. неделя 2, пн: завершить
 адрес: "#overview"
@@ -3145,31 +3084,31 @@
 @@ 1 -1 +1
 - cw-squat=60
 + cw-squat=62.5
-@@ 11 -1 +1
+@@ 9 -1 +1
 - cw-deadlift_light=60
 + cw-deadlift_light=57.5
-@@ 21 -1 +1
+@@ 17 -1 +1
 - w-2-0=26
 + w-2-0=28
-@@ 24 -1 +1
+@@ 20 -1 +1
 - w-2-1=24
 + w-2-1=26
-@@ 28 -1 +1
+@@ 24 -1 +1
 - w-3-0=30
 + w-3-0=32.5
-@@ 31 -1 +1
+@@ 27 -1 +1
 - w-3-1=30
 + w-3-1=32.5
-@@ 34 -1 +1
+@@ 30 -1 +1
 - w-3-2=30
 + w-3-2=32.5
-@@ 37 -1 +1
+@@ 33 -1 +1
 - w-3-3=27.5
 + w-3-3=30
-@@ 55 -1 +1
+@@ 51 -1 +1
 - w-6-0=
 + w-6-0=0
-@@ 58 -1 +1
+@@ 54 -1 +1
 - w-6-1=
 + w-6-1=0
 записи:
@@ -3180,21 +3119,19 @@
 @@ 21 -1 +1
 -      p#warm-0.sub.warm(title=#60d213b7c2) Разминка: 40% × 6 · 60% × 4 · 75% × 2 · 90% × 1 от рабочего веса
 +      p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 25 × 6 · 37.5 × 4 · 45 × 2 · 55 × 1
-@@ 27 -1 +1
--        b 72.3 кг
-+        b 75.3 кг
-@@ 62 -1 +1
+@@ 26 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 54 -1 +1
 -      p#warm-1.sub.warm(title=#60d213b7c2) Разминка: 50% × 6 · 80% × 3 от рабочего веса
 +      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 27.5 × 6 · 45 × 3
-@@ 68 -1 +1
--        b 75.9 кг
-+        b 72.3 кг
-@@ 149 -1 +1
+@@ 59 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 133 -1 +1
 -      p#warm-3.sub.warm(title=#60d213b7c2) Разминка, кг: 15 × 6 · 22.5 × 3
 +      p#warm-3.sub.warm(title=#60d213b7c2) Разминка, кг: 15 × 6 · 25 × 3
-@@ 303 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
-@@ 388 -1 +1
+@@ 290 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 377 -1 +1
 -       span#save-state есть несохранённые изменения
 +       span#save-state сохранено
 
@@ -3203,45 +3140,45 @@
 @@ 1 -1 +1
 - cw-squat=60
 + cw-squat=62.5
-@@ 7 -3 +3
+@@ 5 -3 +3
 - cq-squat-0=2
 - cq-squat-1=2
 - cq-squat-2=2
 + cq-squat-0=1
 + cq-squat-1=1
 + cq-squat-2=1
-@@ 11 -1 +1
+@@ 9 -1 +1
 - cw-deadlift_light=60
 + cw-deadlift_light=57.5
-@@ 17 -3 +3
+@@ 13 -3 +3
 - cq-deadlift_light-0=2
 - cq-deadlift_light-1=2
 - cq-deadlift_light-2=2
 + cq-deadlift_light-0=1
 + cq-deadlift_light-1=1
 + cq-deadlift_light-2=1
-@@ 21 -1 +1
+@@ 17 -1 +1
 - w-2-0=26
 + w-2-0=28
-@@ 24 -1 +1
+@@ 20 -1 +1
 - w-2-1=24
 + w-2-1=26
-@@ 28 -1 +1
+@@ 24 -1 +1
 - w-3-0=30
 + w-3-0=32.5
-@@ 31 -1 +1
+@@ 27 -1 +1
 - w-3-1=30
 + w-3-1=32.5
-@@ 34 -1 +1
+@@ 30 -1 +1
 - w-3-2=30
 + w-3-2=32.5
-@@ 37 -1 +1
+@@ 33 -1 +1
 - w-3-3=27.5
 + w-3-3=30
-@@ 55 -1 +1
+@@ 51 -1 +1
 - w-6-0=
 + w-6-0=0
-@@ 58 -1 +1
+@@ 54 -1 +1
 - w-6-1=
 + w-6-1=0
 черновик:
@@ -3250,20 +3187,18 @@
 @@ 21 -1 +1
 -      p#warm-0.sub.warm(title=#60d213b7c2) Разминка: 40% × 6 · 60% × 4 · 75% × 2 · 90% × 1 от рабочего веса
 +      p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 25 × 6 · 37.5 × 4 · 45 × 2 · 55 × 1
-@@ 27 -1 +1
--        b 72.3 кг
-+        b 75.3 кг
-@@ 62 -1 +1
+@@ 26 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 54 -1 +1
 -      p#warm-1.sub.warm(title=#60d213b7c2) Разминка: 50% × 6 · 80% × 3 от рабочего веса
 +      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 27.5 × 6 · 45 × 3
-@@ 68 -1 +1
--        b 75.9 кг
-+        b 72.3 кг
-@@ 149 -1 +1
+@@ 59 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 133 -1 +1
 -      p#warm-3.sub.warm(title=#60d213b7c2) Разминка, кг: 15 × 6 · 22.5 × 3
 +      p#warm-3.sub.warm(title=#60d213b7c2) Разминка, кг: 15 × 6 · 25 × 3
-@@ 303 -1 +0
--       span первая запись: подбери вес, с которым в запасе останется один повтор
+@@ 290 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
 
 === 27. неделя 2, ср: завершить
 адрес: "#overview"
@@ -3444,19 +3379,19 @@
 @@ 1 -1 +1
 - cw-deadlift=60
 + cw-deadlift=62.5
-@@ 11 -1 +1
+@@ 9 -1 +1
 - cw-bench_light=82.5
 + cw-bench_light=85
-@@ 21 -1 +1
+@@ 17 -1 +1
 - w-2-0=92
 + w-2-0=93
-@@ 24 -1 +1
+@@ 20 -1 +1
 - w-2-1=92
 + w-2-1=93
-@@ 27 -1 +1
+@@ 23 -1 +1
 - w-2-2=92
 + w-2-2=93
-@@ 30 -1 +1
+@@ 26 -1 +1
 - w-2-3=92
 + w-2-3=93
 записи:
@@ -3467,16 +3402,12 @@
 @@ 22 -1 +1
 -      p#warm-0.sub.warm(title=#60d213b7c2) Разминка: 40% × 6 · 60% × 4 · 75% × 2 · 90% × 1 от рабочего веса
 +      p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 25 × 6 · 37.5 × 4 · 45 × 2 · 55 × 1
-@@ 28 -1 +1
--        b 72.3 кг
-+        b 75.3 кг
-@@ 63 -1 +1
+@@ 27 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 55 -1 +1
 -      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 40 × 6 · 65 × 3
 +      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 42.5 × 6 · 67.5 × 3
-@@ 69 -1 +1
--        b 110.4 кг
-+        b 114.5 кг
-@@ 440 -1 +1
+@@ 429 -1 +1
 -       span#save-state есть несохранённые изменения
 +       span#save-state сохранено
 
@@ -3485,33 +3416,33 @@
 @@ 1 -1 +1
 - cw-deadlift=60
 + cw-deadlift=62.5
-@@ 7 -3 +3
+@@ 5 -3 +3
 - cq-deadlift-0=2
 - cq-deadlift-1=2
 - cq-deadlift-2=2
 + cq-deadlift-0=1
 + cq-deadlift-1=1
 + cq-deadlift-2=1
-@@ 11 -1 +1
+@@ 9 -1 +1
 - cw-bench_light=82.5
 + cw-bench_light=85
-@@ 17 -3 +3
+@@ 13 -3 +3
 - cq-bench_light-0=2
 - cq-bench_light-1=2
 - cq-bench_light-2=2
 + cq-bench_light-0=1
 + cq-bench_light-1=1
 + cq-bench_light-2=1
-@@ 21 -1 +1
+@@ 17 -1 +1
 - w-2-0=92
 + w-2-0=93
-@@ 24 -1 +1
+@@ 20 -1 +1
 - w-2-1=92
 + w-2-1=93
-@@ 27 -1 +1
+@@ 23 -1 +1
 - w-2-2=92
 + w-2-2=93
-@@ 30 -1 +1
+@@ 26 -1 +1
 - w-2-3=92
 + w-2-3=93
 черновик:
@@ -3520,15 +3451,11 @@
 @@ 22 -1 +1
 -      p#warm-0.sub.warm(title=#60d213b7c2) Разминка: 40% × 6 · 60% × 4 · 75% × 2 · 90% × 1 от рабочего веса
 +      p#warm-0.sub.warm(title=#60d213b7c2) Разминка, кг: 25 × 6 · 37.5 × 4 · 45 × 2 · 55 × 1
-@@ 28 -1 +1
--        b 72.3 кг
-+        b 75.3 кг
-@@ 63 -1 +1
+@@ 27 -1 +0
+-       span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
+@@ 55 -1 +1
 -      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 40 × 6 · 65 × 3
 +      p#warm-1.sub.warm(title=#60d213b7c2) Разминка, кг: 42.5 × 6 · 67.5 × 3
-@@ 69 -1 +1
--        b 110.4 кг
-+        b 114.5 кг
 
 === 31. неделя 2, пт: завершить
 адрес: "#overview"

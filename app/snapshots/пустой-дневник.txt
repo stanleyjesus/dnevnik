@@ -3954,8 +3954,6 @@
 +  span#wk-timer.timer(title="тренировка идёт: время от «Начать тренировку»") 0:00
 поля: целиком
   cw-bench=
-  cs-bench=4
-  cn-bench=3
   cr-bench-0=
   cr-bench-1=
   cr-bench-2=
@@ -4058,27 +4056,19 @@
        div.ex-meta
         span.tag Грудь
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 5 мин
-        span
-         | "3 × 4 одним весом · цель — запас 2 в последнем подходе, отметь его · расчётный максимум "
-         b –
+        span 3 × 4 одним весом · запас 2 в последнем подходе
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.cyc
         label.f
          span Вес, кг
          input#cw-bench.num(type="text" inputmode="decimal")
-        label.f
-         span Схема
-         select#cs-bench
-          option(value="4" selected="") 4 повт. · 83%
-        label.f
-         span Подходов
-         input#cn-bench.num.sm(type="text" inputmode="numeric")
        div.cyc-sets
         span.sub Повторы по подходам
         input#cr-bench-0.num(type="text" inputmode="numeric" aria-label="Повторы, подход 1" placeholder="4")
         input#cr-bench-1.num(type="text" inputmode="numeric" aria-label="Повторы, подход 2" placeholder="4")
         input#cr-bench-2.num(type="text" inputmode="numeric" aria-label="Повторы, подход 3" placeholder="4")
         button.btn.sm Все по 4
-        span.sub Запас: сколько повторов оставалось до отказа. Отметь хотя бы в последнем подходе — он решает вес на следующей неделе: 2 и больше — плюс шаг, 1 — тот же, 0 — минус 5%
+        span.sub Запас по подходам
         input#cq-bench-0.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 1" placeholder="–")
         input#cq-bench-1.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 2" placeholder="–")
         input#cq-bench-2.num(type="text" inputmode="numeric" aria-label="Запас повторов (RIR), подход 3" placeholder="–")
@@ -4100,7 +4090,7 @@
         span.tag Верх спины
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -4125,6 +4115,7 @@
          input#q-1-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-1.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -4146,7 +4137,7 @@
         span.tag Квадрицепс, Ягодицы
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин 30 с
         span запас 2: со свободным весом отказ опасен
-        span первая запись: подбери вес, с которым в запасе останется 2
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -4171,6 +4162,7 @@
          input#q-2-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-2.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -4191,7 +4183,7 @@
         span.tag Передние дельты
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -4216,6 +4208,7 @@
          input#q-3-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-3.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -4237,7 +4230,7 @@
         span.tag Бицепс бедра, Ягодицы
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин 30 с
         span запас 2: со свободным весом отказ опасен
-        span первая запись: подбери вес, с которым в запасе останется 2
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -4262,6 +4255,7 @@
          input#q-4-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-4.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -4282,7 +4276,7 @@
         span.tag Широчайшие
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -4307,6 +4301,7 @@
          input#q-5-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-5.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -4327,7 +4322,7 @@
         span.tag Средние дельты
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -4352,6 +4347,7 @@
          input#q-6-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-6.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -4372,7 +4368,7 @@
         span.tag Задние дельты
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -4397,6 +4393,7 @@
          input#q-7-1.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 2" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 2")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-7.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -4417,7 +4414,7 @@
         span.tag Бицепс бедра
         span.tag(title="Отдых между подходами: его ставит дневник по типу упражнения") отдых 2 мин
         span запас 1
-        span первая запись: подбери вес, с которым в запасе останется один повтор
+        span.pick Подбери вес: прибавляй по шагу по 3–5 повторов; где вес пошёл заметно медленнее — с него первый подход. Дальше вес поставит дневник
        div.sets
         div.set.head.bare
          span
@@ -4458,6 +4455,7 @@
          input#q-8-3.num.rir(type="text" inputmode="numeric" aria-label="Запас повторов до отказа (RIR), подход 4" placeholder="–")
          button.icon-btn(title="Убрать подход" aria-label="Убрать подход 4")
           svg(viewBox="0 0 24 24" aria-hidden="true") …#a4d43fd373
+       p#live-8.sub.live(hidden="")
        button.btn.ghost.sm(style="margin-top:6px")
         svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
         | Подход
@@ -4577,8 +4575,6 @@
 === 24. подходы
 поля: целиком
   cw-bench=
-  cs-bench=4
-  cn-bench=3
   cr-bench-0=4
   cr-bench-1=4
   cr-bench-2=4
@@ -4663,28 +4659,28 @@
 +   button#wk-dot-6(type="button" aria-label="7. Махи гантелями в стороны" aria-current="false" data-done="")
 +   button#wk-dot-7(type="button" aria-label="8. Обратная бабочка" aria-current="false" data-done="")
 +   button#wk-dot-8(type="button" aria-label="9. Бицепс бедра сидя в тре…" aria-current="false" data-done="")
-@@ 52 -1 +1
+@@ 44 -1 +1
 -       button#wk-next-0.btn(type="button") Следующее упражнение
 +       button#wk-next-0.btn.primary(type="button") Следующее упражнение
-@@ 98 -1 +1
+@@ 91 -1 +1
 -       button#wk-next-1.btn(type="button") Следующее упражнение
 +       button#wk-next-1.btn.primary(type="button") Следующее упражнение
-@@ 144 -1 +1
+@@ 138 -1 +1
 -       button#wk-next-2.btn(type="button") Следующее упражнение
 +       button#wk-next-2.btn.primary(type="button") Следующее упражнение
-@@ 189 -1 +1
+@@ 184 -1 +1
 -       button#wk-next-3.btn(type="button") Следующее упражнение
 +       button#wk-next-3.btn.primary(type="button") Следующее упражнение
-@@ 235 -1 +1
+@@ 231 -1 +1
 -       button#wk-next-4.btn(type="button") Следующее упражнение
 +       button#wk-next-4.btn.primary(type="button") Следующее упражнение
-@@ 280 -1 +1
+@@ 277 -1 +1
 -       button#wk-next-5.btn(type="button") Следующее упражнение
 +       button#wk-next-5.btn.primary(type="button") Следующее упражнение
-@@ 325 -1 +1
+@@ 323 -1 +1
 -       button#wk-next-6.btn(type="button") Следующее упражнение
 +       button#wk-next-6.btn.primary(type="button") Следующее упражнение
-@@ 370 -1 +1
+@@ 369 -1 +1
 -       button#wk-next-7.btn(type="button") Следующее упражнение
 +       button#wk-next-7.btn.primary(type="button") Следующее упражнение
 @@ 431 -1 +1

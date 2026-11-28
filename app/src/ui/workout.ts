@@ -13,6 +13,7 @@ import { byButtons, okMin } from '../core/pace.ts';
 import { goneOf, movesOf, skipProgram } from './skipfix.ts';
 import { factDur, minField, paceText } from './pace.ts';
 import { warmLine } from './warmup.ts';
+import { liveApply, liveLine, ownWeight, PICK } from './live.ts';
 import { trimLine, trimProgram } from './trim.ts';
 import { askAfterWorkout } from './remind.ts';
 import { workCar, wkNext } from './workcar.ts';   // (в эталоне нет) идущая тренировка каруселью (просьба владельца, 28 ноября 2026)
@@ -204,7 +205,7 @@ export function dpBlock(card: HTMLElement, d: Workout, it: Item, prim: string[],
   if (bare) card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
     h('span', { class: 'tag', title: 'Отдых между подходами: его ставит дневник по типу упражнения' }, restTag(D.cfg, it.ex)),
     h('span', null, 'запас ' + rq + (rq > D.cfg.rir ? ': со свободным весом отказ опасен' : '')),
-    hh.prevDate ? null : h('span', null, 'первая запись: подбери вес, с которым в запасе ' + (rq === 1 ? 'останется один повтор' : 'останется ' + rq))));
+    it.sets.length && it.sets.every(s => s.w == null) ? h('span', { class: 'pick' }, PICK) : hh.prevDate ? null : h('span', null, 'первая запись: подбери вес, с которым в запасе ' + (rq === 1 ? 'останется один повтор' : 'останется ' + rq))));   // (в эталоне нет) веса нет — как его подобрать (просьба владельца, 28 ноября 2026; live.ts)
   else card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
     appRules() ? h('span', { class: 'tag', title: 'Отдых между подходами: его ставит дневник по типу упражнения' }, restTag(D.cfg, it.ex)) : null,   // (в эталоне нет) просьба владельца, 25 ноября 2026
     h('span', null, 'Диапазон'), rIn(0, 'Нижняя граница повторов'), '–', rIn(1, 'Верхняя граница повторов'),
@@ -222,17 +223,18 @@ export function dpBlock(card: HTMLElement, d: Workout, it: Item, prim: string[],
     const paint = () => { if (bare) return; track.setCur(st.r); fbEl.textContent = ''; const f = setFeedback(st, g, it.range!, hh.step); if (f) fbEl.appendChild(pill(f[0], f[1])); };
     sets.appendChild(h('div', { class: bare ? 'set bare' : 'set' },
       h('span', { class: 'i' }, i + 1),
-      h('input', { class: 'num', type: 'text', inputmode: 'decimal', id: 'w-' + idx + '-' + i, 'aria-label': 'Вес, подход ' + (i + 1), value: st.w == null ? '' : C.fmt(st.w, 3), oninput: e => { st.w = toNum(e.target.value); touch(); } }),
+      h('input', { class: 'num', type: 'text', inputmode: 'decimal', id: 'w-' + idx + '-' + i, 'aria-label': 'Вес, подход ' + (i + 1), value: st.w == null ? '' : C.fmt(st.w, 3), oninput: e => { st.w = toNum(e.target.value); if (bare) ownWeight(st); touch(); } }),   // (в эталоне нет) вес, вписанный руками, дневник по ходу тренировки не меняет (live.ts)
       h('span', { class: 'x' }, '×'),
-      h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'r-' + idx + '-' + i, 'aria-label': 'Повторы, подход ' + (i + 1), placeholder: !bare && g && g.rule !== 'repeat' ? g.target[0] + '+' : '', value: st.r == null ? '' : st.r, oninput: e => { st.r = toInt(e.target.value); delete st.skip; paint(); touch(); } }),
-      h('input', { class: 'num rir', type: 'text', inputmode: 'numeric', id: 'q-' + idx + '-' + i, 'aria-label': 'Запас повторов до отказа (RIR), подход ' + (i + 1), placeholder: '–', value: st.q == null ? '' : st.q, oninput: e => { const v = toInt(e.target.value); if (v == null) delete st.q; else st.q = Math.max(0, Math.min(5, v)); paint(); touch(); } }),
+      h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'r-' + idx + '-' + i, 'aria-label': 'Повторы, подход ' + (i + 1), placeholder: !bare && g && g.rule !== 'repeat' ? g.target[0] + '+' : '', value: st.r == null ? '' : st.r, oninput: e => { st.r = toInt(e.target.value); delete st.skip; paint(); if (bare) liveApply(it, idx, hh.step); touch(); } }),   // (в эталоне нет) вес следующих подходов по этому (live.ts)
+      h('input', { class: 'num rir', type: 'text', inputmode: 'numeric', id: 'q-' + idx + '-' + i, 'aria-label': 'Запас повторов до отказа (RIR), подход ' + (i + 1), placeholder: '–', value: st.q == null ? '' : st.q, oninput: e => { const v = toInt(e.target.value); if (v == null) delete st.q; else st.q = Math.max(0, Math.min(5, v)); paint(); if (bare) liveApply(it, idx, hh.step); touch(); } }),
       bare ? null : track,
       bare ? null : h('span', { class: 'prev' }, prev ? ['было ', h('b', null, C.fmt(prev.w) + ' × ' + (prev.r == null ? '?' : prev.r)), prev.q != null ? ', запас ' + prev.q + ' ' : ' '] : null, fbEl),
-      h('button', { class: 'icon-btn', title: 'Убрать подход', 'aria-label': 'Убрать подход ' + (i + 1), onclick: () => { it.sets.splice(i, 1); touch(); render(true); } }, icon('x'))));
+      h('button', { class: 'icon-btn', title: 'Убрать подход', 'aria-label': 'Убрать подход ' + (i + 1), onclick: () => { it.sets.splice(i, 1); if (bare) liveApply(it, idx, hh.step); touch(); render(true); } }, icon('x'))));
     paint();
   });
   card.appendChild(sets);
-  card.appendChild(h('button', { class: 'btn ghost sm', style: 'margin-top:6px', onclick: () => { const l = it.sets[it.sets.length - 1]; it.sets.push({ w: l ? l.w : null, r: null }); touch(); render(true); } }, icon('plus'), 'Подход'));
+  if (bare) card.appendChild(liveLine(it, idx, hh.step));   // (в эталоне нет) почему дневник поменял вес следующих подходов (live.ts)
+  card.appendChild(h('button', { class: 'btn ghost sm', style: 'margin-top:6px', onclick: () => { const l = it.sets[it.sets.length - 1]; it.sets.push({ w: l ? l.w : null, r: null }); if (bare) liveApply(it, idx, hh.step); touch(); render(true); } }, icon('plus'), 'Подход'));
 }
 export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string[]) {
   const light = C.isLight(D.cfg, it.ex), par = light ? (D.cfg.ex[it.ex] || {}).of : null;
@@ -253,11 +255,16 @@ export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string
     : pc.verdict === 'up' ? pill('good', was + ': плюс ' + (steps > 1 ? steps + ' ' + C.plural(steps, ['шаг', 'шага', 'шагов']) : 'шаг'))
     : pc.verdict === 'hold' ? pill('info', 'в прошлый раз запас 1 в последнем подходе: вес тот же')
     : pill('warn', (pc.closed ? 'в прошлый раз подход шёл в отказ' : 'в прошлый раз подходы не закрыты') + ': вес −' + C.AUTO.down + '%');
+  /* (в эталоне нет) идущая тренировка с днями «День N» (просьба владельца, 28 ноября 2026, пункт 10): одна строка схемы и запаса — без списка схемы,
+     числа подходов, расчётного максимума и абзаца о запасе; план выставляет дневник, руками в идущей тренировке его не правят */
+  const bare = appRules() && !!d.open, plan = it.sets.length + ' × ' + it.cyc!.reps + ' одним весом · ';
   card.appendChild(h('div', { class: 'ex-meta' }, prim.length ? h('span', { class: 'tag' }, prim.join(', ')) : null,
     appRules() ? h('span', { class: 'tag', title: 'Отдых между подходами: его ставит дневник по типу упражнения' }, restTag(D.cfg, it.ex)) : null,   // (в эталоне нет) просьба владельца, 25 ноября 2026
-    auto ? h('span', null, A.sets + ' × ' + it.cyc!.reps + ' одним весом · цель — запас ' + C.AUTO.aim + ' в последнем подходе' + (appRules() ? ', отметь его' : '') + ' · расчётный максимум ', tmEl)
+    bare ? h('span', null, plan + (auto ? 'запас ' + C.AUTO.aim + ' в последнем подходе' : (light ? ((D.cfg.ex[it.ex] || {}).mid ? 'средний день, ' : 'лёгкий день, ') : wv.hold ? 'поддержание, ' : '') + 'запас около ' + Math.max(0, C.estRir(it.cyc!.pct, it.cyc!.reps))))
+    : auto ? h('span', null, A.sets + ' × ' + it.cyc!.reps + ' одним весом · цель — запас ' + C.AUTO.aim + ' в последнем подходе' + (appRules() ? ', отметь его' : '') + ' · расчётный максимум ', tmEl)
       : h('span', null, it.cyc!.pct + '% от расчётного максимума ' + (light && par ? 'в упражнении «' + C.exName(D.cfg, par) + '» ' : ''), tmEl),
-    light ? h('span', null, !appRules() ? 'лёгкий день: техника и скорость, до отказа далеко' : (D.cfg.ex[it.ex] || {}).mid ? 'средний день: между тяжёлым и лёгким' : 'лёгкий день: вес меньше, повторов больше, чем в тяжёлом') : null,   // (в эталоне нет) «Новая схема»: запас и в лёгком дне около 2
+    bare && w0 == null ? h('span', { class: 'pick' }, PICK) : null,   // (в эталоне нет) веса нет — как его подобрать (live.ts)
+    light && !bare ? h('span', null, !appRules() ? 'лёгкий день: техника и скорость, до отказа далеко' : (D.cfg.ex[it.ex] || {}).mid ? 'средний день: между тяжёлым и лёгким' : 'лёгкий день: вес меньше, повторов больше, чем в тяжёлом') : null,   // (в эталоне нет) «Новая схема»: запас и в лёгком дне около 2
     S.canWrite ? goalSelect(it) : null,
     (appRules() && !!d.open) ? null : pc.prev ? h('span', null, 'прошлый раз ' + C.fmtDate(pc.prev.date) + ': ' + C.fmt(pc.prev.top.w) + ' × ' + pc.prev.item.cyc!.reps) : null,   // (в эталоне нет) в идущей тренировке с днями «День N» — без прошлого раза (просьба владельца, 26 ноября 2026)
     (appRules() && !!d.open) ? null : said || (lm ? pill(lm > 0 ? 'good' : 'warn', lightWhy(lm)) : null) || (pc.repeat ? pill('warn', 'в прошлый раз подходы не закрыты: неделя повторяется') : pc.hard ? pill('warn', 'в прошлый раз был подход в отказ: максимум не повышен') : null)));
@@ -267,15 +274,15 @@ export function cycleBlock(card: HTMLElement, d: Workout, it: Item, prim: string
     repsRow.appendChild(h('span', { class: 'sub' }, 'Повторы по подходам'));
     it.sets.forEach((st, i) => repsRow.appendChild(h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'cr-' + uid + '-' + i, 'aria-label': 'Повторы, подход ' + (i + 1), placeholder: it.cyc!.reps, value: st.r == null ? '' : st.r, oninput: e => { st.r = toInt(e.target.value); touch(); } })));
     repsRow.appendChild(h('button', { class: 'btn sm', onclick: () => { it.sets.forEach(s => { s.r = it.cyc!.reps; }); touch(); paintSets(); } }, 'Все по ' + it.cyc!.reps));
-    repsRow.appendChild(h('span', { class: 'sub' }, auto ? 'Запас: сколько повторов оставалось до отказа. Отметь хотя бы в последнем подходе — он решает вес на следующей неделе: ' + C.AUTO.aim + ' и больше — плюс шаг, 1 — тот же, 0 — минус ' + C.AUTO.down + '%'
+    repsRow.appendChild(h('span', { class: 'sub' }, bare ? 'Запас по подходам' : auto ? 'Запас: сколько повторов оставалось до отказа. Отметь хотя бы в последнем подходе — он решает вес на следующей неделе: ' + C.AUTO.aim + ' и больше — плюс шаг, 1 — тот же, 0 — минус ' + C.AUTO.down + '%'
       : 'Запас по подходам: сколько повторов оставалось до отказа. По расчёту здесь около ' + Math.max(0, C.estRir(it.cyc!.pct, it.cyc!.reps))
         + (light && appRules() ? '. Отметь в последнем подходе: ' + LIGHT_RIR.easy + ' и больше два раза подряд — вес на шаг выше, 0 — на шаг ниже' : '')));   // (в эталоне нет) вывод 7 аудита
     it.sets.forEach((st, i) => repsRow.appendChild(h('input', { class: 'num', type: 'text', inputmode: 'numeric', id: 'cq-' + uid + '-' + i, 'aria-label': 'Запас повторов (RIR), подход ' + (i + 1), placeholder: '–', value: st.q == null ? '' : st.q, oninput: e => { const v = toInt(e.target.value); if (v == null) delete st.q; else st.q = Math.max(0, Math.min(5, v)); touch(); } })));
   };
   card.appendChild(h('div', { class: 'cyc' },
     h('label', { class: 'f' }, h('span', null, 'Вес, кг'), h('input', { class: 'num', type: 'text', inputmode: 'decimal', id: 'cw-' + uid, value: w0 == null ? '' : C.fmt(w0, 3), oninput: e => { const v = toNum(e.target.value); it.sets.forEach(s => { s.w = v; }); it.tm = null; paintTm(); touch(); } })),
-    h('label', { class: 'f' }, h('span', null, 'Схема'), h('select', { id: 'cs-' + uid, onchange: e => { const r = +e.target.value; it.cyc = { reps: r, pct: pctOf(r) }; it.tm = null; touch(); render(true); } }, order.map(r => h('option', { value: r, selected: r === it.cyc!.reps, text: r + ' повт. · ' + pctOf(r) + '%' })))),
-    h('label', { class: 'f' }, h('span', null, 'Подходов'), h('input', { class: 'num sm', type: 'text', inputmode: 'numeric', id: 'cn-' + uid, value: it.sets.length, onchange: e => { const n = Math.max(1, Math.min(12, toInt(e.target.value) || 1)), w = it.sets[0] ? it.sets[0].w : null; while (it.sets.length < n) it.sets.push({ w, r: null }); it.sets.length = n; touch(); render(true); } }))));
+    bare ? null : h('label', { class: 'f' }, h('span', null, 'Схема'), h('select', { id: 'cs-' + uid, onchange: e => { const r = +e.target.value; it.cyc = { reps: r, pct: pctOf(r) }; it.tm = null; touch(); render(true); } }, order.map(r => h('option', { value: r, selected: r === it.cyc!.reps, text: r + ' повт. · ' + pctOf(r) + '%' })))),
+    bare ? null : h('label', { class: 'f' }, h('span', null, 'Подходов'), h('input', { class: 'num sm', type: 'text', inputmode: 'numeric', id: 'cn-' + uid, value: it.sets.length, onchange: e => { const n = Math.max(1, Math.min(12, toInt(e.target.value) || 1)), w = it.sets[0] ? it.sets[0].w : null; while (it.sets.length < n) it.sets.push({ w, r: null }); it.sets.length = n; touch(); render(true); } }))));
   card.appendChild(repsRow);
   paintSets(); paintTm();
 }
