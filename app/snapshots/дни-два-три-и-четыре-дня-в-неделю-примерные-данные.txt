@@ -3569,7 +3569,12 @@
 черновик:
   - td-draft
 экран: правки к шагу 13
-@@ 2 -0 +11
+@@ 2 -0 +16
++  div#backup-ask.banner
++   p Резервной копии ещё нет. Записи есть только на этом устройстве.
++   div.row(style="margin-top:8px")
++    button#backup-now.btn.primary.sm Сохранить копию
++    button#backup-later.btn.ghost.sm Не сейчас
 +  div.tiles.two
 +   div.tile
 +    span.l Тренировок записано
@@ -8759,7 +8764,7 @@
 +      option(value="cable_crunch") Скручивания на блоке
 +      option(value="lat_raise_machine") Средние дельты в тренажере
 +      option(value="deadlift") Становая тяга
-@@ 832 -11 +445
+@@ 832 -11 +444
 +      option(value="pulldown_cable") Тяга верхнего блока
 +      option(value="db_row") Тяга гантели в наклоне
 +      option(value="face_pull") Тяга к лицу на блоке
@@ -9197,14 +9202,13 @@
 +    div.sec-h
 +     div
 +      h2 Данные
-+      p.note Записей в дневнике: 25. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».
++      p.note Записей в дневнике: 25. Они хранятся на этом устройстве и никуда не отправляются.
 +    div.row
-+     button.btn Скачать CSV
-+     button.btn Скопировать CSV
-+     button#backup-all.btn Резервная копия всех профилей (JSON)
-+     button#import-backup.btn Загрузить копию из файла
-+    p.note(style="margin-top:8px") CSV — тренировки открытого профиля. Резервная копия — всё сразу: профили, настройка, программы, тренировки и вес тела. Это единственный способ перенести записи на другое устройство или вернуть их, если это сломается.
++     button#backup-all.btn.primary Сохранить
++     button#import-backup.btn Загрузить
++    p.note(style="margin-top:8px") «Сохранить» — файл со всеми профилями, программами, тренировками и весом тела. «Загрузить» — записи из такого файла: так их переносят на другое устройство и возвращают, если что-то сломается.
 +    p#device-note.note(style="margin-top:6px") Браузер не обещал хранить записи: при нехватке места он может их стереть. Держи свежую резервную копию. Сборка для разработки.
++    p#backup-last.note(style="margin-top:6px") Резервную копию на этом устройстве ещё не сохраняли.
 
 === 30. вручную: упражнение только в четвёртый день
 адрес: "#program"
@@ -10116,158 +10120,158 @@
 черновик:
   - td-draft
 экран: правки к шагу 17
-@@ 5 -1 +1
+@@ 10 -1 +1
 -    span.v 25
 +    span.v 26
-@@ 10 -3 +3
+@@ 15 -3 +3
 -     span.v 117
 -     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#43d2416b7c
 -    span.d +17% к первой неделе
 +     span.v 119
 +     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#cfec43563d
 +    span.d +19% к первой неделе
-@@ 19 -1 +1
+@@ 24 -1 +1
 -   p.sub(style="margin-bottom:6px") 36 подходов, ≈ 2 ч 10 мин с отдыхом по упражнению. Первый раз по программе «Пауэрбилдинг: жим лежа»: веса взяты из последних тренировок каждого упражнения. В план уже внесены поправки дневника: 2.
 +   p.sub(style="margin-bottom:6px") 19 подходов, ≈ 1 ч 5 мин с отдыхом по упражнению. Первый раз по программе «Равномерно на всё тело»: веса взяты из последних тренировок каждого упражнения. В план уже внесены поправки дневника: 2.
-@@ 24 -1 +1
+@@ 29 -1 +1
 -      span.tag(style="margin-left:6px") сила по запасу
 +      span.tag.accent(style="margin-left:6px") Отказ
-@@ 26 -2 +4
+@@ 31 -2 +4
 -      span.chip 3 × 4 по 90 кг
 -      span.tag 83%
 +      span.chip.adj 92.5
 +      span.chip.adj 92.5
 +      span.chip.adj 92.5
 +      span.chip.adj 92.5
-@@ 29 -15 +0
-@@ 46 -1 +1
+@@ 34 -15 +0
+@@ 51 -1 +1
 -      span.chip 5 подходов
 +      span.chip 3 подхода
-@@ 57 -6 +0
-@@ 68 -5 +0
-@@ 90 -29 +0
-@@ 123 -1 +1
+@@ 62 -6 +0
+@@ 73 -5 +0
+@@ 95 -29 +0
+@@ 128 -1 +1
 -     p.sub Подходов в неделю, среднее за недели 8–10. Подсвеченный участок шкалы — рабочая зона 10–20, риска — минимум 4.
 +     p.sub Подходов в неделю, среднее за недели 7–9. Подсвеченный участок шкалы — рабочая зона 10–20, риска — минимум 4.
-@@ 128 -1 +1
+@@ 133 -1 +1
 -    div.meter(role="img" aria-label="10 подходов в неделю")
 +    div.meter(role="img" aria-label="10.3 подходов в неделю")
-@@ 130 -1 +1
+@@ 135 -1 +1
 -     i.fill.z-opt(style="width: 41.6667%;")
 +     i.fill.z-opt(style="width: 43.0556%;")
-@@ 132 -1 +1
+@@ 137 -1 +1
 -    span.mv 10
 +    span.mv 10.3
-@@ 136 -1 +1
+@@ 141 -1 +1
 -    div.meter(role="img" aria-label="7.5 подходов в неделю")
 +    div.meter(role="img" aria-label="8.7 подходов в неделю")
-@@ 138 -1 +1
+@@ 143 -1 +1
 -     i.fill.z-base(style="width: 31.25%;")
 +     i.fill.z-base(style="width: 36.1111%;")
-@@ 140 -1 +1
+@@ 145 -1 +1
 -    span.mv 7.5
 +    span.mv 8.7
-@@ 144 -1 +1
+@@ 149 -1 +1
 -    div.meter(role="img" aria-label="7.7 подходов в неделю")
 +    div.meter(role="img" aria-label="7.3 подходов в неделю")
-@@ 146 -1 +1
+@@ 151 -1 +1
 -     i.fill.z-base(style="width: 31.9444%;")
 +     i.fill.z-base(style="width: 30.5556%;")
-@@ 148 -1 +1
+@@ 153 -1 +1
 -    span.mv 7.7
 +    span.mv 7.3
-@@ 152 -1 +1
+@@ 157 -1 +1
 -    div.meter(role="img" aria-label="6.3 подходов в неделю")
 +    div.meter(role="img" aria-label="5.2 подходов в неделю")
-@@ 154 -1 +1
+@@ 159 -1 +1
 -     i.fill.z-base(style="width: 26.3889%;")
 +     i.fill.z-base(style="width: 21.5278%;")
-@@ 156 -1 +1
+@@ 161 -1 +1
 -    span.mv 6.3
 +    span.mv 5.2
-@@ 160 -1 +1
+@@ 165 -1 +1
 -    div.meter(role="img" aria-label="4.7 подходов в неделю")
 +    div.meter(role="img" aria-label="4 подходов в неделю")
-@@ 162 -1 +1
+@@ 167 -1 +1
 -     i.fill.z-base(style="width: 19.4444%;")
 +     i.fill.z-base(style="width: 16.6667%;")
-@@ 164 -1 +1
+@@ 169 -1 +1
 -    span.mv 4.7
 +    span.mv 4
-@@ 168 -1 +1
+@@ 173 -1 +1
 -    div.meter(role="img" aria-label="3.5 подходов в неделю")
 +    div.meter(role="img" aria-label="2 подходов в неделю")
-@@ 170 -1 +1
+@@ 175 -1 +1
 -     i.fill.z-low(style="width: 14.5833%;")
 +     i.fill.z-low(style="width: 8.33333%;")
-@@ 172 -1 +1
+@@ 177 -1 +1
 -    span.mv 3.5
 +    span.mv 2
-@@ 177 -1 +1
+@@ 182 -1 +1
 -    div.meter(role="img" aria-label="11.5 подходов в неделю")
 +    div.meter(role="img" aria-label="13 подходов в неделю")
-@@ 179 -1 +1
+@@ 184 -1 +1
 -     i.fill.z-opt(style="width: 47.9167%;")
 +     i.fill.z-opt(style="width: 54.1667%;")
-@@ 181 -1 +1
+@@ 186 -1 +1
 -    span.mv 11.5
 +    span.mv 13
-@@ 185 -1 +1
+@@ 190 -1 +1
 -    div.meter(role="img" aria-label="10 подходов в неделю")
 +    div.meter(role="img" aria-label="8.8 подходов в неделю")
-@@ 187 -1 +1
+@@ 192 -1 +1
 -     i.fill.z-opt(style="width: 41.6667%;")
 +     i.fill.z-base(style="width: 36.8056%;")
-@@ 189 -3 +3
+@@ 194 -3 +3
 -    span.mv 10
 -    span.pill.mark.good(role="img" title="рабочая зона" aria-label="рабочая зона")
 -     svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
 +    span.mv 8.8
 +    span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
 +     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-@@ 193 -1 +1
+@@ 198 -1 +1
 -    div.meter(role="img" aria-label="12 подходов в неделю")
 +    div.meter(role="img" aria-label="14.2 подходов в неделю")
-@@ 195 -1 +1
+@@ 200 -1 +1
 -     i.fill.z-opt(style="width: 50%;")
 +     i.fill.z-opt(style="width: 59.0278%;")
-@@ 197 -1 +1
+@@ 202 -1 +1
 -    span.mv 12
 +    span.mv 14.2
-@@ 210 -1 +1
+@@ 215 -1 +1
 -    div.meter(role="img" aria-label="0.8 подходов в неделю")
 +    div.meter(role="img" aria-label="0 подходов в неделю")
-@@ 212 -1 +1
+@@ 217 -1 +1
 -     i.fill.z-low(style="width: 3.47222%;")
 +     i.fill.z-none(style="width: 0%;")
-@@ 214 -1 +1
+@@ 219 -1 +1
 -    span.mv 0.8
 +    span.mv 0
-@@ 219 -1 +1
+@@ 224 -1 +1
 -    div.meter(role="img" aria-label="8.3 подходов в неделю")
 +    div.meter(role="img" aria-label="8.7 подходов в неделю")
-@@ 221 -1 +1
+@@ 226 -1 +1
 -     i.fill.z-base(style="width: 34.7222%;")
 +     i.fill.z-base(style="width: 36.1111%;")
-@@ 223 -1 +1
+@@ 228 -1 +1
 -    span.mv 8.3
 +    span.mv 8.7
-@@ 227 -1 +1
+@@ 232 -1 +1
 -    div.meter(role="img" aria-label="7.7 подходов в неделю")
 +    div.meter(role="img" aria-label="7 подходов в неделю")
-@@ 229 -1 +1
+@@ 234 -1 +1
 -     i.fill.z-base(style="width: 31.9444%;")
 +     i.fill.z-base(style="width: 29.1667%;")
-@@ 231 -1 +1
+@@ 236 -1 +1
 -    span.mv 7.7
 +    span.mv 7
-@@ 235 -1 +1
+@@ 240 -1 +1
 -    div.meter(role="img" aria-label="3.2 подходов в неделю")
 +    div.meter(role="img" aria-label="1.3 подходов в неделю")
-@@ 237 -1 +1
+@@ 242 -1 +1
 -     i.fill.z-low(style="width: 13.1944%;")
 +     i.fill.z-low(style="width: 5.55556%;")
-@@ 239 -1 +1
+@@ 244 -1 +1
 -    span.mv 3.2
 +    span.mv 1.3
 
@@ -10361,9 +10365,9 @@
 - a(href="#muscles") Мышцы
 + a(href="#muscles" aria-current="page") Мышцы
 экран: правки к шагу 40
-@@ 2 -12 +1
+@@ 2 -17 +1
 +  section.card
-@@ 16 -50 +48
+@@ 21 -50 +48
 +     h2 Нагрузка на теле
 +     p.note Подходов в неделю по факту: среднее за недели 7, 8, 9.
 +    div.seg(role="group" aria-label="Что показать на теле")
@@ -10412,7 +10416,7 @@
 +      svg(viewBox="0 0 24 24" aria-hidden="true") …#fb49eed891
 +     | вне расчёта
 +   p.sub Нажми на мышцу или подпись, чтобы увидеть оценку и что с ней делать.
-@@ 69 -130 +321
+@@ 74 -130 +321
 +     h2 Подходы на мышцу по неделям
 +   div
 +    div.pdots
@@ -10734,27 +10738,27 @@
 +   div.scale(style="margin-top:12px")
 +    span.sw
 +     i.hc.z-none
-@@ 202 -1 +2
+@@ 207 -1 +2
 -    span
 +    span.sw
 +     i.hc.z-low
-@@ 206 -1 +2
+@@ 211 -1 +2
 -    span
 +    span.sw
 +     i.hc.z-base
-@@ 210 -1 +2
+@@ 215 -1 +2
 -    span
 +    span.sw
 +     i.hc.z-opt
-@@ 214 -1 +2
+@@ 219 -1 +2
 -    span
 +    span.sw
 +     i.hc.z-high
-@@ 218 -1 +2
+@@ 223 -1 +2
 -    span
 +    span.sw
 +     i.hc.z-cur
-@@ 221 -1 +3
+@@ 226 -1 +3
 -     | вне расчёта
 +     | неделя ещё идёт или мышца вне расчёта
 +   hr.rule
