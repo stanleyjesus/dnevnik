@@ -188,6 +188,7 @@ export async function exportAll() {
     const [cfg, ws, bs, co] = await Promise.all([db.doc(pt.cfg).get(), db.collection(pt.w).limit(1000).get(), db.collection(pt.body).limit(1000).get(), db.doc(pt.coach).get()]);
     out.profiles.push({ id: p.id, name: p.n, config: cfg.exists ? cfg.data() : null, workouts: ws.docs.map(d => Object.assign({ id: d.id }, d.data())), body: bs.docs.map(d => Object.assign({ id: d.id }, d.data())), coach: co.exists ? co.data() : null });
   }
+  if (appRules()) out.app = true;                                     // (в эталоне нет) копию сделало приложение: при загрузке она заменяет записи, а не дополняет историю (data/backup.ts, canMerge)
   return JSON.stringify(out, null, 1);
 }
 export async function saveBackup() {
@@ -256,7 +257,7 @@ export function vSetup() {
     h('div', { class: 'plan-list' }, list.length ? list : h('p', { class: 'sub' }, 'Справочник пуст.'))));
 
   /* data */
-  const csv = () => C.toCsv(D.W, cfg);
+  const csv = () => C.toCsv(D.WA, cfg);   // (в эталоне нет) в таблице вся история, и тренировки прежнего дневника (state.ts, derive)
   rest.push(h('section', { class: 'card' },
     h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Данные'), h('p', { class: 'note' }, 'Записей в дневнике: ' + D.W.length + '. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».'))),
     h('div', { class: 'row' },

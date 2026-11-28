@@ -79,6 +79,8 @@ const NEW_W = 'for (const e of document.querySelectorAll("input[id^=\\"cw-\\"]")
 const box = 'document.getElementById("import-box")';
 const loadCopy = text => 'window.__dnevnik.loadBackupText(' + text + ', "copy.json");';
 const stored = '(await __t.look()).store';
+/* копия прежнего дневника на примерных данных: у второго профиля — три первые тренировки первого (сценарий «копия прежнего дневника поверх программы») */
+const OLD_COPY = 'JSON.stringify((b => { b.profiles[1].workouts = b.profiles[0].workouts.slice(0, 3); return b; })(JSON.parse(__t.pack)))';
 /* встроенный справочник упражнений: сколько упражнений лежит на снарядах, сколько «без снаряда», сообщение внизу экрана */
 const chips = 'document.querySelectorAll("#view .gear-grid .chip").length', looseN = 'document.getElementById("gear-loose-n").textContent.trim()';
 const toastIs = text => 'document.getElementById("toast").textContent === ' + J(text);
@@ -1250,5 +1252,29 @@ export const SCENARIOS = [
       + expect('s && JSON.stringify(JSON.parse(s.text).profiles) === JSON.stringify(JSON.parse(sessionStorage.getItem("file")).profiles)', 'копия нынешних записей совпадает с загружаемой') + press('Отмена')],
     ['после перезагрузки записи те же', RELOAD],
     ['сверка после перезагрузки', expect(stored + ' === sessionStorage.getItem("keep")', 'после перезагрузки записи совпадают с сохранёнными')]
+  ] },
+
+  /* копия прежнего дневника поверх своей программы (просьба владельца, 28 ноября 2026; data/backup.ts, mergeBackup): у второго профиля примерных данных
+     программа есть, а тренировок нет; в копии у него три тренировки, у первого — те же 24, что уже лежат. Тренировки ложатся в историю
+     с пометкой «прежний дневник», план и программа остаются; копия, которую сделало приложение, по-прежнему заменяет записи */
+  { name: 'копия прежнего дневника поверх программы', data: 'seed', app: true, steps: [
+    ['второй профиль: обзор до загрузки', pick('#prof', 'p2') + settle + go('overview') + settle + 'sessionStorage.setItem("ov", document.getElementById("view").innerText);'],
+    ['настройка: данные', go('setup') + settle + click('#setup-more > summary')],
+    ['копия приложения заменяет записи', loadCopy('JSON.stringify(Object.assign(JSON.parse(__t.pack), { app: true }))') + settle
+      + expect(box + ' && document.getElementById("import-go") && !document.getElementById("import-add")', 'копию, которую сделало приложение, загрузка заменяет, как раньше') + press('Отмена')],
+    ['копия прежнего дневника: дополнить историю', loadCopy(OLD_COPY) + settle + expect(box + ' && document.getElementById("import-add") && document.getElementById("import-all") && !document.getElementById("import-go")', 'кнопки «Добавить в историю» и «Заменить всё»')
+      + expect('document.getElementById("import-add-note").textContent.includes("с пометкой «прежний дневник»") && document.getElementById("import-add-note").textContent.includes("Не добавятся 24 тренировки")', 'видно, что тренировки лягут с пометкой, а 24 на те же даты не добавятся')],
+    ['заменить всё — прежнее подтверждение', click('#import-all') + settle + expect(box + '.textContent.includes("Все записи в приложении будут заменены") && document.getElementById("import-go")', '«Заменить всё» показывает прежнее подтверждение замены') + press('Отмена')],
+    ['добавить в историю', loadCopy(OLD_COPY) + settle + click('#import-add') + settle + expect(toastIs('В историю добавлено: 3 тренировки'), 'сообщение: в историю добавлено три тренировки')
+      + expect('JSON.parse(' + stored + ').filter(x => x[0].startsWith("workouts_p2/")).map(x => x[1].old).join() === "true,true,true"', 'три тренировки второго профиля помечены прежним дневником')
+      + expect('JSON.parse(' + stored + ').filter(x => x[0].startsWith("workouts/") && !x[1].old).length === 24', 'тренировки первого профиля — как были')
+      + expect('JSON.stringify(JSON.parse(' + stored + ').find(x => x[0] === "config/p2")[1]) === JSON.stringify(JSON.parse(__t.pack).profiles[1].config)', 'настройка и программа второго профиля не изменились')],
+    ['журнал: пометка «прежний дневник»', go('journal') + settle + expect('document.querySelectorAll(".wo.old").length === 3 && [...document.querySelectorAll(".wo.old .wo-h .tag")].map(t => t.textContent).join() === "прежний дневник,прежний дневник,прежний дневник"', 'три записи другим фоном с пометкой «прежний дневник»')],
+    ['обзор: план тот же, что до загрузки', go('overview') + settle + expect('document.getElementById("view").innerText === sessionStorage.getItem("ov")', '«Обзор» второго профиля — тот же, что до загрузки: план идёт по программе')],
+    ['прогресс: серым — прежний дневник', go('progress') + settle + expect('document.querySelectorAll("#ex-detail tr.old").length > 0 && document.getElementById("ex-old") && [...document.querySelectorAll("#ex-detail .legend span")].some(e => e.textContent === "Прежний дневник")', 'в истории упражнения серые строки и серая линия «Прежний дневник»')],
+    ['повторная загрузка ничего не добавляет', go('setup') + settle + loadCopy(OLD_COPY) + settle + expect('document.getElementById("import-add-note").textContent.includes("Не добавятся 27 тренировок")', 'все тренировки копии уже в журнале')
+      + click('#import-add') + settle + expect(toastIs('Новых тренировок в копии нет'), 'сообщение: новых тренировок нет')],
+    ['после перезагрузки пометка на месте', RELOAD],
+    ['журнал после перезагрузки', go('journal') + settle + expect('document.querySelectorAll(".wo.old").length === 3', 'три записи прежнего дневника после перезагрузки')]
   ] }
 ];

@@ -31,7 +31,7 @@ export function bodyCard() {
     info);
 }
 export function vMuscles() {
-  if (!D.W.length) return S.conn !== 'ready' ? [] : D.cfg.program ? [bodyCard()] : [h('div', { class: 'card empty' }, 'Расчёт появится после первых тренировок.')];
+  if (!D.WA.length) return S.conn !== 'ready' ? [] : D.cfg.program ? [bodyCard()] : [h('div', { class: 'card empty' }, 'Расчёт появится после первых тренировок.')];   // (в эталоне нет) недели по факту — и с тренировками прежнего дневника (state.ts, derive)
   const out = [bodyCard()], z = D.cfg.zones, ui = S.ui, weeks = D.wi.weeks;
   const refTxt = D.wi.ref.length ? 'недели ' + D.wi.ref.map(w => w.no).join(', ') : '–';
   /* a cell is coloured by its zone; a week that is still going on and muscles outside the goal are not judged */
