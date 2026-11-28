@@ -9,6 +9,7 @@ import { progSig } from './program.ts';
 import { lostMode, modeAfter, modeBudget, modeKey, othersOf, setMode } from './goal.ts';
 import { fitBudget, timeOf } from './fit.ts';
 import { appRules, PACE, targetIds } from '../core/rules.ts';
+import { balanceText, rebalance, shiftText } from '../core/balance.ts';
 import type { Cfg, ProgSlots } from '../core/index.ts';
 import type { ProgEdit } from './types.ts';
 
@@ -64,6 +65,7 @@ export function progDraft(cfg: Cfg, cur: ProgSlots, empty: boolean, lifts: strin
   const made = st.fit && st.fit.made; if (st.fit) delete st.fit.made;
   if (!st.draft || st.key !== key) { st.draft = made && made.b === st.budget ? made.t : build(st.budget); st.key = key; st.edited = false; st.name = null; st.swapAt = null; }
   const pr = st.draft, changed = !pr.same || progSig(pr.slots) !== progSig(pr.cur);
+  const keepBalance = appRules() && !manual;                          // (в эталоне нет) замена у программы, которую собрал дневник, не меняет баланс мышц (balance.ts)
   const recount = () => { pr.after = C.progTally(pr.cfg, pr.slots); st.edited = true; render(true); };
   const edit: ProgEdit = {
     manual,
@@ -78,10 +80,22 @@ export function progDraft(cfg: Cfg, cur: ProgSlots, empty: boolean, lifts: strin
       const e = pr.slots[slot][i], old = e.ex, first = e.was || old;
       if (!x || x.id === old) return;
       if (!pr.cfg.ex[x.id]) { if (!x.def) return; pr.create[x.id] = C.clone(x.def); pr.cfg.ex[x.id] = C.placed(pr.cfg, Object.assign({ n: x.id }, x.def)); }
+      const was = keepBalance ? C.progTally(pr.cfg, pr.slots).pv : null;   // (в эталоне нет) объём мышц до замены: его дневник вернёт (balance.ts)
       e.ex = x.id; if (x.id === first) delete e.was; else e.was = first;
       st.swapAt = null;
       (pr.hand = pr.hand || []).push({ m: C.SLOT[slot].s, t: 'замена: ' + C.exName(pr.cfg, old) + ' → ' + C.exName(pr.cfg, x.id) });
-      toast(C.SLOT[slot].s + ': ' + C.exName(pr.cfg, old) + ' → ' + C.exName(pr.cfg, x.id));
+      /* (в эталоне нет) замена не меняет баланс мышц (пункт 1 вопросов владельца, 28 ноября 2026): дневник возвращает мышцам объём до замены
+         ходами кнопок «−» и «+» у мышцы; что вернуть не вышло — в сообщении и под заменой */
+      let tail = '';
+      if (was) {
+        for (const sl of C.SLOTS) for (const x2 of pr.slots[sl.id]) delete x2.lack;
+        const b = rebalance(pr.cfg, pr.slots, was, { slot, ex: x.id }, { z: cfg.zones, ignore: cfg.ignore, budget: st.budget, dayCap: cfg.caps.day, time, rest: D.cfg.rest }, (id, def) => { pr.create[id] = def; pr.cfg.ex[id] = C.placed(pr.cfg, Object.assign({ n: id }, def)); });
+        for (const mv of b.moves) pr.hand.push(mv);
+        tail = balanceText(b);
+        const me = pr.slots[slot].find(y => y.ex === x.id);
+        if (me && b.lack.length) me.lack = shiftText(b.lack.map(l => [l.m, l.d] as [string, number])) + ' — ' + b.lack[0].why;
+      }
+      toast(C.SLOT[slot].s + ': ' + C.exName(pr.cfg, old) + ' → ' + C.exName(pr.cfg, x.id) + tail);
       recount();
     }
   };

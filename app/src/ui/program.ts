@@ -22,6 +22,7 @@ import { DAY_H } from '../core/strength.ts';
 import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../core/index.ts';
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
 import { paceText } from './pace.ts';
+import { shiftOf, shiftText } from '../core/balance.ts';
 import { carousel, kept } from './carousel.ts';   // (в эталоне нет) дни программы каруселью с днями «День N»
 import { newOn, onbNew, vOnboard } from './onboard.ts';   // (в эталоне нет) новая программа — в мастере (просьба владельца, 28 ноября 2026)
 
@@ -51,7 +52,9 @@ export function progDay(cfg: Cfg, sl: Slot, list: ProgEntry[], load: number, was
     /* another exercise for the same muscles in this place: the link opens a list, the choice keeps the sets */
     const alts = edit && (k === 'compound' || k === 'iso') ? C.swapsFor(cfg, e.ex, list.map(x => x.ex)) : null, canSwap = alts && (alts.same.length || alts.near.length);
     const open = canSwap && edit!.swapAt === sl.id + ':' + i, sid = 'sw-' + sl.id + '-' + i;
-    const opt = (x: Swap, tail?: string) => h('option', { value: x.id, text: x.n + (tail || '') + (x.def ? ' · нет в списке, добавится' : '') });
+    /* (в эталоне нет) с днями «День N» у варианта замены — что он сделает с недельным объёмом мышц (balance.ts; пункт 1 вопросов владельца, 28 ноября 2026) */
+    const shiftAt = (x: Swap) => { const t = open && appRules() ? shiftText(shiftOf(cfg, { [sl.id]: list }, sl.id, i, x.id, x.def)) : ''; return t ? ' — ' + t : ''; };
+    const opt = (x: Swap, tail?: string) => h('option', { value: x.id, text: x.n + (shiftAt(x) || tail || '') + (x.def ? ' · нет в списке, добавится' : '') });
     const sub = h('div', { class: 'sub' }, progScheme(cfg, e), e.was ? ' · вместо «' + C.exName(cfg, e.was) + '»' : '',
       canSwap && !open ? [' · ', h('button', { type: 'button', class: 'linkbtn', id: sid, 'aria-label': 'Заменить упражнение: ' + nm, onclick: () => edit!.swapOpen(sl.id, i) }, 'заменить')] : null);
     const picker = open ? h('div', { class: 'row swaprow' },
@@ -200,6 +203,7 @@ export function vProgram() {
     const r = C.nudgeMuscle(pr.cfg, pr.slots, m.id, dir, { z: cfg.zones, ignore: cfg.ignore, budget: cap, dayCap: cfg.caps.day }, (id, def) => { pr.create[id] = def; pr.cfg.ex[id] = C.placed(pr.cfg, Object.assign({ n: id }, def)); });
     toast(r.ok ? m.n + ' — ' + r.text.charAt(0).toLowerCase() + r.text.slice(1) + ' · ' + freeText(freeOf(C.progTally(pr.cfg, pr.slots))) : r.text);
     if (!r.ok) return;
+    for (const sl of C.SLOTS) for (const e of pr.slots[sl.id]) delete e.lack;   // (в эталоне нет) атлет сам поправил мышцу: «не хватает» у замены больше не про то (balance.ts)
     (pr.hand = pr.hand || []).push({ m: m.n, t: r.text });
     recount();
   };

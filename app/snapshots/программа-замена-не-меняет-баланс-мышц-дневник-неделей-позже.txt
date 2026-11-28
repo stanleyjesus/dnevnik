@@ -1,0 +1,276 @@
+Снимок сценария «программа: замена не меняет баланс мышц · дневник неделей позже» с днями приложения «День 1…N».
+Сверяет: npm run screens -- --дни. Переписать (только намеренно): npm run screens -- --переписать. Как устроен — app/scripts/snapshots.mjs.
+
+=== 1. замена со сдвигом: в списке видно, что изменится
+адрес: "#program"
+шапка: целиком
+  div.wrap
+   | "\n  "
+   div.brand
+    svg(viewBox="0 0 24 24" aria-hidden="true") …#37e8870c3f
+    h1 Тренировочный дневник
+   | "\n  "
+   div.top-meta
+    span#prof-slot
+     select#prof.prof(aria-label="Чей дневник открыт")
+      option(value="me" selected="") Мой дневник
+      option(value="p2") Второй профиль
+    span#week-badge Неделя 11 · 17 ноя – 23 ноя
+    span#sync.sync.ok
+     i
+     span
+   | "\n"
+  | " профиль=me"
+  a(href="#overview") Обзор
+  a(href="#workout") Тренировка
+  a(href="#journal") Журнал
+  a(href="#progress") Прогресс
+  a(href="#muscles") Мышцы
+  a(href="#program" aria-current="page") Программа
+  a(href="#setup") Настройка
+поля: —
+сообщение: ""
+курсор: "sw-mon-1-to"
+файл: ""
+буфер: ""
+записи:
+  body/2025-11-03 4f2afdc6c4
+  body/2025-11-10 e4ccde204d
+  body/2025-11-17 82a30a2847
+  config/main 3a638df694
+  config/p2 9aff51afd9
+  config/profiles 304989c7da
+  workouts/2025-09-08 60c270d39a
+  workouts/2025-09-10 941e594b86
+  workouts/2025-09-12 e4e9b93c7f
+  workouts/2025-09-15 9eca0c3b9f
+  workouts/2025-09-19 dffe7844a8
+  workouts/2025-09-22 5de032b523
+  workouts/2025-09-24 ab8b7b8965
+  workouts/2025-09-26 167e26c559
+  workouts/2025-09-29 8874a7171a
+  workouts/2025-10-01 c09af81e94
+  workouts/2025-10-03 ed3b1add2b
+  workouts/2025-10-13 8c3a16e6d5
+  workouts/2025-10-15 33e8268f62
+  workouts/2025-10-17 4684cf0ff2
+  workouts/2025-10-20 269c7e08c7
+  workouts/2025-10-22 184b91fb0f
+  workouts/2025-10-24 02bb02ca64
+  workouts/2025-10-27 572948a158
+  workouts/2025-10-29 9af25e8991
+  workouts/2025-10-31 91f5258ccd
+  workouts/2025-11-03 e5ea9e35b6
+  workouts/2025-11-05 7ff89a3942
+  workouts/2025-11-07 07af07f9b7
+  workouts/2025-11-10 d323f65cd6
+  workouts/2025-11-12 b4ff841882
+  workouts/2025-11-15 5831df1705
+  workouts/2025-11-17 9121e86074
+  workouts_p2/2025-11-14 d6e3dcb259
+  workouts_p2/2025-11-17 61ede9cbb4
+черновик:
+  td-profile me
+экран: целиком
+  div.wrap.stack
+   section#onb.card(data-step="prog" data-path="build" style="max-width:760px;margin:0 auto;width:100%")
+    div.onb-steps(aria-hidden="true")
+     i.on
+     i.on
+     i.on
+     i.on.now
+     i
+     i
+    div.onb-top
+     span
+      b Готово на 67%
+     button#onb-cancel.btn.ghost.sm(type="button") Отмена
+    div.sec-h
+     div
+      div#onb-n.eyebrow Шаг 4 из 6
+      h2 Программа
+    div.row(style="align-items:flex-end;margin-bottom:10px")
+     div#pp.pf
+      span Дни подряд
+      div.picks(role="group" aria-label="Какие дни программы идут подряд")
+       button#pp-mon-wed.btn.sm(type="button" aria-pressed="false") 1–2
+       button#pp-wed-fri.btn.sm(type="button" aria-pressed="false") 2–3
+       button#pp-fri-mon.btn.sm(type="button" aria-pressed="false") 3–1
+    div.pdots
+     button#onb-dot-mon(type="button" aria-label="День 1" aria-current="true")
+     button#onb-dot-wed(type="button" aria-label="День 2" aria-current="false")
+     button#onb-dot-fri(type="button" aria-label="День 3" aria-current="false")
+    div#onb-days.pcar(role="group" aria-roledescription="карусель" aria-label="Дни программы" tabindex="0")
+     div.pslot(data-off="0")
+      div.pclip
+       div.pday
+        div.pday-h
+         b День 1
+         span.sub 27 подходов · ≈ 1 ч 35 мин
+        div.prow
+         div.grow
+          div.pn Жим лежа
+          div.sub 4 × 6–10
+        div.prow.swapping
+         div.grow
+          div.pn Вертикальная тяга в тренажере
+          div.sub 4 × 6–10
+         button#sw-mon-1.btn.sm.ghost(type="button" aria-expanded="true" aria-label="Не заменять: Вертикальная тяга в тренажере") Отмена
+         div.stack.swaprow(style="gap:6px")
+          button#sw-mon-1-to.ex-card(type="button")
+           span.nm Пуловер на верхнем блоке
+           span.sub бицепс −2, верх спины −2 в неделю · добавится в справочник
+        div.prow
+         div.grow
+          div.pn Румынская тяга
+          div.sub 2 × 6–10
+         button#sw-mon-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Румынская тяга") Заменить
+        div.prow
+         div.grow
+          div.pn Жим гантелей сидя
+          div.sub 2 × 6–10
+        div.prow
+         div.grow
+          div.pn Бицепс бедра сидя в тренажере
+          div.sub 4 × 8–12
+         button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра сидя в тренажере") Заменить
+        div.prow
+         div.grow
+          div.pn Средние дельты в тренажере
+          div.sub 4 × 8–12
+         button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Средние дельты в тренажере") Заменить
+        div.prow
+         div.grow
+          div.pn Трицепс из за головы на блоке с косичкой
+          div.sub 3 × 8–13
+         button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
+        div.prow
+         div.grow
+          div.pn Обратная бабочка
+          div.sub 4 × 8–12
+      span.plab(aria-hidden="true") День 1
+      span.pnotch(aria-hidden="true")
+     div.pslot(data-off="1")
+      div.pclip(inert="")
+       div.pday
+        div.pday-h
+         b День 2
+         span.sub 28 подходов · ≈ 1 ч 40 мин
+        div.prow
+         div.grow
+          div.pn Жим ногами
+          div.sub 4 × 6–10
+        div.prow
+         div.grow
+          div.pn Жим гантелей под углом 45
+          div.sub 4 × 6–10
+         button#sw-wed-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Жим гантелей под углом 45") Заменить
+        div.prow
+         div.grow
+          div.pn Горизонтальная тяга Т-бар
+          div.sub 4 × 6–10
+         button#sw-wed-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Горизонтальная тяга Т-бар") Заменить
+        div.prow
+         div.grow
+          div.pn Ягодичный мост со штангой
+          div.sub 4 × 6–10
+         button#sw-wed-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Ягодичный мост со штангой") Заменить
+        div.prow
+         div.grow
+          div.pn Разгибания ног в тренажере
+          div.sub 3 × 8–12
+         button#sw-wed-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Разгибания ног в тренажере") Заменить
+        div.prow
+         div.grow
+          div.pn Бицепс со штангой стоя
+          div.sub 3 × 8–12
+         button#sw-wed-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс со штангой стоя") Заменить
+        div.prow
+         div.grow
+          div.pn Обратная бабочка
+          div.sub 2 × 8–12
+        div.prow
+         div.grow
+          div.pn Махи гантелями в стороны
+          div.sub 4 × 10–20
+         button#sw-wed-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
+      span.plab(aria-hidden="true") День 2
+      span.pnotch(aria-hidden="true")
+     div.pslot(data-off="2")
+      div.pclip(inert="")
+       div.pday
+        div.pday-h
+         b День 3
+         span.sub 25 подходов · ≈ 1 ч 35 мин
+        div.prow
+         div.grow
+          div.pn Подтягивания
+          div.sub 4 × 6–10
+        div.prow
+         div.grow
+          div.pn Жим гантелей сидя
+          div.sub 2 × 6–10
+        div.prow
+         div.grow
+          div.pn Бабочка
+          div.sub 4 × 8–12
+         button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бабочка") Заменить
+        div.prow
+         div.grow
+          div.pn Бицепс бедра на тренажере лежа на животе
+          div.sub 3 × 8–12
+         button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс бедра на тренажере лежа на животе") Заменить
+        div.prow
+         div.grow
+          div.pn Трицепс с косичкой на блоке
+          div.sub 2 × 8–12
+         button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс с косичкой на блоке") Заменить
+        div.prow
+         div.grow
+          div.pn Бицепс Bayesian curl
+          div.sub 3 × 8–16
+         button#sw-fri-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Бицепс Bayesian curl") Заменить
+        div.prow
+         div.grow
+          div.pn Разгибания ног в тренажере
+          div.sub 3 × 8–12
+         button#sw-fri-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Разгибания ног в тренажере") Заменить
+        div.prow
+         div.grow
+          div.pn Обратная бабочка
+          div.sub 2 × 8–12
+        div.prow
+         div.grow
+          div.pn Отведение ног в тренажере
+          div.sub 2 × 10–15
+         button#sw-fri-8.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Отведение ног в тренажере") Заменить
+      span.plab(aria-hidden="true") День 3
+      span.pnotch(aria-hidden="true")
+    div.row.onb-foot(style="margin-top:16px;justify-content:space-between")
+     button#onb-back.btn(type="button") Назад
+     button#onb-accept.btn.primary(type="button") Принять программу
+
+=== 2. заменить со сдвигом
+сообщение: "День 1: Вертикальная тяга в тренажере → Пуловер на верхнем блоке. Объём мышц выровнен: верх спины +1, бицепс +1.5. Не хватает: верх спины −1 — другие упражнения сдвинули бы соседние мышцы"
+курсор: ""
+экран: правки к шагу 1
+@@ 40 -1 +1
+-       div.prow.swapping
++       div.prow.changed
+@@ 42 -7 +4
++         div.pn Пуловер на верхнем блоке
++         div.sub 4 × 10–15 · вместо «Вертикальная тяга в тренажере»
++         div.sub(style="color:var(--warn)") Не хватает: верх спины −1 в неделю — другие упражнения сдвинули бы соседние мышцы
++        button#sw-mon-1.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Пуловер на верхнем блоке") Заменить
+@@ 84 -1 +1
+-        span.sub 28 подходов · ≈ 1 ч 40 мин
++        span.sub 29 подходов · ≈ 1 ч 40 мин
+@@ 97 -1 +1
+-         div.sub 4 × 6–10
++         div.sub 5 × 6–10
+@@ 130 -1 +1
+-        span.sub 25 подходов · ≈ 1 ч 35 мин
++        span.sub 26 подходов · ≈ 1 ч 35 мин
+@@ 157 -1 +1
+-         div.sub 3 × 8–16
++         div.sub 4 × 8–16

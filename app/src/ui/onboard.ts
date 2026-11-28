@@ -90,7 +90,7 @@ export function onbNew() {
 /* ушли с «Программы» после «Принять» — мастер новой программы закончен; до «Принять» он ждёт: вернувшись, атлет продолжает с того же шага */
 addEventListener('hashchange', () => { if (O && O.kind === 'new' && O.took && location.hash !== '#program') { O.done = true; S.ui.prog = null; } });
 /* (только при разработке) сценарии сверки экранов читают у черновика мастера то, чего на шаге «Программа» нет (выбор владельца, 28 ноября 2026):
-   название, лимит недели, подходы в неделю у черновика и сейчас, заметки сборки — у эталона и с таблицей дней эталона это видно в блоке «Новая программа» */
+   название, лимит недели, подходы в неделю у черновика и сейчас, правки и заметки сборки — у эталона и с таблицей дней эталона это видно в блоке «Новая программа» */
 if (__DEV__) (window as unknown as { __dnevnikProg: unknown }).__dnevnikProg = () => {
   const st = S.ui.prog, pr = st && st.draft;
   if (!st || !pr) return null;
@@ -98,7 +98,7 @@ if (__DEV__) (window as unknown as { __dnevnikProg: unknown }).__dnevnikProg = (
   const total = (t: typeof pr.after) => C.SLOTS.reduce((a, sl) => a + t.load[sl.id], 0);
   return { name: pr.name, cap: st.focus === 'manual' ? cfg.caps.week : st.budget, sets: Math.round(total(pr.after) * 2) / 2,
     now: empty && !pr.away ? '' : dayLoad(total(pr.before) + (pr.away || 0)), notes: pr.notes.map(n => n.t),
-    why: (pr.hand || []).map(x => x.m + ': ' + x.t).concat(pr.notes.map(n => n.t + ' ' + n.x)).join('\n') };
+    hand: (pr.hand || []).map(x => x.m + ': ' + x.t).join('\n'), why: (pr.hand || []).map(x => x.m + ': ' + x.t).concat(pr.notes.map(n => n.t + ' ' + n.x)).join('\n') };
 };
 
 /** Что возьмёт дневник для первой тренировки упражнения без журнала: строка под полями известных весов (здесь и в «Настройке»).

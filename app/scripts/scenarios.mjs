@@ -100,8 +100,9 @@ const listOf = id => '(' + AT('goal') + '[...document.getElementById(' + J(id) +
 const wizOr = (dom, info) => '(' + AT('prog') + '(document.getElementById("onb") ? window.__dnevnikProg().' + info + ' : ' + dom + '))';
 /* название новой программы */
 const progTitle = wizOr('(' + DRAFT + '.querySelector("#pn-name") || ' + DRAFT + '.querySelector("h2")).textContent', 'name');
-/* заметки сборки — «Что изменилось и почему» */
+/* заметки сборки — «Что изменилось и почему», и правки атлета в нём — «Поправлено вручную» */
 const WHY = wizOr('(document.getElementById("prog-why") || { textContent: "" }).textContent', 'why');
+const HAND = wizOr('(document.getElementById("prog-hand") || { textContent: "" }).textContent', 'hand');
 /* время на тренировку: минуты каждого дня черновика (из заголовков дней), подпись выбранного лимита недели, настройка профиля в хранилище */
 const dayMins = '[...' + DRAFT + '.querySelectorAll(".pday-h .sub")].map(e => { const m = e.textContent.match(/≈ (?:(\\d+) ч)?\\s*(?:(\\d+) мин)?/); return m ? (+m[1] || 0) * 60 + (+m[2] || 0) : 0; })';
 /* лимит недели черновика — «В программе N из лимита» под счётчиком свободных подходов: с днями «День N» списка «Подходов в неделю» нет, подходы дневник
@@ -817,6 +818,20 @@ export const SCENARIOS = [
       + expect('!document.querySelector("#view .swaprow") && document.querySelectorAll("#view .pday .prow.changed").length === 1 && document.querySelector("#view .pday .prow.changed .sub").textContent.includes("вместо «")', 'список закрыт, полоса слева — только у замены, с «вместо «…»»')],
     ['вручную: все кнопки', mode('manual') + settle + 'const d = ' + DRAFT + ';'
       + expect('!!d.querySelector(".pday .pctl") && !!document.getElementById("pa-mon") && !!document.getElementById("pb-mon") && !!d.querySelector(".linkbtn[id^=sw-]")', 'в «Вручную» — «выше», «−/+», «убрать», «В день» и ссылка «заменить»')]
+  ] },
+
+  /* только в приложении: с днями «День N» замена у программы, которую собрал дневник, не меняет баланс мышц (пункт 1 вопросов владельца, 28 ноября 2026; core/balance.ts):
+     у варианта замены видно, что он сделает с недельным объёмом мышц, а после замены дневник возвращает мышцам объём теми же ходами, что кнопки «−» и «+» у мышцы.
+     С 28 ноября 2026 замена — в мастере новой программы: «Что изменилось и почему» на экране нет, ходы сценарий берёт у черновика */
+  { name: 'программа: замена не меняет баланс мышц', app: true, steps: [
+    ['замена со сдвигом: в списке видно, что изменится', go('program') + settle + 'const d = ' + DRAFT + '; let hit = -1;'
+      + 'for (const id of [...d.querySelectorAll(".pday button[id^=sw-]")].map(b => b.id)) { __t.click("#" + id, 0); await __t.settle();'
+      + ' const cards = [...document.querySelectorAll("#view .swaprow .ex-card")]; hit = cards.findIndex(c => /−\\d[\\d.]*.* в неделю/.test((c.querySelector(".sub") || { textContent: "" }).textContent));'
+      + ' if (hit >= 0) break; __t.click("#" + id, 0); await __t.settle(); }'
+      + 'window.__hit = hit;' + expect('window.__hit >= 0', 'у варианта замены — сколько подходов в неделю потеряет мышца')],
+    ['заменить со сдвигом', '__t.click("#view .swaprow .ex-card", window.__hit);' + settle
+      + expect('/→/.test(document.getElementById("toast").textContent) && /Объём мышц выровнен|Не хватает/.test(document.getElementById("toast").textContent)', 'в сообщении о замене — как дневник выровнял объём мышц')
+      + expect('/подход|Новое упражнение/.test(' + HAND + ')', 'в черновике — ходы выравнивания («Поправлено вручную»)')]
   ] },
 
   /* только в приложении: дни подряд на «Программе» и что беречь в «Настройке» (решения владельца, 25 ноября 2026, пункты 6 и 2): пара дней сохраняется
