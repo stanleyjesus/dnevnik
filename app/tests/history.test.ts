@@ -118,3 +118,15 @@ test('план новой программы тренировок прежнег
     S.workouts = []; useDays(null, true);
   }
 });
+
+/* напоминание о резервной копии (выбор владельца, 28 ноября 2026; ui/remind.ts): копии ещё не было или с последней прошло от семи дней */
+test('напоминание о копии: от семи дней без копии или когда её не было', async () => {
+  const { backupDue, lastBackup, markBackup } = await import('../src/ui/remind.ts');
+  assert.equal(backupDue(null, '2025-11-12'), true);
+  assert.equal(backupDue('2025-11-06', '2025-11-12'), false);
+  assert.equal(backupDue('2025-11-05', '2025-11-12'), true);
+  assert.equal(backupDue('2025-11-12', '2025-11-12'), false);
+  assert.equal(lastBackup(), null);                                                          // память браузера недоступна — как будто копии не было
+  S.ui.backupAsk = true; markBackup('2025-11-12');
+  assert.equal(S.ui.backupAsk, false);                                                       // копия сохранена — напоминание уходит
+});

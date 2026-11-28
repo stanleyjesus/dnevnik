@@ -14,6 +14,7 @@ import { dropExButton, starterTools } from './starter.ts';
 import { startLine } from './onboard.ts';
 import { careBox } from './care.ts';
 import { appRules } from '../core/rules.ts';
+import { backupLine, markBackup } from './remind.ts';
 import type { ExDef, ExGuess, MuscleMap } from '../core/index.ts';
 import type { Db, El, Kid, Profile, RawCfg } from './types.ts';
 import type { Backup } from '../data/backup.ts';
@@ -195,8 +196,9 @@ export async function saveBackup() {
   if (!S.db) return;
   let data;
   try { data = await exportAll(); } catch (e) { toast('Не получилось собрать копию. Повтори ещё раз'); return; }
-  if (S.downloads) { try { await S.downloads.save({ filename: 'dnevnik-backup-' + D.today + '.json', data }); return; } catch (e: any) { if (e && e.code === 'declined') return; } }
-  try { await navigator.clipboard.writeText(data); toast('Копия скопирована в буфер: вставь её в файл .json'); } catch (e) { toast('Браузер не дал сохранить копию'); }
+  const done = () => { if (appRules()) { markBackup(D.today); render(true); } };   // (в эталоне нет) дата последней копии для напоминания о ней (remind.ts)
+  if (S.downloads) { try { await S.downloads.save({ filename: 'dnevnik-backup-' + D.today + '.json', data }); done(); return; } catch (e: any) { if (e && e.code === 'declined') return; } }
+  try { await navigator.clipboard.writeText(data); done(); toast('Копия скопирована в буфер: вставь её в файл .json'); } catch (e) { toast('Браузер не дал сохранить копию'); }
 }
 /* whose diaries live on this page */
 export function profilesCard() {
@@ -258,15 +260,21 @@ export function vSetup() {
 
   /* data */
   const csv = () => C.toCsv(D.WA, cfg);   // (в эталоне нет) в таблице вся история, и тренировки прежнего дневника (state.ts, derive)
+  /* (в эталоне нет) с днями «День N» — только две кнопки, «Сохранить» и «Загрузить» (просьба владельца, 28 ноября 2026): выгрузки CSV нет */
+  const two = appRules();
   rest.push(h('section', { class: 'card' },
-    h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Данные'), h('p', { class: 'note' }, 'Записей в дневнике: ' + D.W.length + '. Они хранятся на этом устройстве и никуда не отправляются. Выгрузка — таблица «один подход в строке».'))),
-    h('div', { class: 'row' },
+    h('div', { class: 'sec-h' }, h('div', null, h('h2', null, 'Данные'), h('p', { class: 'note' }, 'Записей в дневнике: ' + D.WA.length + '. Они хранятся на этом устройстве и никуда не отправляются.' + (two ? '' : ' Выгрузка — таблица «один подход в строке».')))),
+    two ? h('div', { class: 'row' },
+      h('button', { class: 'btn primary', id: 'backup-all', onclick: saveBackup }, 'Сохранить'),
+      S.canWrite ? h('button', { class: 'btn', id: 'import-backup', onclick: pickBackup }, 'Загрузить') : null)
+    : h('div', { class: 'row' },
       S.downloads ? h('button', { class: 'btn', onclick: async () => { try { await S.downloads!.save({ filename: 'trenirovki-' + D.today + '.csv', data: '﻿' + csv() }); } catch (e: any) { if (!e || e.code !== 'declined') toast('Файл не сохранился. Попробуй скопировать таблицу'); } } }, 'Скачать CSV') : null,
       h('button', { class: 'btn', onclick: async () => { try { await navigator.clipboard.writeText(csv()); toast('Таблица скопирована'); } catch (e) { toast('Браузер не дал скопировать'); } } }, 'Скопировать CSV'),
       h('button', { class: 'btn', id: 'backup-all', onclick: saveBackup }, 'Резервная копия всех профилей (JSON)'),
       S.canWrite ? h('button', { class: 'btn', id: 'import-backup', onclick: pickBackup }, 'Загрузить копию из файла') : null),
-    h('p', { class: 'note', style: 'margin-top:8px' }, 'CSV — тренировки открытого профиля. Резервная копия — всё сразу: профили, настройка, программы, тренировки и вес тела. Это единственный способ перенести записи на другое устройство или вернуть их, если это сломается.'),
+    h('p', { class: 'note', style: 'margin-top:8px' }, two ? '«Сохранить» — файл со всеми профилями, программами, тренировками и весом тела. «Загрузить» — записи из такого файла: так их переносят на другое устройство и возвращают, если что-то сломается.' : 'CSV — тренировки открытого профиля. Резервная копия — всё сразу: профили, настройка, программы, тренировки и вес тела. Это единственный способ перенести записи на другое устройство или вернуть их, если это сломается.'),
     h('p', { class: 'note', id: 'device-note', style: 'margin-top:6px' }, deviceNote()),
+    backupLine(),                                                     // (в эталоне нет) когда сохранялась последняя копия (remind.ts)
     importBox()));
   /* the rest is needed rarely: one folded line keeps it within reach without crowding the page */
   out.push(h('details', { class: 'morebox', id: 'setup-more', open: !!ui.setupMore, ontoggle: e => { ui.setupMore = e.target.open; } },

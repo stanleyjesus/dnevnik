@@ -485,8 +485,9 @@ export const SCENARIOS = [
       + click('input[id$="-uni"]') + pickAt('select[id$="-m-chest"]', 2) + press('Сохранить упражнение')],
     ['справочник: открыть другое', press('Изменить', 4)],
     ['справочник: отмена', press('Отмена')],
-    ['данные: скачать таблицу', press('Скачать CSV')],
-    ['данные: скопировать таблицу', press('Скопировать CSV')],
+    /* с днями «День N» в «Данных» только «Сохранить» и «Загрузить» (просьба владельца, 28 ноября 2026): кнопок CSV нет, эти шаги пропускаются */
+    ['данные: скачать таблицу', maybe(press('Скачать CSV'))],
+    ['данные: скопировать таблицу', maybe(press('Скопировать CSV'))],
     ['данные: резервная копия', click('#backup-all')],
     ['после перезагрузки то же', RELOAD]
   ] },
@@ -1276,5 +1277,32 @@ export const SCENARIOS = [
       + click('#import-add') + settle + expect(toastIs('Новых тренировок в копии нет'), 'сообщение: новых тренировок нет')],
     ['после перезагрузки пометка на месте', RELOAD],
     ['журнал после перезагрузки', go('journal') + settle + expect('document.querySelectorAll(".wo.old").length === 3', 'три записи прежнего дневника после перезагрузки')]
+  ] },
+
+  /* напоминание о резервной копии (выбор владельца, 28 ноября 2026; ui/remind.ts) и две кнопки «Данных» (просьба владельца тем же днём):
+     копии на устройстве не было — после «Завершить» над «Обзором» «Сохранить копию»; «Не сейчас» убирает его до следующей тренировки;
+     сохранённая копия запоминает дату, и неделю напоминания нет; через семь дней без копии оно возвращается */
+  { name: 'напоминание о резервной копии', data: 'seed', app: true, steps: [
+    ['данные: две кнопки, копии ещё не было', go('setup') + settle + click('#setup-more > summary') + settle
+      + expect('[...document.querySelectorAll("#backup-all, #import-backup")].map(b => b.textContent).join() === "Сохранить,Загрузить" && ![...document.querySelectorAll("#view button")].some(b => b.textContent.includes("CSV"))', 'в «Данных» только «Сохранить» и «Загрузить»')
+      + expect('document.getElementById("backup-last").textContent === "Резервную копию на этом устройстве ещё не сохраняли."', 'видно, что копии ещё не было')],
+    ...session('первая тренировка', 'День 2', 0, null, null, 'if (document.getElementById("memo-ok")) ' + click('#memo-ok')).slice(0, 3),
+    ['первая тренировка: завершить', FINISH + settle + expect('location.hash === "#overview" && document.getElementById("backup-ask").textContent.startsWith("Резервной копии ещё нет")', 'после «Завершить» — напоминание о копии')],
+    ['не сейчас', click('#backup-later') + settle + expect('!document.getElementById("backup-ask")', 'напоминание убрано')],
+    ...session('вторая тренировка', 'День 3', 0, null, null, 'if (document.getElementById("memo-ok")) ' + click('#memo-ok')).slice(0, 3),
+    ['вторая тренировка: завершить', FINISH + settle + expect('document.getElementById("backup-ask")', 'копии всё ещё нет — напоминание снова')],
+    ['сохранить копию', click('#backup-now') + settle + 'const f = JSON.parse((await __t.look()).saved || "null");'
+      + expect('f && JSON.parse(f.text).profiles.length === 2 && JSON.parse(f.text).app === true', 'сохранён файл со всеми профилями')
+      + expect('!document.getElementById("backup-ask") && localStorage.getItem("td-backup") === __t.day(0)', 'напоминание ушло, дата копии запомнена')],
+    ['данные: дата последней копии', go('setup') + settle + click('#setup-more > summary') + settle
+      + expect('document.getElementById("backup-last").textContent.startsWith("Последняя резервная копия на этом устройстве — ")', 'в «Данных» — дата последней копии')],
+    ...session('третья тренировка', 'День 1', 0, null, null, 'if (document.getElementById("memo-ok")) ' + click('#memo-ok')).slice(0, 3),
+    ['третья тренировка: завершить', FINISH + settle + expect('location.hash === "#overview" && !document.getElementById("backup-ask")', 'копия сегодняшняя — напоминания нет')],
+    ['копии семь дней', 'const [y, m, d] = localStorage.getItem("td-backup").split("-").map(Number); localStorage.setItem("td-backup", new Date(Date.UTC(y, m - 1, d - 7)).toISOString().slice(0, 10));'
+      + go('setup') + settle + click('#setup-more > summary')],
+    ...session('через неделю', 'День 2', 0, null, null, 'if (document.getElementById("memo-ok")) ' + click('#memo-ok')).slice(0, 3),
+    ['через неделю: завершить', FINISH + settle + expect('document.getElementById("backup-ask").textContent.startsWith("Резервной копии не было с ")', 'семь дней без копии — напоминание вернулось')],
+    ['после перезагрузки напоминания нет', RELOAD],
+    ['данные после перезагрузки', go('setup') + settle + click('#setup-more > summary') + settle + expect('document.getElementById("backup-last").textContent.startsWith("Последняя резервная копия")', 'дата копии на месте')]
   ] }
 ];

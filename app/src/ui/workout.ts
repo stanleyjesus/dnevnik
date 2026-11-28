@@ -14,6 +14,7 @@ import { goneOf, movesOf, skipProgram } from './skipfix.ts';
 import { factDur, minField, paceText } from './pace.ts';
 import { warmLine } from './warmup.ts';
 import { trimLine, trimProgram } from './trim.ts';
+import { askAfterWorkout } from './remind.ts';
 import type { Adapted, Addition, Item, Prop, Range, SetRec, Workout } from '../core/index.ts';
 import type { CyclePlan, RangeTrack, SetGoal, SetsSource } from './types.ts';
 
@@ -303,6 +304,7 @@ export async function finishWorkout(confirmed: boolean) {
   /* (в эталоне нет) запись уже в хранилище, а список журнала догонит её сам; программа, которая с темпом атлета не влезает во время, сокращается (trim.ts) */
   let cut: string | null = null;
   if (appRules()) { S.workouts = C.sortW(S.workouts.filter(w => w.id !== d.id).concat([C.clone(d)])); cut = await trimProgram(); }
+  askAfterWorkout(D.today);                                          // (в эталоне нет) копии не было неделю — над «Обзором» кнопка «Сохранить копию» (remind.ts)
   toast('Тренировка сохранена' + (fact ? ', шла ' + factDur(fact) : '') + (moved ? '. Программа поправлена: ' + fx.map(f => C.exName(D.cfg, f.ex) + (f.kind === 'move' ? ' — в ' + C.SLOT[f.to!].n : ' — подходы другим упражнениям')).join(', ') : '') + (cut ? '. ' + cut : ''));
   go('overview');
 }

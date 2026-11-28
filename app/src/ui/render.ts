@@ -10,6 +10,8 @@ import { onbOn } from './onboard.ts';
 import { weekDays } from './platform.ts';
 import { workoutClock } from './clock.ts';
 import { appRules } from '../core/rules.ts';
+import { backupAsk } from './remind.ts';
+import { saveBackup } from './setup.ts';
 import type { Derived } from './types.ts';
 
 export let D = null as unknown as Derived;
@@ -34,6 +36,8 @@ export function render(force?: boolean) {
   if (S.conn === 'none' || S.conn === 'error') wrap.appendChild(h('div', { class: 'banner crit' }, h('b', null, 'Хранилище на этом устройстве недоступно. '), 'Записи не загрузились, и новые сейчас не сохранятся. Закрой режим «инкогнито», если он включён, и обнови страницу.'));
   else if (S.conn !== 'ready') wrap.appendChild(h('div', { class: 'banner' }, S.slow ? 'Записи пока не загрузились. Приложение продолжает попытки.' : 'Загружаю дневник…'));
   else if (!S.canWrite) wrap.appendChild(h('div', { class: 'banner' }, 'Дневник открыт только для чтения: изменять записи может владелец.'));
+  const ask = backupAsk(saveBackup, () => { S.ui.backupAsk = false; render(true); });   // (в эталоне нет) напоминание о резервной копии после тренировки (remind.ts)
+  if (ask) wrap.appendChild(ask);
   put(wrap, [VIEW_FN[S.view]()]);
   v!.appendChild(wrap);
   drawCharts();
