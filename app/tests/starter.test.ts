@@ -11,9 +11,9 @@ import type { ExDef } from '../src/core/types.ts';
 const ids = Object.keys(STARTER), fresh = () => Core.mergeCfg(withStarter(null));
 const sameMap = (a: Record<string, number>, b: Record<string, number>) => assert.deepEqual(Object.entries(a).sort(), Object.entries(b).sort());
 
-test('состав: 34 упражнения основного набора и 29 распространённых, названия не повторяются', () => {
+test('состав: 34 упражнения основного набора и 44 распространённых, названия не повторяются', () => {
   assert.equal(STARTER_OWN, 34);
-  assert.equal(ids.length, 63);
+  assert.equal(ids.length, 78);   // до 28 ноября 2026 — 63: добавлено 15 (просьба владельца, пункты 7–9)
   assert.equal(new Set(ids.map(id => exKey(STARTER[id].n))).size, ids.length, 'два упражнения с одним названием');
   for (const id of ids) {
     const e = STARTER[id];
@@ -27,7 +27,7 @@ test('состав: 34 упражнения основного набора и 2
 
 test('каждое упражнение лежит на снаряде: «без снаряда» пусто, шаг берётся от снаряда', () => {
   const cfg = fresh();
-  assert.equal(Object.keys(cfg.ex).length, 63);
+  assert.equal(Object.keys(cfg.ex).length, 78);
   for (const id of ids) {
     const g = Core.gearOf(cfg, id);
     assert.notEqual(g, Core.NO_GEAR, STARTER[id].n + ' — без снаряда');
@@ -115,12 +115,12 @@ test('чего профилю не хватает и куда положить �
   assert.ok(loose.length > 0 && loose.every(id => !!starterGear(id, cfg.ex[id].n)), 'остаются без места: ' + loose.filter(id => !starterGear(id, cfg.ex[id].n)).join(', '));
 });
 
-test('копия первой версии: справочник дополняется встроенным — шесть упражнений на снаряды, сорок новых, своё не меняется (решение владельца, 25 ноября 2026)', () => {
+test('копия первой версии: справочник дополняется встроенным — шесть упражнений на снаряды, пятьдесят пять новых, своё не меняется (решение владельца, 25 ноября 2026)', () => {
   const raw = readJson('data/config.json'), before = JSON.stringify(raw);
   const f = fillStarter(raw), got = f.raw!;
   assert.equal(JSON.stringify(raw), before, 'исходная настройка изменена');
   assert.deepEqual(f.sorted, ['bench', 'leg_press', 'pullup', 'pec_fly', 'bayesian_curl', 'abs']);
-  assert.equal(f.added.length, 40);
+  assert.equal(f.added.length, 55);
   assert.deepEqual(f.added, starterMissing(raw.ex));
   /* свои упражнения на месте и такие же: меняется только снаряд у тех, что лежали «без снаряда», и уходят шаг и округление, которые не читаются */
   for (const [id, e] of Object.entries(raw.ex as Record<string, ExDef>)) {
@@ -130,9 +130,9 @@ test('копия первой версии: справочник дополня�
   }
   for (const id of f.added) assert.deepEqual(got.ex[id], STARTER[id], id);
   assert.deepEqual(got.gear, { g_pullup: { n: 'Подтягивания', step: 1 } });
-  /* после загрузки — как у нового профиля: 63 упражнения, «без снаряда» пусто, подтягивания с шагом 1 кг */
+  /* после загрузки — как у нового профиля: 78 упражнений, «без снаряда» пусто, подтягивания с шагом 1 кг */
   const cfg = Core.mergeCfg(got);
-  assert.equal(Object.keys(cfg.ex).length, 63);
+  assert.equal(Object.keys(cfg.ex).length, 78);
   assert.deepEqual(Object.keys(cfg.ex).filter(id => Core.gearOf(cfg, id) === Core.NO_GEAR), []);
   for (const id of ids) assert.equal(Core.gearOf(cfg, id), STARTER[id].gear, id + ': снаряд');
   assert.equal(cfg.ex.pullup.round, 1);
@@ -161,14 +161,14 @@ test('дополнение встроенным не трогает выбор �
   assert.deepEqual(got.ex.bench, raw.ex.bench); assert.deepEqual(got.ex.bench_light, raw.ex.bench_light); assert.deepEqual(got.ex.leg_press, raw.ex.leg_press);
   assert.deepEqual(got.ex.x_1, raw.ex.x_1); assert.deepEqual(got.ex.x_2, raw.ex.x_2);
   assert.ok(!f.added.includes('bench') && !f.added.includes('leg_press') && !f.added.includes('pec_fly'));
-  assert.equal(f.added.length, 60);
+  assert.equal(f.added.length, 75);
   assert.deepEqual(got.gear, { g_sled: { n: 'Платформа', step: 10 }, g_pullup: { n: 'Подтягивания', step: 1 } });
 });
 
 for (const b of BACKENDS) test('пустое хранилище (' + b.name + '): профиль считается со встроенным списком, в хранилище ничего не пишется', async () => {
   const s = await b.open(), got = await loadProfile(s, 'me');
   assert.equal(got.cfgRaw, null);
-  assert.equal(Object.keys(got.cfg.ex).length, 63);
+  assert.equal(Object.keys(got.cfg.ex).length, 78);
   assert.deepEqual(await s.list('config'), []);
 });
 

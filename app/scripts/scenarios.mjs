@@ -124,7 +124,7 @@ const DOT = '(i => [...document.querySelectorAll(".pdots button")].map(b => b.ge
 const OPEN = '(i => [...document.querySelectorAll("#onb-days > .pslot")].map(e => e.dataset.off).join() === [0, 1].map(j => String(j - i)).join() && !document.querySelector("#onb-days > .pslot:nth-child(" + (i + 1) + ") > .pclip").inert)';   // открыт день i: остальные — края, его упражнения доступны
 const SWIPE = '(dx => { const c = document.getElementById("onb-days"), r = c.getBoundingClientRect(), p = (t, x) => c.dispatchEvent(new PointerEvent(t, { bubbles: true, isPrimary: true, pointerId: 7, pointerType: "touch", clientX: x, clientY: r.top + 60 })); p("pointerdown", r.left + r.width / 2); for (let k = 1; k <= 4; k++) p("pointermove", r.left + r.width / 2 + dx * k / 4); p("pointerup", r.left + r.width / 2 + dx); })';   // палец по карусели дней вбок на dx
 const tabsOff = 'getComputedStyle(document.querySelector(".tabs")).display === "none"';
-const PASTED = 'День 1\nЖим штанги лёжа 4×6-8 80 кг\nТяга верхнего блока к груди 3x10\nПуловер с гантелью 3×12\n\nДень 2:\nПрисед 4×6 @100\nРумынская тяга 3 x (8–10)';
+const PASTED = 'День 1\nЖим штанги лёжа 4×6-8 80 кг\nТяга верхнего блока к груди 3x10\nОтжимания на брусьях 3×12\n\nДень 2:\nПрисед 4×6 @100\nРумынская тяга 3 x (8–10)';
 const outIs = (id, text) => expect('document.getElementById("kw-out-' + id + '").textContent === ' + J(text), id + ': ' + text);
 /* вкладка открылась: нарисована, без сообщения о сбое. Ошибку в коде страницы и страницу шире экрана проверка ловит сама на каждом шаге */
 const opens = (v, note = '') => [v + (note ? ' ' + note : '') + ': открывается', go(v) + settle + expect('location.hash === "#' + v + '" && !document.querySelector(".banner.crit") && document.querySelector("#view .wrap").children.length > 0', 'вкладка ' + v + ' открылась')];
@@ -299,13 +299,13 @@ export const SCENARIOS = [
     ['собрать программу: снова онбординг', click('#onb-again') + settle + expect(onbAt(1, 7) + ' && ' + tabsOff, 'онбординг, шаг 1 из 7, без вкладок')],
     ['и снова пропустить', click('#onb-skip') + settle + expect('!!document.querySelector(".card.empty")', 'карточка «В дневнике пока пусто»')],
     ...APP_TABS.slice(1).map(v => opens(v)),
-    ['настройка: справочник заполнен и разложен по снарядам', go('setup') + settle + expect(chips + ' === 63', '63 упражнения на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')
+    ['настройка: справочник заполнен и разложен по снарядам', go('setup') + settle + expect(chips + ' === 78', '78 упражнений на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')
       + expect('!!document.getElementById("gear-g_pullup")', 'есть снаряд «Подтягивания»') + expect('!document.getElementById("starter-tools")', 'кнопок справочника нет: раскладывать и добавлять нечего')
       + expect(stored + ' === "[]"', 'список встроен: в хранилище по-прежнему пусто')],
     ['блока «Лимиты и методика» нет', click('#setup-more > summary') + settle + expect('!document.getElementById("st-start") && !document.getElementById("view").textContent.includes("Лимиты и методика")', 'в «Остальных настройках» нет лимитов и методики')
       + expect('[...document.querySelectorAll("#setup-more section.card h2")].map(x => x.textContent).join() === "Что беречь,Профили,Справочник упражнений,Данные"', 'в «Остальных настройках» четыре раздела: что беречь, профили, справочник, данные')],
     ['программа: вручную, в списке дня — весь справочник', go('program') + settle + expect(goalIs('hand') + ' && !document.querySelector("#pm, #pl, #ps")', 'для пустого дневника цель «Вручную», уточняющего списка нет')
-      + expect('document.querySelectorAll("#pa-mon option").length === 63', 'в списке понедельника 63 упражнения')],
+      + expect('document.querySelectorAll("#pa-mon option").length === 78', 'в списке понедельника 78 упражнений')],
     ['цели: масса, сила, гибрид, вручную', expect(goals + ' === "Масса,Сила,Гибрид,Вручную"', 'четыре кнопки цели: в справочнике есть базовые, поэтому сила и гибрид на месте')],
     /* в «Массе» базовые справочника с нуля сами не встают (решение владельца, 25 ноября 2026): упражнения подбираются по мышцам из остального справочника */
     ['равномерно: без базовых, упражнения по мышцам', mode('even') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'even'), 'цель «Масса», в списке — «Всем поровну»')
@@ -323,7 +323,7 @@ export const SCENARIOS = [
     ['что изменилось и почему', click('#prog-why > summary') + settle + expect('document.getElementById("prog-why").textContent.includes("Базовые — первыми в своих днях: Жим лежа (день 1)") && !document.getElementById("prog-why").textContent.includes("Жим ногами (день 2)")', 'заметка о базовых: по проценту — только жим лежа, остальные базовые — как подсобка (вывод 5 аудита)')
       + expect('!document.getElementById("prog-why").textContent.includes("undefined")', 'в заметках нет «undefined»: строки артефакта «лёгкий день — undefined × 8–12» в приложении нет')],
     ['принять программу', click('#prog-accept') + settle + expect('document.getElementById("toast").textContent.startsWith("Программа принята")', 'сообщение «Программа принята»')
-      + 'const d = JSON.parse(' + stored + ');' + expect('d.length === 1 && d[0][0] === "config/main" && Object.keys(d[0][1].ex).length === 64 && d[0][1].program.focus === "bench" && d[0][1].ex.bench.goal === "auto" && d[0][1].gear.g_pullup.step === 1',
+      + 'const d = JSON.parse(' + stored + ');' + expect('d.length === 1 && d[0][0] === "config/main" && Object.keys(d[0][1].ex).length === 79 && d[0][1].program.focus === "bench" && d[0][1].ex.bench.goal === "auto" && d[0][1].gear.g_pullup.step === 1',
         'в хранилище одна запись: настройка со справочником, лёгким днём, снарядом «Подтягивания» и программой вокруг жима лежа')],
     ['обзор: первая тренировка по программе', go('overview') + settle + expect('document.getElementById("view").textContent.includes("Первая тренировка")', 'карточка «Первая тренировка»')],
     ['известный максимум жима ногами', go('setup') + settle + type('#kw-max-leg_press', 200) + settle + expect('document.getElementById("kw-out-leg_press").textContent.includes("(от максимума 200)")', 'стартовый вес считается от названного максимума: жим ногами в «Гибриде» — как подсобка, по повторам (вывод 5 аудита)')],
@@ -335,7 +335,7 @@ export const SCENARIOS = [
     ...APP_TABS.filter(v => v !== 'journal').map(v => opens(v, 'после первой тренировки')),
     ['после перезагрузки записи на месте', RELOAD],
     ['журнал после перезагрузки', go('journal') + settle + journal(1)],
-    ['справочник после перезагрузки тот же', go('setup') + settle + expect(chips + ' === 63', '63 упражнения на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')]
+    ['справочник после перезагрузки тот же', go('setup') + settle + expect(chips + ' === 78', '78 упражнений на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')]
   ] },
 
   { name: 'мышцы', steps: [
@@ -720,6 +720,11 @@ export const SCENARIOS = [
     ['дальше: программа и дни подряд', click('#onb-next') + settle + expect(onbAt(4, 7), 'шаг 4 из 7')
       + expect('[...document.querySelectorAll("#pp button")].map(b => b.textContent).join() === "1–2,2–3,3–1" && !document.querySelector("#pp button[aria-pressed=true]")', 'дни подряд — пары соседних дней по кругу, ничего не отмечено')
       + expect('!document.querySelector("#onb > .note")', 'над днями текста нет: только «Дни подряд» и карточки дней')],
+    /* (просьба владельца, 28 ноября 2026, пункт 7) в «Массе» базовые на двойной прогрессии — в заменах: у приседаний есть жим ногами */
+    ['замены приседаний: жим ногами', 'const b = [...document.querySelectorAll("#view .prow")].find(p => p.querySelector(".pn").textContent.startsWith("Приседания со штангой"));' + '__t.click("#" + b.querySelector("[id^=sw-]").id, 0);' + settle
+      + expect('[...document.querySelectorAll("#view .swaprow .ex-card .nm")].some(n => n.textContent.startsWith("Жим ногами"))', 'в списке замен приседаний — жим ногами')],
+    ['отмена замены', click('#view .prow.swapping [id^="sw-"]') + settle + expect('!document.querySelector("#view .swaprow")', 'список замен закрыт')],
+    ['назад к дню 1', click('#onb-dot-mon') + settle + expect('document.querySelector(".pdots button").getAttribute("aria-current") === "true"', 'открыт день 1')],
     ['дни 1 и 2 подряд', click('#pp-mon-wed') + settle + expect('JSON.stringify(' + cfgMain + '.pairs) === \'["mon-wed"]\' && document.getElementById("pp-mon-wed").getAttribute("aria-pressed") === "true" && ' + onbAt(4, 7), 'пара сохранена, мастер на том же шаге')],
     ['снять дни 1 и 2', click('#pp-mon-wed') + settle + expect('!("pairs" in ' + cfgMain + ')', 'пар нет')],
     ['назад: что беречь', click('#onb-back') + settle + expect(onbAt(3, 7), 'шаг 3 из 7')],
@@ -761,8 +766,9 @@ export const SCENARIOS = [
     ['подтягиваний 4: вместо них тяга', type('#bw-reps-pullup', 4) + settle + 'const c = ' + cfgMain + ', all = Object.values(c.program.slots).flat().map(e => e.ex);'
       + expect('!all.includes("pullup") && all.includes("lat_pulldown")', 'в программе вместо подтягиваний вертикальная тяга')
       + expect('document.getElementById("bw-out-pullup").textContent === "меньше 6 — пока вместо них «Вертикальная тяга в тренажере»"', 'строка «меньше 6 — пока вместо них …»')],
-    ['подтягиваний 8: они вернулись', type('#bw-reps-pullup', 8) + settle + 'const c = ' + cfgMain + ', all = Object.values(c.program.slots).flat().map(e => e.ex);'
-      + expect('all.includes("pullup") && !all.includes("lat_pulldown")', 'подтягивания снова в программе')
+    /* с 28 ноября 2026 (разные упражнения по дням, rules.ts, VARY_PEN) вертикальная тяга стоит во втором дне сама, а подтягивания — в первом */
+    ['подтягиваний 8: они вернулись', type('#bw-reps-pullup', 8) + settle + 'const c = ' + cfgMain + ', all = Object.values(c.program.slots).flat().map(e => e.ex), mon = c.program.slots.mon.map(e => e.ex);'
+      + expect('all.includes("pullup") && mon.includes("pullup") && !mon.includes("lat_pulldown")', 'подтягивания снова в программе, в первом дне вместо вертикальной тяги')
       + expect('c.ex.pullup.work === 80 && c.ex.pullup.workR === 8 && document.getElementById("bw-out-pullup").textContent.startsWith("старт: 80 кг")', 'старт подтягиваний — вес тела на 8 повторов')],
     ['жим лежа 100 на раз', type('#kw-max-bench', 100) + settle + expect('document.getElementById("kw-out-bench").textContent.includes("% от максимума 100")', 'старт жима — от максимума 100')
       + expect('[...document.querySelectorAll("#known .kw-out")].some(e => e.textContent.includes("— оценка по «Жим лежа»"))', 'у похожего упражнения с гантелями — оценка по жиму лежа')
@@ -839,18 +845,18 @@ export const SCENARIOS = [
     ['программа текстом', go('overview') + settle + click('#onb-paste') + settle + expect(onbAt(2, 7), 'шаг 2 из 7: программа текстом') + expect('document.getElementById("onb-next").disabled', '«Дальше» выключена, пока текст не разобран')],
     ['пусто: разбирать нечего', click('#onb-parse') + settle + expect('document.getElementById("toast").textContent.startsWith("Не нашёл упражнений")', 'сообщение «Не нашёл упражнений»')],
     ['вставить и разобрать', type('#onb-text', PASTED) + click('#onb-parse') + settle
-      + expect('[...document.querySelectorAll("[id^=onb-pick-]")].map(e => e.id.slice(9) + "=" + e.value).join() === "0-0=bench,0-1=pulldown_cable,0-2=,1-0=squat,1-1=rdl"', 'узнаны жим лежа, тяга верхнего блока, приседания и румынская тяга; пуловера в справочнике нет')
+      + expect('[...document.querySelectorAll("[id^=onb-pick-]")].map(e => e.id.slice(9) + "=" + e.value).join() === "0-0=bench,0-1=pulldown_cable,0-2=,1-0=squat,1-1=rdl"', 'узнаны жим лежа, тяга верхнего блока, приседания и румынская тяга; отжиманий на брусьях в справочнике нет (пуловер с гантелью в нём с 28 ноября 2026)')
       + expect('document.getElementById("onb-parsed").textContent.includes("Дней: 2.") && !document.getElementById("onb-next").disabled', 'два дня, «Дальше» включена')],
-    ['пуловер — новым упражнением', pick('#onb-pick-0-2', '+new') + settle + expect('!!document.getElementById("onb-gear-0-2")', 'у нового — выбор снаряда') + pick('#onb-gear-0-2', 'dumbbell')],
+    ['отжимания на брусьях — новым упражнением', pick('#onb-pick-0-2', '+new') + settle + expect('!!document.getElementById("onb-gear-0-2")', 'у нового — выбор снаряда') + pick('#onb-gear-0-2', 'dumbbell')],
     ['дальше: что беречь', click('#onb-next') + settle + expect(onbAt(3, 7) + ' && !!document.getElementById("care")', 'шаг 3 из 7: что беречь')],
     ['болит колено', click('#care-knee') + settle + expect('JSON.stringify(' + cfgMain + '.care) === \'["knee"]\'', 'колено отмечено')],
     ['дальше: дни программы', click('#onb-next') + settle + expect(onbAt(4, 7), 'шаг 4 из 7') + 'const r = ' + draftRows + ';'
-      + expect('r.length === 2 && r[0].length === 3 && r[0][0].startsWith("Жим лежа") && r[0][2].startsWith("Пуловер с гантелью") && r[1][0].startsWith("Приседания со штангой")', 'два дня, как в тексте, пуловер — в первом')
+      + expect('r.length === 2 && r[0].length === 3 && r[0][0].startsWith("Жим лежа") && r[0][2].startsWith("Отжимания на брусьях") && r[1][0].startsWith("Приседания со штангой")', 'два дня, как в тексте, отжимания на брусьях — в первом')
       + expect('[...document.querySelectorAll(".pday .prow .tag.crit")].map(t => t.textContent).join() === "Колено"', 'у приседаний — пилюля «Колено»')],
     ['назад: разбор на месте', click('#onb-back') + settle + expect(onbAt(3, 7), 'шаг 3 из 7: что беречь') + click('#onb-back') + settle + expect(onbAt(2, 7) + ' && document.getElementById("onb-pick-0-2").value === "+new"', 'шаг 2, выбор сохранился')
       + click('#onb-next') + settle + click('#onb-next') + settle + expect(onbAt(4, 7), 'снова шаг 4')],
     ['принять', click('#onb-accept') + settle + accepted + expect(onbAt(5, 7), 'шаг 5 из 7: веса')
-      + 'const c = ' + cfgMain + ', nx = Object.values(c.ex).find(e => e.n === "Пуловер с гантелью");' + expect('c.days === 2 && c.ex.bench.work === 80 && c.ex.bench.workR === 6 && c.ex.squat.work === 100 && nx && nx.gear === "dumbbell"', 'в настройке: два дня, вес из текста у жима и приседаний, пуловер на гантелях')
+      + 'const c = ' + cfgMain + ', nx = Object.values(c.ex).find(e => e.n === "Отжимания на брусьях");' + expect('c.days === 2 && c.ex.bench.work === 80 && c.ex.bench.workR === 6 && c.ex.squat.work === 100 && nx && nx.gear === "dumbbell"', 'в настройке: два дня, вес из текста у жима и приседаний, отжимания на брусьях — с гантелью')
       + expect('document.getElementById("kw-work-bench").value === "80"', 'вес жима из текста — в поле рабочего веса')],
     ['шаг веса и дальше', clickAll('[id^="onb-step-usual-"]') + settle + click('#onb-next') + settle + expect(onbAt(6, 7), 'шаг 6 из 7')],
     ['памятка', click('#onb-next') + settle + expect(onbAt(7, 7), 'шаг 7 из 7') + expect('document.querySelectorAll("#onb .memo .memo-i").length === 3 && document.querySelector("#onb h2").textContent === "Памятка"', 'памятка: три карточки')],
@@ -1125,8 +1131,8 @@ export const SCENARIOS = [
     ['профиль без копии упражнений', click('#pr-copy') + type('#pr-new', 'Новичок') + click('#pr-add') + settle
       + expect('document.getElementById("prof").selectedOptions[0].textContent === "Новичок"', 'открыт профиль «Новичок»')],
     ...APP_TABS.map(v => opens(v, 'у новичка')),
-    ['у новичка встроенный справочник', go('setup') + settle + expect(chips + ' === 63', '63 упражнения на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')],
-    ['своё упражнение сверх списка', click('#ex-new') + settle + type('#nx-n', 'Подъём гантелей перед собой') + click('#nx-save') + settle + expect(chips + ' === 64', 'упражнений стало 64')],
+    ['у новичка встроенный справочник', go('setup') + settle + expect(chips + ' === 78', '78 упражнений на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')],
+    ['своё упражнение сверх списка', click('#ex-new') + settle + type('#nx-n', 'Подъём гантелей перед собой') + click('#nx-save') + settle + expect(chips + ' === 79', 'упражнений стало 79')],
     ['название из списка повторить нельзя', click('#ex-new') + settle + type('#nx-n', 'жим лежа') + click('#nx-save') + settle + expect(toastIs('Такое упражнение уже есть'), 'сообщение «Такое упражнение уже есть»') + press('Отмена')],
     ['программа вручную: в понедельник', go('program') + settle + pickAt('#pa-mon', 0) + click('#pb-mon')],
     ['программа вручную: в пятницу', pickAt('#pa-fri', -1) + click('#pb-fri')],
@@ -1137,7 +1143,7 @@ export const SCENARIOS = [
     ['завершить', FINISH],
     ['журнал новичка: одна запись', go('journal') + settle + journal(1)],
     ['после перезагрузки открыт тот же профиль', RELOAD],
-    ['профиль и справочник на месте', go('setup') + settle + expect('document.getElementById("prof").selectedOptions[0].textContent === "Новичок"', 'открыт профиль «Новичок»') + expect(chips + ' === 64', '64 упражнения на снарядах')],
+    ['профиль и справочник на месте', go('setup') + settle + expect('document.getElementById("prof").selectedOptions[0].textContent === "Новичок"', 'открыт профиль «Новичок»') + expect(chips + ' === 79', '79 упражнений на снарядах')],
     ['первый профиль не изменился', 'sessionStorage.setItem("n", String(JSON.parse(' + stored + ').filter(x => x[0].startsWith("workouts/")).length));' + pick('#prof', 'me') + settle + go('journal') + settle
       + expect('document.querySelectorAll(".wo").length === +sessionStorage.getItem("n")', 'в своём журнале столько же записей, сколько в хранилище')]
   ] },
@@ -1151,15 +1157,15 @@ export const SCENARIOS = [
     ['разложить по снарядам', click('#starter-sort') + settle + expect(looseN + ' === "0"', '«без снаряда» пусто') + expect('!document.getElementById("starter-sort")', 'кнопка «Разложить» исчезла')
       + expect('document.getElementById("toast").textContent === "Разложено по снарядам: " + sessionStorage.getItem("loose")', 'сообщение с числом разложенных') + expect(chips + ' === +sessionStorage.getItem("n")', 'упражнений столько же')],
     ['план после раскладки тот же', go('workout') + settle + expect('document.getElementById("view").innerText === sessionStorage.getItem("plan")', 'раскладка по снарядам не изменила план: шаг веса у упражнений прежний')],
-    ['добавить типовые упражнения', go('setup') + settle + click('#starter-add') + settle + expect('document.getElementById("toast").textContent === "Добавлено упражнений: " + (63 - +sessionStorage.getItem("n"))', 'сообщение с числом добавленных')
-      + expect(chips + ' === 63', 'упражнений стало 63') + expect(looseN + ' === "0"', '«без снаряда» пусто') + expect('!document.getElementById("starter-tools")', 'кнопок справочника больше нет')],
+    ['добавить типовые упражнения', go('setup') + settle + click('#starter-add') + settle + expect('document.getElementById("toast").textContent === "Добавлено упражнений: " + (78 - +sessionStorage.getItem("n"))', 'сообщение с числом добавленных')
+      + expect(chips + ' === 78', 'упражнений стало 78') + expect(looseN + ' === "0"', '«без снаряда» пусто') + expect('!document.getElementById("starter-tools")', 'кнопок справочника больше нет')],
     ['в списке дня программы есть типовые', go('program') + settle + mode('manual') + settle + expect('[...document.querySelectorAll("#pa-mon option")].some(o => o.value === "face_pull")', 'в списке понедельника есть «Тяга к лицу на блоке»')],
     ['справочник: «Убрать» только у неиспользуемого', go('setup') + settle + click('#setup-more > summary') + settle + expect('!!document.getElementById("ex-del-cable_crunch")', 'у «Скручиваний на блоке» есть «Убрать»')
       + expect('!document.getElementById("ex-del-bench")', 'у упражнения из журнала кнопки «Убрать» нет')],
-    ['убрать упражнение', click('#ex-del-cable_crunch') + settle + expect(toastIs('Убрано из справочника: Скручивания на блоке'), 'сообщение «Убрано из справочника»') + expect(chips + ' === 62', 'упражнений стало 62')
+    ['убрать упражнение', click('#ex-del-cable_crunch') + settle + expect(toastIs('Убрано из справочника: Скручивания на блоке'), 'сообщение «Убрано из справочника»') + expect(chips + ' === 77', 'упражнений стало 77')
       + expect('document.getElementById("starter-add").textContent.trim() === "Типовые упражнения: 1"', 'убранное можно вернуть кнопкой «Типовые упражнения: 1»')],
     ['после перезагрузки то же', RELOAD],
-    ['справочник после перезагрузки', go('setup') + settle + expect(chips + ' === 62', '62 упражнения на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')]
+    ['справочник после перезагрузки', go('setup') + settle + expect(chips + ' === 77', '77 упражнений на снарядах') + expect(looseN + ' === "0"', '«без снаряда» пусто')]
   ] },
 
   /* промежуточные ширины экрана: разметка от ширины зависит только в графиках, а страница нигде не должна стать шире экрана */
@@ -1215,12 +1221,12 @@ export const SCENARIOS = [
     ['копия новее приложения', loadCopy('JSON.stringify({ format: "training-diary-backup", version: 99, profiles: [] })') + settle + expect(box + ' && ' + box + '.textContent.includes("Копия не загружена")', 'копия новой версии не принята') + press('Понятно')],
     ['верная копия: видно, что внутри', loadCopy('__t.pack') + settle + expect(box + '.textContent.includes("Загрузить копию от") && ' + box + '.textContent.includes("24 тренировки") && ' + box + '.textContent.includes("Сейчас в нём записей нет")', 'состав копии и что сейчас записей нет')
       /* справочники примерных данных — неполные, как у копии первой версии: загрузка дополнит их встроенным (решение владельца, 25 ноября 2026) */
-      + expect('document.getElementById("import-fill").textContent === "Справочник дополнится встроенным — «Мой дневник»: на снаряды — 6, новых упражнений — 40; «Второй профиль»: на снаряды — 5, новых упражнений — 30."', 'видно, как дополнится справочник каждого профиля')],
+      + expect('document.getElementById("import-fill").textContent === "Справочник дополнится встроенным — «Мой дневник»: на снаряды — 6, новых упражнений — 55; «Второй профиль»: на снаряды — 5, новых упражнений — 45."', 'видно, как дополнится справочник каждого профиля')],
     ['отмена: записи не тронуты', press('Отмена') + settle + expect('!' + box + ' && ' + stored + ' === "[]"', 'после отмены в хранилище пусто')],
     ['заменить записи', loadCopy('__t.pack') + settle + click('#import-go') + settle + expect('document.getElementById("toast").textContent === "Копия загружена: 24 тренировки"', 'сообщение о загрузке 24 тренировок')
       + expect('JSON.parse(' + stored + ').length === 27', 'в хранилище 27 документов: список профилей, две настройки и 24 тренировки')
-      + expect('JSON.parse(' + stored + ').filter(x => x[0].startsWith("config/") && x[1].ex).map(x => Object.keys(x[1].ex).length).join() === "63,63"', 'в справочнике каждого профиля 63 упражнения')],
-    ['настройка: все упражнения на снарядах', go('setup') + settle + expect(chips + ' === 63 && ' + looseN + ' === "0" && !document.getElementById("starter-tools")', '63 упражнения на снарядах, «без снаряда» пусто, разложить и добавить нечего')],
+      + expect('JSON.parse(' + stored + ').filter(x => x[0].startsWith("config/") && x[1].ex).map(x => Object.keys(x[1].ex).length).join() === "78,78"', 'в справочнике каждого профиля 78 упражнений')],
+    ['настройка: все упражнения на снарядах', go('setup') + settle + expect(chips + ' === 78 && ' + looseN + ' === "0" && !document.getElementById("starter-tools")', '78 упражнений на снарядах, «без снаряда» пусто, разложить и добавить нечего')],
     ['журнал: 24 записи', go('journal') + settle + expect('document.querySelectorAll(".wo").length === 24', 'в журнале 24 записи')],
     ['второй профиль на месте', expect('[...document.getElementById("prof").options].map(o => o.textContent).join() === "Мой дневник,Второй профиль"', 'в шапке два профиля')],
     ['после перезагрузки записи на месте', RELOAD],

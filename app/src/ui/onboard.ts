@@ -29,7 +29,7 @@ import { TIMES, timeOf } from './fit.ts';
 import { weekDays } from './platform.ts';
 import { importBox, pickBackup } from './importer.ts';
 import { DAY_COUNTS, useDays } from '../core/days.ts';
-import { appRules, withBody } from '../core/rules.ts';
+import { appRules, BASE_SETS, withBody } from '../core/rules.ts';
 import { pasteDays, pasteMatch } from '../core/paste.ts';
 import type { PasteDay } from '../core/paste.ts';
 import type { ExDef, ProgSlots, Swap } from '../core/types.ts';
@@ -290,7 +290,8 @@ function vWeights(): View {
     for (const sl of Object.keys(P.slots)) {
       const L = P.slots[sl] || [], i = L.findIndex(e => e.ex === id), j = L.findIndex(e => e.ex === to.id);
       if (i < 0) continue;
-      if (j >= 0) { L[j] = Object.assign({}, L[j], { n: (+L[j].n! || 0) + (+L[i].n! || 0) }); L.splice(i, 1); } else L[i] = Object.assign({}, L[i], { ex: to.id });
+      const n = +L[i].n! || BASE_SETS;                                  // подтягивания в «Массе» — базовое на двойной прогрессии, без числа подходов (rules.ts, BASE_SETS)
+      if (j >= 0) { L[j] = Object.assign({}, L[j], { n: (+L[j].n! || 0) + n }); L.splice(i, 1); } else L[i] = Object.assign({}, L[i], { ex: to.id, n });
     }
   });
   const swapBack = (id: string) => saveCfg(r => { if (r.program && o.away[id]) r.program.slots = C.clone(o.away[id].slots); });

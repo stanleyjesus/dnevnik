@@ -11,7 +11,7 @@
 import { C, h } from './dom.ts';
 import { D } from './render.ts';
 import { loadText, progScheme } from './program.ts';
-import { careOf, zoneName } from '../core/rules.ts';
+import { careOf, swappable, zoneName } from '../core/rules.ts';
 import type { Cfg, ProgEntry, Slot, Swap } from '../core/types.ts';
 import type { ProgEdit } from './types.ts';
 
@@ -21,7 +21,7 @@ export const carePills = (cfg: Cfg, id: string, def?: { n?: string } | null) => 
 export function builtDay(cfg: Cfg, sl: Slot, list: ProgEntry[], load: number, edit: ProgEdit) {
   const rows = list.map((e, i) => {
     const k = C.kindOf(cfg, e.ex), nm = C.exName(cfg, e.ex), sid = 'sw-' + sl.id + '-' + i, goal = k === 'base' ? C.goalName(cfg, e.ex) : null;
-    const alts = k === 'compound' || k === 'iso' ? C.swapsFor(cfg, e.ex, list.map(x => x.ex)) : null, can = !!alts && alts.same.length + alts.near.length > 0;
+    const alts = swappable(cfg, e.ex) ? C.swapsFor(cfg, e.ex, list.map(x => x.ex)) : null, can = !!alts && alts.same.length + alts.near.length > 0;
     const open = can && edit.swapAt === sl.id + ':' + i;
     let first = true;                                                   // первое упражнение списка получает фокус, когда список открывается (swapOpen в draft.ts)
     const card = (x: Swap, note: string) => h('button', { type: 'button', class: 'ex-card', id: first ? (first = false, sid + '-to') : null, onclick: () => edit.swap(sl.id, i, x) }, h('span', { class: 'nm' }, x.n, carePills(cfg, x.id, x.def)), note ? h('span', { class: 'sub' }, note) : null);
