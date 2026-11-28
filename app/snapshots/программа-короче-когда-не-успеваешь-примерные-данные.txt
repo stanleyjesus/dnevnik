@@ -985,6 +985,11 @@
   - td-draft
 экран: целиком
   div.wrap.stack
+   div#backup-ask.banner
+    p Резервной копии ещё нет. Записи есть только на этом устройстве.
+    div.row(style="margin-top:8px")
+     button#backup-now.btn.primary.sm Сохранить копию
+     button#backup-later.btn.ghost.sm Не сейчас
    div.tiles.two
     div.tile
      span.l Тренировок записано
@@ -1231,8 +1236,8 @@
   np-date=2025-11-14
 сообщение: ""
 экран: правки к шагу 4
-@@ 2 -11 +0
-@@ 16 -4 +16
+@@ 2 -16 +0
+@@ 21 -4 +16
 -     div.eyebrow Следующая тренировка
 -     h2 Четверг, 13 ноября
 -    a.btn.primary(href="#workout") Открыть план
@@ -1253,7 +1258,7 @@
 +   p.sub(style="margin-bottom:6px")
 +    b Время: ≈ 1 ч 30 мин
 +    | " — разминка, 25 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин."
-@@ 84 -156 +2
+@@ 89 -156 +2
 +   div.row(style="margin-top:14px")
 +    button.btn.primary Начать тренировку
 
@@ -1489,23 +1494,23 @@
 черновик:
   - td-draft
 экран: правки к шагу 4
-@@ 5 -1 +1
+@@ 10 -1 +1
 -    span.v 25
 +    span.v 26
-@@ 10 -3 +3
+@@ 15 -3 +3
 -     span.v 121
 -     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#3f140dba58
 -    span.d +21% к первой неделе
 +     span.v 122
 +     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#1ae12d2136
 +    span.d +22% к первой неделе
-@@ 19 -1 +1
+@@ 24 -1 +1
 -   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 30 мин с отдыхом по упражнению. Первый раз по программе «Равномерно на всё тело»: веса взяты из последних тренировок каждого упражнения. В план уже внесены поправки дневника: 2.
 +   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 2 ч с отдыхом по упражнению. Первый раз по программе «Равномерно на всё тело»: веса взяты из последних тренировок каждого упражнения. В план уже внесены поправки дневника: 5.
-@@ 23 -1 +1
+@@ 28 -1 +1
 -      | Жим ногами
 +      | Подтягивания
-@@ 26 -4 +4
+@@ 31 -4 +4
 -      span.chip.adj 192.5
 -      span.chip.adj 192.5
 -      span.chip.adj 192.5
@@ -1514,10 +1519,10 @@
 +      span.chip.adj 90
 +      span.chip.adj 90
 +      span.chip.adj 90
-@@ 31 -1 +1
+@@ 36 -1 +1
 -     span.n Жим гантелей под углом 45
 +     span.n Бабочка
-@@ 33 -4 +3
+@@ 38 -4 +3
 -      span.chip 24
 -      span.chip.up 24 ↑
 -      span.chip 22
@@ -1525,23 +1530,23 @@
 +      span.chip.up 47.5 ↑
 +      span.chip 42.5
 +      span.chip.up 42.5 ↑
-@@ 38 -1 +3
+@@ 43 -1 +3
 -     span.n Горизонтальная тяга Т-бар
 +     span.n
 +      | Бицепс бедра на тренажере лежа на животе
 +      span.tag.accent(style="margin-left:6px") Подход стоит
-@@ 40 -3 +2
+@@ 45 -3 +2
 -      span.chip.up 32.5 ↑
 -      span.chip 30
 -      span.chip.up 30 ↑
 +      span.chip.adj 30
 +      span.chip.adj 27.5
-@@ 44 -1 +3
+@@ 49 -1 +3
 -     span.n Жим над головой
 +     span.n
 +      | Трицепс с косичкой на блоке
 +      span.tag.accent(style="margin-left:6px") Плато
-@@ 46 -3 +4
+@@ 51 -3 +4
 -      span.chip.up 2.5 ↑
 -      span.chip.up 2.5 ↑
 -      span.chip 2.5
@@ -1549,149 +1554,149 @@
 +      span.chip 22.5
 +      span.chip 22.5
 +      span.chip.down 20 ↓
-@@ 50 -1 +3
+@@ 55 -1 +3
 -     span.n Румынская тяга
 +     span.n
 +      | Бицепс Bayesian curl
 +      span.tag.accent(style="margin-left:6px") Диапазон по шагу веса
-@@ 52 -4 +2
+@@ 57 -4 +2
 -      span.chip.up 2.5 ↑
 -      span.chip.up 2.5 ↑
 -      span.chip.up 2.5 ↑
 -      span.chip 2.5
 +      span.chip.adj 10
 +      span.chip 10
-@@ 59 -1 +1
+@@ 64 -1 +1
 -      span.chip 50
 +      span.chip.up 52.5 ↑
-@@ 61 -1 +2
+@@ 66 -1 +2
 -      span.chip.down 42.5 ↓
 +      span.chip.up 47.5 ↑
 +      span.chip 47.5
-@@ 63 -1 +1
+@@ 68 -1 +1
 -     span.n Бицепс со штангой стоя
 +     span.n Махи с гантелями на плечи
-@@ 65 -2 +3
+@@ 70 -2 +3
 -      span.chip 30
 -      span.chip 27.5
 +      span.chip 10
 +      span.chip 10
 +      span.chip.down 8 ↓
-@@ 74 -0 +1
+@@ 79 -0 +1
 +      span.chip 0
-@@ 88 -1 +1
+@@ 93 -1 +1
 -     p.sub Подходов в неделю, среднее за недели 7–9. Подсвеченный участок шкалы — рабочая зона 10–20, риска — минимум 4.
 +     p.sub Подходов в неделю, среднее за недели 8–10. Подсвеченный участок шкалы — рабочая зона 10–20, риска — минимум 4.
-@@ 101 -1 +1
+@@ 106 -1 +1
 -    div.meter(role="img" aria-label="8.7 подходов в неделю")
 +    div.meter(role="img" aria-label="8.8 подходов в неделю")
-@@ 103 -1 +1
+@@ 108 -1 +1
 -     i.fill.z-base(style="width: 36.1111%;")
 +     i.fill.z-base(style="width: 36.8056%;")
-@@ 105 -1 +1
+@@ 110 -1 +1
 -    span.mv 8.7
 +    span.mv 8.8
-@@ 109 -1 +1
+@@ 114 -1 +1
 -    div.meter(role="img" aria-label="7.3 подходов в неделю")
 +    div.meter(role="img" aria-label="8.5 подходов в неделю")
-@@ 111 -1 +1
+@@ 116 -1 +1
 -     i.fill.z-base(style="width: 30.5556%;")
 +     i.fill.z-base(style="width: 35.4167%;")
-@@ 113 -1 +1
+@@ 118 -1 +1
 -    span.mv 7.3
 +    span.mv 8.5
-@@ 117 -1 +1
+@@ 122 -1 +1
 -    div.meter(role="img" aria-label="5.2 подходов в неделю")
 +    div.meter(role="img" aria-label="6.8 подходов в неделю")
-@@ 119 -1 +1
+@@ 124 -1 +1
 -     i.fill.z-base(style="width: 21.5278%;")
 +     i.fill.z-base(style="width: 28.4722%;")
-@@ 121 -1 +1
+@@ 126 -1 +1
 -    span.mv 5.2
 +    span.mv 6.8
-@@ 125 -1 +1
+@@ 130 -1 +1
 -    div.meter(role="img" aria-label="4 подходов в неделю")
 +    div.meter(role="img" aria-label="6.5 подходов в неделю")
-@@ 127 -1 +1
+@@ 132 -1 +1
 -     i.fill.z-base(style="width: 16.6667%;")
 +     i.fill.z-base(style="width: 27.0833%;")
-@@ 129 -1 +1
+@@ 134 -1 +1
 -    span.mv 4
 +    span.mv 6.5
-@@ 133 -1 +1
+@@ 138 -1 +1
 -    div.meter(role="img" aria-label="2 подходов в неделю")
 +    div.meter(role="img" aria-label="3.8 подходов в неделю")
-@@ 135 -1 +1
+@@ 140 -1 +1
 -     i.fill.z-low(style="width: 8.33333%;")
 +     i.fill.z-low(style="width: 15.9722%;")
-@@ 137 -1 +1
+@@ 142 -1 +1
 -    span.mv 2
 +    span.mv 3.8
-@@ 142 -1 +1
+@@ 147 -1 +1
 -    div.meter(role="img" aria-label="13 подходов в неделю")
 +    div.meter(role="img" aria-label="11.8 подходов в неделю")
-@@ 144 -1 +1
+@@ 149 -1 +1
 -     i.fill.z-opt(style="width: 54.1667%;")
 +     i.fill.z-opt(style="width: 49.3056%;")
-@@ 146 -1 +1
+@@ 151 -1 +1
 -    span.mv 13
 +    span.mv 11.8
-@@ 150 -1 +1
+@@ 155 -1 +1
 -    div.meter(role="img" aria-label="8.8 подходов в неделю")
 +    div.meter(role="img" aria-label="10.3 подходов в неделю")
-@@ 152 -1 +1
+@@ 157 -1 +1
 -     i.fill.z-base(style="width: 36.8056%;")
 +     i.fill.z-opt(style="width: 43.0556%;")
-@@ 154 -3 +3
+@@ 159 -3 +3
 -    span.mv 8.8
 -    span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
 -     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +    span.mv 10.3
 +    span.pill.mark.good(role="img" title="рабочая зона" aria-label="рабочая зона")
 +     svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-@@ 158 -1 +1
+@@ 163 -1 +1
 -    div.meter(role="img" aria-label="14.2 подходов в неделю")
 +    div.meter(role="img" aria-label="12.8 подходов в неделю")
-@@ 160 -1 +1
+@@ 165 -1 +1
 -     i.fill.z-opt(style="width: 59.0278%;")
 +     i.fill.z-opt(style="width: 53.4722%;")
-@@ 162 -1 +1
+@@ 167 -1 +1
 -    span.mv 14.2
 +    span.mv 12.8
-@@ 175 -1 +1
+@@ 180 -1 +1
 -    div.meter(role="img" aria-label="0 подходов в неделю")
 +    div.meter(role="img" aria-label="1.2 подходов в неделю")
-@@ 177 -1 +1
+@@ 182 -1 +1
 -     i.fill.z-none(style="width: 0%;")
 +     i.fill.z-low(style="width: 4.86111%;")
-@@ 179 -1 +1
+@@ 184 -1 +1
 -    span.mv 0
 +    span.mv 1.2
-@@ 184 -1 +1
+@@ 189 -1 +1
 -    div.meter(role="img" aria-label="8.7 подходов в неделю")
 +    div.meter(role="img" aria-label="8.3 подходов в неделю")
-@@ 186 -1 +1
+@@ 191 -1 +1
 -     i.fill.z-base(style="width: 36.1111%;")
 +     i.fill.z-base(style="width: 34.7222%;")
-@@ 188 -1 +1
+@@ 193 -1 +1
 -    span.mv 8.7
 +    span.mv 8.3
-@@ 192 -1 +1
+@@ 197 -1 +1
 -    div.meter(role="img" aria-label="7 подходов в неделю")
 +    div.meter(role="img" aria-label="9.3 подходов в неделю")
-@@ 194 -1 +1
+@@ 199 -1 +1
 -     i.fill.z-base(style="width: 29.1667%;")
 +     i.fill.z-base(style="width: 38.8889%;")
-@@ 196 -1 +1
+@@ 201 -1 +1
 -    span.mv 7
 +    span.mv 9.3
-@@ 200 -1 +1
+@@ 205 -1 +1
 -    div.meter(role="img" aria-label="1.3 подходов в неделю")
 +    div.meter(role="img" aria-label="4.7 подходов в неделю")
-@@ 202 -1 +1
+@@ 207 -1 +1
 -     i.fill.z-low(style="width: 5.55556%;")
 +     i.fill.z-base(style="width: 19.4444%;")
-@@ 204 -3 +3
+@@ 209 -3 +3
 -    span.mv 1.3
 -    span.pill.mark.serious(role="img" title="мало" aria-label="мало")
 -     svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
@@ -1706,8 +1711,8 @@
   np-date=2025-11-16
 сообщение: ""
 экран: правки к шагу 7
-@@ 2 -11 +0
-@@ 16 -4 +16
+@@ 2 -16 +0
+@@ 21 -4 +16
 -     div.eyebrow Следующая тренировка
 -     h2 Четверг, 13 ноября
 -    a.btn.primary(href="#workout") Открыть план
@@ -1728,7 +1733,7 @@
 +   p.sub(style="margin-bottom:6px")
 +    b Время: ≈ 2 ч
 +    | " — разминка, 25 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин. Оценка — по твоему темпу: тренировки идут ×1.3 к расчёту."
-@@ 90 -156 +2
+@@ 95 -156 +2
 +   div.row(style="margin-top:14px")
 +    button.btn.primary Начать тренировку
 
@@ -1958,25 +1963,25 @@
 черновик:
   - td-draft
 экран: правки к шагу 7
-@@ 5 -1 +1
+@@ 10 -1 +1
 -    span.v 26
 +    span.v 27
-@@ 10 -3 +3
+@@ 15 -3 +3
 -     span.v 122
 -     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#1ae12d2136
 -    span.d +22% к первой неделе
 +     span.v 119
 +     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#531f705b4a
 +    span.d +19% к первой неделе
-@@ 19 -1 +1
+@@ 24 -1 +1
 -   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 2 ч с отдыхом по упражнению. Первый раз по программе «Равномерно на всё тело»: веса взяты из последних тренировок каждого упражнения. В план уже внесены поправки дневника: 5.
 +   p.sub(style="margin-bottom:6px") 19 подходов, ≈ 1 ч 30 мин с отдыхом по упражнению. Первый раз по программе «Равномерно на всё тело»: веса взяты из последних тренировок каждого упражнения. В план уже внесены поправки дневника: 1.
-@@ 22 -3 +1
+@@ 27 -3 +1
 -     span.n
 -      | Подтягивания
 -      span.tag.accent(style="margin-left:6px") Отказ
 +     span.n Жим лежа
-@@ 26 -4 +4
+@@ 31 -4 +4
 -      span.chip.adj 90
 -      span.chip.adj 90
 -      span.chip.adj 90
@@ -1985,173 +1990,173 @@
 +      span.chip.up 95 ↑
 +      span.chip.up 95 ↑
 +      span.chip.up 95 ↑
-@@ 31 -1 +1
+@@ 36 -1 +1
 -     span.n Бабочка
 +     span.n Вертикальная тяга в тренажере
-@@ 33 -3 +2
+@@ 38 -3 +2
 -      span.chip.up 47.5 ↑
 -      span.chip 42.5
 -      span.chip.up 42.5 ↑
 +      span.chip.up 62.5 ↑
 +      span.chip.up 60 ↑
-@@ 37 -3 +1
+@@ 42 -3 +1
 -     span.n
 -      | Бицепс бедра на тренажере лежа на животе
 -      span.tag.accent(style="margin-left:6px") Подход стоит
 +     span.n Румынская тяга
-@@ 41 -2 +2
+@@ 46 -2 +2
 -      span.chip.adj 30
 -      span.chip.adj 27.5
 +      span.chip.up 2.5 ↑
 +      span.chip.up 2.5 ↑
-@@ 44 -3 +1
+@@ 49 -3 +1
 -     span.n
 -      | Трицепс с косичкой на блоке
 -      span.tag.accent(style="margin-left:6px") Плато
 +     span.n Жим над головой
-@@ 48 -4 +2
+@@ 53 -4 +2
 -      span.chip 22.5
 -      span.chip 22.5
 -      span.chip 22.5
 -      span.chip.down 20 ↓
 +      span.chip.up 2.5 ↑
 +      span.chip.up 2.5 ↑
-@@ 53 -3 +1
+@@ 58 -3 +1
 -     span.n
 -      | Бицепс Bayesian curl
 -      span.tag.accent(style="margin-left:6px") Диапазон по шагу веса
 +     span.n Ягодичный мост
-@@ 57 -2 +2
+@@ 62 -2 +2
 -      span.chip.adj 10
 -      span.chip 10
 +      span.chip.up 2.5 ↑
 +      span.chip.up 2.5 ↑
-@@ 60 -1 +1
+@@ 65 -1 +1
 -     span.n Разгибания ног в тренажере
 +     span.n Горизонтальная тяга в тренажере
-@@ 62 -2 +0
+@@ 67 -2 +0
 -      span.chip.up 52.5 ↑
 -      span.chip.up 50 ↑
-@@ 65 -1 +1
+@@ 70 -1 +1
 -      span.chip 47.5
 +      span.chip.up 47.5 ↑
-@@ 67 -1 +1
+@@ 72 -1 +1
 -     span.n Махи с гантелями на плечи
 +     span.n Средние дельты в тренажере
-@@ 69 -3 +3
+@@ 74 -3 +3
 -      span.chip 10
 -      span.chip 10
 -      span.chip.down 8 ↓
 +      span.chip 22.5
 +      span.chip 22.5
 +      span.chip 22.5
-@@ 79 -1 +0
+@@ 84 -1 +0
 -      span.chip 0
-@@ 99 -1 +1
+@@ 104 -1 +1
 -    div.meter(role="img" aria-label="10.3 подходов в неделю")
 +    div.meter(role="img" aria-label="11.3 подходов в неделю")
-@@ 101 -1 +1
+@@ 106 -1 +1
 -     i.fill.z-opt(style="width: 43.0556%;")
 +     i.fill.z-opt(style="width: 47.2222%;")
-@@ 103 -1 +1
+@@ 108 -1 +1
 -    span.mv 10.3
 +    span.mv 11.3
-@@ 107 -1 +1
+@@ 112 -1 +1
 -    div.meter(role="img" aria-label="8.8 подходов в неделю")
 +    div.meter(role="img" aria-label="10.2 подходов в неделю")
-@@ 109 -1 +1
+@@ 114 -1 +1
 -     i.fill.z-base(style="width: 36.8056%;")
 +     i.fill.z-opt(style="width: 42.3611%;")
-@@ 111 -3 +3
+@@ 116 -3 +3
 -    span.mv 8.8
 -    span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
 -     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
 +    span.mv 10.2
 +    span.pill.mark.good(role="img" title="рабочая зона" aria-label="рабочая зона")
 +     svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-@@ 115 -1 +1
+@@ 120 -1 +1
 -    div.meter(role="img" aria-label="8.5 подходов в неделю")
 +    div.meter(role="img" aria-label="9.7 подходов в неделю")
-@@ 117 -1 +1
+@@ 122 -1 +1
 -     i.fill.z-base(style="width: 35.4167%;")
 +     i.fill.z-base(style="width: 40.2778%;")
-@@ 119 -1 +1
+@@ 124 -1 +1
 -    span.mv 8.5
 +    span.mv 9.7
-@@ 123 -1 +1
+@@ 128 -1 +1
 -    div.meter(role="img" aria-label="6.8 подходов в неделю")
 +    div.meter(role="img" aria-label="7.3 подходов в неделю")
-@@ 125 -1 +1
+@@ 130 -1 +1
 -     i.fill.z-base(style="width: 28.4722%;")
 +     i.fill.z-base(style="width: 30.5556%;")
-@@ 127 -1 +1
+@@ 132 -1 +1
 -    span.mv 6.8
 +    span.mv 7.3
-@@ 131 -1 +1
+@@ 136 -1 +1
 -    div.meter(role="img" aria-label="6.5 подходов в неделю")
 +    div.meter(role="img" aria-label="7.5 подходов в неделю")
-@@ 133 -1 +1
+@@ 138 -1 +1
 -     i.fill.z-base(style="width: 27.0833%;")
 +     i.fill.z-base(style="width: 31.25%;")
-@@ 135 -1 +1
+@@ 140 -1 +1
 -    span.mv 6.5
 +    span.mv 7.5
-@@ 139 -1 +1
+@@ 144 -1 +1
 -    div.meter(role="img" aria-label="3.8 подходов в неделю")
 +    div.meter(role="img" aria-label="4.8 подходов в неделю")
-@@ 141 -1 +1
+@@ 146 -1 +1
 -     i.fill.z-low(style="width: 15.9722%;")
 +     i.fill.z-base(style="width: 20.1389%;")
-@@ 143 -3 +3
+@@ 148 -3 +3
 -    span.mv 3.8
 -    span.pill.mark.serious(role="img" title="мало" aria-label="мало")
 -     svg(viewBox="0 0 24 24" aria-hidden="true") …#b3e659f1e8
 +    span.mv 4.8
 +    span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
 +     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-@@ 148 -1 +1
+@@ 153 -1 +1
 -    div.meter(role="img" aria-label="11.8 подходов в неделю")
 +    div.meter(role="img" aria-label="13.2 подходов в неделю")
-@@ 150 -1 +1
+@@ 155 -1 +1
 -     i.fill.z-opt(style="width: 49.3056%;")
 +     i.fill.z-opt(style="width: 54.8611%;")
-@@ 152 -1 +1
+@@ 157 -1 +1
 -    span.mv 11.8
 +    span.mv 13.2
-@@ 156 -1 +1
+@@ 161 -1 +1
 -    div.meter(role="img" aria-label="10.3 подходов в неделю")
 +    div.meter(role="img" aria-label="11.7 подходов в неделю")
-@@ 158 -1 +1
+@@ 163 -1 +1
 -     i.fill.z-opt(style="width: 43.0556%;")
 +     i.fill.z-opt(style="width: 48.6111%;")
-@@ 160 -1 +1
+@@ 165 -1 +1
 -    span.mv 10.3
 +    span.mv 11.7
-@@ 164 -1 +1
+@@ 169 -1 +1
 -    div.meter(role="img" aria-label="12.8 подходов в неделю")
 +    div.meter(role="img" aria-label="13.8 подходов в неделю")
-@@ 166 -1 +1
+@@ 171 -1 +1
 -     i.fill.z-opt(style="width: 53.4722%;")
 +     i.fill.z-opt(style="width: 57.6389%;")
-@@ 168 -1 +1
+@@ 173 -1 +1
 -    span.mv 12.8
 +    span.mv 13.8
-@@ 190 -1 +1
+@@ 195 -1 +1
 -    div.meter(role="img" aria-label="8.3 подходов в неделю")
 +    div.meter(role="img" aria-label="9.7 подходов в неделю")
-@@ 192 -1 +1
+@@ 197 -1 +1
 -     i.fill.z-base(style="width: 34.7222%;")
 +     i.fill.z-base(style="width: 40.2778%;")
-@@ 194 -1 +1
+@@ 199 -1 +1
 -    span.mv 8.3
 +    span.mv 9.7
-@@ 198 -1 +1
+@@ 203 -1 +1
 -    div.meter(role="img" aria-label="9.3 подходов в неделю")
 +    div.meter(role="img" aria-label="10 подходов в неделю")
-@@ 200 -1 +1
+@@ 205 -1 +1
 -     i.fill.z-base(style="width: 38.8889%;")
 +     i.fill.z-opt(style="width: 41.6667%;")
-@@ 202 -3 +3
+@@ 207 -3 +3
 -    span.mv 9.3
 -    span.pill.mark.warn(role="img" title="ниже рабочей зоны" aria-label="ниже рабочей зоны")
 -     svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
@@ -2166,8 +2171,8 @@
   np-date=2025-11-19
 сообщение: ""
 экран: правки к шагу 10
-@@ 2 -11 +0
-@@ 16 -4 +17
+@@ 2 -16 +0
+@@ 21 -4 +17
 -     div.eyebrow Следующая тренировка
 -     h2 Четверг, 13 ноября
 -    a.btn.primary(href="#workout") Открыть план
@@ -2189,7 +2194,7 @@
 +   p.sub(style="margin-bottom:6px")
 +    b Время: ≈ 1 ч 30 мин
 +    | " — разминка, 19 подходов и отдых: у каждого упражнения свой, от 2 до 5 мин. Оценка — по твоему темпу: тренировки идут ×1.3 к расчёту."
-@@ 76 -156 +2
+@@ 81 -156 +2
 +   div.row(style="margin-top:14px")
 +    button.btn.primary Начать тренировку
 
@@ -2198,9 +2203,9 @@
 шапка: как в шаге 1
 поля: —
 экран: правки к шагу 10
-@@ 2 -12 +1
+@@ 2 -17 +1
 +  section.card
-@@ 16 -61 +129
+@@ 21 -61 +129
 +     div.eyebrow Действует сейчас
 +     h2 Равномерно на всё тело
 +    span.sub 53 подхода в неделю
@@ -2330,7 +2335,7 @@
 +      span.plab(aria-hidden="true") День 3
 +      span.pnotch(aria-hidden="true")
 +  section#prog-new-box.card
-@@ 79 -153 +4
+@@ 84 -153 +4
 +     div.eyebrow Новая программа
 +     h2 Собрать новую
 +   p.sub(style="margin-bottom:12px") По шагам: цель, время, что беречь, дни и веса. Действующая остаётся, пока не примешь новую.
@@ -2550,25 +2555,25 @@
 черновик:
   - td-draft
 экран: правки к шагу 10
-@@ 5 -1 +1
+@@ 10 -1 +1
 -    span.v 27
 +    span.v 28
-@@ 10 -3 +3
+@@ 15 -3 +3
 -     span.v 119
 -     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#531f705b4a
 -    span.d +19% к первой неделе
 +     span.v 121
 +     svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#60e4ff6912
 +    span.d +21% к первой неделе
-@@ 19 -1 +1
+@@ 24 -1 +1
 -   p.sub(style="margin-bottom:6px") 19 подходов, ≈ 1 ч 30 мин с отдыхом по упражнению. Первый раз по программе «Равномерно на всё тело»: веса взяты из последних тренировок каждого упражнения. В план уже внесены поправки дневника: 1.
 +   p.sub(style="margin-bottom:6px") 25 подходов, ≈ 1 ч 55 мин с отдыхом по упражнению. Первый раз по программе «Равномерно на всё тело»: веса взяты из последних тренировок каждого упражнения. В план уже внесены поправки дневника: 2.
-@@ 22 -1 +3
+@@ 27 -1 +3
 -     span.n Жим лежа
 +     span.n
 +      | Жим ногами
 +      span.tag.accent(style="margin-left:6px") Отказ
-@@ 24 -4 +4
+@@ 29 -4 +4
 -      span.chip.up 95 ↑
 -      span.chip.up 95 ↑
 -      span.chip.up 95 ↑
@@ -2577,46 +2582,46 @@
 +      span.chip.adj 192.5
 +      span.chip.adj 192.5
 +      span.chip.adj 192.5
-@@ 29 -1 +1
+@@ 34 -1 +1
 -     span.n Вертикальная тяга в тренажере
 +     span.n Жим гантелей под углом 45
-@@ 31 -2 +4
+@@ 36 -2 +4
 -      span.chip.up 62.5 ↑
 -      span.chip.up 60 ↑
 +      span.chip 24
 +      span.chip.up 24 ↑
 +      span.chip 22
 +      span.chip.up 22 ↑
-@@ 34 -1 +1
+@@ 39 -1 +1
 -     span.n Румынская тяга
 +     span.n Горизонтальная тяга Т-бар
-@@ 36 -2 +3
+@@ 41 -2 +3
 -      span.chip.up 2.5 ↑
 -      span.chip.up 2.5 ↑
 +      span.chip.up 32.5 ↑
 +      span.chip 30
 +      span.chip.up 30 ↑
-@@ 43 -0 +1
-+      span.chip 2.5
-@@ 44 -1 +1
--     span.n Ягодичный мост
-+     span.n Румынская тяга
-@@ 48 -0 +2
-+      span.chip.up 2.5 ↑
+@@ 48 -0 +1
 +      span.chip 2.5
 @@ 49 -1 +1
+-     span.n Ягодичный мост
++     span.n Румынская тяга
+@@ 53 -0 +2
++      span.chip.up 2.5 ↑
++      span.chip 2.5
+@@ 54 -1 +1
 -     span.n Горизонтальная тяга в тренажере
 +     span.n Разгибания ног в тренажере
-@@ 51 -2 +3
+@@ 56 -2 +3
 -      span.chip.up 47.5 ↑
 -      span.chip.up 47.5 ↑
 +      span.chip 50
 +      span.chip.up 50 ↑
 +      span.chip.down 42.5 ↓
-@@ 54 -1 +1
+@@ 59 -1 +1
 -     span.n Средние дельты в тренажере
 +     span.n Бицепс со штангой стоя
-@@ 56 -3 +2
+@@ 61 -3 +2
 -      span.chip 22.5
 -      span.chip 22.5
 -      span.chip 22.5

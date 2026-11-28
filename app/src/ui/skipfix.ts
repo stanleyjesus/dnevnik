@@ -20,7 +20,7 @@ export const movesOf = (d: Workout) => goneOf(d, C.adapt(D.W, D.cfg, d.slot!, d.
    Неделя — как она стоит после этой тренировки; программа, если её не было, появляется под именем «Своя программа» (как собранная вручную: добавки плана только предлагаются),
    прежняя остаётся в «Вернуть прежнюю» */
 export async function skipProgram(d: Workout, fixes: SkipFix[]) {
-  const W2 = C.sortW(S.workouts.filter(w => w.id !== d.id).concat([d])), slots = applySkips(C.currentSlots(W2, D.cfg), fixes);
+  const W2 = C.sortW(S.workouts.filter(w => !w.old && w.id !== d.id).concat([d])), slots = applySkips(C.currentSlots(W2, D.cfg), fixes);   // тренировки прежнего дневника в программу не входят (state.ts, derive)
   return saveCfg(raw => {
     const old = raw.program ? Object.assign({}, raw.program) : null;
     if (old) delete old.prev;

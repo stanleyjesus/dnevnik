@@ -9,11 +9,12 @@ import { barChart, chartHost, lineChart, setChip, spark } from './charts.ts';
 import { goalTag, STATUS } from './overview.ts';
 import { appRules, statusOf } from '../core/rules.ts';
 import type { ExStat, Slot } from '../core/index.ts';
-import type { Point } from './types.ts';
+type Sess = ExStat['ss'][number];
+import type { Point, Series } from './types.ts';
 
 /* ---------- UI part 3: progress, muscles, coach, setup ---------- */
 export function vProgress() {
-  if (!D.W.length) return S.conn === 'ready' ? [h('div', { class: 'card empty' }, 'Графики появятся после первых тренировок.')] : [];
+  if (!D.WA.length) return S.conn === 'ready' ? [h('div', { class: 'card empty' }, 'Графики появятся после первых тренировок.')] : [];   // (в эталоне нет) в прогрессе и тренировки прежнего дневника (state.ts, derive)
   const out = [], start = C.dnum(D.cfg.start!), ui = S.ui;
   const last = D.idx[D.idx.length - 1];
   out.push(h('div', { class: 'grid2 even' },
@@ -50,9 +51,12 @@ export function exerciseDetail(s: ExStat, start: number) {
   const ex = D.cfg.ex[s.id] || { m: {} };
   const mus = Object.entries(ex.m || {}).sort((a, b) => b[1] - a[1]).map(e => (C.MUSCLE[e[0]] || {}).n + (e[1] < 1 ? ' ½' : '')).join(', ');
   const day = (x: { date: string }) => C.dnum(x.date);
+  /* (в эталоне нет) тренировки прежнего дневника (state.ts, derive) — серой линией и серыми строками таблицы (просьба владельца, 28 ноября 2026) */
+  const isOld = (x: Sess) => D.olds.has(x.wid), mine = D.olds.size ? s.ss.filter(x => !isOld(x)) : s.ss, prior = D.olds.size ? s.ss.filter(isOld) : [];
+  const was = (y: (x: Sess) => number): Series[] => prior.length ? [{ name: 'Прежний дневник', color: 'var(--deemph)', pts: prior.map(x => ({ x: day(x), y: y(x) })) }] : [];
   let chart;
   if (ui.metric === 'e1') {
-    chart = chartHost((el, W) => lineChart(el, W, { label: 'Расчётный максимум', start, unit: ' кг', series: [{ name: wave ? 'Расчётный максимум по волне' : 'Расчётный 1ПМ лучшего подхода', color: 'var(--s1)', area: true, end: true, pts: s.ss.map(x => ({ x: day(x), y: x.metric })) }] }));
+    chart = chartHost((el, W) => lineChart(el, W, { label: 'Расчётный максимум', start, unit: ' кг', series: ([{ name: wave ? 'Расчётный максимум по волне' : 'Расчётный 1ПМ лучшего подхода', color: 'var(--s1)', area: true, end: true, pts: mine.map(x => ({ x: day(x), y: x.metric })) }] as Series[]).concat(was(x => x.metric)) }));
   } else if (cyc) {
     const cols = ['var(--s1)', 'var(--s2)', 'var(--s3)', 'var(--s4)'], order = Array.from(new Set(s.ss.map(x => x.item.cyc!.reps))).sort((a, b) => b - a).slice(0, 4);
     const pctOf = (r: number) => { const l = s.ss.filter(x => x.item.cyc!.reps === r); return l[l.length - 1].item.cyc!.pct; };
@@ -61,12 +65,12 @@ export function exerciseDetail(s: ExStat, start: number) {
   } else {
     const rest: Point[] = [];
     for (const x of s.ss) for (const t of x.sets) if (t !== x.top && t.w !== x.top.w) rest.push({ x: day(x), y: t.w! });
-    chart = chartHost((el, W) => lineChart(el, W, { label: 'Рабочий вес', start, unit: ' кг', series: [{ name: 'Самый тяжёлый подход', color: 'var(--s1)', end: true, pts: s.ss.map(x => ({ x: day(x), y: x.top.w! })) }], dots: rest.length ? { name: 'Остальные подходы', pts: rest } : null,
+    chart = chartHost((el, W) => lineChart(el, W, { label: 'Рабочий вес', start, unit: ' кг', series: ([{ name: 'Самый тяжёлый подход', color: 'var(--s1)', end: true, pts: mine.map(x => ({ x: day(x), y: x.top.w! })) }] as Series[]).concat(was(x => x.top.w!)), dots: rest.length ? { name: 'Остальные подходы', pts: rest } : null,
       tip: x => { const q = s.ss.find(k => day(k) === x); return q ? q.sets.map((t, i) => ({ color: t === q.top ? 'var(--s1)' : 'var(--deemph)', v: C.fmt(t.w) + ' × ' + t.r, k: 'подход ' + (i + 1) })) : []; } }));
   }
   const rows = s.ss.slice().reverse(), lim = ui.hist ? rows.length : 6;   // (в эталоне нет) с днями «День N» в строке тренировки — только лучший подход, по нему считается максимум (просьба владельца, 26 ноября 2026)
   const tbl = h('table', null, h('thead', null, h('tr', null, h('th', null, 'Дата'), h('th', { style: 'text-align:left' }, appRules() ? 'Лучший подход' : 'Подходы'), h('th', null, wave ? 'Максимум' : 'Расч. 1ПМ'), h('th', null, 'К прошлой'))),
-    h('tbody', null, rows.slice(0, lim).map((x, i) => { const p = rows[i + 1]; return h('tr', null, h('td', null, C.fmtDate(x.date) + ', ' + ((C.SLOT[x.slot!] || {} as Slot).s || '')), h('td', { class: 'wrapc' }, h('div', { class: 'chips', style: 'justify-content:flex-start' }, appRules() ? setChip(x.best) : x.item.sets.map(t => setChip(t)))), h('td', null, C.fmt(x.metric, 1)), h('td', null, p ? C.signed(C.pct(x.metric, p.metric), 1) + '%' : '–')); })));
+    h('tbody', null, rows.slice(0, lim).map((x, i) => { const p = rows[i + 1]; return h('tr', prior.length && isOld(x) ? { class: 'old' } : null, h('td', null, C.fmtDate(x.date) + (prior.length && isOld(x) ? '' : ', ' + ((C.SLOT[x.slot!] || {} as Slot).s || ''))), h('td', { class: 'wrapc' }, h('div', { class: 'chips', style: 'justify-content:flex-start' }, appRules() ? setChip(x.best) : x.item.sets.map(t => setChip(t)))), h('td', null, C.fmt(x.metric, 1)), h('td', null, p ? C.signed(C.pct(x.metric, p.metric), 1) + '%' : '–')); })));
   return h('div', { class: 'card', id: 'ex-detail' },
     h('div', { class: 'sec-h' }, h('div', null, h('h3', { style: 'font-size:18px', text: C.exName(D.cfg, s.id) }), h('p', { class: 'sub' }, (mus || 'мышцы не указаны') + (goalTag(D.cfg, s.id) ? ' · ' + goalTag(D.cfg, s.id) : ''))),
       h('div', { class: 'row' }, st ? pill(st[0], st[1]) : h('span', { class: 'tag' }, 'не в программе'), h('div', { class: 'seg', role: 'group', 'aria-label': 'Что показать на графике' }, h('button', { 'aria-pressed': String(ui.metric === 'w'), onclick: () => { ui.metric = 'w'; render(true); } }, 'Рабочий вес'), h('button', { 'aria-pressed': String(ui.metric === 'e1'), onclick: () => { ui.metric = 'e1'; render(true); } }, 'Максимум')))),
@@ -77,6 +81,7 @@ export function exerciseDetail(s: ExStat, start: number) {
       h('div', null, h('b', null, s.n), h('span', null, C.plural(s.n, ['тренировка', 'тренировки', 'тренировок'])))),
     chart,
     h('div', { class: 'scroll-x', style: 'margin-top:10px' }, tbl),
+    prior.length && rows.slice(0, lim).some(isOld) ? h('p', { class: 'note', id: 'ex-old', style: 'margin-top:6px' }, 'Серым — тренировки прежнего дневника.') : null,
     rows.length > 6 ? h('button', { class: 'btn ghost sm', style: 'margin-top:6px', onclick: () => { ui.hist = !ui.hist; render(true); } }, ui.hist ? 'Свернуть' : 'Вся история: ' + rows.length) : null);
 }
 export function bodySection() {
