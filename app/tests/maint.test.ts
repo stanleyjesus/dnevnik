@@ -67,7 +67,7 @@ test('с выбранным временем подходы и время ухо
     for (const sl of Core.SLOTS) assert.ok(Core.estMinutes(pr.cfg, pr.slots[sl.id]) <= time + 2.5, label + ': ' + sl.id + ' не влезает');
     assert.equal(Core.buildProgram([], acceptAs(raw, pr, '2025-11-20'), { time }).same, true, label + ': после «Принять»');
   }
-  /* руки на поддержании, 1 ч 30 мин: остальным — 12 вместо 10 (без отметки широчайшие и задние дельты — 9.5) */
+  /* руки на поддержании, 1 ч 30 мин: уровень остальных 12, без отметки — 11 */
   const pr = Core.buildProgram([], Core.mergeCfg(starter({ maint: ['arms'] })), { time: 90 });
   assert.match(noteOf(pr, /^Все мышцы в рабочей зоне|^Нагрузка поровну/)!.x!, /общий уровень поднят с 10 до 12 подходов в неделю/);
 }));

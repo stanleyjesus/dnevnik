@@ -8,7 +8,7 @@ import { D, render } from './render.ts';
 import { progSig } from './program.ts';
 import { lostMode, modeAfter, modeBudget, modeKey, othersOf, setMode } from './goal.ts';
 import { fitBudget, timeOf } from './fit.ts';
-import { appRules, PACE, targetIds } from '../core/rules.ts';
+import { appRules, BASE_SETS, PACE, targetIds } from '../core/rules.ts';
 import { balanceText, rebalance, shiftText } from '../core/balance.ts';
 import type { Cfg, ProgSlots } from '../core/index.ts';
 import type { ProgEdit } from './types.ts';
@@ -82,6 +82,8 @@ export function progDraft(cfg: Cfg, cur: ProgSlots, empty: boolean, lifts: strin
       if (!pr.cfg.ex[x.id]) { if (!x.def) return; pr.create[x.id] = C.clone(x.def); pr.cfg.ex[x.id] = C.placed(pr.cfg, Object.assign({ n: x.id }, x.def)); }
       const was = keepBalance ? C.progTally(pr.cfg, pr.slots).pv : null;   // (в эталоне нет) объём мышц до замены: его дневник вернёт (balance.ts)
       e.ex = x.id; if (x.id === first) delete e.was; else e.was = first;
+      /* (в эталоне нет) базовое на двойной прогрессии — без числа подходов: у него их BASE_SETS (rules.ts); вместо базового — столько же подходов */
+      if (C.isCycle(pr.cfg, x.id)) delete e.n; else if (!(e.n! > 0)) e.n = BASE_SETS;
       st.swapAt = null;
       (pr.hand = pr.hand || []).push({ m: C.SLOT[slot].s, t: 'замена: ' + C.exName(pr.cfg, old) + ' → ' + C.exName(pr.cfg, x.id) });
       /* (в эталоне нет) замена не меняет баланс мышц (пункт 1 вопросов владельца, 28 ноября 2026): дневник возвращает мышцам объём до замены
