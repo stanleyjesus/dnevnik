@@ -94,21 +94,26 @@ const goalIs = g => '(' + AT('goal') + 'document.getElementById("pg-' + g + '").
 const goals = '(' + AT('goal') + '[...document.querySelectorAll("#pg button")].map(b => b.textContent).join())';
 const listIs = (id, value) => '(' + AT('goal') + 'document.getElementById(' + J(id) + ').value === ' + J(value) + ')';
 const listOf = id => '(' + AT('goal') + '[...document.getElementById(' + J(id) + ').options].map(o => o.value).join())';
-/* название новой программы: в мастере — над пояснением в «Подходах по мышцам» */
-const progTitle = '(' + DRAFT + '.querySelector("#pn-name") || ' + DRAFT + '.querySelector("h2")).textContent';
+/* С днями «День N» на шаге «Программа» мастера нет таблицы мышц, счётчика свободных подходов и заметок сборки (выбор владельца, 28 ноября 2026):
+   название, лимит недели, подходы в неделю и заметки сценарий берёт у черновика мастера (__dnevnikProg в onboard.ts, только при разработке);
+   у эталона и с таблицей дней эталона — из блока «Новая программа», как раньше */
+const wizOr = (dom, info) => '(' + AT('prog') + '(document.getElementById("onb") ? window.__dnevnikProg().' + info + ' : ' + dom + '))';
+/* название новой программы */
+const progTitle = wizOr('(' + DRAFT + '.querySelector("#pn-name") || ' + DRAFT + '.querySelector("h2")).textContent', 'name');
+/* заметки сборки — «Что изменилось и почему» */
+const WHY = wizOr('(document.getElementById("prog-why") || { textContent: "" }).textContent', 'why');
 /* время на тренировку: минуты каждого дня черновика (из заголовков дней), подпись выбранного лимита недели, настройка профиля в хранилище */
 const dayMins = '[...' + DRAFT + '.querySelectorAll(".pday-h .sub")].map(e => { const m = e.textContent.match(/≈ (?:(\\d+) ч)?\\s*(?:(\\d+) мин)?/); return m ? (+m[1] || 0) * 60 + (+m[2] || 0) : 0; })';
 /* лимит недели черновика — «В программе N из лимита» под счётчиком свободных подходов: с днями «День N» списка «Подходов в неделю» нет, подходы дневник
    считает от времени, дней и цели (просьба владельца, 25 ноября 2026); нет и выбора отдыха — его дневник ставит упражнению сам */
-const capOf = '+((' + AT('prog') + 'document.querySelector("#prog-free .sub").textContent.match(/ из (\\d+)/) || [])[1])';
+const capOf = wizOr('+((document.querySelector("#prog-free .sub").textContent.match(/ из (\\d+)/) || [])[1])', 'cap');
 const noPicks = '!document.getElementById("pb-budget") && !document.getElementById("prog-rest")';
-/* новая программа: сколько подходов в неделю (число в начале её заголовка; в мастере — в строке «Подходы по мышцам») и сколько упражнений в самом полном дне */
+/* новая программа: сколько подходов в неделю (число в начале её заголовка) и сколько упражнений в самом полном дне */
 const draftLine = '(' + DRAFT + '.querySelector("#pn-sets") || ' + DRAFT + '.querySelector(".sec-h .sub")).textContent';
-const draftSets = 'parseFloat(' + draftLine + ')';
+const draftSets = wizOr('parseFloat(' + draftLine + ')', 'sets');
 const dayEx = 'Math.max(...[...' + DRAFT + '.querySelectorAll(".pday")].map(d => d.querySelectorAll(".prow").length))';
-/* новая программа: «сейчас N» в её заголовке — недельная нагрузка того, что действует сейчас; пояснение режима под заголовком */
-const nowLoad = '((' + draftLine + '.match(/сейчас ([\\d.,]+)/) || [])[1] || "")';
-const progNote = '(' + DRAFT + '.querySelector("#pn-note") || ' + DRAFT + '.querySelector("p.note")).textContent';
+/* новая программа: «сейчас N» в её заголовке — недельная нагрузка того, что действует сейчас */
+const nowLoad = wizOr('((' + draftLine + '.match(/сейчас ([\\d.,]+)/) || [])[1] || "")', 'now');
 /* новая программа совпадает с принятой: «Принять программу» выключена, а в мастере вместо неё — «Дальше» */
 /* названия дней на вкладке (действующая программа, where = 'tab') или в мастере (новая, 'prog') */
 const dayNames = where => '[...(' + AT(where) + 'document).querySelectorAll("#view .pday-h b")].map(b => b.textContent).join()';
@@ -327,7 +332,7 @@ export const SCENARIOS = [
     ['равномерно: без базовых, упражнения по мышцам', mode('even') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'even'), 'цель «Масса», в списке — «Всем поровну»')
       + expect('(__t.at("prog"), document).querySelectorAll("#view .prow").length >= 15', 'в черновике не меньше 15 упражнений')
       + expect('![...[...document.querySelectorAll("#view section.card")].pop().querySelectorAll(".prow .pn")].some(e => /^(Жим лежа|Жим ногами|Подтягивания)(новое|$)/.test(e.textContent))', 'жима лежа, жима ногами и подтягиваний в черновике нет')
-      + expect('!((__t.at("prog"), document).getElementById("prog-why") || { textContent: "" }).textContent.includes("Базовые — первыми")', 'заметки «Базовые — первыми» нет')],
+      + expect('!' + WHY + '.includes("Базовые — первыми")', 'заметки «Базовые — первыми» нет')],
     ['пауэрбилдинг с нуля: жим лежа', mode('l:bench') + settle + 'const r = ' + firstRows + ';'
       + expect(goalIs('mix') + ' && ' + listOf('pl') + ' === "l:bench,l:squat,l:leg_press,l:pullup,l:deadlift,l:hip_thrust,l:ohp,l:barbell_curl"', 'цель «Гибрид», в списке — восемь движений целей (пункт 8, 24 ноября 2026), первое — жим лежа')
       + expect('r[0].startsWith("Жим лежа") && r[0].includes("сила по запасу")', 'понедельник начинается с жима лежа на силу по запасу')
@@ -336,8 +341,8 @@ export const SCENARIOS = [
       + expect('document.getElementById("view").textContent.includes("Подтягивания") && !!(__t.at("goal"), document).getElementById("po-grow")', 'подтягивания в программе, есть переключатель «Остальные базовые»')
       + expect('![...(__t.at("prog"), document).querySelectorAll("#view .pday")].some(g => g.textContent.includes("undefined"))', 'в днях программы нет «undefined»')],
     /* в заметке «Новое …: лёгкий день» стоит «undefined × 8–12» — ошибка текста, которая есть и в артефакте (эталонный вывод test_prog); новых таких строк правило о базовых не добавляет */
-    ['что изменилось и почему', click('#prog-why > summary') + settle + expect('(__t.at("prog"), document).getElementById("prog-why").textContent.includes("Базовые — первыми в своих днях: Жим лежа (день 1)") && !(__t.at("prog"), document).getElementById("prog-why").textContent.includes("Жим ногами (день 2)")', 'заметка о базовых: по проценту — только жим лежа, остальные базовые — как подсобка (вывод 5 аудита)')
-      + expect('!(__t.at("prog"), document).getElementById("prog-why").textContent.includes("undefined")', 'в заметках нет «undefined»: строки артефакта «лёгкий день — undefined × 8–12» в приложении нет')],
+    ['что изменилось и почему', expect(WHY + '.includes("Базовые — первыми в своих днях: Жим лежа (день 1)") && !' + WHY + '.includes("Жим ногами (день 2)")', 'заметка о базовых: по проценту — только жим лежа, остальные базовые — как подсобка (вывод 5 аудита)')
+      + expect('!' + WHY + '.includes("undefined")', 'в заметках нет «undefined»: строки артефакта «лёгкий день — undefined × 8–12» в приложении нет')],
     ['принять программу', click('#prog-accept') + settle + expect('document.getElementById("toast").textContent.startsWith("Программа принята")', 'сообщение «Программа принята»')
       + 'const d = JSON.parse(' + stored + ');' + expect('d.length === 1 && d[0][0] === "config/main" && Object.keys(d[0][1].ex).length === 64 && d[0][1].program.focus === "bench" && d[0][1].ex.bench.goal === "auto" && d[0][1].gear.g_pullup.step === 1',
         'в хранилище одна запись: настройка со справочником, лёгким днём, снарядом «Подтягивания» и программой вокруг жима лежа')],
@@ -398,11 +403,12 @@ export const SCENARIOS = [
 
   { name: 'программа: правка и принятие', steps: [
     ['программа', go('program')],
-    ['прибавить подход мышце', click('button[id^="mp-"]')],
-    ['убавить подход другой', click('button[id^="mn-"]', 3)],
-    ['прибавить икрам: они вне расчёта', click('#mp-calves')],
-    ['прибавить прессу', click('#mp-abs')],
-    ['сбросить правки', click('#prog-reset')],
+    /* с днями «День N» кнопок «−» и «+» у мышц нет: подходы мышцам ставит дневник (выбор владельца, 28 ноября 2026) — эти шаги есть только при сверке с эталоном */
+    ['прибавить подход мышце', maybe(click('button[id^="mp-"]'))],
+    ['убавить подход другой', maybe(click('button[id^="mn-"]', 3))],
+    ['прибавить икрам: они вне расчёта', maybe(click('#mp-calves'))],
+    ['прибавить прессу', maybe(click('#mp-abs'))],
+    ['сбросить правки', maybe(click('#prog-reset'))],
     /* с днями «День N» у программы, которую собрал дневник, только «Заменить» (решение владельца, 25 ноября 2026): эти кнопки есть только при сверке с эталоном и в «Вручную» */
     ['больше подходов в упражнении', maybe(click('button[aria-label^="Больше подходов"]', 1))],
     ['меньше подходов в упражнении', maybe(click('button[aria-label^="Меньше подходов"]', 2))],
@@ -574,13 +580,11 @@ export const SCENARIOS = [
       + expect(TRIAD_DAYS, 'каждое движение тройки — один тяжёлый день по запасу и один лёгкий; день начинается тяжёлым днём одного движения, за ним — лёгкий день другого')
       + expect('!r.flat().some(t => t.includes("поддержание") || (t.includes("сила по запасу") && !/^(Приседания со штангой|Жим лежа|Становая тяга)/.test(t)))', 'остальные базовые — обычные упражнения: ни поддержания, ни силы по запасу')
       + expect('!(__t.at("goal"), document).getElementById("po-grow")', 'переключателя «Остальные базовые» нет')],
-    ['что изменилось и почему', click('#prog-why > summary') + settle + 'const t = (__t.at("prog"), document).getElementById("prog-why").textContent;'
+    ['что изменилось и почему', 'const t = ' + WHY + ';'
       + expect('t.includes("Тройка: Приседания со штангой, Жим лежа и Становая тяга — каждое два раза в неделю") && t.includes("Тяжёлый день — 3 × 4 одним весом") && t.includes("Лёгкий день — 3 × 8 на 75%") && t.includes("Всего 6 подходов движения в неделю")', 'заметка о тройке: тяжёлый день 3 × 4, лёгкий 3 × 8, шесть подходов движения')
       + expect('t.includes("Становая тяга — в программу в день") && t.includes("В программе этого движения не было. Оно в тройке")', 'становой в справочнике нет: сборка поставила её сама и сказала об этом')
       + expect('t.includes("Подсобка — ") && t.includes("в 8 подходов в неделю вместо 10") && t.includes("Точные повторы — правило дневника")', 'заметка о подсобке и честное «правило дневника»: точные повторы — не вывод исследования')
       + expect('!t.includes("undefined")', 'в заметках нет «undefined»')],
-    ['прибавить подход мышце под «Силой»', click('#mp-biceps') + settle + expect('document.getElementById("toast").textContent.length > 0', 'дневник ответил, что сделал или почему не может')],
-    ['сбросить правки', maybe(click('#prog-reset'))],
     ['принять программу', click('#prog-accept') + settle + expect('document.getElementById("toast").textContent.startsWith("Программа принята")', 'сообщение «Программа принята»')
       + 'const c = JSON.parse(' + stored + ').find(x => x[0] === "config/main")[1];'
       + expect('c.program.strength === true && c.program.lean === true && c.program.budget === 80 && !c.program.focus && JSON.stringify(c.program.triad) === \'["squat","bench","deadlift"]\'', 'в записи программы: тройка, скромные поправки, лимит 80, без приоритета')
@@ -609,15 +613,14 @@ export const SCENARIOS = [
       + expect('r[2][0].startsWith("Жим лежа — лёгкий день") && !r[1][0].startsWith("Жим лежа")', 'день 3 начинается с лёгкого дня жима, в дне 2 жима нет: два дня, тяжёлый и лёгкий (выводы аудита)')
       + expect('r.flat().filter(t => t.includes("лёгкий день")).length === 1 && !r.flat().some(t => t.includes("средний день")) && !r.flat().some(t => t.includes("поддержание") || (t.includes("сила по запасу") && !t.startsWith("Жим лежа")))', 'лёгкий день — один, среднего нет; остальные базовые — обычные упражнения')
       + expect('!(__t.at("goal"), document).getElementById("po-grow")', 'переключателя «Остальные базовые» под «Силой» нет')],
-    ['что изменилось и почему', click('#prog-why > summary') + settle + 'const t = (__t.at("prog"), document).getElementById("prog-why").textContent;'
+    ['что изменилось и почему', 'const t = ' + WHY + ';'
       + expect('t.includes("Сила: Жим лежа — два раза в неделю") && t.includes("Тяжёлый день — в день 1: 3 × 4") && t.includes("Лёгкий день — в день 3: 3 × 8 на 75%.") && t.includes("Всего 6 подходов движения в неделю")', 'заметка о трёх днях: тяжёлый, лёгкий и средний')
       + expect('t.includes("по исследованиям прибавка силы от подходов самого движения быстро затухает") && t.includes("Точные повторы — правило дневника") && t.includes("Дня «на массу», как в «Гибриде», здесь нет")', 'честно сказано, что из исследований, а что правило дневника')
       + expect('t.includes("Мышцы цели (грудь) получают примерно в полтора раза больше остальных") && t.includes("в 8 подходов в неделю вместо 10")', 'мышцам цели — в полтора раза больше, подсобка — ниже рабочей зоны')
       + expect('/(Жим ногами|Подтягивания)[^.]* — по двойной прогрессии/.test(t) && t.includes("Под «Силой» по проценту идёт только цель")', 'сказано, что остальные базовые — обычные многосуставные')
       + expect('!t.includes("undefined")', 'в заметках нет «undefined»')],
     ['изоляция: бицепс со штангой — два дня, 3 × 6', mode('s:barbell_curl') + settle + 'const r = ' + draftRows + ';'
-      + expect('r.flat().filter(t => t.startsWith("Бицепс со штангой стоя — лёгкий день")).length === 1 && r.flat().filter(t => t.startsWith("Бицепс со штангой стоя") && t.includes("сила по запасу")).length === 1', 'у изоляции дня два: тяжёлый по запасу и лёгкий')
-      + expect(progNote + '.startsWith("Сила в одном движении. Оно идёт два дня из трёх: тяжёлый день 3 × 6 с весом по запасу и лёгкий день.")', 'пояснение режима: два дня из трёх, 3 × 6')],
+      + expect('r.flat().filter(t => t.startsWith("Бицепс со штангой стоя — лёгкий день")).length === 1 && r.flat().filter(t => t.startsWith("Бицепс со штангой стоя") && t.includes("сила по запасу")).length === 1', 'у изоляции дня два: тяжёлый по запасу и лёгкий')],
     ['снова жим лежа', mode('s:bench') + settle + expect(listIs('ps', 's:bench') + ' && ' + progTitle + ' === "Сила: жим лежа"', 'выбран жим лежа')],
     ['принять программу', click('#prog-accept') + settle + expect('document.getElementById("toast").textContent.startsWith("Программа принята")', 'сообщение «Программа принята»')
       + 'const c = JSON.parse(' + stored + ').find(x => x[0] === "config/main")[1];'
@@ -648,9 +651,8 @@ export const SCENARIOS = [
     ['выбрать становую тягу', pick('#ps', 's:deadlift') + settle + expect(goalIs('force') + ' && ' + listIs('ps', 's:deadlift') + ' && ' + capOf + ' === 80 && ' + progTitle + ' === "Сила: становая тяга"', 'цель «Сила», становая тяга, лимит 80')
       + 'const r = ' + draftRows + ';'
       + expect('r[1][0].startsWith("Становая тяга") && r[1][0].includes("сила по запасу") && r[0][0].startsWith("Становая тяга — лёгкий день") && !r.flat().some(t => t.includes("средний день"))', 'тяжёлый день — первым в день 2, лёгкий — первым в день 1, среднего нет (выводы аудита)')
-      + expect('!r.flat().some(t => t.includes("поддержание")) && !(__t.at("goal"), document).getElementById("po-grow")', 'остальные базовые — обычные упражнения, переключателя нет')
-      + expect(progNote + '.startsWith("Сила в одном движении. Оно идёт два дня из трёх: тяжёлый день 3 × 4 с весом по запасу и лёгкий день.")', 'пояснение режима')],
-    ['что изменилось и почему', click('#prog-why > summary') + settle + 'const t = (__t.at("prog"), document).getElementById("prog-why").textContent;'
+      + expect('!r.flat().some(t => t.includes("поддержание")) && !(__t.at("goal"), document).getElementById("po-grow")', 'остальные базовые — обычные упражнения, переключателя нет')],
+    ['что изменилось и почему', 'const t = ' + WHY + ';'
       + expect('t.includes("Становая тяга — в программу в день 2") && t.includes("В программе этого упражнения не было. Оно — цель программы")', 'становой не было: сборка поставила её первой в день без другого базового')
       + expect('t.includes("Сила: Становая тяга — два раза в неделю") && t.includes("Мышцы цели — от 12 до 13, остальные — от 8 до 10 подходов в неделю") && t.includes("Мышцы цели (бицепс бедра и ягодицы)")', 'мышцам цели — в полтора раза больше остальных')
       + expect('t.includes("Жим лежа, Жим ногами и Подтягивания — по двойной прогрессии")', 'остальные базовые — обычные многосуставные')
@@ -709,8 +711,8 @@ export const SCENARIOS = [
     ['к гибриду и обратно к силе: базовое на месте', click('#pg-mix') + settle + expect(capOf + ' === 100', 'у гибрида лимит прежний — 100') + click('#pg-force') + settle
       + expect(goalIs('force') + ' && ' + listIs('ps', 's:bench') + ' && ' + capOf + ' === 80', 'выбор под целью «Сила» запомнен, лимит снова 80')],
     ['из силы к массе: лимит недели вернулся', click('#pg-mass') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back') + ' && ' + capOf + ' === 100', 'лимит снова 100 — лимит профиля')],
-    ['правка мышцы', click('#mn-chest') + settle + expect('!!document.getElementById("prog-reset")', 'правка принята: есть «Сбросить правки»')],
-    ['нажатие на выбранную цель правку не сбрасывает', click('#pg-mass') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back') + ' && (' + AT('prog') + '!!document.getElementById("prog-reset"))', 'черновик с правкой на месте')],
+    ['правка: замена упражнения', click(SWAP) + settle + click('#view .swaprow .ex-card') + settle + expect('document.querySelectorAll("#view .pday .prow.changed").length === 1', 'замена принята: у неё полоса слева')],
+    ['нажатие на выбранную цель правку не сбрасывает', click('#pg-mass') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'm:back') + ' && (' + AT('prog') + 'document.querySelectorAll("#view .pday .prow.changed").length === 1)', 'черновик с заменой на месте')],
     ['своя программа: цели, списка и лимита нет', mode('manual') + settle + expect('__t.wizStep() === "own:prog" && !document.querySelector("#pg, #pm, #pl, #ps, #pt, #pb-budget")', 'своя программа — дни без цели, уточняющего списка, времени и лимита')],
     ['снова собрать: масса, всем поровну', mode('even') + settle + expect(goalIs('mass') + ' && ' + listIs('pm', 'even') + ' && ' + capOf + ' === 100', 'мастер начат заново: масса, всем поровну, лимит 100')],
     ['узкий телефон: 360', size(360, 740)],
@@ -802,15 +804,13 @@ export const SCENARIOS = [
 
   /* только в приложении: с днями «День N» у программы, которую собрал дневник, на «Программе» — то же, что в онбординге (решение владельца, 25 ноября 2026):
      у упражнения только «Заменить» с упражнениями на замену под кнопкой; стрелок, «−/+», «убрать», пометок «новое», «перенос», «+N подходов» и строки «В день» нет,
-     полоса слева — только у замены, «было N» в заголовке дня нет. Подходы мышце по-прежнему прибавляются кнопками у мышцы, а в «Вручную» — все кнопки, как были */
+     полоса слева — только у замены, «было N» в заголовке дня нет. Кнопок «−» и «+» у мышц нет (выбор владельца, 28 ноября 2026), а в своей программе — все кнопки, как были */
   { name: 'программа: у собранной только «Заменить»', app: true, steps: [
     ['программа: собрал дневник', go('program') + settle + 'const d = ' + DRAFT + ';'
       + expect('!d.querySelector(".pday .pctl, .pday .linkbtn, .pday select, [id^=pa-], [id^=pb-]")', 'в днях новой программы нет «выше», «−», «+», «убрать», «В день» и списка замены')
       + expect('[...d.querySelectorAll(".pday button[id^=sw-]")].length > 0 && [...d.querySelectorAll(".pday button[id^=sw-]")].every(b => b.textContent === "Заменить")', 'у упражнений — кнопка «Заменить»')
-      + expect(NO_TAGS, 'пометок «новое», «перенос» и «+N подходов» нет') + expect('!!d.querySelector("button[id^=mp-]") && !!d.querySelector("button[id^=mn-]")', 'кнопки «+» и «−» у мышц на месте')],
-    ['прибавить подход мышце', click('button[id^="mp-"]') + settle + 'const d = ' + DRAFT + ';'
-      + expect('!!document.getElementById("prog-reset") && !d.querySelector(".pday .prow.changed")', 'правка есть, а полосы слева нет: она только у замены, как в онбординге') + expect(NO_TAGS, 'пометки «+N подходов» нет')
-      + expect('![...d.querySelectorAll(".pday-h")].some(e => e.textContent.includes("было"))', 'в заголовках дней нет «было N»')],
+      + expect(NO_TAGS, 'пометок «новое», «перенос» и «+N подходов» нет') + expect('!d.querySelector(".pday .prow.changed") && ![...d.querySelectorAll(".pday-h")].some(e => e.textContent.includes("было"))', 'полосы слева нет — она только у замены, в заголовках дней нет «было N»')
+      + expect('!document.querySelector("button[id^=mp-], button[id^=mn-], #prog-free, #prog-mus")', 'кнопок «+» и «−» у мышц и счётчика подходов нет: подходы мышцам ставит дневник (выбор владельца, 28 ноября 2026)')],
     ['заменить упражнение: список', click(SWAP) + settle + expect('document.querySelectorAll("#view .swaprow .ex-card").length > 0 && document.querySelector("#view .prow.swapping button[id^=sw-]").textContent === "Отмена"', 'под кнопкой — упражнения на замену, кнопка стала «Отмена»')
       + expect('document.activeElement && document.activeElement.classList.contains("ex-card")', 'фокус — на первом упражнении списка')],
     ['заменить упражнение', click('#view .swaprow .ex-card') + settle + expect('document.getElementById("toast").textContent.includes("→")', 'сообщение о замене')
@@ -824,7 +824,7 @@ export const SCENARIOS = [
   { name: 'программа: дни подряд и что беречь', app: true, steps: [
     ['программа: дни подряд', go('program') + settle + expect('[...(__t.at("prog"), document).querySelectorAll("#pp button")].map(b => b.textContent).join() === "1–2,2–3,3–1" && !document.querySelector("#pp button[aria-pressed=true]")', 'три пары соседних дней, ничего не отмечено')],
     ['дни 1 и 2 подряд', click('#pp-mon-wed') + settle + expect('JSON.stringify(' + cfgMain + '.pairs) === \'["mon-wed"]\' && document.getElementById("pp-mon-wed").getAttribute("aria-pressed") === "true"', 'пара сохранена в настройке профиля')
-      + expect('[...document.querySelectorAll("#prog-why .why b")].some(b => b.textContent.startsWith("Дни подряд: 1–2"))', 'в «Что изменилось и почему» — заметка «Дни подряд: 1–2»')],
+      + expect(WHY + '.split("\\n").some(l => l.startsWith("Дни подряд: 1–2"))', 'в «Что изменилось и почему» — заметка «Дни подряд: 1–2»')],
     ['и дни 2 и 3', click('#pp-wed-fri') + settle + expect('JSON.stringify(' + cfgMain + '.pairs) === \'["mon-wed","wed-fri"]\'', 'две пары')],
     ['все три подряд нельзя', click('#pp-fri-mon') + settle + expect(toastIs('Все дни подряд не бывают: между последним и первым днём недели есть отдых'), 'сообщение') + expect('document.getElementById("pp-fri-mon").getAttribute("aria-pressed") === "false"', 'третья пара не отмечена')],
     ['снять дни 2 и 3', click('#pp-wed-fri') + settle + expect('JSON.stringify(' + cfgMain + '.pairs) === \'["mon-wed"]\'', 'одна пара')],
@@ -903,7 +903,6 @@ export const SCENARIOS = [
     ['программа: время не ограничено', go('program') + settle + expect(listOf('pt') + ' === "0,60,75,90,105,120,135,150" && ' + listIs('pt', '0'), 'список времени: не ограничено и от часа до двух с половиной; выбрано «не ограничено»')
       + expect('[...document.getElementById("pt").options].map(o => o.textContent).join("|") === "не ограничено|до 1 ч|до 1 ч 15 мин|до 1 ч 30 мин|до 1 ч 45 мин|до 2 ч|до 2 ч 15 мин|до 2 ч 30 мин"', 'названия пунктов')
       + expect(noPicks + ' && ' + capOf + ' === 100 && !("time" in ' + cfgMain + ')', 'списков «Подходов в неделю» и отдыха нет, лимит недели — 100, времени в настройке нет')
-      + expect('document.getElementById("view").textContent.includes("отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных")', 'под днями сказано, какой отдых дневник ставит упражнению')
       + expect(dayEx + ' === 9', 'без времени в дне девять упражнений, как в первой версии')],
     ['до полутора часов', pick('#pt', 90) + settle + expect(listIs('pt', '90') + ' && ' + capOf + ' === 100', 'лимит недели — по времени: сборка сама укладывает дни в полтора часа')
       + expect('Math.max(...' + dayMins + ') <= 90 && ' + dayMins + '.length === 3', 'ни одна тренировка не длиннее полутора часов')
@@ -956,11 +955,10 @@ export const SCENARIOS = [
       + expect('!(__t.at("goal"), document).getElementById("pd-drop")', 'списка «Без базового» в «Массе» нет')
       + expect('!!(__t.at("tab"), document).getElementById("pd-away") && (__t.at("tab"), document).getElementById("pd-away").textContent.startsWith("День 3 сейчас не в неделе: Подтягивания и ещё 7 упражнений в план не попадают. Собери новую программу — сборка разложит неделю заново, а в своей программе добавь их в дни сам — или верни прежнее число дней.")', 'подсказка: третий день не в неделе, подтягивания в план не попадают')
       + expect(nowLoad + ' === sessionStorage.getItem("now3")', '«сейчас» — вся нынешняя неделя вместе с третьим днём, как при трёх днях')],
-    ['что изменилось и почему', click('#prog-why > summary') + settle + 'const t = (__t.at("prog"), document).getElementById("prog-why").textContent;'
+    ['что изменилось и почему', 'const t = ' + WHY + ';'
       + expect('t.includes("Подтягивания — в день 2") && t.includes("Дней в неделе стало меньше, а это базовое стояло в дне, которого больше нет") && !t.includes("Не в программе")', 'заметка о базовом, которое переехало, и почему') + expect('!/понедельник|в среду|в пятницу|undefined/i.test(t)', 'в заметках нет дней недели и «undefined»')
       + expect('/Порядок упражнений: [^.]*день 2/.test(t)', 'заметка о порядке: во втором дне базовое встало перед разгибаниями ног')
-      + expect('t.includes("Один день в неделю") && t.includes("в каждой тренировке уже по девять упражнений")', 'второй день достался не всем мышцам — и названа настоящая причина')
-      + expect(progNote + '.includes("Второй день достался не всем мышцам") && !' + progNote + '.includes("Каждая мышца работает минимум")', 'пояснение режима не обещает второй день каждой мышце')],
+      + expect('t.includes("Один день в неделю") && t.includes("в каждой тренировке уже по девять упражнений")', 'второй день достался не всем мышцам — и названа настоящая причина')],
     ['два дня и полтора часа на тренировку', pick('#pt', 90) + settle + expect(noPicks + ' && ' + capOf + ' === 100 && ' + dayMins + '.length === 2 && Math.max(...' + dayMins + ') <= 90', 'лимит по времени, обе тренировки не длиннее полутора часов')],
     ['время снова не ограничено', pick('#pt', 0) + settle + expect(capOf + ' === 100', 'лимит — лимит профиля')],
     ['своя программа при дне вне недели: принять можно', mode('manual') + settle + expect('__t.wizStep() === "own:prog" && !!document.getElementById("onb-accept") && !document.getElementById("onb-accept").disabled', '«Принять программу» доступна: неделя из двух дней — уже другая программа')
@@ -970,17 +968,16 @@ export const SCENARIOS = [
     ['гибрид при двух днях: остальные базовые как подсобка', mode('l:bench') + settle + 'const r = ' + draftRows + ';'
       + expect('r[0][0].startsWith("Жим лежа") && r[1][0].startsWith("Жим лежа — лёгкий день")', 'тяжёлый день — первый, лёгкий — второй')
       + expect('r[1].some(t => t.startsWith("Подтягивания")) && !(__t.at("goal"), document).getElementById("pd-drop")', 'подтягивания из третьего дня переехали в день 2: по проценту они не идут, жертвовать нечем — списка «Без базового» нет')
-      + expect('(__t.at("prog"), document).getElementById("prog-why").textContent.includes("Масса — вместе с лёгким днём, в день 2")', 'упражнение на массу стоит в лёгком дне, и об этом сказано')],
+      + expect(WHY + '.includes("Масса — вместе с лёгким днём, в день 2")', 'упражнение на массу стоит в лёгком дне, и об этом сказано')],
     ['гибрид при двух днях: остальные базовые растут — в тренировке одно базовое', click('#po-grow') + settle + 'const r = ' + draftRows + ';'
       + expect('r[0][0].startsWith("Жим лежа") && r[1][0].startsWith("Жим лежа — лёгкий день")', 'тяжёлый день — первый, лёгкий — второй')
       + expect('r.every(d => !d.some(t => t.startsWith("Подтягивания")))', 'подтягивания из третьего дня не встали: в тренировке одно базовое')
       + 'const dr = (__t.at("goal"), document).getElementById("pd-drop");' + expect('!!dr && dr.closest("label").textContent.startsWith("Без базового") && dr.value === "pullup" && [...dr.options].map(o => o.textContent).join() === "Жим ногами,Подтягивания"', 'список «Без базового»: без выбора — подтягивания; цели «Гибрида» в нём нет')
-      + expect('(__t.at("prog"), document).getElementById("prog-why").textContent.includes("Не в программе: Подтягивания") && (__t.at("prog"), document).getElementById("prog-why").textContent.includes("Базовых три, а дней два: в тренировке одно базовое")', 'заметка о базовом, которое ушло, и почему')
-      + expect('(__t.at("prog"), document).getElementById("prog-why").textContent.includes("Масса — вместе с лёгким днём, в день 2")', 'упражнение на массу стоит в лёгком дне, и об этом сказано')
-      + expect(progNote + '.includes("Оно идёт оба дня на силу") && ' + progNote + '.includes("упражнение на массу стоит в лёгкий день")', 'пояснение режима — под два дня')],
+      + expect(WHY + '.includes("Не в программе: Подтягивания") && ' + WHY + '.includes("Базовых три, а дней два: в тренировке одно базовое")', 'заметка о базовом, которое ушло, и почему')
+      + expect(WHY + '.includes("Масса — вместе с лёгким днём, в день 2")', 'упражнение на массу стоит в лёгком дне, и об этом сказано')],
     ['без базового: жертвуем жимом ногами', pick('#pd-drop', 'leg_press') + settle + 'const r = ' + draftRows + ';'
       + expect('r[0][0].startsWith("Жим лежа") && r[1].some(t => t.startsWith("Подтягивания")) && r.every(d => !d.some(t => t.startsWith("Жим ногами")))', 'подтягивания встали во второй день вместо жима ногами')
-      + expect('(__t.at("goal"), document).getElementById("pd-drop").value === "leg_press" && (__t.at("prog"), document).getElementById("prog-why").textContent.includes("Не в программе: Жим ногами")', 'выбор виден в списке и в заметке')],
+      + expect('(__t.at("goal"), document).getElementById("pd-drop").value === "leg_press" && ' + WHY + '.includes("Не в программе: Жим ногами")', 'выбор виден в списке и в заметке')],
     ['снова поровну и принять программу на два дня', mode('even') + settle + click('#prog-accept') + settle + accepted
       + expect('Object.keys(' + cfgMain + '.program.slots).join() === "mon,wed" && ' + cfgMain + '.days === 2 && ' + cfgMain + '.program.prev.days === 3', 'в программе два дня; запомнено, что до этого было три')
       + 'const cp = ' + cfgMain + '.program;' + expect('!("drop" in cp) && ["bench", "leg_press", "pullup"].every(id => JSON.stringify(cp.slots).includes(\'"\' + id + \'"\'))', 'в «Массе» программа ничем не жертвует: все три базовых в ней, выбор «Без базового» из «Гибрида» на неё не влияет')
@@ -1006,14 +1003,13 @@ export const SCENARIOS = [
       + expect('r.every(d => d.filter(t => /^(Жим лежа|Жим ногами|Подтягивания)/.test(t) && !t.includes("лёгкий")).length <= 1) && !(__t.at("goal"), document).getElementById("pd-drop")', 'базовых три, дней четыре: в каждом дне не больше одного, и спрашивать, каким жертвовать, не о чем')
       + expect('!!document.querySelector("#view .grid4") || (__t.at("prog"), document).querySelectorAll("#pn-days .pslot, #onb-days .pslot").length === 4', 'четыре столбца дней (с днями «День N» — четыре дня в карусели)')
       + expect('(__t.at("tab"), document).querySelector("#view section.card p.sub").textContent.includes("День 3 и день 4 в ней пусты: заполнятся, когда примешь новую программу.")', 'в строке о действующей программе сказано, что новых дней в ней нет')],
-    ['что изменилось при четырёх днях', maybe(click('#prog-why:not([open]) > summary')) ],
-    ['дни выровнены по длине', expect('(__t.at("prog"), document).getElementById("prog-why").textContent.includes("Дни выровнены по длине")', 'заметка о выравнивании дней')
-      + expect('(__t.at("prog"), document).getElementById("prog-why").textContent.includes("Дней в неделе стало больше. Этим базовым программа жертвовала")', 'подтягивания, которыми программа на два дня пожертвовала, вернулись — и об этом сказано')
+    ['дни выровнены по длине', expect(WHY + '.includes("Дни выровнены по длине")', 'заметка о выравнивании дней')
+      + expect(WHY + '.includes("Дней в неделе стало больше. Этим базовым программа жертвовала")', 'подтягивания, которыми программа на два дня пожертвовала, вернулись — и об этом сказано')
       + 'const m = ' + dayMins + ';' + expect('m.length === 4 && Math.max(...m) - Math.min(...m) <= 30', 'тренировки отличаются не больше чем на полчаса: ' )],
     ['узкий телефон: 360', size(360, 740)],
     ['большой экран', size(...BIG)],
     ['телефон', size(390, 844)],
-    ['сила в одном движении при четырёх днях: два дня из четырёх', mode('s:bench') + settle + expect(draftRows + '.filter(d => d.some(t => t.startsWith("Жим лежа"))).length === 2', 'жим лежа — в двух днях из четырёх: тяжёлый и лёгкий (выводы аудита)') + expect(progNote + '.includes("Оно идёт два дня из четырёх")', 'пояснение режима — под четыре дня')],
+    ['сила в одном движении при четырёх днях: два дня из четырёх', mode('s:bench') + settle + expect(draftRows + '.filter(d => d.some(t => t.startsWith("Жим лежа"))).length === 2', 'жим лежа — в двух днях из четырёх: тяжёлый и лёгкий (выводы аудита)')],
     ['поровну и принять программу на четыре дня', mode('even') + settle + click('#prog-accept') + settle + expect('Object.keys(' + cfgMain + '.program.slots).join() === "mon,wed,fri,d4"', 'в программе четыре дня: прежние три и d4')],
     /* упражнение, которое стоит только в четвёртом дне принятой программы и которого нет в журнале: при трёх днях его нельзя убрать из справочника */
     ['типовые упражнения — в справочник', go('setup') + settle + click('#starter-add') + settle + expect('document.getElementById("toast").textContent.startsWith("Добавлено упражнений: ")', 'типовые упражнения добавлены')],
@@ -1122,8 +1118,8 @@ export const SCENARIOS = [
     ['лимит недели 50', maybe(pick('#pb-budget', 50))],
     ['лимит недели 60', maybe(pick('#pb-budget', 60))],
     ['что изменилось и почему', maybe(click('#prog-why > summary'))],
-    ['убавить передним дельтам', click('#mn-delt_front')],
-    ['прибавить разгибателям спины', click('#mp-erectors')],
+    ['убавить передним дельтам', maybe(click('#mn-delt_front'))],   // с днями «День N» кнопок у мышц нет (выбор владельца, 28 ноября 2026)
+    ['прибавить разгибателям спины', maybe(click('#mp-erectors'))],
     ['известные веса: рабочий', go('setup') + settle + type('input[id^="kw-work-"]', 40)],
     ['известные веса: повторы', type('input[id^="kw-workR-"]', 8)],
     ['известные веса: максимум у другого', type('input[id^="kw-max-"]', 55, 1)],

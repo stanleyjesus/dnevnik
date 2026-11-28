@@ -490,7 +490,7 @@
 @@ 81 -9 +2
 +     b Готово на 60%
 +    button#onb-cancel.btn.ghost.sm(type="button") Отмена
-@@ 92 -153 +723
+@@ 92 -153 +484
 +     div#onb-n.eyebrow Шаг 3 из 5
 +     h2 Твоя программа
 +   div.row(style="align-items:flex-end;margin-bottom:10px")
@@ -972,245 +972,6 @@
 +         | В день
 +     span.plab(aria-hidden="true") День 3
 +     span.pnotch(aria-hidden="true")
-+   div(style="margin-top:12px")
-+    details#prog-mus.whybox
-+     summary
-+      | Подходы по мышцам
-+      span#pn-sets.sub(style="display:block;margin-top:2px") 70 подходов в неделю · сейчас 70 · тренировка ≈ 1 ч 25 мин
-+     div.stack(style="gap:12px;margin-top:10px")
-+      div
-+       b#pn-name Приоритет: ягодицы
-+       p#pn-note.note Собери или поправь программу сам: добавляй упражнения в дни, меняй порядок и число подходов. Упражнений, которых нет в списке, сначала заведи в «Настройке». Записи в журнале не меняются.
-+      div#prog-free.free.some(role="status")
-+       div.free-main
-+        b#prog-free-n.free-n 30
-+        div
-+         div.free-t подходов свободно
-+         div.sub В программе 70 из 100 — твой лимит недели
-+       div.free-bar(aria-hidden="true")
-+        i(style="width:70.0%")
-+      div.scroll-x.mwrap
-+       table.mtab
-+        thead
-+         tr
-+          th Мышца
-+          th.c-now Сейчас
-+          th Станет
-+          th.c-zone(style="text-align:left") Оценка
-+          th(style="text-align:center") − / +
-+        tbody
-+         tr
-+          td Грудь
-+          td.c-now 0
-+          td 0
-+          td.c-zone(style="text-align:left")
-+           span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            | вне расчёта
-+          td.mctl
-+           div.pctl
-+            button#mn-chest.icon-btn(title="Убавить подход" aria-label="Убавить подход: Грудь" disabled="")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-chest.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Грудь")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Широчайшие
-+          td.c-now 10
-+          td 10
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-lats.icon-btn(title="Убавить подход" aria-label="Убавить подход: Широчайшие")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-lats.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Широчайшие")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Верх спины
-+          td.c-now 14
-+          td 14
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-upper_back.icon-btn(title="Убавить подход" aria-label="Убавить подход: Верх спины")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-upper_back.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Верх спины")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Передние дельты
-+          td.c-now 10
-+          td 10
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-delt_front.icon-btn(title="Убавить подход" aria-label="Убавить подход: Передние дельты")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-delt_front.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Передние дельты")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Средние дельты
-+          td.c-now 10
-+          td 10
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-delt_mid.icon-btn(title="Убавить подход" aria-label="Убавить подход: Средние дельты")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-delt_mid.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Средние дельты")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Задние дельты
-+          td.c-now 10
-+          td 10
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-delt_rear.icon-btn(title="Убавить подход" aria-label="Убавить подход: Задние дельты")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-delt_rear.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Задние дельты")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Бицепс
-+          td.c-now 10
-+          td 10
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-biceps.icon-btn(title="Убавить подход" aria-label="Убавить подход: Бицепс")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-biceps.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Бицепс")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Трицепс
-+          td.c-now 10
-+          td 10
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-triceps.icon-btn(title="Убавить подход" aria-label="Убавить подход: Трицепс")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-triceps.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Трицепс")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Предплечья
-+          td.c-now 8.5
-+          td 8.5
-+          td.c-zone(style="text-align:left")
-+           span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            | вне расчёта
-+          td.mctl
-+           div.pctl
-+            button#mn-forearms.icon-btn(title="Убавить подход" aria-label="Убавить подход: Предплечья")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-forearms.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Предплечья")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Пресс
-+          td.c-now 0
-+          td 0
-+          td.c-zone(style="text-align:left")
-+           span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            | вне расчёта
-+          td.mctl
-+           div.pctl
-+            button#mn-abs.icon-btn(title="Убавить подход" aria-label="Убавить подход: Пресс" disabled="")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-abs.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Пресс")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Разгибатели спины
-+          td.c-now 0
-+          td 0
-+          td.c-zone(style="text-align:left")
-+           span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            | вне расчёта
-+          td.mctl
-+           div.pctl
-+            button#mn-erectors.icon-btn(title="Убавить подход" aria-label="Убавить подход: Разгибатели спины" disabled="")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-erectors.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Разгибатели спины")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Квадрицепс
-+          td.c-now 10
-+          td 10
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-quads.icon-btn(title="Убавить подход" aria-label="Убавить подход: Квадрицепс")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-quads.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Квадрицепс")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Бицепс бедра
-+          td.c-now 10.5
-+          td 10.5
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-hams.icon-btn(title="Убавить подход" aria-label="Убавить подход: Бицепс бедра")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-hams.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Бицепс бедра")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Ягодицы
-+          td.c-now 16.5
-+          td 16.5
-+          td.c-zone(style="text-align:left")
-+           span.pill.good
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
-+            | рабочая зона
-+          td.mctl
-+           div.pctl
-+            button#mn-glutes.icon-btn(title="Убавить подход" aria-label="Убавить подход: Ягодицы")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-glutes.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Ягодицы")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+         tr
-+          td Икры
-+          td.c-now 0
-+          td 0
-+          td.c-zone(style="text-align:left")
-+           span.pill(title="Вне расчёта: дневник сам подходы не выделяет, прибавь кнопкой «+»")
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            | вне расчёта
-+          td.mctl
-+           div.pctl
-+            button#mn-calves.icon-btn(title="Убавить подход" aria-label="Убавить подход: Икры" disabled="")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#3475e0ccd2
-+            button#mp-calves.icon-btn(title="Прибавить подход" aria-label="Прибавить подход: Икры")
-+             svg(viewBox="0 0 24 24" aria-hidden="true") …#8d1d761ff0
-+      p.note «−» освобождает подход, «+» отдаёт его мышце: дневник сам выбирает упражнение.
-+      p#pn-time.sub Время — разминка, подходы и отдых по упражнению: 5 мин в тяжёлом дне, 3 мин в лёгком, 2 мин 30 с в многосуставных со штангой, 2 мин в остальных.
 +   div.row.onb-foot(style="margin-top:16px;justify-content:space-between")
 +    button#onb-back.btn(type="button") Назад
 +    button#onb-next.btn.primary(type="button") Дальше
@@ -1306,66 +1067,7 @@
 @@ 450 -44 +2
 +         div.sub 2 × 10–15
 +        button#sw-fri-7.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Сгибания ног лежа") Заменить
-@@ 500 -1 +1
--      span#pn-sets.sub(style="display:block;margin-top:2px") 70 подходов в неделю · сейчас 70 · тренировка ≈ 1 ч 25 мин
-+      span#pn-sets.sub(style="display:block;margin-top:2px") 66 подходов в неделю · сейчас 70 · тренировка ≈ 1 ч 20 мин
-@@ 503 -2 +2
--       b#pn-name Приоритет: ягодицы
--       p#pn-note.note Собери или поправь программу сам: добавляй упражнения в дни, меняй порядок и число подходов. Упражнений, которых нет в списке, сначала заведи в «Настройке». Записи в журнале не меняются.
-+       b#pn-name Равномерно на всё тело
-+       p#pn-note.note Все мышцы в цели получают поровну, разброс — около двух подходов. Каждая мышца работает минимум в два дня недели. Лимиты недели и дня не нарушаются.
-@@ 507 -1 +1
--        b#prog-free-n.free-n 30
-+        b#prog-free-n.free-n 34
-@@ 509 -2 +2
--         div.free-t подходов свободно
--         div.sub В программе 70 из 100 — твой лимит недели
-+         div.free-t подхода свободны
-+         div.sub В программе 66 из 100
-@@ 512 -1 +1
--        i(style="width:70.0%")
-+        i(style="width:66.0%")
-@@ 694 -1 +3
--          td 10.5
-+          td
-+           span.tag.accent(style="margin-right:6px") −0.5
-+           b 10
-@@ 708 -1 +3
--          td 16.5
-+          td
-+           span.tag.accent(style="margin-right:6px") −4
-+           b 12.5
-@@ 735 -0 +29
-+      details#prog-why.whybox
-+       summary Что изменилось и почему
-+       div.why
-+        b Дни выровнены по длине
-+        div.sub Горизонтальная тяга Т-бар (день 2 → день 3). Упражнение или подход переезжает из самого длинного дня в самый короткий, пока разница между ними больше 10 минут: объём за неделю тот же, меняется только день.
-+       div.why
-+        b Все мышцы в рабочей зоне, поровну
-+        div.sub Каждая мышца в цели получает от 10 до 14 подходов в неделю, ни одна не выделяется. Всего 66 подходов при лимите 100.
-+       div.why
-+        b Чуть выше своего уровня: верх спины
-+        div.sub Эти мышцы работают попутно почти во всех упражнениях на соседние или в базовых, где число подходов постоянное. Убрать у них ещё — значит недодать соседям.
-+       div.why
-+        b Прибавлены подходы
-+        div.sub Сгибания ног лежа (день 1) +2, Трицепс из за головы на блоке с косичкой (день 1) +2.
-+       div.why
-+        b Убраны подходы
-+        div.sub Ягодичный мост со штангой (день 1) −1. Эти мышцы получали заметно больше, чем им отведено.
-+       div.why
-+        b Убрано из программы
-+        div.sub Отведение ног в тренажере (день 2): эти упражнения давали лишнее мышцам, которые и так выше своего уровня, или не помещались в лимит недели.
-+       div.why
-+        b Одно упражнение вместо двух
-+        div.sub Трицепс из за головы на блоке с косичкой (день 1) +2 вместо Трицепс с косичкой на блоке, Сгибания ног лежа (день 1) +2 вместо Бицепс бедра сидя в тренажере. В длинном дне подходы на мышцу собраны в одно упражнение: для роста считаются подходы, а каждое упражнение — это ещё разминка и настройка снаряда.
-+       div.why
-+        b Стартовые веса — из «Настройки»
-+        div.sub Приседания со штангой — 40 кг (от разового максимума). Первая тренировка начнётся с них, дальше веса ведёт журнал.
-+       div.why
-+        b Вес пока не задан: 1 упражнение
-+        div.sub Горизонтальная тяга Т-бар. Его можно подобрать на первой тренировке — или указать рабочий вес либо разовый максимум в «Настройке» → «Известные веса», тогда дневник поставит его сам.
-@@ 737 -1 +1
+@@ 498 -1 +1
 -    button#onb-next.btn.primary(type="button") Дальше
 +    button#onb-accept.btn.primary(type="button") Принять программу
 
@@ -1421,57 +1123,8 @@
 @@ 132 -1 +1
 -        button#sw-fri-2.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
 +        button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Вертикальная тяга в тренажере") Заменить
-@@ 137 -1 +1
--        button#sw-fri-3.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
+@@ 137 -6 +1
 +        button#sw-fri-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Махи гантелями в стороны") Заменить
-@@ 140 -5 +0
-@@ 163 -1 +1
--      span#pn-sets.sub(style="display:block;margin-top:2px") 66 подходов в неделю · сейчас 70 · тренировка ≈ 1 ч 20 мин
-+      span#pn-sets.sub(style="display:block;margin-top:2px") 70 подходов в неделю · сейчас 70 · тренировка ≈ 1 ч 20 мин
-@@ 166 -2 +2
--       b#pn-name Равномерно на всё тело
--       p#pn-note.note Все мышцы в цели получают поровну, разброс — около двух подходов. Каждая мышца работает минимум в два дня недели. Лимиты недели и дня не нарушаются.
-+       b#pn-name Приоритет: ягодицы
-+       p#pn-note.note Приоритетные мышцы получают примерно в полтора раза больше остальных, остальные делят объём поровну. Каждая мышца работает минимум в два дня недели. Лимиты недели и дня не нарушаются.
-@@ 170 -1 +1
--        b#prog-free-n.free-n 34
-+        b#prog-free-n.free-n 30
-@@ 172 -2 +2
--         div.free-t подхода свободны
--         div.sub В программе 66 из 100
-+         div.free-t подходов свободно
-+         div.sub В программе 70 из 100
-@@ 175 -1 +1
--        i(style="width:66.0%")
-+        i(style="width:70.0%")
-@@ 357 -3 +1
--          td
--           span.tag.accent(style="margin-right:6px") −0.5
--           b 10
-+          td 10.5
-@@ 371 -2 +0
--          td Ягодицы
--          td.c-now 16.5
-@@ 374 -2 +4
--           span.tag.accent(style="margin-right:6px") −4
--           b 12.5
-+           | Ягодицы
-+           span.tag(style="margin-left:6px") приоритет
-+          td.c-now 16.5
-+          td 16.5
-@@ 406 -1 +1
--        div.sub Горизонтальная тяга Т-бар (день 2 → день 3). Упражнение или подход переезжает из самого длинного дня в самый короткий, пока разница между ними больше 10 минут: объём за неделю тот же, меняется только день.
-+        div.sub Горизонтальная тяга в тренажере (день 2 → день 3). Упражнение или подход переезжает из самого длинного дня в самый короткий, пока разница между ними больше 10 минут: объём за неделю тот же, меняется только день.
-@@ 408 -2 +2
--        b Все мышцы в рабочей зоне, поровну
--        div.sub Каждая мышца в цели получает от 10 до 14 подходов в неделю, ни одна не выделяется. Всего 66 подходов при лимите 100.
-+        b Приоритет — 16.5, остальные мышцы — от 10 до 14 подходов в неделю
-+        div.sub Приоритетные мышцы (ягодицы) получают примерно в полтора раза больше остальных, но не больше: каждый следующий подход прибавляет всё меньше, а остальным мышцам нужен свой объём. Остальные делят объём поровну. Все мышцы в рабочей зоне (от 10). Всего 70 подходов при лимите 100.
-@@ 417 -6 +0
-@@ 425 -0 +3
-+       div.why
-+        b Порядок упражнений: день 2 и день 3
-+        div.sub Сначала базовое дня, затем упражнения на мышцы в приоритете, многосуставные — раньше изоляции, соседние упражнения — на разные мышцы. По исследованиям в упражнении ближе к началу тренировки больше повторов и сильнее растёт сила; чередование мышц — правило дневника. Свой порядок — в «Вручную»: там сборка его не трогает.
 
 === 6. лимит недели 50
 пропущен: кнопки шага на этих записях нет
@@ -1480,131 +1133,13 @@
 пропущен: кнопки шага на этих записях нет
 
 === 8. что изменилось и почему
-экран: правки к шагу 7
-@@ 405 -1 +1
--      details#prog-why.whybox
-+      details#prog-why.whybox(open="")
+пропущен: кнопки шага на этих записях нет
 
 === 9. убавить передним дельтам
-сообщение: "Передние дельты — −1 подход: Жим гантелей сидя (день 1) · свободно 31"
-экран: правки к шагу 8
-@@ 2 -1 +1
--  section#onb.card(data-step="prog" data-path="build" data-enter="" style="max-width:760px;margin:0 auto;width:100%")
-+  section#onb.card(data-step="prog" data-path="build" style="max-width:760px;margin:0 auto;width:100%")
-@@ 35 -1 +1
--        span.sub 25 подходов · ≈ 1 ч 25 мин
-+        span.sub 24 подхода · ≈ 1 ч 20 мин
-@@ 49 -1 +1
--         div.sub 5 × 6–14
-+         div.sub 4 × 6–14
-@@ 168 -1 +1
--      span#pn-sets.sub(style="display:block;margin-top:2px") 70 подходов в неделю · сейчас 70 · тренировка ≈ 1 ч 20 мин
-+      span#pn-sets.sub(style="display:block;margin-top:2px") 69 подходов в неделю · сейчас 70 · тренировка ≈ 1 ч 20 мин
-@@ 175 -1 +1
--        b#prog-free-n.free-n 30
-+        b#prog-free-n.free-n 31
-@@ 177 -2 +3
--         div.free-t подходов свободно
--         div.sub В программе 70 из 100
-+         div.free-t подход свободен
-+         div.sub В программе 69 из 100
-+       button#prog-reset.btn.sm Сбросить правки
-@@ 180 -1 +1
--        i(style="width:70.0%")
-+        i(style="width:69.0%")
-@@ 236 -1 +3
--          td 10
-+          td
-+           span.tag.accent(style="margin-right:6px") −1
-+           b 9
-@@ 238 -3 +3
--           span.pill.good
--            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
--            | рабочая зона
-+           span.pill.warn
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-+            | ниже рабочей зоны
-@@ 250 -1 +3
--          td 10
-+          td
-+           span.tag.accent(style="margin-right:6px") −0.5
-+           b 9.5
-@@ 252 -3 +3
--           span.pill.good
--            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
--            | рабочая зона
-+           span.pill.warn
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-+            | ниже рабочей зоны
-@@ 292 -1 +3
--          td 10
-+          td
-+           span.tag.accent(style="margin-right:6px") −0.5
-+           b 9.5
-@@ 294 -3 +3
--           span.pill.good
--            svg(viewBox="0 0 24 24" aria-hidden="true") …#4b08bc2053
--            | рабочая зона
-+           span.pill.warn
-+            svg(viewBox="0 0 24 24" aria-hidden="true") …#329b428526
-+            | ниже рабочей зоны
-@@ 407 -0 +4
-+       div#prog-hand.why.hand
-+        b Поправлено вручную
-+        div.sub
-+         div Передние дельты: −1 подход: Жим гантелей сидя (день 1)
+пропущен: кнопки шага на этих записях нет
 
 === 10. прибавить разгибателям спины
-сообщение: "Разгибатели спины — новое упражнение: Гиперэкстензия (день 1), 2 подхода · свободно 29"
-экран: правки к шагу 9
-@@ 35 -1 +1
--        span.sub 24 подхода · ≈ 1 ч 20 мин
-+        span.sub 26 подходов · ≈ 1 ч 30 мин
-@@ 57 -0 +4
-+         div.pn Гиперэкстензия
-+         div.sub 2 × 10–15
-+       div.prow
-+        div.grow
-@@ 59 -1 +1
--        button#sw-mon-4.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Сгибания ног лежа") Заменить
-+        button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Сгибания ног лежа") Заменить
-@@ 64 -1 +1
--        button#sw-mon-5.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
-+        button#sw-mon-6.btn.sm(type="button" aria-expanded="false" aria-label="Заменить упражнение: Трицепс из за головы на блоке с косичкой") Заменить
-@@ 168 -1 +1
--      span#pn-sets.sub(style="display:block;margin-top:2px") 69 подходов в неделю · сейчас 70 · тренировка ≈ 1 ч 20 мин
-+      span#pn-sets.sub(style="display:block;margin-top:2px") 71 подход в неделю · сейчас 70 · тренировка ≈ 1 ч 25 мин
-@@ 175 -1 +1
--        b#prog-free-n.free-n 31
-+        b#prog-free-n.free-n 29
-@@ 177 -2 +2
--         div.free-t подход свободен
--         div.sub В программе 69 из 100
-+         div.free-t подходов свободно
-+         div.sub В программе 71 из 100
-@@ 181 -1 +1
--        i(style="width:69.0%")
-+        i(style="width:71.0%")
-@@ 341 -1 +3
--          td 0
-+          td
-+           span.tag.accent(style="margin-right:6px") +2
-+           b 2
-@@ 348 -1 +1
--            button#mn-erectors.icon-btn(title="Убавить подход" aria-label="Убавить подход: Разгибатели спины" disabled="")
-+            button#mn-erectors.icon-btn(title="Убавить подход" aria-label="Убавить подход: Разгибатели спины")
-@@ 369 -1 +3
--          td 10.5
-+          td
-+           span.tag.accent(style="margin-right:6px") +1
-+           b 11.5
-@@ 385 -1 +3
--          td 16.5
-+          td
-+           span.tag.accent(style="margin-right:6px") +1
-+           b 17.5
-@@ 418 -0 +1
-+         div Разгибатели спины: новое упражнение: Гиперэкстензия (день 1), 2 подхода
+пропущен: кнопки шага на этих записях нет
 
 === 11. известные веса: рабочий
 адрес: "#setup"
@@ -2526,19 +2061,13 @@
 шапка: как в шаге 2
 поля: —
 сообщение: ""
-экран: правки к шагу 8
+экран: правки к шагу 5
 @@ 2 -1 +1
 -  section#onb.card(data-step="prog" data-path="build" data-enter="" style="max-width:760px;margin:0 auto;width:100%")
 +  section#onb.card(data-step="prog" data-path="build" style="max-width:760px;margin:0 auto;width:100%")
 @@ 99 -1 +1
 -         div.sub 2 × 6–10
 +         div.sub 2 × 6–10 · старт 40 кг
-@@ 427 -4 +1
--        div.sub Приседания со штангой — 40 кг (от разового максимума). Первая тренировка начнётся с них, дальше веса ведёт журнал.
--       div.why
--        b Вес пока не задан: 1 упражнение
--        div.sub Горизонтальная тяга Т-бар. Его можно подобрать на первой тренировке — или указать рабочий вес либо разовый максимум в «Настройке» → «Известные веса», тогда дневник поставит его сам.
-+        div.sub Приседания со штангой — 40 кг; Горизонтальная тяга Т-бар — 40 кг (от разового максимума). Первая тренировка начнётся с них, дальше веса ведёт журнал.
 
 === 15. принять
 поля: правки к шагу 13

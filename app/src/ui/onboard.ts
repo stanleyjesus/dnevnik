@@ -15,21 +15,20 @@
    Новая программа (просьба владельца, 28 ноября 2026): с днями «День N» блока сборки на «Программе» нет — кнопка «Собрать новую программу»
    открывает этот же мастер (kind 'new') прямо на вкладке «Программа», без вкладок. Шаги те же, без переноса записей из файла и без памятки
    (она и так встречает каждую тренировку); «Отмена» до «Принять» оставляет действующую программу, после — «К программе». Ушёл на другую
-   вкладку до «Принять» — мастер ждёт на том же шаге, после — закончен. Сборка, правки и «Принять» — те же, что были в блоке: черновик общий (draft.ts), а таблица мышц
-   с «−» и «+» — свёрнутой строкой «Подходы по мышцам» на шаге «Программа» (musbox.ts; решение владельца, 28 ноября 2026) */
+   вкладку до «Принять» — мастер ждёт на том же шаге, после — закончен. Сборка, замены и «Принять» — те же, что были в блоке: черновик общий (draft.ts).
+   Таблицы мышц с «−» и «+» в мастере нет (выбор владельца, 28 ноября 2026): подходы мышцам ставит дневник */
 import { $, C, h, toInt, toNum } from './dom.ts';
 import { PT, S } from './state.ts';
 import { dbErr, toast } from './toast.ts';
 import { saveCfg } from './storage.ts';
 import { D, go, render } from './render.ts';
-import { acceptProgram, loadText, progDay } from './program.ts';
+import { acceptProgram, dayLoad, loadText, progDay } from './program.ts';
 import { builtDay } from './builtday.ts';
 import { bodyMap } from './bodymap.ts';   // фигура с нагрузкой мышц на последнем шаге (просьба владельца, 25 ноября 2026)   // у программы, которую собрал дневник, только «Заменить» (решение владельца, 25 ноября 2026)
 import { careBox, pairsRow } from './care.ts';
 import { memoCards } from './memo.ts';
 import { carousel } from './carousel.ts';   // дни программы каруселью   // что беречь и дни подряд (решение владельца, 25 ноября 2026)
 import { progDraft, progFocus, progLifts } from './draft.ts';
-import { musBox } from './musbox.ts';   // таблица мышц с «−» и «+» — свёрнутой строкой на шаге «Программа»
 import { goalOf, goalPicker, modeBudget, othersOf } from './goal.ts';
 import { rulesBox } from './program.ts';
 import { TIMES, timeOf } from './fit.ts';
@@ -41,6 +40,8 @@ import { pasteDays, pasteMatch } from '../core/paste.ts';
 import type { PasteDay } from '../core/paste.ts';
 import type { ExDef, ProgSlots, Swap } from '../core/types.ts';
 import type { El, Kid, View } from './types.ts';
+
+declare const __DEV__: boolean;
 
 type Step = 'start' | 'goal' | 'care' | 'paste' | 'prog' | 'weights' | 'done' | 'memo';
 /** Программа из текста: text — как вставлен, days — разбор, pick — что взять в строке «день-строка» (id, '' — не брать, NEW — новое упражнение),
@@ -88,6 +89,17 @@ export function onbNew() {
 }
 /* ушли с «Программы» после «Принять» — мастер новой программы закончен; до «Принять» он ждёт: вернувшись, атлет продолжает с того же шага */
 addEventListener('hashchange', () => { if (O && O.kind === 'new' && O.took && location.hash !== '#program') { O.done = true; S.ui.prog = null; } });
+/* (только при разработке) сценарии сверки экранов читают у черновика мастера то, чего на шаге «Программа» нет (выбор владельца, 28 ноября 2026):
+   название, лимит недели, подходы в неделю у черновика и сейчас, заметки сборки — у эталона и с таблицей дней эталона это видно в блоке «Новая программа» */
+if (__DEV__) (window as unknown as { __dnevnikProg: unknown }).__dnevnikProg = () => {
+  const st = S.ui.prog, pr = st && st.draft;
+  if (!st || !pr) return null;
+  const cfg = D.cfg, cur = C.currentSlots(D.W, cfg), empty = C.SLOTS.every(sl => !cur[sl.id].length);
+  const total = (t: typeof pr.after) => C.SLOTS.reduce((a, sl) => a + t.load[sl.id], 0);
+  return { name: pr.name, cap: st.focus === 'manual' ? cfg.caps.week : st.budget, sets: Math.round(total(pr.after) * 2) / 2,
+    now: empty && !pr.away ? '' : dayLoad(total(pr.before) + (pr.away || 0)), notes: pr.notes.map(n => n.t),
+    why: (pr.hand || []).map(x => x.m + ': ' + x.t).concat(pr.notes.map(n => n.t + ' ' + n.x)).join('\n') };
+};
 
 /** Что возьмёт дневник для первой тренировки упражнения без журнала: строка под полями известных весов (здесь и в «Настройке»).
     Читает свежую настройку, поэтому строка следует за вводом без перерисовки страницы */
@@ -280,10 +292,9 @@ function vProg(): View {
       : C.SLOTS.length > 2 ? h('div', { class: 'row', style: 'align-items:flex-end;margin-bottom:10px' }, pairsRow()) : null,   // дни подряд — у дней программы, которую собрал дневник (просьба владельца, 25 ноября 2026)
     now && !own ? fitNote(d) : null,
     dayCarousel(C.SLOTS.map(sl => own ? progDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], null, d.edit, null) : builtDay(pr.cfg, sl, pr.slots[sl.id], pr.after.load[sl.id], d.edit))),
-    /* новая программа (просьба владельца, 28 ноября 2026): что было в блоке под днями черновика — нарушения лимитов и свёрнутая строка «Подходы по мышцам»
-       с таблицей мышц, «−» и «+» (musbox.ts). В первом входе шаг прежний: только дни (просьба владельца, 25 ноября 2026) */
-    now ? rulesBox(C.ruleBreaks(pr.cfg, pr.after)) : null,
-    now ? h('div', { style: 'margin-top:12px' }, musBox(d, C.SLOTS.every(sl => !C.currentSlots(D.W, cfg)[sl.id].length))) : null],
+    /* новая программа (просьба владельца, 28 ноября 2026): из блока под днями черновика — только нарушения лимитов; таблицы мышц с «−» и «+»,
+       счётчика свободных подходов и заметок сборки нет (выбор владельца тем же днём). В первом входе шаг прежний: только дни (просьба владельца, 25 ноября 2026) */
+    now ? rulesBox(C.ruleBreaks(pr.cfg, pr.after)) : null],
     () => to('care'), next)];
 }
 
