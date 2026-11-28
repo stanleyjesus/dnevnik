@@ -65,6 +65,15 @@
   td-profile p2
 экран: целиком
   div.wrap.stack
+   div#soon-tiles.tiles.two
+    div.tile
+     span.l Тренировок записано
+     span.v 0
+     span.d пока ни одной
+    div.tile
+     span.l Индекс силы
+     span.v –
+     span.d появится после первой тренировки
    div.grid2
     div.card
      div.sec-h
@@ -115,7 +124,14 @@
       div.sub Со второй тренировки дневник подставляет веса сам и показывает цель по повторам. Графики и нагрузка по мышцам появятся после первой недели.
      div.why
       b Программу можно править
-      div.sub Состав дней, порядок и число подходов меняются во вкладке «Программа», упражнения и шаг веса — в «Настройке».
+      div.sub Новую программу собери по шагам или поправь свою во вкладке «Программа», упражнения и шаг веса — в «Настройке».
+   section#soon-muscles.card
+    div.sec-h
+     div
+      h2 Нагрузка по мышцам
+      p.sub Подходов в неделю на каждую мышцу и зона нагрузки.
+     a.btn.ghost.sm(href="#muscles") По неделям
+    p.empty.soon Появится, когда пройдёт первая неделя с тренировками.
 
 === 2. настройка: данные
 адрес: "#setup"
@@ -1400,145 +1416,146 @@
 поля: целиком
   bw-date=2025-11-12
   bw-kg=
-экран: правки к шагу 8
-@@ 2 -1 +1
--  div.grid2
-+  div.grid2.even
-@@ 5 -36 +6
-+     h2 Индекс силы
-+     span.sub 100 · 0% к первой неделе
-+    div.chart
-+     svg(viewBox="0 0 324 210" height="210" role="img" aria-label="Индекс силы по неделям") …#f10a86f7c0
-+     div.tip(style="display: none;")
-+    p.note(style="margin-top:8px") Первая неделя = 100. Каждую неделю индекс меняется на среднее изменение расчётного максимума в упражнениях, которые были и неделей раньше, поэтому замена упражнений его не ломает.
-@@ 43 -10 +127
-+     h2 Рабочие подходы по неделям
-+    div.chart
-+     svg(viewBox="0 0 324 210" height="210" role="img" aria-label="Рабочие подходы по неделям") …#03da6a15e1
-+     div.tip(style="display: none;")
-+    p.note(style="margin-top:8px") Здесь все подходы с записанными повторами, без разминочных и без поправки на запас. Правая и левая рука вместе дают один подход. Серый столбец — текущая неделя.
-+  section.stack(style="gap:12px")
-+   div.sec-h(style="margin-bottom:0")
-+    h2 Упражнения
-+    div.seg(role="group" aria-label="Какие упражнения показать")
-+     button(aria-pressed="true") В программе
-+     button(aria-pressed="false") Все
-+   div#ex-detail.card
-+    div.sec-h
-+     div
-+      h3(style="font-size:18px") Вертикальная тяга в тренажере
-+      p.sub Широчайшие, Бицепс ½, Верх спины ½, Предплечья ½
-+     div.row
-+      span.pill.info
-+       svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+       | мало данных
-+      div.seg(role="group" aria-label="Что показать на графике")
-+       button(aria-pressed="true") Рабочий вес
-+       button(aria-pressed="false") Максимум
-+    div.kv
-+     div
-+      b 52.5 × 10
-+      span лучший подход, 8 сен
-+     div
-+      b 73.5 кг
-+      span расчётный 1ПМ (по Эпли)
-+     div
-+      b 0%
-+      span с 8 сен (52.5 × 10)
-+     div
-+      b 1
-+      span тренировка
-+    div.chart
-+     div.legend
-+      span
-+       i.key(style="border-top-color: var(--s1);")
-+       | Самый тяжёлый подход
-+      span
-+       i.key(style="border-top-color: var(--deemph);")
-+       | Прежний дневник
-+     svg(viewBox="0 0 324 220" height="220" role="img" aria-label="Рабочий вес") …#c467fcba84
-+     div.tip(style="display: none;")
-+    div.scroll-x(style="margin-top:10px")
-+     table
-+      thead
-+       tr
-+        th Дата
-+        th(style="text-align:left") Лучший подход
-+        th Расч. 1ПМ
-+        th К прошлой
-+      tbody
-+       tr.old
-+        td 8 сен
-+        td.wrapc
-+         div.chips(style="justify-content:flex-start")
-+          span.chip 52.5 × 10
-+        td 73.5
-+        td –
-+    p#ex-old.note(style="margin-top:6px") Серым — тренировки прежнего дневника.
-+   div.ex-grid
-+    button.ex-card(aria-pressed="true")
-+     span.nm Вертикальная тяга в тренажере
-+     div.ln
-+      span.big 52.5 × 10
-+      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
-+     div.ln
-+      span.tag 0% за 1 тренировку
-+      span.pill.info
-+       svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+       | мало данных
-+    button.ex-card(aria-pressed="false")
-+     span.nm Жим ногами
-+     div.ln
-+      span.big 155 × 5
-+      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
-+     div.ln
-+      span.tag 0% за 1 тренировку
-+      span.pill.info
-+       svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+       | мало данных
-+    button.ex-card(aria-pressed="false")
-+     span.nm Горизонтальная тяга в тренажере
-+     div.ln
-+      span.big 45 × 11
-+      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
-+     div.ln
-+      span.tag 0% за 1 тренировку
-+      span.pill.info
-+       svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+       | мало данных
-+    button.ex-card(aria-pressed="false")
-+     span.nm Сгибания ног лежа
-+     div.ln
-+      span.big 30 × 11
-+      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
-+     div.ln
-+      span.tag 0% за 1 тренировку
-+      span.pill.info
-+       svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+       | мало данных
-+    button.ex-card(aria-pressed="false")
-+     span.nm Пресс
-+     div.ln
-+      span.big 0 × 15
-+      svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
-+     div.ln
-+      span.tag 0% за 1 тренировку
-+      span.pill.info
-+       svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
-+       | мало данных
-+  section.card
-+   div.sec-h
-+    div
-+     h2 Вес тела
-+     p.sub Записывай вес 2–3 раза в неделю утром: по нему видно, куда идёт процесс.
-+   div.row(style="margin-bottom:12px")
-+    label.f
-+     span Дата
-+     input#bw-date(type="date")
-+    label.f
-+     span Вес, кг
-+     input#bw-kg.num(type="text" inputmode="decimal" placeholder="")
-+    button.btn(style="align-self:flex-end") Записать
+экран: целиком
+  div.wrap.stack
+   div.grid2.even
+    div.card
+     div.sec-h
+      h2 Индекс силы
+      span.sub 100 · 0% к первой неделе
+     div.chart
+      svg(viewBox="0 0 324 210" height="210" role="img" aria-label="Индекс силы по неделям") …#f10a86f7c0
+      div.tip(style="display: none;")
+     p.note(style="margin-top:8px") Первая неделя = 100. Каждую неделю индекс меняется на среднее изменение расчётного максимума в упражнениях, которые были и неделей раньше, поэтому замена упражнений его не ломает.
+    div.card
+     div.sec-h
+      h2 Рабочие подходы по неделям
+     div.chart
+      svg(viewBox="0 0 324 210" height="210" role="img" aria-label="Рабочие подходы по неделям") …#03da6a15e1
+      div.tip(style="display: none;")
+     p.note(style="margin-top:8px") Здесь все подходы с записанными повторами, без разминочных и без поправки на запас. Правая и левая рука вместе дают один подход. Серый столбец — текущая неделя.
+   section.stack(style="gap:12px")
+    div.sec-h(style="margin-bottom:0")
+     h2 Упражнения
+     div.seg(role="group" aria-label="Какие упражнения показать")
+      button(aria-pressed="true") В программе
+      button(aria-pressed="false") Все
+    div#ex-detail.card
+     div.sec-h
+      div
+       h3(style="font-size:18px") Вертикальная тяга в тренажере
+       p.sub Широчайшие, Бицепс ½, Верх спины ½, Предплечья ½
+      div.row
+       span.pill.info
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+        | мало данных
+       div.seg(role="group" aria-label="Что показать на графике")
+        button(aria-pressed="true") Рабочий вес
+        button(aria-pressed="false") Максимум
+     div.kv
+      div
+       b 52.5 × 10
+       span лучший подход, 8 сен
+      div
+       b 73.5 кг
+       span расчётный 1ПМ (по Эпли)
+      div
+       b 0%
+       span с 8 сен (52.5 × 10)
+      div
+       b 1
+       span тренировка
+     div.chart
+      div.legend
+       span
+        i.key(style="border-top-color: var(--s1);")
+        | Самый тяжёлый подход
+       span
+        i.key(style="border-top-color: var(--deemph);")
+        | Прежний дневник
+      svg(viewBox="0 0 324 220" height="220" role="img" aria-label="Рабочий вес") …#c467fcba84
+      div.tip(style="display: none;")
+     div.scroll-x(style="margin-top:10px")
+      table
+       thead
+        tr
+         th Дата
+         th(style="text-align:left") Лучший подход
+         th Расч. 1ПМ
+         th К прошлой
+       tbody
+        tr.old
+         td 8 сен
+         td.wrapc
+          div.chips(style="justify-content:flex-start")
+           span.chip 52.5 × 10
+         td 73.5
+         td –
+     p#ex-old.note(style="margin-top:6px") Серым — тренировки прежнего дневника.
+    div.ex-grid
+     button.ex-card(aria-pressed="true")
+      span.nm Вертикальная тяга в тренажере
+      div.ln
+       span.big 52.5 × 10
+       svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
+      div.ln
+       span.tag 0% за 1 тренировку
+       span.pill.info
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+        | мало данных
+     button.ex-card(aria-pressed="false")
+      span.nm Жим ногами
+      div.ln
+       span.big 155 × 5
+       svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
+      div.ln
+       span.tag 0% за 1 тренировку
+       span.pill.info
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+        | мало данных
+     button.ex-card(aria-pressed="false")
+      span.nm Горизонтальная тяга в тренажере
+      div.ln
+       span.big 45 × 11
+       svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
+      div.ln
+       span.tag 0% за 1 тренировку
+       span.pill.info
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+        | мало данных
+     button.ex-card(aria-pressed="false")
+      span.nm Сгибания ног лежа
+      div.ln
+       span.big 30 × 11
+       svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
+      div.ln
+       span.tag 0% за 1 тренировку
+       span.pill.info
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+        | мало данных
+     button.ex-card(aria-pressed="false")
+      span.nm Пресс
+      div.ln
+       span.big 0 × 15
+       svg.spark(viewBox="0 0 96 30" aria-hidden="true") …#da39a3ee5e
+      div.ln
+       span.tag 0% за 1 тренировку
+       span.pill.info
+        svg(viewBox="0 0 24 24" aria-hidden="true") …#13581edb1f
+        | мало данных
+   section.card
+    div.sec-h
+     div
+      h2 Вес тела
+      p.sub Записывай вес 2–3 раза в неделю утром: по нему видно, куда идёт процесс.
+    div.row(style="margin-bottom:12px")
+     label.f
+      span Дата
+      input#bw-date(type="date")
+     label.f
+      span Вес, кг
+      input#bw-kg.num(type="text" inputmode="decimal" placeholder="")
+     button.btn(style="align-self:flex-end") Записать
 
 === 10. повторная загрузка ничего не добавляет
 адрес: "#setup"
