@@ -17,7 +17,7 @@ import { builtDay, carePills } from './builtday.ts';
 import { pairsRow } from './care.ts';
 import { weekDays } from './platform.ts';
 import { DAY_COUNTS, awayDays, daysOf, useDays } from '../core/days.ts';
-import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift, stopOf } from '../core/rules.ts';
+import { BASE_SETS, HOLD, appRules, byPct, heavyOf, isoLift, stopOf, swappable } from '../core/rules.ts';
 import { DAY_H } from '../core/strength.ts';
 import type { Cfg, Muscle, ProgEntry, ProgSlots, Slot, Swap, Workout } from '../core/index.ts';
 import type { Built, Marked, ProgEdit, ProgTally, VolRow } from './types.ts';
@@ -50,7 +50,7 @@ export function progDay(cfg: Cfg, sl: Slot, list: ProgEntry[], load: number, was
       e.n ? h('button', { class: 'icon-btn', title: 'Больше подходов', 'aria-label': 'Больше подходов: ' + nm, disabled: e.n >= 6, onclick: () => edit.sets(sl.id, i, 1) }, icon('plus')) : null,
       k !== 'base' || edit.manual ? h('button', { class: 'icon-btn', title: 'Убрать из программы', 'aria-label': 'Убрать из программы: ' + nm, onclick: () => edit.drop(sl.id, i) }, icon('x')) : null) : null;
     /* another exercise for the same muscles in this place: the link opens a list, the choice keeps the sets */
-    const alts = edit && (k === 'compound' || k === 'iso') ? C.swapsFor(cfg, e.ex, list.map(x => x.ex)) : null, canSwap = alts && (alts.same.length || alts.near.length);
+    const alts = edit && swappable(cfg, e.ex) ? C.swapsFor(cfg, e.ex, list.map(x => x.ex)) : null, canSwap = alts && (alts.same.length || alts.near.length);
     const open = canSwap && edit!.swapAt === sl.id + ':' + i, sid = 'sw-' + sl.id + '-' + i;
     /* (в эталоне нет) с днями «День N» у варианта замены — что он сделает с недельным объёмом мышц (balance.ts; пункт 1 вопросов владельца, 28 ноября 2026) */
     const shiftAt = (x: Swap) => { const t = open && appRules() ? shiftText(shiftOf(cfg, { [sl.id]: list }, sl.id, i, x.id, x.def)) : ''; return t ? ' — ' + t : ''; };

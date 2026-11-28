@@ -17,6 +17,8 @@ const vol = (cfg: Cfg, slots: ProgSlots) => { const pv = Core.progTally(cfg, slo
 const sq = (a: Record<string, number>, b: Record<string, number>) => Object.keys(a).reduce((t, m) => t + ((b[m] || 0) - a[m]) ** 2, 0);
 const total = (cfg: Cfg, slots: ProgSlots) => { const T = Core.progTally(cfg, slots); return Core.SLOTS.reduce((a, sl) => a + (T.load[sl.id] || 0), 0); };
 const mins = (cfg: Cfg, slots: ProgSlots) => Core.SLOTS.map(sl => Core.estMinutes(cfg, slots[sl.id], cfg.rest));
+/** День, где стоит упражнение: какой — решает сборка (с 28 ноября 2026 она разносит упражнения по дням, variety.test.ts) */
+const dayOf = (pr: Built, id: string) => Core.SLOTS.map(sl => sl.id).find(d => pr.slots[d].some(e => e.ex === id))!;
 /** Замена, как её делает экран (draft.ts, edit.swap): упражнение в том же месте, подходы те же, затем выравнивание */
 function swap(pr: Built, cfg: Cfg, slot: string, from: string, to: string, opts: BuildOpts = {}) {
   const i = pr.slots[slot].findIndex(e => e.ex === from);
@@ -29,20 +31,20 @@ function swap(pr: Built, cfg: Cfg, slot: string, from: string, to: string, opts:
 }
 
 test('сдвиг у варианта замены: приседания → ягодичный мост отнимают у квадрицепса все подходы приседаний', () => withDays(3, () => {
-  const cfg = cfgOf(), pr = Core.buildProgram([], cfg, {});
-  const i = pr.slots.mon.findIndex(e => e.ex === 'squat'), n = pr.slots.mon[i].n!;
-  assert.deepEqual(shiftOf(pr.cfg, pr.slots, 'mon', i, 'hip_thrust'), [['quads', -n], ['hams', n / 2]]);
-  assert.equal(shiftText(shiftOf(pr.cfg, { mon: pr.slots.mon }, 'mon', i, 'hip_thrust')), 'квадрицепс −' + n + ', бицепс бедра +' + n / 2 + ' в неделю', 'по одному дню — то же, что по всей программе');
-  assert.deepEqual(shiftOf(pr.cfg, pr.slots, 'mon', i, 'lunge'), [], 'выпады — те же мышцы с той же долей: сдвига нет');
-  assert.deepEqual(shiftOf(pr.cfg, pr.slots, 'mon', i, 'squat'), [], 'то же упражнение — сдвига нет');
-  const j = pr.slots.mon.findIndex(e => e.ex === 'row_machine');
-  assert.deepEqual(shiftOf(pr.cfg, pr.slots, 'mon', j, 'shrug').map(x => x[0]).sort(), ['biceps', 'delt_rear', 'lats'], 'даже из «Тех же мышц»: шраги вместо тяги отнимают у помощников');
-  assert.ok(shiftOf(pr.cfg, pr.slots, 'mon', j, 'shrug').every(x => x[1] <= -SHIFT_MIN), 'потери от подхода');
+  const cfg = cfgOf(), pr = Core.buildProgram([], cfg, {}), d = dayOf(pr, 'squat');
+  const i = pr.slots[d].findIndex(e => e.ex === 'squat'), n = pr.slots[d][i].n!;
+  assert.deepEqual(shiftOf(pr.cfg, pr.slots, d, i, 'hip_thrust'), [['quads', -n], ['hams', n / 2]]);
+  assert.equal(shiftText(shiftOf(pr.cfg, { [d]: pr.slots[d] }, d, i, 'hip_thrust')), 'квадрицепс −' + n + ', бицепс бедра +' + n / 2 + ' в неделю', 'по одному дню — то же, что по всей программе');
+  assert.deepEqual(shiftOf(pr.cfg, pr.slots, d, i, 'lunge'), [], 'выпады — те же мышцы с той же долей: сдвига нет');
+  assert.deepEqual(shiftOf(pr.cfg, pr.slots, d, i, 'squat'), [], 'то же упражнение — сдвига нет');
+  const r = dayOf(pr, 'row_machine'), j = pr.slots[r].findIndex(e => e.ex === 'row_machine');
+  assert.deepEqual(shiftOf(pr.cfg, pr.slots, r, j, 'shrug').map(x => x[0]).sort(), ['biceps', 'delt_rear', 'lats'], 'даже из «Тех же мышц»: шраги вместо тяги отнимают у помощников');
+  assert.ok(shiftOf(pr.cfg, pr.slots, r, j, 'shrug').every(x => x[1] <= -SHIFT_MIN), 'потери от подхода');
 }));
 
 test('после замены дневник возвращает мышцам объём: приседания → ягодичный мост, квадрицепс снова как до замены', () => withDays(3, () => {
   const cfg = cfgOf(), pr = Core.buildProgram([], cfg, {}), budget = +pr.budget! || cfg.caps.week;
-  const r = swap(pr, cfg, 'mon', 'squat', 'hip_thrust');
+  const r = swap(pr, cfg, dayOf(pr, 'squat'), 'squat', 'hip_thrust');
   assert.ok(r.mid.quads <= r.was.quads - 4 + 0.01, 'сразу после замены квадрицепс потерял подходы');
   const now = vol(pr.cfg, pr.slots);
   for (const m of Object.keys(now)) assert.ok(Math.abs(now[m] - r.was[m]) <= SHIFT_MIN + 0.01, m + ': ' + r.was[m] + ' → ' + now[m]);   // остаток до подхода: «Равномерно» — разброс около двух
@@ -58,15 +60,16 @@ test('после замены дневник возвращает мышцам �
 
 test('вернуть обратно: замена назад и выравнивание дают прежний объём мышц', () => withDays(3, () => {
   const cfg = cfgOf(), pr = Core.buildProgram([], cfg, {}), start = vol(pr.cfg, pr.slots);
-  swap(pr, cfg, 'mon', 'squat', 'hip_thrust');
-  swap(pr, cfg, 'mon', 'hip_thrust', 'squat');
+  const d = dayOf(pr, 'squat');
+  swap(pr, cfg, d, 'squat', 'hip_thrust');
+  swap(pr, cfg, d, 'hip_thrust', 'squat');
   const now = vol(pr.cfg, pr.slots);
   for (const m of Object.keys(start)) assert.ok(Math.abs(now[m] - start[m]) <= SHIFT_MIN + 0.01, m + ': ' + start[m] + ' → ' + now[m]);
 }));
 
 test('с выбранным временем день не становится длиннее; чего вернуть нельзя — названо с причиной', () => withDays(3, () => {
   const cfg = cfgOf(), opts = { time: 60 }, pr = Core.buildProgram([], cfg, opts);
-  const r = swap(pr, cfg, 'mon', 'squat', 'hip_thrust', opts), after = mins(pr.cfg, pr.slots);
+  const r = swap(pr, cfg, dayOf(pr, 'squat'), 'squat', 'hip_thrust', opts), after = mins(pr.cfg, pr.slots);
   after.forEach((v, k) => assert.ok(v <= Math.max(60, r.minMid[k]) + 0.01, 'день ' + (k + 1) + ': ' + v + ' мин'));
   const now = vol(pr.cfg, pr.slots);
   assert.ok(sq(r.was, now) < sq(r.was, r.mid), 'отклонений меньше, чем сразу после замены');
